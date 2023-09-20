@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_ironman.dart
+ASSET_PREFIX=ironman
+BUNDLE_NAME=IRONMAN
+BUNDLE_DISPLAY_NAME=IRONMAN

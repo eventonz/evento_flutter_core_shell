@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_epicseries.dart
+ASSET_PREFIX=epicseries
+BUNDLE_NAME=Epic Series
+BUNDLE_DISPLAY_NAME=Epic Series

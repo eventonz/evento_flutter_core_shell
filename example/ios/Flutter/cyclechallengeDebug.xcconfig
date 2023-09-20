@@ -1,0 +1,5 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_cyclechallenge.dart
+ASSET_PREFIX=cyclechallenge
+BUNDLE_NAME=Cycle Challenge

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>293633418513-ktrtfjfum6lelclrvd7cjdbfke9slk0a.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.293633418513-ktrtfjfum6lelclrvd7cjdbfke9slk0a</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAUvRGDMuaS2Sc1AuTe69aey-kHa2KuVBQ</string>
+	<key>GCM_SENDER_ID</key>
+	<string>293633418513</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>nz.netproject.aamarathon</string>
+	<key>PROJECT_ID</key>
+	<string>aa-marathon</string>
+	<key>STORAGE_BUCKET</key>
+	<string>aa-marathon.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:293633418513:ios:1d6438f1d6607ed8e618b0</string>
+	<key>DATABASE_URL</key>
+	<string>https://aa-marathon.firebaseio.com</string>
+</dict>
+</plist>

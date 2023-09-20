@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_flavordemo.dart
+ASSET_PREFIX=flavordemo
+BUNDLE_NAME=Evento Tracker
+BUNDLE_DISPLAY_NAME=Evento Tracker

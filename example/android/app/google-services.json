@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "893380815399",
+    "project_id": "evento-tracker-flutter",
+    "storage_bucket": "evento-tracker-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:9118da9ef539b5a1d8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker.flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

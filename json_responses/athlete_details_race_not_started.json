@@ -1,0 +1,26 @@
+// https://eventotracker.com/api/v3/api.cfm/splits/race/111/?bib=30&id=30&contest=1
+
+{
+    "items": [
+        {
+            "entries": [
+                {
+                    "data": [
+                        "Awaiting Start"
+                    ],
+                    "style": "notstarted"
+                },
+                {
+                    "data": [
+                        "Point",
+                        "Race Time",
+                        "TOD",
+                        "Pace"
+                    ],
+                    "style": "header"
+                }
+            ],
+            "type": "splits"
+        }
+    ]
+}

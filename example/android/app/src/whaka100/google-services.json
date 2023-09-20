@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "947362584534",
+    "project_id": "whaka100-f9823",
+    "storage_bucket": "whaka100-f9823.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:947362584534:android:ba7f26878dbbad3f05b677",
+        "android_client_info": {
+          "package_name": "nz.netproject.whaka100"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "947362584534-t85o8r3liq4hm7bf46abhn0t3o5igtbu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA83qWzPYGMfYJT5Nuy0Hwg1fj-LmL1xr0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "947362584534-t85o8r3liq4hm7bf46abhn0t3o5igtbu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "947362584534-fdk8s7vdsdq3n5pr9irc9pruhdhfb6jq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.whaka100"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

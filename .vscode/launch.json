@@ -1,0 +1,177 @@
+{
+
+  "version": "3.0.0",
+  "configurations": [
+    {
+      "name": "flavordemo",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_flavordemo.dart",
+      "args": [
+        "--flavor",
+        "flavordemo"
+      ]
+    },
+    {
+      "name": "cyclechallenge",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_cyclechallenge.dart",
+      "args": [
+        "--flavor",
+        "cyclechallenge"
+     ]
+    },
+    {
+      "name": "Evento Demo",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_eventodemo.dart",
+      "args": [
+        "--flavor",
+        "eventodemo"
+     ]
+    },
+    {
+      "name": "epicseries",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_epicseries.dart",
+      "args": [
+        "--flavor",
+        "epicseries"
+     ]
+    },
+    {
+      "name": "motatapu",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_motatapu.dart",
+      "args": [
+        "--flavor",
+        "motatapu"
+     ]
+    },
+    {
+     "name": "noosatri",
+     "request": "launch",
+     "type": "dart",
+     "program": "example/lib/main_noosatri.dart",
+     "args": [
+       "--flavor",
+       "noosatri"
+     ]
+    },
+    {
+      "name": "mootri",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_mootri.dart",
+      "args": [
+        "--flavor",
+        "mootri"
+      ]
+    },
+    {
+      "name": "uta",
+      "request": "launch",
+      "type": "dart",
+      "program": "example/lib/main_uta.dart",
+      "args": [
+        "--flavor",
+        "uta"
+      ]
+    },
+    {
+        "name": "kosci",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_kosci.dart",
+        "args": [
+          "--flavor",
+          "kosci"
+        ]
+      },
+      {
+        "name": "rtb",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_rtb.dart",
+        "args": [
+          "--flavor",
+          "rtb"
+        ]
+      },
+  
+      {
+        "name": "auckland",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_auckland.dart",
+        "args": [
+          "--flavor",
+          "auckland"
+        ]
+      },
+      {
+        "name": "whaka100",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_whaka100.dart",
+        "args": [
+          "--flavor",
+          "whaka100"
+        ]
+      },
+      {
+        "name": "ironman",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_ironman.dart",
+        "args": [
+          "--flavor",
+          "ironman"
+        ]
+      },
+      {
+        "name": "runaway",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_runaway.dart",
+        "args": [
+          "--flavor",
+          "runaway"
+        ]
+      },
+      {
+        "name": "challenge",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_challenge.dart",
+        "args": [
+          "--flavor",
+          "challenge"
+        ]
+      },
+      {
+        "name": "coasttocoast",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_coasttocoast.dart",
+        "args": [
+          "--flavor",
+          "coasttocoast"
+        ]
+      },
+      {
+        "name": "chmarathon",
+        "request": "launch",
+        "type": "dart",
+        "program": "example/lib/main_chmarathon.dart",
+        "args": [
+          "--flavor",
+          "chmarathon"
+        ]
+      },
+  ]
+}

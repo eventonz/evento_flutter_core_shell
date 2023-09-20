@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "293633418513",
+    "firebase_url": "https://aa-marathon.firebaseio.com",
+    "project_id": "aa-marathon",
+    "storage_bucket": "aa-marathon.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293633418513:android:a95054405be8abf5",
+        "android_client_info": {
+          "package_name": "nz.netproject.aamarathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293633418513-f8i9frpk641qmtohbke7q5av5ikbl7de.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGy8NMvBIlUfIGrdfEclQXDcRgEyiMRig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293633418513-f8i9frpk641qmtohbke7q5av5ikbl7de.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "293633418513-ktrtfjfum6lelclrvd7cjdbfke9slk0a.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.aamarathon"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

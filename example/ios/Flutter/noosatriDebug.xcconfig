@@ -1,0 +1,6 @@
+#include "Generated.xcconfig"
+
+FLUTTER_TARGET=lib/main_noosatri.dart
+ASSET_PREFIX=noosatri
+BUNDLE_NAME=Noosatri
+BUNDLE_DISPLAY_NAME=Noosatri

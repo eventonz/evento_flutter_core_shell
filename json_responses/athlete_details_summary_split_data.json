@@ -1,0 +1,118 @@
+// https://eventotracker.com/api/v3/api.cfm/splits/race/84/?bib=1&id=1&contest=1
+
+{
+    "open_tab": "summary",
+    "tabs": {
+        "splits": [
+            {
+                "data": [
+                    " "
+                ]
+            },
+            {
+                "data": [
+                    "Stage Results"
+                ],
+                "style": "split_grey"
+            },
+            {
+                "data": [
+                    "Stage",
+                    "Time",
+                    "GC",
+                    "Rank"
+                ],
+                "style": "header"
+            },
+            {
+                "data": [
+                    "Stage 1",
+                    "2:01:00",
+                    "2:01:00",
+                    "1"
+                ]
+            },
+            {
+                "data": [
+                    "Stage 2",
+                    "2:35:59",
+                    "4:36:59",
+                    "1"
+                ]
+            },
+            {
+                "data": [
+                    "Stage 3",
+                    "3:33:10",
+                    "8:10:09",
+                    "2"
+                ]
+            },
+            {
+                "data": [
+                    "Stage 4",
+                    "2:21:50",
+                    "10:31:59",
+                    "2"
+                ]
+            },
+            {
+                "data": [
+                    " Rank for UCI Men"
+                ]
+            },
+            {
+                "data": [
+                    " "
+                ]
+            },
+            {
+                "data": [
+                    " "
+                ]
+            }
+        ],
+        "summary": {
+            "list": [
+                {
+                    "icon": "",
+                    "name": "",
+                    "value": ""
+                },
+                {
+                    "icon": "",
+                    "name": "UCI Men",
+                    "value": "2"
+                },
+                {
+                    "icon": "",
+                    "name": "GC Overall ",
+                    "value": "2"
+                }
+            ],
+            "top": {
+                "medal": "https://evento-nz.fra1.cdn.digitaloceanspaces.com/medals/andorra.png",
+                "info_bar": [
+                    {
+                        "name": "Duration",
+                        "value": "4 Days"
+                    },
+                    {
+                        "name": "Climbing",
+                        "value": "7160 m"
+                    },
+                    {
+                        "name": "Distance",
+                        "value": "220 km"
+                    }
+                ],
+                "subtitle": "Andorra Epic, 2023",
+                "result": "10:31:59"
+            }
+        }
+    },
+    "order": [
+        "summary",
+        "splits"
+    ]
+}

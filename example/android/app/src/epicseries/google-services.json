@@ -1,0 +1,190 @@
+{
+  "project_info": {
+    "project_number": "893380815399",
+    "project_id": "evento-tracker-flutter",
+    "storage_bucket": "evento-tracker-flutter.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:1a71d183d6ce6634d8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893380815399-b8jsonirda1vdglbtohkoa9svg3n5kdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.ironman"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:f291f7ae81133d00d8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker.aamarathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893380815399-b8jsonirda1vdglbtohkoa9svg3n5kdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.ironman"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:9118da9ef539b5a1d8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker.flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893380815399-b8jsonirda1vdglbtohkoa9svg3n5kdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.ironman"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:b0b37381ac8817b2d8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker.ironman"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893380815399-b8jsonirda1vdglbtohkoa9svg3n5kdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.ironman"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:893380815399:android:56ced88384da65ded8fc02",
+        "android_client_info": {
+          "package_name": "nz.netproject.mtbseries"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCH12t-c1BN2tKPJTxspDbAG7zSCks4uXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "893380815399-1sc8lboorhguehds8use793e1mmvs8hi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "893380815399-b8jsonirda1vdglbtohkoa9svg3n5kdb.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.ironman"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

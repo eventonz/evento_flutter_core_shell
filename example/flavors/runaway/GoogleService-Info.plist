@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>365010818721-o1hs2ksan0753mvccghgimu236fvkvsc.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.365010818721-o1hs2ksan0753mvccghgimu236fvkvsc</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCbjycCid1Hb0ZsQvS8jKsGJmAvdQZI9zo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>365010818721</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>nz.netproject.runaway</string>
+	<key>PROJECT_ID</key>
+	<string>runaway-37100</string>
+	<key>STORAGE_BUCKET</key>
+	<string>runaway-37100.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:365010818721:ios:3e20bf67626223e971c2e0</string>
+	<key>DATABASE_URL</key>
+	<string>https://runaway-37100.firebaseio.com</string>
+</dict>
+</plist>

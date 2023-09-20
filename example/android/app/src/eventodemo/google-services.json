@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "269736099797",
+    "firebase_url": "https://eventotracker.firebaseio.com",
+    "project_id": "eventotracker",
+    "storage_bucket": "eventotracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:269736099797:android:e9530f86fea9f15e7c075c",
+        "android_client_info": {
+          "package_name": "nz.netproject.eventotracker.demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "269736099797-jva1fjp7gc2bv0rm208lktp91qavb7a2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmSA7nFzJQP6Et-NMOBIN0SPaj4nyWw20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "269736099797-jva1fjp7gc2bv0rm208lktp91qavb7a2.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "269736099797-1ovlfkjlf8rqpeok726u61k759nhgnn1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "nz.netproject.eventotracker.demo"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
