@@ -13,6 +13,7 @@ import 'package:evento_core/core/utils/one_signal.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:flutter/cupertino.dart';
@@ -118,8 +119,13 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
     Get.back();
   }
 
-  void selectMenu(BottomNavMenu menu) {
+  void selectMenu(BottomNavMenu menu) async {
     selMenu.value = menu;
+    if (selMenu.value!.label == 'track') {
+      await Future.delayed(const Duration(seconds: 1));
+      final TrackingController controller = Get.find();
+      controller.getAtheteTrackingInfo();
+    }
 
     // if (menu == menus.first) {
     //   homeController.startFade();

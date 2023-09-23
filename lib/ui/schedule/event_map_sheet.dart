@@ -4,7 +4,6 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
@@ -71,41 +70,41 @@ class EventMapSheet extends StatelessWidget {
                   SizedBox(
                     height: 2.h,
                   ),
-                  controller.latLng == null
-                      ? const SizedBox()
-                      : SizedBox(
-                          height: 40.h,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: FlutterMap(
-                              options: MapOptions(
-                                  center: controller.latLng!, zoom: 15.5),
-                              children: [
-                                TileLayer(
-                                  urlTemplate:
-                                      "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
-                                  subdomains: const ['a', 'b', 'c'],
-                                  additionalOptions: {
-                                    'mapStyleId': controller.terrainStyle,
-                                    'accessToken': controller.accessToken,
-                                  },
-                                ),
-                                MarkerLayer(markers: [
-                                  Marker(
-                                    width: 10.w,
-                                    height: 10.w,
-                                    point: controller.latLng!,
-                                    builder: (_) => Icon(
-                                      Icons.location_on,
-                                      color: AppColors.primary,
-                                      size: 10.w,
-                                    ),
-                                  )
-                                ])
-                              ],
-                            ),
-                          ),
-                        )
+                  // controller.latLng == null
+                  //     ? const SizedBox()
+                  //     : SizedBox(
+                  //         height: 40.h,
+                  //         child: ClipRRect(
+                  //           borderRadius: BorderRadius.circular(12),
+                  //           child: FlutterMap(
+                  //             options: MapOptions(
+                  //                 center: controller.latLng!, zoom: 15.5),
+                  //             children: [
+                  //               TileLayer(
+                  //                 urlTemplate:
+                  //                     "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
+                  //                 subdomains: const ['a', 'b', 'c'],
+                  //                 additionalOptions: {
+                  //                   'mapStyleId': controller.terrainStyle,
+                  //                   'accessToken': controller.accessToken,
+                  //                 },
+                  //               ),
+                  //               MarkerLayer(markers: [
+                  //                 Marker(
+                  //                   width: 10.w,
+                  //                   height: 10.w,
+                  //                   point: controller.latLng!,
+                  //                   builder: (_) => Icon(
+                  //                     Icons.location_on,
+                  //                     color: AppColors.primary,
+                  //                     size: 10.w,
+                  //                   ),
+                  //                 )
+                  //               ])
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       )
                 ],
               ),
             ),

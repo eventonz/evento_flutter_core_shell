@@ -26,6 +26,7 @@ class AthleteTrackDetail {
   String? info;
   double? speed;
   double? location;
+  double? prevLocation;
   String? path;
   String? status;
   String? markerText;
@@ -35,6 +36,7 @@ class AthleteTrackDetail {
       this.info,
       this.speed,
       this.location,
+      this.prevLocation,
       this.path,
       this.status,
       this.markerText});
@@ -44,6 +46,7 @@ class AthleteTrackDetail {
     info = json['info'];
     speed = json['speed'].toDouble();
     location = json['location'].toDouble();
+    prevLocation = json['prev_location']?.toDouble();
     path = json['path'];
     status = json['status'];
     markerText = json['marker_text'];
@@ -55,6 +58,7 @@ class AthleteTrackDetail {
     data['info'] = info;
     data['speed'] = speed;
     data['location'] = location;
+    data['prev_location'] = prevLocation;
     data['path'] = path;
     data['status'] = status;
     data['marker_text'] = markerText;
