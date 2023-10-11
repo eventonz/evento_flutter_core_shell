@@ -1,8 +1,8 @@
-import 'dart:math';
-
+import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
+import 'package:geodart/geometries.dart';
 import 'package:latlong2/latlong.dart';
 
 class AnimatedMarkerLayer<T> extends ImplicitlyAnimatedWidget {
@@ -23,60 +23,97 @@ class AnimatedMarkerLayer<T> extends ImplicitlyAnimatedWidget {
 class _AnimatedMarkerLayerState
     extends AnimatedWidgetBaseState<AnimatedMarkerLayer>
     with AutomaticKeepAliveClientMixin {
-  double get _currentLocation => widget.options.location;
-  List<LatLng> get routePath => widget.options.routePath;
-  double latitude = 0;
-  double longitude = 0;
+  Tween<double>? _latitude;
+  Tween<double>? _longitude;
 
-  double _lastLocation = 0;
+  int currentPointIndex = 0;
+  List<AthleteTrackDetail> trackDetails = [];
+  bool isAnimating = false;
+  List<LatLng> get routePath => widget.options.routePath;
+  LineString get lineStringPath => createlLineString();
 
   Marker get marker => widget.options.marker;
 
+  late double currentLatitude = marker.point.latitude;
+  late double currentLongitude = marker.point.latitude;
+
+  double get latitude => _latitude?.evaluate(animation) ?? currentLatitude;
+  double get longitude => _longitude?.evaluate(animation) ?? currentLatitude;
+
   @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {}
-
-  void _animateMarker() async {
-    int li = getIndexFromLocation(_lastLocation);
-    int ci = getIndexFromLocation(_currentLocation);
-    if (li >= ci) {
-      ci = li;
-      li = getIndexFromLocation(_currentLocation);
-    }
-    final minPath = routePath.getRange(li, ci).toList();
-    final animationDuration = Duration(seconds: 2);
-    for (int i = 0; i < minPath.length; i++) {
-      final start = minPath[i];
-      final end = minPath[min(i + 1, minPath.length - 1)];
-
-      final animationStart = DateTime.now();
-
-      final stepDuration = animationDuration ~/ minPath.length;
-
-      while (DateTime.now().difference(animationStart) < stepDuration) {
-        final progress =
-            DateTime.now().difference(animationStart).inMilliseconds /
-                stepDuration.inMilliseconds;
-        setState(() {
-          latitude =
-              start.latitude + (end.latitude - start.latitude) * progress;
-          longitude =
-              start.longitude + (end.longitude - start.longitude) * progress;
-        });
-        await Future.delayed(Duration(milliseconds: 30));
-      }
-    }
-  }
-
-  int getIndexFromLocation(double location) {
-    final res = (routePath.length * (location / 100)).floor();
-    return res;
+  void forEachTween(TweenVisitor<dynamic> visitor) {
+    _latitude = visitor(_latitude, currentLatitude,
+            (dynamic value) => Tween<double>(begin: value as double))
+        as Tween<double>?;
+    _longitude = visitor(_longitude, currentLongitude,
+            (dynamic value) => Tween<double>(begin: value as double))
+        as Tween<double>?;
   }
 
   @override
   void didUpdateWidget(covariant AnimatedMarkerLayer oldWidget) {
-    _lastLocation = oldWidget.options.location;
     super.didUpdateWidget(oldWidget);
-    _animateMarker();
+    if (trackDetails.isEmpty ||
+        trackDetails.last.location != oldWidget.options.trackDetail.location) {
+      trackDetails.add(oldWidget.options.trackDetail);
+      print('added! -----' + oldWidget.options.trackDetail.toJson().toString());
+    }
+    setState(() {});
+    checkOnMarkerMovement();
+  }
+
+  LineString createlLineString() {
+    return LineString(routePath
+        .map((point) => Coordinate(point.latitude, point.longitude))
+        .toList());
+  }
+
+  void checkOnMarkerMovement() {
+    if (isAnimating) return;
+    final currentTrackDetail = trackDetails[currentPointIndex];
+    final nextTrackDetail = (currentPointIndex < trackDetails.length - 1)
+        ? trackDetails[currentPointIndex + 1]
+        : null;
+    moveMarker(
+      currentTrackDetail.speed ?? 0,
+      currentTrackDetail.location ?? 0,
+      nextTrackDetail?.location ?? 0,
+    );
+  }
+
+  void moveMarker(double speed, double progress, double newProgress) async {
+    double totalPathDistance = lineStringPath.length;
+    double distanceTraveledinOneSec = (speed * 1500) / 3600;
+
+    double locationAsDistance = (progress / 100) * totalPathDistance;
+    double newlocationAsDistance = (newProgress / 100) * totalPathDistance;
+    isAnimating = true;
+    if (progress > newProgress) {
+      while (locationAsDistance >= newlocationAsDistance) {
+        locationAsDistance -= distanceTraveledinOneSec;
+        Point updatedlatlng = lineStringPath.along(locationAsDistance);
+        setState(() {
+          currentLatitude = updatedlatlng.lat;
+          currentLongitude = updatedlatlng.lng;
+        });
+        didUpdateWidget(widget);
+        await Future.delayed(const Duration(milliseconds: 1000));
+      }
+    } else {
+      while (locationAsDistance <= newlocationAsDistance) {
+        locationAsDistance += distanceTraveledinOneSec;
+        Point updatedlatlng = lineStringPath.along(locationAsDistance);
+        setState(() {
+          currentLatitude = updatedlatlng.lat;
+          currentLongitude = updatedlatlng.lng;
+        });
+        didUpdateWidget(widget);
+        await Future.delayed(const Duration(milliseconds: 1000));
+      }
+    }
+
+    isAnimating = false;
+    currentPointIndex++;
   }
 
   @override
@@ -93,6 +130,7 @@ class _AnimatedMarkerLayerState
     }
     final pos = pxPoint - map.pixelOrigin;
     final markerWidget = (marker.rotate ?? widget.options.rotate ?? false)
+        // Counter rotated marker to the map rotation
         ? Transform.rotate(
             angle: -map.rotationRad,
             origin: marker.rotateOrigin ?? widget.options.rotateOrigin,

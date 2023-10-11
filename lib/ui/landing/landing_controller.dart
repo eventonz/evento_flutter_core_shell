@@ -85,8 +85,6 @@ class LandingController extends GetxController {
   Future<void> getConfigDetails(String url) async {
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
-    print(AppGlobals.appConfig?.toJson());
-    print(url);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
     AppColors.accentDark = AppHelper.hexToColor(accentColors.dark!);

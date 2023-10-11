@@ -11,16 +11,17 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:geodart/geometries.dart';
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
 import 'dart:async';
-
 import 'package:latlong2/latlong.dart';
 
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
-  late Tracking trackingDetails;
+  late Tracking? trackingDetails;
   late String raceId;
   late Timer timer;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
@@ -29,24 +30,16 @@ class TrackingController extends GetxController
       'pk.eyJ1IjoiamV0aHJvMDA1NiIsImEiOiJjazZwazBhYTIwMDhmM2hxbGs1bWp3Z3BuIn0.F54xb2r1CQfJByfhSaIs5g';
   final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
   late List<LatLng> routePath = [];
+  late LineString lineStringPath;
 
   @override
   void onInit() {
     super.onInit();
-    trackingDetails = AppGlobals.appConfig!.tracking!;
+    trackingDetails = AppGlobals.appConfig!.tracking;
     raceId = AppGlobals.appEventConfig.singleEventId ?? '';
     if (raceId.isEmpty) {
       raceId = AppGlobals.appEventConfig.multiEventListId ?? '';
     }
-  }
-
-  @override
-  void onReady() {
-    super.onReady();
-    createGeoJsonTracks();
-    getAtheteTrackingInfo();
-    timer = Timer.periodic(Duration(seconds: trackingDetails.updateFreq ?? 60),
-        (Timer t) => getAtheteTrackingInfo());
   }
 
   @override
@@ -55,25 +48,28 @@ class TrackingController extends GetxController
     timer.cancel();
   }
 
-  Stream<List<AppAthleteDb>> watchFollowedAthletes() async* {
-    yield* DatabaseHandler.getAthletes('', true);
+  @override
+  void onReady() {
+    super.onReady();
+    getRoutePaths();
+    timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
+        (Timer t) => getAtheteTrackingInfo());
   }
 
-  void createGeoJsonTracks() async {
-    final paths = trackingDetails.paths ?? [];
+  void getRoutePaths() async {
+    if (trackingDetails == null) return;
+    final paths = trackingDetails!.paths ?? [];
     try {
       mapDataSnap.value = DataSnapShot.loading;
       final geoJson = GeoJson();
       for (Paths path in paths) {
         final res = await ApiHandler.downloadFile(baseUrl: path.url!);
         final geoJsonFile = File(res.data['file_path']);
-        await geoJson.parse(
-          await geoJsonFile.readAsString(),
-        );
+        await geoJson.parse(await geoJsonFile.readAsString());
         final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
         if (geoPoints.isNotEmpty) {
-          routePath =
-              geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
+          createGeoRoutePaths(
+              geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList());
         }
         break;
       }
@@ -84,8 +80,19 @@ class TrackingController extends GetxController
     }
   }
 
+  void createGeoRoutePaths(List<LatLng> geoPoints) async {
+    routePath = geoPoints;
+    lineStringPath = LineString(routePath
+        .map((point) => Coordinate(point.latitude, point.longitude))
+        .toList());
+  }
+
+  Stream<List<AppAthleteDb>> watchFollowedAthletes() async* {
+    yield* DatabaseHandler.getAthletes('', true);
+  }
+
   Future<void> getAtheteTrackingInfo() async {
-    print('incmong====');
+    if (trackingDetails == null) return;
     final entrants = await watchFollowedAthletes().first;
     final entrantsIds = <String>[];
     for (final AppAthleteDb entrant in entrants) {
@@ -97,7 +104,7 @@ class TrackingController extends GetxController
       'tracks': entrantsIds
     };
     final res = await ApiHandler.postHttp(
-        baseUrl: trackingDetails.data!, endPoint: '', body: body);
+        baseUrl: trackingDetails!.data!, endPoint: '', body: body);
     if (res.statusCode == 200) {
       athleteTrackDetails.clear();
       athleteTrackDetails
@@ -114,25 +121,6 @@ class TrackingController extends GetxController
     }
     getAtheteTrackingInfo();
     return null;
-  }
-
-  LatLng getLatLngByThreshold(AthleteTrackDetail athleteTrackDetails) {
-    final threshold = athleteTrackDetails.location ?? 0.0;
-    if (threshold < 0 || threshold > 100.0) {
-      throw Exception("Threshold should be between 1.0 and 100.0");
-    }
-
-    if (routePath.isEmpty) {
-      throw Exception("RouteProutePath is empty");
-    }
-
-    final int index = ((routePath.length - 1) * (threshold / 100.0)).round();
-
-    if (index < 0 || index >= routePath.length) {
-      throw Exception("Invalid index");
-    }
-
-    return routePath[index];
   }
 
   void toAthleteDetails(AppAthleteDb entrant) async {
