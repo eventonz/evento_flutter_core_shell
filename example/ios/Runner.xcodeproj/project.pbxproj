@@ -1595,7 +1595,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Evento;
@@ -3443,7 +3443,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Evento;
@@ -3471,7 +3471,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Evento;
@@ -4323,7 +4323,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = B378FF9E1952F7DF1F0F5159 /* Pods-Runner.debug-motatapu.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Debug-motatapu";
@@ -4332,7 +4332,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 24EC0664183BCDDD87224ADA /* Pods-Runner.profile-motatapu.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Profile-motatapu";
@@ -4341,7 +4341,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 4E1FFD133FBACAEBBD942772 /* Pods-Runner.release-motatapu.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				PRODUCT_NAME = Runner;
 			};
 			name = "Release-motatapu";
@@ -4353,7 +4353,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				INFOPLIST_KEY_CFBundleDisplayName = "AA Marathon";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4367,7 +4367,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				INFOPLIST_KEY_CFBundleDisplayName = "AA Marathon";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -4381,7 +4381,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 6;
-				DEVELOPMENT_TEAM = TNDZQHY7AG;
+				DEVELOPMENT_TEAM = BRHCKFR8G2;
 				INFOPLIST_KEY_CFBundleDisplayName = "AA Marathon";
 				PRODUCT_NAME = Runner;
 				PROVISIONING_PROFILE_SPECIFIER = "";

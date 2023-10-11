@@ -49,7 +49,7 @@
       "program": "example/lib/main_motatapu.dart",
       "args": [
         "--flavor",
-        "motatapu"
+        "motatapu",
      ]
     },
     {
