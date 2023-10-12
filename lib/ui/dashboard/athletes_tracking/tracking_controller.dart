@@ -22,7 +22,7 @@ import 'package:latlong2/latlong.dart';
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
   late Tracking? trackingDetails;
-  late String raceId;
+  late String raceId = '0';
   late Timer timer;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
