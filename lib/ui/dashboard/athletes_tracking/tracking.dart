@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
@@ -12,7 +10,6 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer_options.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
@@ -91,6 +88,7 @@ class TrackingScreen extends StatelessWidget {
 
   Widget _buildMapWidget(TrackingController controller) {
     final mapDataSnap = controller.mapDataSnap;
+    final centerPoint = controller.lineStringPath.center;
     return Obx(() {
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final routePath = controller.routePath;
@@ -98,7 +96,11 @@ class TrackingScreen extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: FlutterMap(
             options: MapOptions(
-                center: routePath.first, zoom: 10, minZoom: 8, maxZoom: 18),
+              center: LatLng(centerPoint.lat, centerPoint.lng),
+              zoom: 17,
+              minZoom: 8,
+              maxZoom: 18,
+            ),
             children: [
               TileLayer(
                 urlTemplate:
@@ -113,7 +115,7 @@ class TrackingScreen extends StatelessWidget {
                 polylines: [
                   Polyline(
                       points: routePath,
-                      color: AppColors.secondary,
+                      color: AppColors.black,
                       strokeWidth: 4.0,
                       useStrokeWidthInMeter: true),
                 ],
@@ -122,15 +124,13 @@ class TrackingScreen extends StatelessWidget {
                   in controller.athleteTrackDetails.value)
                 AnimatedMarkerLayer(
                   options: AnimatedMarkerLayerOptions(
-                    duration: const Duration(
-                      seconds: 0,
-                    ),
-                    location: trackDetails.location ?? 0,
+                    duration: const Duration(seconds: 1),
                     routePath: routePath,
+                    trackDetail: trackDetails,
                     marker: Marker(
                       width: 30,
                       height: 30,
-                      point: controller.getLatLngByThreshold(trackDetails),
+                      point: routePath.first,
                       builder: (context) => Center(
                         child: Icon(
                           Icons.fiber_manual_record,
@@ -145,8 +145,7 @@ class TrackingScreen extends StatelessWidget {
           ),
         );
       } else if (mapDataSnap.value == DataSnapShot.error) {
-        return Center(
-            child: RetryLayout(onTap: controller.createGeoJsonTracks));
+        return Center(child: RetryLayout(onTap: controller.getRoutePaths));
       } else {
         return const Center(child: CircularProgressIndicator());
       }

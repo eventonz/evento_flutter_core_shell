@@ -241,14 +241,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.6"
-  dart_exporter_annotation:
-    dependency: transitive
-    description:
-      name: dart_exporter_annotation
-      sha256: f41e230919ca926e4231fc068f427f8370f33523a3c0900c11417650a4b97fc4
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.3"
   dart_style:
     dependency: transitive
     description:
@@ -453,14 +445,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.0"
-  flutter_map_animated_marker:
-    dependency: transitive
-    description:
-      name: flutter_map_animated_marker
-      sha256: "2be266d7231e50039f80591f271e2099e37a008d3711fcaae3363f820264990b"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   flutter_svg:
     dependency: transitive
     description:
@@ -495,6 +479,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  geodart:
+    dependency: transitive
+    description:
+      name: geodart
+      sha256: "8e6f72bb8ae2384ac402632b146884d4f2afd684658401974109db56ff6e4b41"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.8"
   geodesy:
     dependency: transitive
     description:

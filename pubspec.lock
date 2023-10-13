@@ -33,14 +33,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.11.2"
-  archive:
-    dependency: transitive
-    description:
-      name: archive
-      sha256: e0902a06f0e00414e4e3438a084580161279f137aeb862274710f29ec10cf01e
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.3.9"
   args:
     dependency: transitive
     description:
@@ -446,14 +438,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0+1"
-  flutter_flavorizr:
-    dependency: "direct main"
-    description:
-      name: flutter_flavorizr
-      sha256: "54c799a467d2d5102d3e2ec9c999377ca11e30590b8d0ddd929ee9e69e26c0a0"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.1"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -504,6 +488,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  geodart:
+    dependency: "direct main"
+    description:
+      name: geodart
+      sha256: "8e6f72bb8ae2384ac402632b146884d4f2afd684658401974109db56ff6e4b41"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.8"
   geodesy:
     dependency: transitive
     description:
@@ -584,14 +576,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
-  image:
-    dependency: transitive
-    description:
-      name: image
-      sha256: a72242c9a0ffb65d03de1b7113bc4e189686fc07c7147b8b41811d0dd0e0d9bf
-      url: "https://pub.dev"
-    source: hosted
-    version: "4.0.17"
   intl:
     dependency: "direct main"
     description:
@@ -896,14 +880,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.6"
-  pointycastle:
-    dependency: transitive
-    description:
-      name: pointycastle
-      sha256: "7c1e5f0d23c9016c5bbd8b1473d0d3fb3fc851b876046039509e18e0c7485f2c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.7.3"
   polylabel:
     dependency: transitive
     description:
@@ -1085,14 +1061,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.0"
-  sprintf:
-    dependency: transitive
-    description:
-      name: sprintf
-      sha256: "1fc9ffe69d4df602376b52949af107d8f5703b77cda567c4d7d86a0693120f23"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.0"
   sqflite:
     dependency: transitive
     description:
