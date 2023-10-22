@@ -65,5 +65,48 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/svgs/
-    - assets/images/
+    - packages/evento_core/assets/svgs/article.svg
+    - packages/evento_core/assets/svgs/assignment.svg
+    - packages/evento_core/assets/svgs/auto_stories.svg
+    - packages/evento_core/assets/svgs/campaign.svg
+    - packages/evento_core/assets/svgs/chevron_left.svg
+    - packages/evento_core/assets/svgs/date_range.svg
+    - packages/evento_core/assets/svgs/directions_bike.svg
+    - packages/evento_core/assets/svgs/directions_run.svg
+    - packages/evento_core/assets/svgs/done.svg
+    - packages/evento_core/assets/svgs/event.svg
+    - packages/evento_core/assets/svgs/filter_drama.svg
+    - packages/evento_core/assets/svgs/gps_fixed.svg
+    - packages/evento_core/assets/svgs/image.svg
+    - packages/evento_core/assets/svgs/info.svg
+    - packages/evento_core/assets/svgs/landscape.svg
+    - packages/evento_core/assets/svgs/language.svg
+    - packages/evento_core/assets/svgs/laptop.svg
+    - packages/evento_core/assets/svgs/layers.svg
+    - packages/evento_core/assets/svgs/list_numbered.svg
+    - packages/evento_core/assets/svgs/list.svg
+    - packages/evento_core/assets/svgs/location_searching.svg
+    - packages/evento_core/assets/svgs/map.svg
+    - packages/evento_core/assets/svgs/medical_services.svg
+    - packages/evento_core/assets/svgs/menu_book.svg
+    - packages/evento_core/assets/svgs/near_me.svg
+    - packages/evento_core/assets/svgs/people.svg
+    - packages/evento_core/assets/svgs/personal_video.svg
+    - packages/evento_core/assets/svgs/phone.svg
+    - packages/evento_core/assets/svgs/picture_as_pdf.svg
+    - packages/evento_core/assets/svgs/qr_code.svg
+    - packages/evento_core/assets/svgs/shopping_bag.svg
+    - packages/evento_core/assets/svgs/sticky_note_2.svg
+    - packages/evento_core/assets/svgs/subject.svg
+    - packages/evento_core/assets/svgs/support_agent.svg
+    - packages/evento_core/assets/svgs/terrain.svg
+    - packages/evento_core/assets/svgs/text_snippet.svg
+    - packages/evento_core/assets/svgs/trophey.svg
+    - packages/evento_core/assets/svgs/verified_user.svg
+    - packages/evento_core/assets/svgs/videocam.svg
+    - packages/evento_core/assets/svgs/view_list.svg
+    - packages/evento_core/assets/svgs/watch_later.svg
+    - packages/evento_core/assets/svgs/wb_sunny.svg
+    - packages/evento_core/assets/svgs/web.svg
+
+    - packages/evento_core/assets/images/splash_image.png
