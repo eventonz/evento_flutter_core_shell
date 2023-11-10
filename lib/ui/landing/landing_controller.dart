@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
@@ -83,7 +85,6 @@ class LandingController extends GetxController {
   Future<void> getConfigDetails(String url) async {
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
-    print(url);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
     AppColors.accentDark = AppHelper.hexToColor(accentColors.dark!);
@@ -103,7 +104,13 @@ class LandingController extends GetxController {
     }
     try {
       final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
-      final athletesM = AthletesM.fromJson(res.data);
+      late Map<String, dynamic> resJsonData;
+      if (res.data.runtimeType == String) {
+        resJsonData = jsonDecode(res.data);
+      } else {
+        resJsonData = res.data;
+      }
+      final athletesM = AthletesM.fromJson(resJsonData);
       await DatabaseHandler.insertAthletes(athletesM.entrants!);
       await Future.delayed(const Duration(milliseconds: 500));
     } catch (e) {

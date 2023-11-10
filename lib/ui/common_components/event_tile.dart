@@ -101,7 +101,7 @@ class EventTile extends StatelessWidget {
                         ? Align(
                             alignment: Alignment.topRight,
                             child: Container(
-                              width: 26.w,
+                              width: 30.w,
                               margin: const EdgeInsets.all(12),
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
