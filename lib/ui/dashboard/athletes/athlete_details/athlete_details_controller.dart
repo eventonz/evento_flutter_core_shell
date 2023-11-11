@@ -45,7 +45,7 @@ class AthleteDetailsController extends GetxController
     }
     String mainUrl = athleteSplitUrl.split('?').first;
     mainUrl =
-        '$mainUrl?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
+        'http://127.0.0.1:8080/api/v3/api.cfm/splits/race/109/?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
     // '$mainUrl?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
 
     athleteSplitDataSnap.value = DataSnapShot.loading;
