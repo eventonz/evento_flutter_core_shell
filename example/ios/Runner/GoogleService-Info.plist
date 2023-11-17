@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>893380815399-p8396pf2ud7kh9at356dt8v16rkacvad.apps.googleusercontent.com</string>
+	<string>269736099797-1ovlfkjlf8rqpeok726u61k759nhgnn1.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.893380815399-p8396pf2ud7kh9at356dt8v16rkacvad</string>
+	<string>com.googleusercontent.apps.269736099797-1ovlfkjlf8rqpeok726u61k759nhgnn1</string>
 	<key>API_KEY</key>
-	<string>AIzaSyAcp7AoiDPJJRsxYsdWaZJS-tknQOvZ24U</string>
+	<string>AIzaSyBR04--BSiZamoF8wg7mBFyXym-xcnZeHw</string>
 	<key>GCM_SENDER_ID</key>
-	<string>893380815399</string>
+	<string>269736099797</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>nz.netproject.motatapu</string>
+	<string>nz.netproject.eventotracker.demo</string>
 	<key>PROJECT_ID</key>
-	<string>evento-tracker-flutter</string>
+	<string>eventotracker</string>
 	<key>STORAGE_BUCKET</key>
-	<string>evento-tracker-flutter.appspot.com</string>
+	<string>eventotracker.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,6 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:893380815399:ios:d82dcf766a9af38dd8fc02</string>
+	<string>1:269736099797:ios:8296fa62a66391c77c075c</string>
+	<key>DATABASE_URL</key>
+	<string>https://eventotracker.firebaseio.com</string>
 </dict>
 </plist>

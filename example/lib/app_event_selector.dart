@@ -82,8 +82,6 @@ class AppEventSelector {
         return AppEventConfig(
           singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
           singleEventId: '94',
-          multiEventListUrl: '',
-          multiEventListId: '',
           appName: eventApp.name,
           splashImage: 'assets/images/aamarathon.png',
           oneSignalId: '1bda2692-7758-4ceb-af3c-4b5d2c84c78e',
@@ -120,8 +118,6 @@ class AppEventSelector {
         return AppEventConfig(
           singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
           singleEventId: '116',
-          multiEventListUrl: '',
-          multiEventListId: '',
           appName: eventApp.name,
           splashImage: 'assets/images/cyclechallenge.png',
           oneSignalId: 'd19042a8-af05-46e6-a59b-8ad38d306dbf',
