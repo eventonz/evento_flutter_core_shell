@@ -1,4 +1,5 @@
 import 'package:evento_core/app_event_config.dart';
+import 'package:evento_core/core/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
@@ -9,7 +10,6 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
-import 'package:evento_core/core/utils/one_signal.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
@@ -26,6 +26,7 @@ import 'more/more.dart';
 
 class DashboardController extends GetxController with WidgetsBindingObserver {
   final selMenu = Rx<BottomNavMenu?>(null);
+  final AppOneSignal oneSignalService = Get.find();
   late Athletes entrantsList;
   late Tracking? trackingData;
   late HomeController homeController;
@@ -74,6 +75,7 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
   @override
   void onReady() {
     super.onReady();
+    oneSignalService.setOneSignalUserId();
     showNotificationPrompt();
   }
 
@@ -112,7 +114,7 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
   }
 
   void setShowNotification(NotificationStatus status) {
-    AppOneSignal.updateNotificationStatus(
+    oneSignalService.updateNotificationStatus(
         AppGlobals.oneSignalUserId, eventId, status == NotificationStatus.show);
     Preferences.setString(
         AppHelper.notificationPrefenceKey(eventId), status.name);

@@ -1,6 +1,0 @@
-#include "Generated.xcconfig"
-
-FLUTTER_TARGET=lib/main_uta.dart
-ASSET_PREFIX=uta
-BUNDLE_NAME=UTA
-BUNDLE_DISPLAY_NAME=UTA

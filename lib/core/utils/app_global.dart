@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'one_signal.dart';
 import 'preferences.dart';
 
 class AppGlobals {
@@ -31,7 +30,7 @@ class AppGlobals {
     await Preferences.init();
     await ApiHandler.init();
     await Firebase.initializeApp();
-    await AppOneSignal.init();
+    // await AppOneSignal.init();
     DatabaseHandler.init();
     await SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
@@ -44,7 +43,7 @@ class AppGlobals {
     oneSignalUserId = Preferences.getString(AppKeys.oneSingleUserId, '');
     if (oneSignalUserId.isEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
-        oneSignalUserId = await AppOneSignal.setOneSignalUserId();
+        // oneSignalUserId = await AppOneSignal.setOneSignalUserId();
         Preferences.setString(AppKeys.oneSingleUserId, oneSignalUserId);
       });
     }

@@ -1,4 +1,5 @@
 import 'package:evento_core/app_event_config.dart';
+import 'package:evento_core/core/initial_binding.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/routes/router.dart';
 import 'package:evento_core/core/routes/routes.dart';
@@ -24,6 +25,7 @@ class EventoApp extends StatelessWidget {
               darkTheme: AppStyles.dark,
               initialRoute: Routes.landing,
               getPages: PageRouter.pages,
+              initialBinding: MainBinding(),
               builder: (_, child) {
                 return ResponsiveSizer(
                     builder: (context, orientation, screenSize) =>

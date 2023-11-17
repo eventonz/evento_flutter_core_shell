@@ -1,3 +1,4 @@
+import 'package:evento_core/core/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/overlays/toast.dart';
@@ -6,7 +7,6 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
-import 'package:evento_core/core/utils/one_signal.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/common_components/bottom_sheet.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -16,6 +16,7 @@ import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class SettingsController extends GetxController {
+  final AppOneSignal oneSignalService = Get.find();
   late int eventId;
   final showAthleteInfo = false.obs;
   final eventNotificationstatus = false.obs;
@@ -47,7 +48,7 @@ class SettingsController extends GetxController {
 
   void toggleNotificationStatus() {
     eventNotificationstatus.value = !eventNotificationstatus.value;
-    AppOneSignal.updateNotificationStatus(
+    oneSignalService.updateNotificationStatus(
         AppGlobals.oneSignalUserId, eventId, eventNotificationstatus.value);
     Preferences.setString(
         AppHelper.notificationPrefenceKey(eventId),

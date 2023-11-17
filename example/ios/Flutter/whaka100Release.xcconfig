@@ -1,6 +1,0 @@
-#include "Generated.xcconfig"
-
-FLUTTER_TARGET=lib/main_whaka100.dart
-ASSET_PREFIX=whaka100
-BUNDLE_NAME=Whaka 100
-BUNDLE_DISPLAY_NAME=Whaka 100
