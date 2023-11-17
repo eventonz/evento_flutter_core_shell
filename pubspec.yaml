@@ -33,7 +33,6 @@ dependencies:
   carousel_slider: ^4.2.1
   firebase_core: ^2.15.1
   firebase_crashlytics: ^3.3.5
-  firebase_messaging: ^14.6.7
   sqlite3_flutter_libs: ^0.5.8
   drift_sqflite: ^2.0.1
   drift: ^2.11.1
@@ -41,7 +40,7 @@ dependencies:
   webview_flutter: ^4.2.4
   flutter_svg: ^2.0.7
   video_player: ^2.4.7
-  mobile_scanner: ^3.4.1
+  # mobile_scanner: ^3.5.2
   pull_to_refresh: ^2.0.0
   flutter_map:
   latlong2:

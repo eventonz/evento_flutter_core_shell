@@ -1,6 +1,0 @@
-#include "Generated.xcconfig"
-
-FLUTTER_TARGET=lib/main_chmarathon.dart
-ASSET_PREFIX=chmarathon
-BUNDLE_NAME=CH Marathon
-BUNDLE_DISPLAY_NAME=CH Marathon

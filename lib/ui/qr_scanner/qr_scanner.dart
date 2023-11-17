@@ -3,7 +3,7 @@ import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mobile_scanner/mobile_scanner.dart';
+// import 'package:mobile_scanner/mobile_scanner.dart';
 import 'qr_scanner_controller.dart';
 import 'qr_shape_overlay.dart';
 
@@ -31,9 +31,9 @@ class QRScannerScreen extends StatelessWidget {
               Expanded(
                 child: Stack(
                   children: [
-                    MobileScanner(
-                        controller: controller.mobileScannerController,
-                        onDetect: (capture) => controller.onDetect(capture)),
+                    // MobileScanner(
+                    //     controller: controller.mobileScannerController,
+                    //     onDetect: (capture) => controller.onDetect(capture)),
                     Padding(
                       padding: EdgeInsets.zero,
                       child: Container(

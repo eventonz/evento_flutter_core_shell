@@ -7,8 +7,8 @@ class Preferences {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  static setString(String key, String value) {
-    _prefs.setString(key, value);
+  static Future<void> setString(String key, String value) async {
+    await _prefs.setString(key, value);
   }
 
   static String getString(String key, String value) {
@@ -19,20 +19,20 @@ class Preferences {
     return _prefs.getInt(key) ?? value;
   }
 
-  static setInt(String key, int value) {
-    _prefs.setInt(key, value);
+  static Future<void> setInt(String key, int value) async {
+    await _prefs.setInt(key, value);
   }
 
-  static setBool(String key, bool value) {
-    _prefs.setBool(key, value);
+  static Future<void> setBool(String key, bool value) async {
+    await _prefs.setBool(key, value);
   }
 
   static bool getBool(String key, bool value) {
     return _prefs.getBool(key) ?? value;
   }
 
-  static setDouble(String key, double value) {
-    _prefs.setDouble(key, value);
+  static Future<void> setDouble(String key, double value) async {
+    await _prefs.setDouble(key, value);
   }
 
   static double getDouble(String key, double value) {
