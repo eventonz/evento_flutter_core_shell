@@ -1,8 +1,6 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 import 'package:evento_core/core/models/api_data.dart';
-import 'package:evento_core/core/utils/app_global.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as p;

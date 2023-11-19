@@ -1,12 +1,9 @@
-import 'dart:io';
-
-import 'package:evento_core/core/app_one_signal/app_one_signal_service.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class AppOneSignalImpl implements AppOneSignal {

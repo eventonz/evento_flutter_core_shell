@@ -14,9 +14,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class AppHelper {
-  static String getImage(String imageName) => 'packages/evento_core/assets/images/$imageName';
+  static String getImage(String imageName) =>
+      'packages/evento_core/assets/images/$imageName';
 
-  static String getSvg(String imageName) => 'packages/evento_core/assets/svgs/$imageName.svg';
+  static String getSvg(String imageName) =>
+      'packages/evento_core/assets/svgs/$imageName.svg';
 
   static final Dio _dio = Dio();
 

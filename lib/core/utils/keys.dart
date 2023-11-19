@@ -16,6 +16,8 @@ class AppKeys {
   static const String appThemeStyle = 'app_theme_style';
   static const String h12Format = 'HH:mm a';
 
+  static const String configLastUpdated = 'config_last_updated';
+
   static const String notificationSettingChanged =
       'notification_setting_changed';
   static const String showNotificationEventUpdates =

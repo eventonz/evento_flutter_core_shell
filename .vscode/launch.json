@@ -3,10 +3,11 @@
   "version": "3.0.0",
   "configurations": [
     {
-      "name": "single event app",
+      "name": "event app",
       "request": "launch",
       "type": "dart",
-      "program": "single_event_app/lib/main.dart",
+      "cwd":"example",
+      "program": "lib/main.dart",
     }
   ]
 }

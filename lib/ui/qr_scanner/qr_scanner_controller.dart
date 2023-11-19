@@ -1,4 +1,3 @@
-import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

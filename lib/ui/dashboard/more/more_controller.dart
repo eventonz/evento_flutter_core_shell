@@ -1,5 +1,3 @@
-import 'package:evento_core/app_event_config.dart';
-import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/res/app_colors.dart';

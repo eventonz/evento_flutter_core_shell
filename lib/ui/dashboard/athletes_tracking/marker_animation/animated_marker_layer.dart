@@ -56,7 +56,6 @@ class _AnimatedMarkerLayerState
     if (trackDetails.isEmpty ||
         trackDetails.last.location != oldWidget.options.trackDetail.location) {
       trackDetails.add(oldWidget.options.trackDetail);
-      print('added! -----' + oldWidget.options.trackDetail.toJson().toString());
     }
     setState(() {});
     checkOnMarkerMovement();

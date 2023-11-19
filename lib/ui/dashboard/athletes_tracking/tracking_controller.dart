@@ -12,7 +12,6 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:geodart/geometries.dart';
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';

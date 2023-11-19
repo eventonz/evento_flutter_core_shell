@@ -1,4 +1,4 @@
-import 'package:evento_core/core/app_one_signal/app_one_signal_service.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/overlays/toast.dart';

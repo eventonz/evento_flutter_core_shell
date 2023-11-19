@@ -79,11 +79,14 @@ class LandingController extends GetxController {
     final res = await ApiHandler.genericGetHttp(
         url: AppHelper.createUrl(
             config.multiEventListUrl!, config.multiEventListId!));
+    print(AppHelper.createUrl(
+        config.multiEventListUrl!, config.multiEventListId!));
     AppGlobals.eventM = EventM.fromJson(res.data);
   }
 
   Future<void> getConfigDetails(String url) async {
-    final res = await ApiHandler.genericGetHttp(url: url);
+    final res = await ApiHandler.genericGetHttp(
+        url: url.replaceFirst('127.0.0.1:8080', 'eventotracker.com'));
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
