@@ -1,6 +1,5 @@
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
-import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';

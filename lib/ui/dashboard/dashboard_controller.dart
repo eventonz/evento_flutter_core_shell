@@ -1,5 +1,4 @@
-import 'package:evento_core/app_event_config.dart';
-import 'package:evento_core/core/app_one_signal/app_one_signal_service.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
@@ -24,13 +23,12 @@ import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
 import 'more/more.dart';
 
-class DashboardController extends GetxController with WidgetsBindingObserver {
+class DashboardController extends GetxController {
   final selMenu = Rx<BottomNavMenu?>(null);
   final AppOneSignal oneSignalService = Get.find();
   late Athletes entrantsList;
   late Tracking? trackingData;
   late HomeController homeController;
-  late AppLifecycleState cycleState;
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
 
@@ -46,7 +44,6 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
     super.onInit();
     eventId = Preferences.getInt(AppKeys.eventId, 0);
     AppGlobals.checkOnUserId();
-    WidgetsBinding.instance.addObserver(this);
     homeController = Get.put(HomeController());
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
@@ -144,13 +141,7 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
       transition: Transition.leftToRightWithFade,
     );
   }
-
-  @override
-  void onClose() {
-    super.onClose();
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
+  
   Future<void> getConfigDetails() async {
     final config = AppGlobals.appEventConfig;
     String url = Preferences.getString(AppKeys.eventUrl, '');
@@ -183,22 +174,6 @@ class DashboardController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  void checkAthletesUpdate() async {
-    athleteSnapData.value = DataSnapShot.loading;
-    await getConfigDetails();
-    await getAthletes();
-    final controller = Get.put(AthletesController());
-    controller.update();
-    athleteSnapData.value = DataSnapShot.loaded;
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    cycleState = state;
-    if (state == AppLifecycleState.resumed) {
-      checkAthletesUpdate();
-    }
-  }
 }
 
 class BottomNavMenu {

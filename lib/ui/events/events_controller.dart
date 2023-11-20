@@ -60,7 +60,10 @@ class EventsController extends GetxController {
   Future<void> getConfigDetails(dynamic event) async {
     ProgressDialogUtils.show();
     try {
-      final res = await ApiHandler.genericGetHttp(url: event.config!);
+      final res = await ApiHandler.genericGetHttp(
+          url: event.config
+              .toString()
+              .replaceFirst('127.0.0.1:8080', 'eventotracker.com'));
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
       final accentColors = AppGlobals.appConfig!.theme!.accent;
       AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
