@@ -73,6 +73,10 @@ class LandingController extends GetxController {
   Future<void> checkLaunchState() async {
     final isInitiallyLaunched =
         Preferences.getBool(AppKeys.isInitiallyLaunched, false);
+
+    print('EVENTO - is launching first time: ' +
+        (!isInitiallyLaunched).toString());
+
     if (!isInitiallyLaunched) {
       await ApiHandler.postHttp(
           baseUrl:
@@ -98,6 +102,8 @@ class LandingController extends GetxController {
   Future<void> getConfigDetails(String url) async {
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    Preferences.setInt(AppKeys.configLastUpdated,
+        AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
     AppColors.accentDark = AppHelper.hexToColor(accentColors.dark!);

@@ -32,14 +32,19 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
   void checkAthletesUpdate() async {
     try {
-      DashboardController dashboardController = Get.find();
+      print('EVENTO - background fetching started...');
       final recentlyUpdated = await checkConfigUpdatedDate();
       if (recentlyUpdated) {
+        print(
+            'EVENTO - background fetching done, change detected updating athletes');
+        DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         await getAthletes();
         final controller = Get.put(AthletesController());
         controller.update();
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
+      } else {
+        print('EVENTO - background fetching done, no change detected');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -60,6 +65,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
     }
+
     final res = await ApiHandler.genericGetHttp(
         url: Preferences.getString(AppKeys.eventUrl, ''));
     AppGlobals.appConfig = AppConfig.fromJson(res.data);

@@ -62,6 +62,8 @@ class EventsController extends GetxController {
     try {
       final res = await ApiHandler.genericGetHttp(url: event.config);
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
+      Preferences.setInt(AppKeys.configLastUpdated,
+          AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
       final accentColors = AppGlobals.appConfig!.theme!.accent;
       AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
       AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);

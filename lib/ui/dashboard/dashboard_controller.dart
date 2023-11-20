@@ -141,7 +141,7 @@ class DashboardController extends GetxController {
       transition: Transition.leftToRightWithFade,
     );
   }
-  
+
   Future<void> getConfigDetails() async {
     final config = AppGlobals.appEventConfig;
     String url = Preferences.getString(AppKeys.eventUrl, '');
@@ -156,6 +156,8 @@ class DashboardController extends GetxController {
     final res = await ApiHandler.genericGetHttp(
         url: Preferences.getString(AppKeys.eventUrl, ''));
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    Preferences.setInt(AppKeys.configLastUpdated,
+        AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
   }
 
   Future<void> getAthletes() async {
@@ -173,7 +175,6 @@ class DashboardController extends GetxController {
       debugPrint(e.toString());
     }
   }
-
 }
 
 class BottomNavMenu {
