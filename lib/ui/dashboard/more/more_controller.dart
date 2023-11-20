@@ -63,6 +63,8 @@ class MoreController extends GetxController {
     }
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    Preferences.setInt(AppKeys.configLastUpdated,
+        AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     moreDetails = AppGlobals.appConfig!.menu!;
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);

@@ -38,6 +38,7 @@ class LandingController extends GetxController {
     if (!isPrev) {
       await AppGlobals.init();
     }
+    await checkLaunchState();
     late String url;
     final config = AppGlobals.appEventConfig;
     if (config.multiEventListId != null) {
@@ -69,6 +70,22 @@ class LandingController extends GetxController {
     }
   }
 
+  Future<void> checkLaunchState() async {
+    final isInitiallyLaunched =
+        Preferences.getBool(AppKeys.isInitiallyLaunched, false);
+
+    print('EVENTO - is launching first time: ' +
+        (!isInitiallyLaunched).toString());
+
+    if (!isInitiallyLaunched) {
+      await ApiHandler.postHttp(
+          baseUrl:
+              'https://eventotracker.com/api/v2/api.cfm/downloads/${AppGlobals.appEventConfig.oneSignalId}',
+          body: {});
+      Preferences.setBool(AppKeys.isInitiallyLaunched, true);
+    }
+  }
+
   void checkTheme() {
     final themeMode = AppHelper.getAppTheme(
         Preferences.getString(AppKeys.appThemeStyle, ThemeMode.system.name));
@@ -79,15 +96,14 @@ class LandingController extends GetxController {
     final res = await ApiHandler.genericGetHttp(
         url: AppHelper.createUrl(
             config.multiEventListUrl!, config.multiEventListId!));
-    print(AppHelper.createUrl(
-        config.multiEventListUrl!, config.multiEventListId!));
     AppGlobals.eventM = EventM.fromJson(res.data);
   }
 
   Future<void> getConfigDetails(String url) async {
-    final res = await ApiHandler.genericGetHttp(
-        url: url.replaceFirst('127.0.0.1:8080', 'eventotracker.com'));
+    final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    Preferences.setInt(AppKeys.configLastUpdated,
+        AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
     AppColors.accentDark = AppHelper.hexToColor(accentColors.dark!);
