@@ -15,7 +15,7 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(MoreController());
+    final MoreController controller = Get.find();
     return Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -37,7 +37,7 @@ class MoreScreen extends StatelessWidget {
               physics: const BouncingScrollPhysics(),
               header: const MaterialClassicHeader(),
               controller: controller.refreshController,
-              onRefresh: controller.onRefresh,
+              onRefresh: controller.doRrefresh,
               footer: CustomFooter(
                 builder: (BuildContext context, LoadStatus? mode) {
                   Widget body;

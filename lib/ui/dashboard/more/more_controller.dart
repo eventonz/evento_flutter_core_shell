@@ -44,7 +44,7 @@ class MoreController extends GetxController {
     }
   }
 
-  void onRefresh() async {
+  void doRrefresh() async {
     await getConfigDetails();
     refreshController.refreshCompleted();
     update();
@@ -53,13 +53,16 @@ class MoreController extends GetxController {
   Future<void> getConfigDetails() async {
     final config = AppGlobals.appEventConfig;
     String url = Preferences.getString(AppKeys.eventUrl, '');
-    if (url.isEmpty && config.multiEventListId == null) {
-      url = AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
-      Preferences.setString(AppKeys.eventUrl, url);
-      AppGlobals.selEventId = int.parse(config.singleEventId!);
-      Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
-    } else {
-      return;
+    if (url.isEmpty) {
+      if (config.multiEventListId != null) {
+        return;
+      } else {
+        url =
+            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
+        Preferences.setString(AppKeys.eventUrl, url);
+        AppGlobals.selEventId = int.parse(config.singleEventId!);
+        Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
+      }
     }
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);

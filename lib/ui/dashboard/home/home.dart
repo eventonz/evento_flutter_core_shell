@@ -9,57 +9,18 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: GetBuilder<HomeController>(
-        builder: (controller) {
-          return Stack(
-            children: [
-              // controller.videoPlayerController!.value.isInitialized
-              //     ? SizedBox.expand(
-              //         child: FittedBox(
-              //           fit: BoxFit.cover,
-              //           child: SizedBox(
-              //             width: controller
-              //                 .videoPlayerController!.value.size.width,
-              //             height: controller
-              //                 .videoPlayerController!.value.size.height,
-              //             child: VideoPlayer(controller.videoPlayerController!),
-              //           ),
-              //         ),
-              //       )
-              //     : Container(),
-              // AnimatedOpacity(
-              //   opacity: controller.showVideo ? 0 : 1,
-              //   duration: const Duration(milliseconds: 1000),
-              //   curve: Curves.easeOutCubic,
-              //   child: CachedNetworkImage(
-              //     imageUrl: controller.imagelink,
-              //     placeholder: (_, val) =>
-              //         const Center(child: CircularProgressIndicator.adaptive()),
-              //     errorWidget: (_, val, val2) => const Center(
-              //         child: NoDataFoundLayout(
-              //       errorMessage: 'No Image Found',
-              //     )),
-              //     width: double.infinity,
-              //     fit: BoxFit.cover,
-              //   ),
-              // ),
-              CachedNetworkImage(
-                imageUrl: controller.imagelink,
-                placeholder: (_, val) =>
-                    const Center(child: CircularProgressIndicator.adaptive()),
-                errorWidget: (_, val, val2) => const Center(
-                    child: NoDataFoundLayout(
-                  errorMessage: 'No Image Found',
-                )),
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-              ),
-            ],
-          );
-        },
-      ),
-    );
+    final HomeController controller = Get.find();
+    return Obx(() => CachedNetworkImage(
+          imageUrl: controller.imagelink.value,
+          placeholder: (_, val) =>
+              const Center(child: CircularProgressIndicator.adaptive()),
+          errorWidget: (_, val, val2) => const Center(
+              child: NoDataFoundLayout(
+            errorMessage: 'No Image Found',
+          )),
+          width: double.infinity,
+          height: double.infinity,
+          fit: BoxFit.cover,
+        ));
   }
 }
