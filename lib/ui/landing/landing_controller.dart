@@ -74,9 +74,6 @@ class LandingController extends GetxController {
     final isInitiallyLaunched =
         Preferences.getBool(AppKeys.isInitiallyLaunched, false);
 
-    print('EVENTO - is launching first time: ' +
-        (!isInitiallyLaunched).toString());
-
     if (!isInitiallyLaunched) {
       await ApiHandler.postHttp(
           baseUrl:

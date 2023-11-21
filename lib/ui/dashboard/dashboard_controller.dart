@@ -11,9 +11,9 @@ import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/common_components/text.dart';
-import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
+import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -28,7 +28,6 @@ class DashboardController extends GetxController {
   final AppOneSignal oneSignalService = Get.find();
   late Athletes entrantsList;
   late Tracking? trackingData;
-  late HomeController homeController;
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
 
@@ -44,7 +43,8 @@ class DashboardController extends GetxController {
     super.onInit();
     eventId = Preferences.getInt(AppKeys.eventId, 0);
     AppGlobals.checkOnUserId();
-    homeController = Get.put(HomeController());
+    Get.put(HomeController());
+    Get.put(MoreController());
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
     final showAthletes = entrantsList.showAthletes ?? false;

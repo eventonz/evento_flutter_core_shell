@@ -1,6 +1,8 @@
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
+import 'package:evento_core/core/overlays/blur_loading.dart';
+import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -8,6 +10,8 @@ import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
+import 'package:evento_core/ui/dashboard/home/home_controller.dart';
+import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -32,19 +36,14 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
   void checkAthletesUpdate() async {
     try {
-      print('EVENTO - background fetching started...');
       final recentlyUpdated = await checkConfigUpdatedDate();
       if (recentlyUpdated) {
-        print(
-            'EVENTO - background fetching done, change detected updating athletes');
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         await getAthletes();
         final controller = Get.put(AthletesController());
         controller.update();
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
-      } else {
-        print('EVENTO - background fetching done, no change detected');
       }
     } catch (e) {
       debugPrint(e.toString());
@@ -65,15 +64,22 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
     }
+    BlurLoadingOverlay.show(loadingText: 'Checking for updates...');
 
-    final res = await ApiHandler.genericGetHttp(
-        url: Preferences.getString(AppKeys.eventUrl, ''));
+    final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;
     final oldConfigLastUpdated =
         Preferences.getInt(AppKeys.configLastUpdated, 0);
 
+    final HomeController homeController = Get.find();
+    homeController.loadImageLink();
+    final MoreController moreController = Get.find();
+    moreController.doRrefresh();
+
+    await Future.delayed(const Duration(seconds: 1));
+    BlurLoadingOverlay.dismiss();
     if (newConfigLastUpdated != oldConfigLastUpdated) {
       Preferences.setInt(AppKeys.configLastUpdated, newConfigLastUpdated);
       return true;
@@ -89,10 +95,13 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       return;
     }
     try {
+      ToastUtils.show(
+          'Updating ${AppHelper.setAthleteMenuText(entrantsList.text)} List...');
       final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
       final athletesM = AthletesM.fromJson(res.data);
       await DatabaseHandler.insertAthletes(athletesM.entrants!);
       await Future.delayed(const Duration(milliseconds: 500));
+      ToastUtils.show('List updated');
     } catch (e) {
       debugPrint(e.toString());
     }
