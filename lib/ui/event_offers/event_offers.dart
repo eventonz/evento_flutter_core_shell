@@ -20,7 +20,7 @@ class EventOffersScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const AppText(
-          'Event Offers',
+          '',
           style: AppStyles.appBarTitle,
         ),
       ),
