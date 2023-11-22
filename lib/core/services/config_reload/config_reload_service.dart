@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
@@ -66,7 +67,12 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
     BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
 
-    final res = await ApiHandler.genericGetHttp(url: url);
+    final res = await ApiHandler.genericGetHttp(
+        url: url, apiTimeout: const Duration(seconds: 5));
+    if (res.statusMessage == 'Error') {
+      BlurLoadingOverlay.dismiss();
+      return false;
+    }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;

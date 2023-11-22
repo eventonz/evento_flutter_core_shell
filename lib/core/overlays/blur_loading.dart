@@ -22,6 +22,10 @@ class BlurLoadingOverlay {
   }
 
   static Future<void> show({String loadingText = 'Please wait...'}) async {
+    // if (_isLoading) {
+    //   Get.back();
+    //   _isLoading = false;
+    // }
     _isLoading = true;
     await Get.dialog(
         Scaffold(
@@ -41,7 +45,6 @@ class BlurLoadingOverlay {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                      
                         AppText(
                           loadingText,
                           color: AppColors.white,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:evento_core/core/models/api_data.dart';
@@ -118,14 +119,20 @@ class ApiHandler {
   }
 
   static Future<ApiData> genericGetHttp(
-      {required String url, Map<String, dynamic>? header}) async {
+      {required String url,
+      Map<String, dynamic>? header,
+      Options? options,
+      Duration? apiTimeout}) async {
     try {
-      final response = await _dio.get(
-        url,
-        options: Options(
-          headers: header ?? {'content-Type': 'application/json'},
-        ),
-      );
+      final response = await _dio
+          .get(
+            url,
+            options: options ??
+                Options(
+                  headers: header ?? {'content-Type': 'application/json'},
+                ),
+          )
+          .timeout(apiTimeout ?? const Duration(seconds: 30));
       return ApiData(
           data: response.data,
           statusCode: response.statusCode,
@@ -140,6 +147,8 @@ class ApiHandler {
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,
           statusMessage: e.response?.statusMessage ?? 'Error');
+    } on TimeoutException catch (e) {
+      return ApiData(data: {}, statusCode: 500, statusMessage: 'Error');
     }
   }
 
