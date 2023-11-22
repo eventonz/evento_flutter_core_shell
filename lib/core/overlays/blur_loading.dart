@@ -25,7 +25,7 @@ class BlurLoadingOverlay {
     _isLoading = true;
     await Get.dialog(
         Scaffold(
-          backgroundColor: AppColors.black.withOpacity(0.25),
+          backgroundColor: AppColors.black.withOpacity(0.15),
           body: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
             child: Center(
@@ -34,22 +34,14 @@ class BlurLoadingOverlay {
                   const Spacer(flex: 5),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 20, horizontal: 40),
+                        vertical: 15, horizontal: 15),
                     decoration: BoxDecoration(
-                        color: AppColors.white.withOpacity(0.15),
+                        color: AppColors.black,
                         borderRadius: BorderRadius.circular(12)),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        SizedBox(
-                            width: 5.w,
-                            height: 5.w,
-                            child: const CircularProgressIndicator.adaptive(
-                              strokeWidth: 3,
-                            )),
-                        SizedBox(
-                          height: 2.h,
-                        ),
+                      
                         AppText(
                           loadingText,
                           color: AppColors.white,

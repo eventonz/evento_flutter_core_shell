@@ -64,7 +64,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
     }
-    BlurLoadingOverlay.show(loadingText: 'Checking for updates...');
+    BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
 
     final res = await ApiHandler.genericGetHttp(url: url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
