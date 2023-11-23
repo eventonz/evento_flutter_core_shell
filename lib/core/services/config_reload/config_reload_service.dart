@@ -37,17 +37,19 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
   void checkAthletesUpdate() async {
     try {
+      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final recentlyUpdated = await checkConfigUpdatedDate();
-      if (recentlyUpdated) {
+      if (!recentlyUpdated) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         await getAthletes();
-        final controller = Get.put(AthletesController());
-        controller.update();
+        Get.put(AthletesController());
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
       }
+      BlurLoadingOverlay.dismiss();
     } catch (e) {
       debugPrint(e.toString());
+      BlurLoadingOverlay.dismiss();
     }
   }
 
@@ -65,12 +67,10 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
     }
-    BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
 
     final res = await ApiHandler.genericGetHttp(
         url: url, apiTimeout: const Duration(seconds: 5));
     if (res.statusMessage == 'Error') {
-      BlurLoadingOverlay.dismiss();
       return false;
     }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
@@ -85,7 +85,6 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     moreController.doRrefresh();
 
     await Future.delayed(const Duration(seconds: 1));
-    BlurLoadingOverlay.dismiss();
     if (newConfigLastUpdated != oldConfigLastUpdated) {
       Preferences.setInt(AppKeys.configLastUpdated, newConfigLastUpdated);
       return true;
@@ -101,15 +100,14 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       return;
     }
     try {
-      ToastUtils.show(
+      BlurLoadingOverlay.updateLoaderText(
           'Updating ${AppHelper.setAthleteMenuText(entrantsList.text)} List...');
       final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
       final athletesM = AthletesM.fromJson(res.data);
       await DatabaseHandler.insertAthletes(athletesM.entrants!);
-      await Future.delayed(const Duration(milliseconds: 500));
-      ToastUtils.show('List updated');
     } catch (e) {
       debugPrint(e.toString());
+      BlurLoadingOverlay.dismiss();
     }
   }
 

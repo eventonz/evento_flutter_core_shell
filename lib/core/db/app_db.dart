@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -53,20 +54,22 @@ class DatabaseHandler {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     await removeAthletesByEvent(eventId);
     for (Entrants entrant in entrants) {
-      await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id);
-      await _db.into(_db.athleteDb).insert(AthleteDbCompanion.insert(
-          athleteId: entrant.id,
-          name: entrant.name,
-          profileImage: entrant.profileImage,
-          raceno: getRaceNo(entrant.number),
-          isFollowed: false,
-          contestNo: entrant.contest,
-          info: entrant.info,
-          eventId: eventId,
-          extra: entrant.extra,
-          canFollow: entrant.canFollow,
-          searchTag:
-              '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+      await Future(() async {
+        await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id);
+        _db.into(_db.athleteDb).insert(AthleteDbCompanion.insert(
+            athleteId: entrant.id,
+            name: entrant.name,
+            profileImage: entrant.profileImage,
+            raceno: getRaceNo(entrant.number),
+            isFollowed: false,
+            contestNo: entrant.contest,
+            info: entrant.info,
+            eventId: eventId,
+            extra: entrant.extra,
+            canFollow: entrant.canFollow,
+            searchTag:
+                '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+      });
     }
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
