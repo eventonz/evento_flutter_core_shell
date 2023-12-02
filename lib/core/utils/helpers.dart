@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -67,13 +69,17 @@ class AppHelper {
       pageTitle = title;
     }
 
+    // if (Platform.isAndroid) {
+    //   url = 'https://docs.google.com/gview?embedded=true&url=${url}';
+    // }
+
     final WebViewController webViewController = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(AppColors.black)
-      ..enableZoom(false)
+      ..setBackgroundColor(AppColors.white)
+      ..enableZoom(true)
       ..loadRequest(Uri.parse(url));
 
-    AppFixedBottomSheet(Get.context!).show(
+    await AppFixedBottomSheet(Get.context!).show(
       child: ClipRRect(
         borderRadius: const BorderRadius.vertical(
           top: Radius.circular(15.0),
@@ -97,9 +103,12 @@ class AppHelper {
               ),
             ),
             Expanded(
-              child: WebViewWidget(
-                controller: webViewController,
-              ),
+              child: Platform.isAndroid && url.contains('.pdf')
+                  ? ColoredBox(
+                      color: AppColors.white, child: SfPdfViewer.network(url))
+                  : WebViewWidget(
+                      controller: webViewController,
+                    ),
             )
           ],
         ),
