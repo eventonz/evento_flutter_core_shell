@@ -121,19 +121,6 @@ class TrackingMapView extends StatelessWidget {
                     )),
               ),
             ),
-            Positioned(
-              top: 2.w,
-              child: SafeArea(
-                child: CupertinoButton(
-                    padding: const EdgeInsets.all(0),
-                    color: AppColors.white,
-                    onPressed: controller.getRoutePaths,
-                    child: const Icon(
-                      Icons.layers_outlined,
-                      color: AppColors.black,
-                    )),
-              ),
-            ),
           ],
         );
       } else if (mapDataSnap.value == DataSnapShot.error) {
