@@ -22,7 +22,7 @@ class TrackDetail {
 }
 
 class AthleteTrackDetail {
-  String? track;
+  String track = '';
   String? info;
   double? speed;
   double? location;
@@ -32,7 +32,7 @@ class AthleteTrackDetail {
   String? markerText;
 
   AthleteTrackDetail(
-      {this.track,
+      {this.track = '',
       this.info,
       this.speed,
       this.location,
@@ -50,6 +50,10 @@ class AthleteTrackDetail {
     path = json['path'];
     status = json['status'];
     markerText = json['marker_text'];
+  }
+
+  bool isRaceNoBig() {
+    return track.length > 3;
   }
 
   Map<String, dynamic> toJson() {

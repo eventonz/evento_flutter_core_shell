@@ -1,5 +1,4 @@
 // ignore_for_file: invalid_use_of_protected_member
-
 import 'dart:io';
 
 import 'package:evento_core/core/db/app_db.dart';
@@ -21,23 +20,27 @@ import 'package:latlong2/latlong.dart';
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
   late Tracking? trackingDetails;
-  late String raceId = '0';
+  late String eventId = '0';
   late Timer timer;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
   final accessToken =
       'pk.eyJ1IjoiamV0aHJvMDA1NiIsImEiOiJjazZwazBhYTIwMDhmM2hxbGs1bWp3Z3BuIn0.F54xb2r1CQfJByfhSaIs5g';
   final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
-  late List<LatLng> routePath = [];
-  late LineString lineStringPath;
+  final statelliteStyle = 'cl8bcpr5y004z15s12saxlpsb';
+  final currentStyle = ''.obs;
+  List<Paths> routePathLinks = [];
+  List<MapPathMarkers> mapPathMarkers = [];
+  Map<String, List<LatLng>> routePathsCordinates = {};
 
   @override
   void onInit() {
     super.onInit();
     trackingDetails = AppGlobals.appConfig!.tracking;
-    raceId = AppGlobals.appEventConfig.singleEventId ?? '';
-    if (raceId.isEmpty) {
-      raceId = AppGlobals.appEventConfig.multiEventListId ?? '';
+    eventId = AppGlobals.appEventConfig.singleEventId ?? '';
+    changeMapStyle(setDefault: true);
+    if (eventId.isEmpty) {
+      eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
     }
   }
 
@@ -55,23 +58,42 @@ class TrackingController extends GetxController
         (Timer t) => getAtheteTrackingInfo());
   }
 
-  void getRoutePaths() async {
+  Future<void> getRoutePaths() async {
     if (trackingDetails == null) return;
-    final paths = trackingDetails!.paths ?? [];
+    routePathLinks = List.from(trackingDetails!.paths);
     try {
       mapDataSnap.value = DataSnapShot.loading;
-      final geoJson = GeoJson();
-      for (Paths path in paths) {
+      for (Paths path in routePathLinks) {
+        final geoJson = GeoJson();
         final res = await ApiHandler.downloadFile(baseUrl: path.url!);
         final geoJsonFile = File(res.data['file_path']);
         await geoJson.parse(await geoJsonFile.readAsString());
         final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
         if (geoPoints.isNotEmpty) {
-          createGeoRoutePaths(
-              geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList());
+          routePathsCordinates[path.name ?? 'path'] =
+              geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
         }
-        break;
       }
+      if (trackingDetails!.mapMarkers != null) {
+        final res = await ApiHandler.downloadFile(
+            baseUrl: trackingDetails!.mapMarkers!);
+        final geoJson = GeoJson();
+        final geoJsonFile = File(res.data['file_path']);
+        await geoJson.parse(await geoJsonFile.readAsString());
+        final markerPoints = geoJson.features;
+        if (markerPoints.isNotEmpty) {
+          mapPathMarkers.clear();
+          for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
+            final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
+            mapPathMarkers.add(MapPathMarkers(
+                latLng: LatLng(geoPoint.latitude, geoPoint.longitude),
+                name: markerPoint.properties?['name'] ?? '',
+                description: markerPoint.properties?['description'] ?? '',
+                iconUrl: markerPoint.properties?['urlicon'] ?? ''));
+          }
+        }
+      }
+
       mapDataSnap.value = DataSnapShot.loaded;
     } catch (e) {
       debugPrint(e.toString());
@@ -79,11 +101,25 @@ class TrackingController extends GetxController
     }
   }
 
-  void createGeoRoutePaths(List<LatLng> geoPoints) async {
-    routePath = geoPoints;
-    lineStringPath = LineString(routePath
-        .map((point) => Coordinate(point.latitude, point.longitude))
-        .toList());
+  LineString? getLineStringForPath(String pathName) {
+    final routePath = routePathsCordinates[pathName];
+    if (routePath != null) {
+      return LineString(routePath
+          .map((point) => Coordinate(point.latitude, point.longitude))
+          .toList());
+    } else {
+      return null;
+    }
+  }
+
+  LatLng initialPathCenterPoint() {
+    final initalPathName = routePathsCordinates.keys.first;
+    final lineString = getLineStringForPath(initalPathName);
+    if (lineString != null) {
+      final point = lineString.center;
+      return LatLng(point.lat, point.lng);
+    }
+    return LatLng(0, 0);
   }
 
   Stream<List<AppAthleteDb>> watchFollowedAthletes() async* {
@@ -98,7 +134,7 @@ class TrackingController extends GetxController
       entrantsIds.add(entrant.athleteId);
     }
     final body = {
-      'race_id': raceId,
+      'race_id': eventId,
       'web_tracking': true,
       'tracks': entrantsIds
     };
@@ -109,6 +145,18 @@ class TrackingController extends GetxController
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
       athleteTrackDetails.refresh();
+    }
+  }
+
+  void changeMapStyle({bool setDefault = false}) {
+    if (setDefault) {
+      currentStyle.value = terrainStyle;
+    } else {
+      if (currentStyle.value == terrainStyle) {
+        currentStyle.value = statelliteStyle;
+      } else {
+        currentStyle.value = terrainStyle;
+      }
     }
   }
 
@@ -125,4 +173,17 @@ class TrackingController extends GetxController
   void toAthleteDetails(AppAthleteDb entrant) async {
     Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant});
   }
+}
+
+class MapPathMarkers {
+  final LatLng latLng;
+  final String name;
+  final String description;
+  final String iconUrl;
+
+  MapPathMarkers(
+      {required this.latLng,
+      required this.name,
+      required this.description,
+      required this.iconUrl});
 }

@@ -39,7 +39,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     try {
       BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final recentlyUpdated = await checkConfigUpdatedDate();
-      if (!recentlyUpdated) {
+      if (recentlyUpdated) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         await getAthletes();

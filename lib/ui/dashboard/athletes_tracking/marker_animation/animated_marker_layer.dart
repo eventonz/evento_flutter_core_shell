@@ -91,11 +91,13 @@ class _AnimatedMarkerLayerState
       while (locationAsDistance >= newlocationAsDistance) {
         locationAsDistance -= distanceTraveledinOneSec;
         Point updatedlatlng = lineStringPath.along(locationAsDistance);
-        setState(() {
-          currentLatitude = updatedlatlng.lat;
-          currentLongitude = updatedlatlng.lng;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            currentLatitude = updatedlatlng.lat;
+            currentLongitude = updatedlatlng.lng;
+          });
+          didUpdateWidget(widget);
         });
-        didUpdateWidget(widget);
         await Future.delayed(const Duration(milliseconds: 1000));
       }
     } else {
