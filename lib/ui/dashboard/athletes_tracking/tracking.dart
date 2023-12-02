@@ -5,17 +5,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
-import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
-import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer.dart';
-import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer_options.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
-import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'tracking_controller.dart';
@@ -33,7 +29,7 @@ class TrackingScreen extends StatelessWidget {
           Expanded(
             child: Stack(
               children: [
-                _buildMapWidget(controller),
+                const TrackingMapView(),
                 StreamBuilder<List<AppAthleteDb>>(
                     stream: controller.watchFollowedAthletes(),
                     builder: (_, snap) {
@@ -86,72 +82,6 @@ class TrackingScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Widget _buildMapWidget(TrackingController controller) {
-    final mapDataSnap = controller.mapDataSnap;
-    final centerPoint = controller.lineStringPath.center;
-    return Obx(() {
-      if (mapDataSnap.value == DataSnapShot.loaded) {
-        final routePath = controller.routePath;
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: FlutterMap(
-            options: MapOptions(
-              center: LatLng(centerPoint.lat, centerPoint.lng),
-              zoom: 17,
-              minZoom: 8,
-              maxZoom: 18,
-            ),
-            children: [
-              TileLayer(
-                urlTemplate:
-                    "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
-                subdomains: const ['a', 'b', 'c'],
-                additionalOptions: {
-                  'mapStyleId': controller.terrainStyle,
-                  'accessToken': controller.accessToken,
-                },
-              ),
-              PolylineLayer(
-                polylines: [
-                  Polyline(
-                      points: routePath,
-                      color: AppColors.black,
-                      strokeWidth: 4.0,
-                      useStrokeWidthInMeter: true),
-                ],
-              ),
-              for (AthleteTrackDetail trackDetails
-                  in controller.athleteTrackDetails.value)
-                AnimatedMarkerLayer(
-                  options: AnimatedMarkerLayerOptions(
-                    duration: const Duration(seconds: 1),
-                    routePath: routePath,
-                    trackDetail: trackDetails,
-                    marker: Marker(
-                      width: 30,
-                      height: 30,
-                      point: routePath.first,
-                      builder: (context) => Center(
-                        child: Icon(
-                          Icons.fiber_manual_record,
-                          color: Colors.redAccent,
-                          size: 8.w,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        );
-      } else if (mapDataSnap.value == DataSnapShot.error) {
-        return Center(child: RetryLayout(onTap: controller.getRoutePaths));
-      } else {
-        return const Center(child: CircularProgressIndicator());
-      }
-    });
   }
 }
 

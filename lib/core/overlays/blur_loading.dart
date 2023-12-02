@@ -9,6 +9,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class BlurLoadingOverlay {
   static final BlurLoadingOverlay _instance = BlurLoadingOverlay.internal();
   static bool _isLoading = false;
+  static final _loadingText = 'Please wait...'.obs;
 
   BlurLoadingOverlay.internal();
 
@@ -21,7 +22,11 @@ class BlurLoadingOverlay {
     }
   }
 
-  static Future<void> show({String loadingText = 'Please wait...'}) async {
+  static Future<void> show({String? loadingText}) async {
+    // if (_isLoading) {
+    //   Get.back();
+    //   _isLoading = false;
+    // }
     _isLoading = true;
     await Get.dialog(
         Scaffold(
@@ -41,12 +46,11 @@ class BlurLoadingOverlay {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                      
-                        AppText(
-                          loadingText,
-                          color: AppColors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        Obx(() => AppText(
+                              _loadingText.value,
+                              color: AppColors.white,
+                              fontWeight: FontWeight.bold,
+                            )),
                       ],
                     ),
                   ),
@@ -58,5 +62,11 @@ class BlurLoadingOverlay {
         ),
         barrierColor: AppColors.transparent,
         barrierDismissible: false);
+  }
+
+  static void updateLoaderText(String text) {
+    if (_isLoading) {
+      _loadingText.value = text;
+    }
   }
 }

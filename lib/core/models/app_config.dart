@@ -221,19 +221,26 @@ class Items {
 class Tracking {
   String? data;
   int? updateFreq;
+  bool? androidTracking;
   String? mapMarkers;
-  List<Paths>? paths;
+  List<Paths> paths = [];
 
-  Tracking({this.data, this.updateFreq, this.mapMarkers, this.paths});
+  Tracking(
+      {this.data,
+      this.updateFreq,
+      this.androidTracking,
+      this.mapMarkers,
+      this.paths = const []});
 
   Tracking.fromJson(Map<String, dynamic> json) {
     data = json['data'];
     updateFreq = json['update_freq'];
+    androidTracking = json['android_tracking'];
     mapMarkers = json['map_markers'];
     if (json['paths'] != null) {
       paths = <Paths>[];
       json['paths'].forEach((v) {
-        paths!.add(Paths.fromJson(v));
+        paths.add(Paths.fromJson(v));
       });
     }
   }
@@ -242,10 +249,9 @@ class Tracking {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['data'] = this.data;
     data['update_freq'] = updateFreq;
+    data['android_tracking'] = androidTracking;
     data['map_markers'] = mapMarkers;
-    if (paths != null) {
-      data['paths'] = paths!.map((v) => v.toJson()).toList();
-    }
+    data['paths'] = paths.map((v) => v.toJson()).toList();
     return data;
   }
 }
