@@ -24,61 +24,57 @@ class TrackingScreen extends StatelessWidget {
     final TrackingController controller = Get.find();
     return Container(
       color: AppColors.greyLight,
-      child: Column(
+      child: Stack(
         children: [
-          Expanded(
-            child: Stack(
-              children: [
-                const TrackingMapView(),
-                StreamBuilder<List<AppAthleteDb>>(
-                    stream: controller.watchFollowedAthletes(),
-                    builder: (_, snap) {
-                      if (snap.hasData) {
-                        final entrants = snap.data!;
-                        if (entrants.isEmpty) {
-                          return const SizedBox();
-                        }
-                        entrants.sort((x, y) => x.raceno.compareTo(y.raceno));
-                        return SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 20.0),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: CarouselSlider(
-                                options: CarouselOptions(
-                                    height: 20.h,
-                                    enableInfiniteScroll: false,
-                                    viewportFraction: 0.82,
-                                    enlargeCenterPage: true,
-                                    enlargeFactor: 0.15),
-                                items: entrants.map((x) {
-                                  return Builder(
-                                    builder: (BuildContext context) {
-                                      return Obx(() => SliderAthleteTile(
-                                            onTap: () =>
-                                                controller.toAthleteDetails(x),
-                                            athelete: x,
-                                            trackDetail:
-                                                controller.findTrackDetail(x),
-                                          ));
-                                    },
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ),
-                        );
-                      } else if (snap.hasError) {
-                        return Center(
-                            child: RetryLayout(onTap: controller.update));
-                      } else {
-                        return const Center(
-                            child: CircularProgressIndicator.adaptive());
-                      }
-                    })
-              ],
-            ),
-          ),
+          const TrackingMapView(),
+          StreamBuilder<List<AppAthleteDb>>(
+              stream: controller.watchFollowedAthletes(),
+              builder: (_, snap) {
+                if (snap.hasData) {
+                  final entrants = snap.data!;
+                  if (entrants.isEmpty) {
+                    return const SizedBox();
+                  }
+                  entrants.sort((x, y) => x.raceno.compareTo(y.raceno));
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    controller.getAthleteTrackingInfo();
+                  });
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20.0),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: CarouselSlider(
+                          options: CarouselOptions(
+                              height: 20.h,
+                              enableInfiniteScroll: false,
+                              viewportFraction: 0.82,
+                              enlargeCenterPage: true,
+                              enlargeFactor: 0.15),
+                          items: entrants.map((x) {
+                            return Builder(
+                              builder: (BuildContext context) {
+                                return Obx(() => SliderAthleteTile(
+                                      onTap: () =>
+                                          controller.toAthleteDetails(x),
+                                      athelete: x,
+                                      trackDetail:
+                                          controller.findTrackDetail(x),
+                                    ));
+                              },
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    ),
+                  );
+                } else if (snap.hasError) {
+                  return Center(child: RetryLayout(onTap: controller.update));
+                } else {
+                  return const Center(
+                      child: CircularProgressIndicator.adaptive());
+                }
+              })
         ],
       ),
     );
@@ -112,7 +108,8 @@ class SliderAthleteTile extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Flexible(
+                SizedBox(
+                  width: 50.w,
                   child: AppText(
                     athelete.name,
                     fontSize: 16,
@@ -121,12 +118,9 @@ class SliderAthleteTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(
-                  width: 20,
-                ),
                 AthleteRaceNo(
                   number: athelete.raceno,
-                  width: 16.w,
+                  width: 18.w,
                 )
               ],
             ),

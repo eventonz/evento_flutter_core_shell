@@ -57,8 +57,10 @@ class _AnimatedMarkerLayerState
         trackDetails.last.location != oldWidget.options.trackDetail.location) {
       trackDetails.add(oldWidget.options.trackDetail);
     }
-    setState(() {});
-    checkOnMarkerMovement();
+    if (mounted) {
+      setState(() {});
+      checkOnMarkerMovement();
+    }
   }
 
   LineString createlLineString() {
@@ -82,7 +84,7 @@ class _AnimatedMarkerLayerState
 
   void moveMarker(double speed, double progress, double newProgress) async {
     double totalPathDistance = lineStringPath.length;
-    double distanceTraveledinOneSec = (speed * 1500) / 3600;
+    double distanceTraveledinOneSec = (speed * 1600) / 3600;
 
     double locationAsDistance = (progress / 100) * totalPathDistance;
     double newlocationAsDistance = (newProgress / 100) * totalPathDistance;
@@ -91,25 +93,27 @@ class _AnimatedMarkerLayerState
       while (locationAsDistance >= newlocationAsDistance) {
         locationAsDistance -= distanceTraveledinOneSec;
         Point updatedlatlng = lineStringPath.along(locationAsDistance);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
           setState(() {
             currentLatitude = updatedlatlng.lat;
             currentLongitude = updatedlatlng.lng;
           });
           didUpdateWidget(widget);
-        });
-        await Future.delayed(const Duration(milliseconds: 1000));
+        }
+        await Future.delayed(const Duration(milliseconds: 1200));
       }
     } else {
       while (locationAsDistance <= newlocationAsDistance) {
         locationAsDistance += distanceTraveledinOneSec;
         Point updatedlatlng = lineStringPath.along(locationAsDistance);
-        setState(() {
-          currentLatitude = updatedlatlng.lat;
-          currentLongitude = updatedlatlng.lng;
-        });
-        didUpdateWidget(widget);
-        await Future.delayed(const Duration(milliseconds: 1000));
+        if (mounted) {
+          setState(() {
+            currentLatitude = updatedlatlng.lat;
+            currentLongitude = updatedlatlng.lng;
+          });
+          didUpdateWidget(widget);
+        }
+        await Future.delayed(const Duration(milliseconds: 1200));
       }
     }
 

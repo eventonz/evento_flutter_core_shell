@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/overlays/blur_loading.dart';
-import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';

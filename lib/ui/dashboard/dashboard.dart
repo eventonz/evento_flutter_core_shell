@@ -1,4 +1,3 @@
-import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';

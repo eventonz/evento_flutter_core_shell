@@ -87,7 +87,6 @@ class ApiHandler {
 
   static Future<ApiData> downloadFile({required String baseUrl}) async {
     try {
-      debugPrint(baseUrl);
       final docDir = await path.getApplicationDocumentsDirectory();
       Uri uri = Uri.parse(baseUrl);
       final fileName = p.basename(uri.path);
@@ -148,6 +147,7 @@ class ApiHandler {
           statusCode: e.response?.statusCode ?? 500,
           statusMessage: e.response?.statusMessage ?? 'Error');
     } on TimeoutException catch (e) {
+      debugPrint(e.toString());
       return ApiData(data: {}, statusCode: 500, statusMessage: 'Error');
     }
   }

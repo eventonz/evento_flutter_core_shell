@@ -55,7 +55,7 @@ class TrackingController extends GetxController
     super.onReady();
     getRoutePaths();
     timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
-        (Timer t) => getAtheteTrackingInfo());
+        (Timer t) => getAthleteTrackingInfo());
   }
 
   Future<void> getRoutePaths() async {
@@ -126,7 +126,7 @@ class TrackingController extends GetxController
     yield* DatabaseHandler.getAthletes('', true);
   }
 
-  Future<void> getAtheteTrackingInfo() async {
+  Future<void> getAthleteTrackingInfo() async {
     if (trackingDetails == null) return;
     final entrants = await watchFollowedAthletes().first;
     final entrantsIds = <String>[];
@@ -166,7 +166,7 @@ class TrackingController extends GetxController
     if (trackDetail != null) {
       return trackDetail;
     }
-    getAtheteTrackingInfo();
+    getAthleteTrackingInfo();
     return null;
   }
 
