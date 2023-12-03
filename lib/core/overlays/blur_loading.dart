@@ -4,7 +4,6 @@ import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 
 class BlurLoadingOverlay {
   static final BlurLoadingOverlay _instance = BlurLoadingOverlay.internal();

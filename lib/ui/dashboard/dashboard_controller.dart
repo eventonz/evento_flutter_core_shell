@@ -123,7 +123,7 @@ class DashboardController extends GetxController {
     if (selMenu.value!.label == 'track') {
       await Future.delayed(const Duration(seconds: 1));
       final TrackingController controller = Get.find();
-      controller.getAtheteTrackingInfo();
+      controller.getAthleteTrackingInfo();
     }
 
     // if (menu == menus.first) {

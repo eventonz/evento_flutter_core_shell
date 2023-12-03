@@ -1,4 +1,5 @@
 // ignore_for_file: invalid_use_of_protected_member
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -10,7 +11,6 @@ import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/anim
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';

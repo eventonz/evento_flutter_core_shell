@@ -153,7 +153,7 @@ class AssistantController extends GetxController {
           duration: const Duration(milliseconds: 1000),
           curve: Curves.fastEaseInToSlowEaseOut);
     });
-  }
+  } 
 }
 
 class ChatMessageM {
