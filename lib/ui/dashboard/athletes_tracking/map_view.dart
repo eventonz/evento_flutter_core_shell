@@ -81,19 +81,19 @@ class TrackingMapView extends StatelessWidget {
                   AnimatedMarkerView(athleteTrackDetail: trackDetail)
               ],
             ),
-            Positioned(
-              top: 2.w,
-              child: SafeArea(
-                child: CupertinoButton(
-                    padding: const EdgeInsets.all(0),
-                    color: AppColors.white,
-                    onPressed: controller.getRoutePaths,
-                    child: const Icon(
-                      Icons.layers_outlined,
-                      color: AppColors.black,
-                    )),
-              ),
-            ),
+            // Positioned(
+            //   top: 2.w,
+            //   child: SafeArea(
+            //     child: CupertinoButton(
+            //         padding: const EdgeInsets.all(0),
+            //         color: AppColors.white,
+            //         onPressed: controller.getRoutePaths,
+            //         child: const Icon(
+            //           Icons.layers_outlined,
+            //           color: AppColors.black,
+            //         )),
+            //   ),
+            // ),
             Positioned(
               right: 2.w,
               top: 2.w,
