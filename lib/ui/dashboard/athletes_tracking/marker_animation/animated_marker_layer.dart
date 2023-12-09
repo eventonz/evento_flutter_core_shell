@@ -1,9 +1,7 @@
-import 'package:evento_core/core/models/athlete_track_detail.dart';
-import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
-import 'package:geodart/geometries.dart';
 import 'package:latlong2/latlong.dart';
+import 'animated_marker_layer_options.dart';
 
 class AnimatedMarkerLayer<T> extends ImplicitlyAnimatedWidget {
   final AnimatedMarkerLayerOptions<T> options;
@@ -26,26 +24,18 @@ class _AnimatedMarkerLayerState
   Tween<double>? _latitude;
   Tween<double>? _longitude;
 
-  int currentPointIndex = 0;
-  List<AthleteTrackDetail> trackDetails = [];
-  bool isAnimating = false;
-  List<LatLng> get routePath => widget.options.routePath;
-  LineString get lineStringPath => createlLineString();
-
   Marker get marker => widget.options.marker;
-
-  late double currentLatitude = marker.point.latitude;
-  late double currentLongitude = marker.point.latitude;
-
-  double get latitude => _latitude?.evaluate(animation) ?? currentLatitude;
-  double get longitude => _longitude?.evaluate(animation) ?? currentLatitude;
+  double get latitude =>
+      _latitude?.evaluate(animation) ?? marker.point.latitude;
+  double get longitude =>
+      _longitude?.evaluate(animation) ?? marker.point.longitude;
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    _latitude = visitor(_latitude, currentLatitude,
+    _latitude = visitor(_latitude, widget.options.marker.point.latitude,
             (dynamic value) => Tween<double>(begin: value as double))
         as Tween<double>?;
-    _longitude = visitor(_longitude, currentLongitude,
+    _longitude = visitor(_longitude, widget.options.marker.point.longitude,
             (dynamic value) => Tween<double>(begin: value as double))
         as Tween<double>?;
   }
@@ -53,72 +43,7 @@ class _AnimatedMarkerLayerState
   @override
   void didUpdateWidget(covariant AnimatedMarkerLayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (trackDetails.isEmpty ||
-        trackDetails.last.location != oldWidget.options.trackDetail.location) {
-      trackDetails.add(oldWidget.options.trackDetail);
-    }
-    if (mounted) {
-      setState(() {});
-      checkOnMarkerMovement();
-    }
-  }
-
-  LineString createlLineString() {
-    return LineString(routePath
-        .map((point) => Coordinate(point.latitude, point.longitude))
-        .toList());
-  }
-
-  void checkOnMarkerMovement() {
-    if (isAnimating) return;
-    final currentTrackDetail = trackDetails[currentPointIndex];
-    final nextTrackDetail = (currentPointIndex < trackDetails.length - 1)
-        ? trackDetails[currentPointIndex + 1]
-        : null;
-    moveMarker(
-      currentTrackDetail.speed ?? 0,
-      currentTrackDetail.location ?? 0,
-      nextTrackDetail?.location ?? 0,
-    );
-  }
-
-  void moveMarker(double speed, double progress, double newProgress) async {
-    double totalPathDistance = lineStringPath.length;
-    double distanceTraveledinOneSec = (speed * 1600) / 3600;
-
-    double locationAsDistance = (progress / 100) * totalPathDistance;
-    double newlocationAsDistance = (newProgress / 100) * totalPathDistance;
-    isAnimating = true;
-    if (progress > newProgress) {
-      while (locationAsDistance >= newlocationAsDistance) {
-        locationAsDistance -= distanceTraveledinOneSec;
-        Point updatedlatlng = lineStringPath.along(locationAsDistance);
-        if (mounted) {
-          setState(() {
-            currentLatitude = updatedlatlng.lat;
-            currentLongitude = updatedlatlng.lng;
-          });
-          didUpdateWidget(widget);
-        }
-        await Future.delayed(const Duration(milliseconds: 1200));
-      }
-    } else {
-      while (locationAsDistance <= newlocationAsDistance) {
-        locationAsDistance += distanceTraveledinOneSec;
-        Point updatedlatlng = lineStringPath.along(locationAsDistance);
-        if (mounted) {
-          setState(() {
-            currentLatitude = updatedlatlng.lat;
-            currentLongitude = updatedlatlng.lng;
-          });
-          didUpdateWidget(widget);
-        }
-        await Future.delayed(const Duration(milliseconds: 1200));
-      }
-    }
-
-    isAnimating = false;
-    currentPointIndex++;
+    setState(() {});
   }
 
   @override

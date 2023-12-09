@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:evento_core/core/overlays/progress_dialog.dart';
@@ -172,5 +173,15 @@ class AppHelper {
 
   static String notificationPrefenceKey(int eventId) {
     return '${eventId}_notification_status';
+  }
+
+  static Color getRandomLightColor() {
+    Random random = Random();
+
+    int red = random.nextInt(128) + 140;
+    int green = random.nextInt(128) + 140;
+    int blue = random.nextInt(128) + 140;
+
+    return Color.fromARGB(255, red, green, blue);
   }
 }
