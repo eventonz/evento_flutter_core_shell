@@ -54,8 +54,6 @@ class TrackingController extends GetxController
   void onReady() {
     super.onReady();
     getRoutePaths();
-    timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
-        (Timer t) => getAthleteTrackingInfo());
   }
 
   Future<void> getRoutePaths() async {
@@ -93,12 +91,18 @@ class TrackingController extends GetxController
           }
         }
       }
-
       mapDataSnap.value = DataSnapShot.loaded;
+      await getAthleteTrackingInfo();
+      startTrackingTimer();
     } catch (e) {
       debugPrint(e.toString());
       mapDataSnap.value = DataSnapShot.error;
     }
+  }
+
+  void startTrackingTimer() {
+    timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
+        (Timer t) => getAthleteTrackingInfo());
   }
 
   LineString? getLineStringForPath(String pathName) {
@@ -146,6 +150,7 @@ class TrackingController extends GetxController
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
       athleteTrackDetails.refresh();
     }
+    update();
   }
 
   void changeMapStyle({bool setDefault = false}) {
@@ -172,6 +177,11 @@ class TrackingController extends GetxController
 
   void toAthleteDetails(AppAthleteDb entrant) async {
     Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant});
+  }
+
+  List<LatLng> getAthleteRouthPath(AthleteTrackDetail athleteTrackDetail) {
+    return routePathsCordinates[athleteTrackDetail.path] ??
+        routePathsCordinates.values.first;
   }
 }
 
