@@ -46,7 +46,7 @@ class ScheduleController extends GetxController {
       scheduleDataItems = scheduleM.schedule!.items!;
       tags = scheduleM.schedule!.tags!;
       tags.insert(0, 'All');
-      tags.insert(1, 'Today');
+      // tags.insert(1, 'Today');
 
       selectTag(tags.first);
       dataSnapshot.value = DataSnapShot.loaded;
