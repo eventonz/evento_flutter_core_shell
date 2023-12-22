@@ -101,7 +101,10 @@ class SliderAthleteTile extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
-            color: AppColors.white, borderRadius: BorderRadius.circular(14)),
+            color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.darkBlack
+                  : AppColors.greyLighter,
+            borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
             padding: const EdgeInsets.all(12),

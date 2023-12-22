@@ -36,7 +36,7 @@ class AthletesScreen extends StatelessWidget {
                           : AppColors.transparent,
                       maxRadius: 4.5.w,
                       child: Icon(
-                        FeatherIcons.filter,
+                        FeatherIcons.star,
                         color: controller.showFollowed.value
                             ? AppColors.white
                             : Theme.of(context).brightness == Brightness.light
