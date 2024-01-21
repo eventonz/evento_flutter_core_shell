@@ -78,16 +78,12 @@ class AssistantScreen extends StatelessWidget {
                         onChanged: (value) =>
                             controller.messageText.value = value,
                         decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 24),
-                            isDense: true,
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(width: 0.8)),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(28),
-                                borderSide: const BorderSide(width: 0.8)),
-                            hintText: 'Ask a question'),
+                        hintText: "Ask a Question...",
+                        hintStyle: TextStyle(color:Theme.of(context).brightness == Brightness.light
+                                ? AppColors.white
+                                : AppColors.darkBlack),
+                        border: InputBorder.none
+                      ),
                       )),
                       SizedBox(
                         width: 2.w,
