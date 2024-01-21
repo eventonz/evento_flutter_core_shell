@@ -1,6 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
@@ -17,8 +18,15 @@ class AssistantScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AssistantController());
     return Scaffold(
-        backgroundColor: AppColors.header,
+        backgroundColor:Theme.of(context).brightness == Brightness.light
+                                ? AppColors.darkBlack
+                                : AppColors.white,
         appBar: AppBar(
+           title: const AppText(
+            '',
+            style: AppStyles.appBarTitle,
+          ),
+          
           actions: [
             IconButton(
                 onPressed: controller.showPromptRemoveMessages,
@@ -29,6 +37,7 @@ class AssistantScreen extends StatelessWidget {
           ],
         ),
         body: Column(
+         
           children: [
             GetBuilder<AssistantController>(
               builder: (_) {
@@ -54,15 +63,17 @@ class AssistantScreen extends StatelessWidget {
                   backgroundColor: AppColors.headerText,
                 )),
             Container(
-              color: AppColors.white,
+              
               child: SafeArea(
+                
                 child: Container(
                   padding: const EdgeInsets.all(16),
-                  color: AppColors.white,
                   child: Row(
                     children: [
                       Flexible(
                           child: TextField(
+                               
+                
                         controller: controller.messageTextEditingController,
                         onChanged: (value) =>
                             controller.messageText.value = value,
@@ -81,22 +92,12 @@ class AssistantScreen extends StatelessWidget {
                       SizedBox(
                         width: 2.w,
                       ),
-                      GestureDetector(
-                        onTap: controller.sendMessage,
-                        child: Obx(() => Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12, horizontal: 18),
-                              decoration: BoxDecoration(
-                                color: controller.messageText.value.isEmpty
-                                    ? AppColors.separator
-                                    : AppColors.secondary,
-                                borderRadius: BorderRadius.circular(32),
-                              ),
-                              child: Icon(FeatherIcons.send,
-                                  color: AppColors.primary.withOpacity(0.3),
-                                  size: 20),
-                            )),
-                      )
+                      FloatingActionButton.small(
+                    onPressed: controller.sendMessage,
+                    child: Icon(Icons.send,color: Colors.white,size: 16,),
+                    backgroundColor: AppColors.primary,
+                    elevation: 0,
+                  ),
                     ],
                   ),
                 ),
@@ -118,20 +119,22 @@ class ChatMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+  
       padding: const EdgeInsets.all(16),
-      color: message.role == 'user' ? AppColors.white : AppColors.transparent,
+      //color: message.role == 'user' ? AppColors.white : AppColors.transparent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppColors.primary.withOpacity(0.8),
+                backgroundColor: AppColors.primary,
                 radius: 12,
                 child: AppText(
                   getUserName()[0],
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
+                  color: AppColors.white
                 ),
               ),
               SizedBox(
