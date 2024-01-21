@@ -11,6 +11,7 @@ import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
@@ -59,13 +60,13 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         return false;
       } else {
         url =
-        AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
+            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
         Preferences.setString(AppKeys.eventUrl, url);
         AppGlobals.selEventId = int.parse(config.singleEventId!);
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
     }
-
+    // tries to check for updates for 5 sec then returns false
     final res = await ApiHandler.genericGetHttp(
         url: url, apiTimeout: const Duration(seconds: 5));
     if (res.statusMessage == 'Error') {
@@ -79,6 +80,11 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
     final HomeController homeController = Get.find();
     homeController.loadImageLink();
+
+    final TrackingController trackingController = Get.find();
+    trackingController.onInit();
+    trackingController.getRoutePaths();
+
     final MoreController moreController = Get.find();
     moreController.doRrefresh();
 
