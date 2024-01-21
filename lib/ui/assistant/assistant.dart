@@ -124,7 +124,7 @@ class ChatMessage extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: AppColors.primary,
+                backgroundColor: message.role == 'user' ? AppColors.primary : AppColors.grey,
                 radius: 12,
                 child: AppText(
                   getUserName()[0],

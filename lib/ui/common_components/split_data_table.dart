@@ -36,11 +36,17 @@ class SplitNewDataContent extends StatelessWidget {
         case 'split_orange':
           return AppColors.splitOrange;
         case 'split_grey':
-          return AppColors.splitGrey;
+          return Theme.of(Get.context!).brightness == Brightness.light
+              ? AppColors.darkgrey
+              : AppColors.splitGrey;
         case 'separator':
-          return AppColors.separator;
+          return Theme.of(Get.context!).brightness == Brightness.light
+              ? AppColors.grey
+              : AppColors.header;
         case 'header':
-          return AppColors.header;
+          return Theme.of(Get.context!).brightness == Brightness.light
+              ? AppColors.grey
+              : AppColors.header;
         case 'estimate':
           return AppColors.header;
         default:
@@ -56,9 +62,14 @@ class SplitNewDataContent extends StatelessWidget {
         case 'split_grey':
           return AppColors.white;
         case 'separator':
-          return AppColors.separatorText;
+          return Theme.of(Get.context!).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.headerText;
         case 'header':
-          return AppColors.headerText;
+          return Theme.of(Get.context!).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.headerText;
+
         case 'estimate':
           return AppColors.estimateText;
         default:

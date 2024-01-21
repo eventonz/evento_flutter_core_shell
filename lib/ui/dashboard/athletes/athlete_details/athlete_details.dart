@@ -282,7 +282,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                           enableFeedback: true,
                           labelColor: AppColors.primary,
                           unselectedLabelColor:
-                              AppColors.primary.withOpacity(0.3),
+                              AppColors.primary.withOpacity(0.6),
                           indicatorSize: TabBarIndicatorSize.tab,
                           indicatorColor: AppColors.primary,
                           tabs: controller.detailsTabs,
