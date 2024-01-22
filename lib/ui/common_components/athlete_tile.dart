@@ -35,9 +35,9 @@ class AthleteTile extends StatelessWidget {
               child: AppText(
                 raceNo(),
                 fontWeight: FontWeight.bold,
+                fontSize: 18,
                 color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.accentDark
-                    : AppColors.accentLight,
+                    ? AppColors.greyLight : AppColors.darkgrey,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -57,7 +57,9 @@ class AthleteTile extends StatelessWidget {
             ),
             AppText(
               entrant.info,
-              color: AppColors.grey,
+              color: Theme.of(context).brightness == Brightness.light
+                    ? AppColors.greyLight : AppColors.darkgrey,
+                    
               fontSize: 12,
             ),
           ],

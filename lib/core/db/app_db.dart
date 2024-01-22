@@ -51,6 +51,7 @@ class DatabaseHandler {
   static Future<int> insertAthletes(List<Entrants> entrants) async {
     final followedAthletes = await getAthletes('', true).first;
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
+    print(' Loading athletes');
     await removeAthletesByEvent(eventId);
     for (Entrants entrant in entrants) {
       await Future(() async {
