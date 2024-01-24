@@ -51,8 +51,12 @@ class DatabaseHandler {
   static Future<int> insertAthletes(List<Entrants> entrants) async {
     final followedAthletes = await getAthletes('', true).first;
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
-    print(' Loading athletes');
+    print(' mytest');
+    
     await removeAthletesByEvent(eventId);
+  
+    final stopwatch = Stopwatch()..start();
+   
     for (Entrants entrant in entrants) {
       await Future(() async {
         await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id);
@@ -71,6 +75,8 @@ class DatabaseHandler {
                 '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
       });
     }
+    stopwatch.stop();
+    print('Function Execution Time save athletes : ${stopwatch.elapsed}');
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
         updateAthlete(athlete, true);

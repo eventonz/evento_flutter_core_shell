@@ -66,9 +66,10 @@ class AthleteDetailsScreen extends StatelessWidget {
             return [
               SliverAppBar(
                 title: AppText(
-                  controller.selEntrant.name.capitalizeFirst!,
+                  controller.selEntrant.name,
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
+                  maxLines: 2,
                 ),
                 automaticallyImplyLeading: false,
                 centerTitle: false,
