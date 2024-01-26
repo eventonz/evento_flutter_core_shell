@@ -246,8 +246,8 @@ class ScheduleTile extends StatelessWidget {
               const Spacer(),
               Icon(
                 Icons.arrow_circle_right_outlined,
-                color: AppColors.primary.withOpacity(0.5),
-                size: 4.5.w,
+                color: AppColors.primary,
+                size: 6.w,
               ),
             ],
           ),

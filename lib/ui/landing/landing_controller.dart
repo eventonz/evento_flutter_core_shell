@@ -77,7 +77,7 @@ class LandingController extends GetxController {
     if (!isInitiallyLaunched) {
       await ApiHandler.postHttp(
           baseUrl:
-              'https://eventotracker.com/api/v2/api.cfm/downloads/${AppGlobals.appEventConfig.oneSignalId}',
+              'https://eventotracker.com/api/v3/api.cfm/downloads/${AppGlobals.appEventConfig.oneSignalId}',
           body: {});
       Preferences.setBool(AppKeys.isInitiallyLaunched, true);
     }

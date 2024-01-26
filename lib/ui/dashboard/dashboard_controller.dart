@@ -17,6 +17,7 @@ import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:get/get.dart';
 import 'home/home.dart';
 import 'athletes/athletes.dart';
@@ -142,6 +143,8 @@ class DashboardController extends GetxController {
     );
   }
 
+  
+
   Future<void> getConfigDetails() async {
     final config = AppGlobals.appEventConfig;
     String url = Preferences.getString(AppKeys.eventUrl, '');
@@ -175,6 +178,7 @@ class DashboardController extends GetxController {
       debugPrint(e.toString());
     }
   }
+  
 }
 
 class BottomNavMenu {

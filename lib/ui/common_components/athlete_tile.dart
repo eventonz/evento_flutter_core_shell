@@ -31,13 +31,13 @@ class AthleteTile extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
-              width: 12.w,
+              width: 16.w,
               child: AppText(
                 raceNo(),
                 fontWeight: FontWeight.bold,
+                fontSize: 14,
                 color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.accentDark
-                    : AppColors.accentLight,
+                    ? AppColors.greyLight : AppColors.darkgrey,
                 textAlign: TextAlign.center,
               ),
             ),
@@ -45,19 +45,24 @@ class AthleteTile extends StatelessWidget {
         ),
       ),
       title: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppText(
               entrant.name,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
             ),
             SizedBox(
-              height: 1.h,
+              height: 0.5.h,
             ),
             AppText(
               entrant.info,
-              color: AppColors.grey,
+              maxLines: 2,
+              color: Theme.of(context).brightness == Brightness.light
+                    ? AppColors.greyLight : AppColors.darkgrey,
+                    
               fontSize: 12,
             ),
           ],

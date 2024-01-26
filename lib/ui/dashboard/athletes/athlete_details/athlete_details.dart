@@ -66,9 +66,10 @@ class AthleteDetailsScreen extends StatelessWidget {
             return [
               SliverAppBar(
                 title: AppText(
-                  controller.selEntrant.name.capitalizeFirst!,
+                  controller.selEntrant.name,
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
+                  maxLines: 2,
                 ),
                 automaticallyImplyLeading: false,
                 centerTitle: false,
@@ -282,7 +283,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                           enableFeedback: true,
                           labelColor: AppColors.primary,
                           unselectedLabelColor:
-                              AppColors.primary.withOpacity(0.3),
+                              AppColors.primary.withOpacity(0.6),
                           indicatorSize: TabBarIndicatorSize.tab,
                           indicatorColor: AppColors.primary,
                           tabs: controller.detailsTabs,

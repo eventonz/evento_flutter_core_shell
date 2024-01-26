@@ -51,9 +51,13 @@ class DatabaseHandler {
   static Future<int> insertAthletes(List<Entrants> entrants) async {
     final followedAthletes = await getAthletes('', true).first;
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
+    print(' mytest');
+    
     await removeAthletesByEvent(eventId);
+
     List<AthleteDbCompanion> list = [];
     List<AthleteExtraDetailsDbCompanion> detailsList = [];
+
     for (Entrants entrant in entrants) {
       list.add(AthleteDbCompanion.insert(
           athleteId: entrant.id,
@@ -77,6 +81,7 @@ class DatabaseHandler {
           batch.insertAll(_db.athleteExtraDetailsDb, detailsList);
         });
       });
+
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
         updateAthlete(athlete, true);
