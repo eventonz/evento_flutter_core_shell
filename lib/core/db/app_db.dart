@@ -54,29 +54,34 @@ class DatabaseHandler {
     print(' mytest');
     
     await removeAthletesByEvent(eventId);
-  
-    final stopwatch = Stopwatch()..start();
-   
+
+    List<AthleteDbCompanion> list = [];
+    List<AthleteExtraDetailsDbCompanion> detailsList = [];
+
     for (Entrants entrant in entrants) {
-      await Future(() async {
-        await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id);
-        _db.into(_db.athleteDb).insert(AthleteDbCompanion.insert(
-            athleteId: entrant.id,
-            name: entrant.name,
-            profileImage: entrant.profileImage,
-            raceno: getRaceNo(entrant.number),
-            isFollowed: false,
-            contestNo: entrant.contest,
-            info: entrant.info,
-            eventId: eventId,
-            extra: entrant.extra,
-            canFollow: entrant.canFollow,
-            searchTag:
-                '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
-      });
+      list.add(AthleteDbCompanion.insert(
+          athleteId: entrant.id,
+          name: entrant.name,
+          profileImage: entrant.profileImage,
+          raceno: getRaceNo(entrant.number),
+          isFollowed: false,
+          contestNo: entrant.contest,
+          info: entrant.info,
+          eventId: eventId,
+          extra: entrant.extra,
+          canFollow: entrant.canFollow,
+          searchTag:
+          '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+      detailsList.addAll(await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id));
     }
-    stopwatch.stop();
-    print('Function Execution Time save athletes : ${stopwatch.elapsed}');
+    print(1);
+      await Future(() async {
+        await _db.batch((batch) {
+          batch.insertAll(_db.athleteDb, list);
+          batch.insertAll(_db.athleteExtraDetailsDb, detailsList);
+        });
+      });
+
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
         updateAthlete(athlete, true);
@@ -92,20 +97,20 @@ class DatabaseHandler {
     return raceNo;
   }
 
-  static Future<int> insertAthleteDetails(
+  static Future<List<AthleteExtraDetailsDbCompanion>> insertAthleteDetails(
       List<AthleteDetails> details, String athleteId) async {
     if (details.isEmpty) 1;
+    List<AthleteExtraDetailsDbCompanion> list = [];
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     for (AthleteDetails detail in details) {
-      await _db.into(_db.athleteExtraDetailsDb).insert(
-          AthleteExtraDetailsDbCompanion.insert(
-              name: detail.name,
-              athleteId: athleteId,
-              eventId: eventId,
-              country: detail.country,
-              athleteNumber: detail.athleteNumber));
+      list.add(AthleteExtraDetailsDbCompanion.insert(
+          name: detail.name,
+          athleteId: athleteId,
+          eventId: eventId,
+          country: detail.country,
+          athleteNumber: detail.athleteNumber));
     }
-    return 1;
+    return list;
   }
 
   static Stream<List<AppAthleteDb>> getAthletes(
