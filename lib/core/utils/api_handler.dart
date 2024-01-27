@@ -32,7 +32,7 @@ class ApiHandler {
           headers: header ?? {'content-Type': 'application/json'},
         ),
         data: body,
-      );
+      ).timeout(const Duration(seconds: 5));
       return ApiData(
           data: response.data,
           statusCode: response.statusCode,

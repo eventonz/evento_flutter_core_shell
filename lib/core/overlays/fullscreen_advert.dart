@@ -44,6 +44,7 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
   trackEvent(String action) async {
     String url = 'adverts/${widget.advert.id}';
     final res = await ApiHandler.postHttp(
+        
         endPoint: url, body: {
           'action' : action,
     });
@@ -87,6 +88,7 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
                             duration: const Duration(milliseconds: 300), curve: Curves.easeIn, child: seconds < 8 ? Text('Auto close in $seconds', style: const TextStyle(
                               fontWeight: FontWeight.w500,
                               fontSize: 13,
+                              color: Colors.black
                             )) : null),
                         Container(
                           padding: const EdgeInsets.all(3),
@@ -97,7 +99,8 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
                               BoxShadow(color: seconds < 8 ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4), spreadRadius: seconds < 8 ? 0 : 1, blurRadius: 3),
                             ],
                           ),
-                          child: const Icon(Icons.close, size: 19),
+                          child: const Icon(Icons.close, size: 19,
+                          color: Colors.black),
                         ),
                       ],
                     ),
