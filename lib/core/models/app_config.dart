@@ -1,3 +1,5 @@
+import 'advert.dart';
+
 class AppConfig {
   AthleteDetails? athleteDetails;
   Home? home;
@@ -6,6 +8,7 @@ class AppConfig {
   Settings? settings;
   Tracking? tracking;
   AppTheme? theme;
+  List<Advert>? adverts;
 
   AppConfig(
       {this.athleteDetails,
@@ -14,6 +17,7 @@ class AppConfig {
       this.athletes,
       this.settings,
       this.tracking,
+      this.adverts,
       this.theme});
 
   AppConfig.fromJson(Map<String, dynamic> json) {
@@ -30,6 +34,7 @@ class AppConfig {
         json['settings'] != null ? Settings.fromJson(json['settings']) : null;
 
     theme = json['theme'] != null ? AppTheme.fromJson(json['theme']) : null;
+    adverts = json['adverts'] != null ? (json['adverts'] as List).map((e) => Advert.fromJson(e)).toList() : [];
   }
 
   Map<String, dynamic> toJson() {

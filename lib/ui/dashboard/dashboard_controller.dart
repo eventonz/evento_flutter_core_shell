@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:evento_core/core/overlays/fullscreen_advert.dart';
 import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
@@ -16,9 +18,11 @@ import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:get/get.dart';
+import '../../core/models/advert.dart';
 import 'home/home.dart';
 import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
@@ -27,6 +31,7 @@ import 'more/more.dart';
 class DashboardController extends GetxController {
   final selMenu = Rx<BottomNavMenu?>(null);
   final AppOneSignal oneSignalService = Get.find();
+  late List<Advert> advertList;
   late Athletes entrantsList;
   late Tracking? trackingData;
   final athleteSnapData = DataSnapShot.loaded.obs;
@@ -68,6 +73,27 @@ class DashboardController extends GetxController {
       );
     }
     selMenu.value = menus.first;
+
+    advertList = AppGlobals.appConfig!.adverts ?? [];
+
+    var splashImage = advertList.where((element) => element.type == AdvertType.splash).firstOrNull;
+    if(splashImage != null) {
+      if(splashImage.frequency == AdvertFrequency.daily) {
+        String lastOpen = Preferences.getString('last_splash_open', '');
+        if(lastOpen != '') {
+          DateTime dateTime = DateTime.parse(lastOpen);
+          if(dateTime.day == DateTime.now().day) {
+            return;
+          }
+        }
+        Preferences.setString('last_splash_open', DateTime.now().toString());
+      }
+      precacheImage(CachedNetworkImageProvider(splashImage.image!), Get.context!);
+      Future.delayed(const Duration(seconds: 1), () {
+        Navigator.of(Get.context!).push(MaterialPageRoute(builder: (_) => FullscreenAdvert(splashImage)));
+      });
+    }
+
   }
 
   @override

@@ -8,20 +8,51 @@ import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../core/models/advert.dart';
+import '../../../core/utils/api_handler.dart';
+import '../../../core/utils/preferences.dart';
+
 class AthletesController extends GetxController {
   late String athleteText;
   final TextEditingController searchTextEditController =
       TextEditingController();
   final searchText = ''.obs;
   late Athletes entrantsList;
+  late List<Advert> advertList;
   final showFollowed = false.obs;
+  final showAdvert = false.obs;
   final DashboardController dashboardController = Get.find();
 
   @override
   void onInit() {
     super.onInit();
+    advertList = AppGlobals.appConfig!.adverts!;
     entrantsList = AppGlobals.appConfig!.athletes!;
     athleteText = AppHelper.setAthleteMenuText(entrantsList.text);
+    var advert = advertList.where((element) => element.type == AdvertType.banner).firstOrNull;
+    if(advert != null) {
+      if(advert.frequency == AdvertFrequency.daily) {
+        String lastOpen = Preferences.getString('last_banner_open', '');
+        if(lastOpen != '') {
+          DateTime dateTime = DateTime.parse(lastOpen);
+          if(dateTime.day == DateTime.now().day) {
+            return;
+          }
+        }
+        Preferences.setString('last_banner_open', DateTime.now().toString());
+      }
+      showAdvert.value = true;
+      trackEvent('impression');
+    }
+  }
+
+  Future<void> trackEvent(String action) async {
+    String url = 'adverts/${advertList.where((element) => element.type == AdvertType.banner).first.id}';
+    final res = await ApiHandler.postHttp(
+        endPoint: url, body: {
+      'action' : action,
+    });
+    print(res.data);
   }
 
   void toggleFollowed() {
