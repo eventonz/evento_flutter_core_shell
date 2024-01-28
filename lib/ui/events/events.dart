@@ -36,7 +36,7 @@ class EventsScreen extends StatelessWidget {
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
                 child: AppText(
-                  'Events',
+                  '',
                   style: AppStyles.appBarTitle.copyWith(color: AppColors.black),
                 ),
               ),
