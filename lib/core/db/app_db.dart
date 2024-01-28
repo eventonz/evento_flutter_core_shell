@@ -57,7 +57,7 @@ class DatabaseHandler {
 
     List<AthleteDbCompanion> list = [];
     List<AthleteExtraDetailsDbCompanion> detailsList = [];
-
+    final stopwatch = Stopwatch()..start();
     for (Entrants entrant in entrants) {
       list.add(AthleteDbCompanion.insert(
           athleteId: entrant.id,
@@ -74,13 +74,17 @@ class DatabaseHandler {
           '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
       detailsList.addAll(await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id));
     }
-    print(1);
+    //print(1);
       await Future(() async {
         await _db.batch((batch) {
           batch.insertAll(_db.athleteDb, list);
           batch.insertAll(_db.athleteExtraDetailsDb, detailsList);
         });
       });
+      stopwatch.stop();
+      
+     //   print('Function Execution Time save athletes : ${stopwatch.elapsed}');
+      
 
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
