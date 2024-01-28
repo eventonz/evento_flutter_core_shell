@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/overlays/fullscreen_advert.dart';
 import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/db/app_db.dart';
@@ -33,6 +34,7 @@ class DashboardController extends GetxController {
   final AppOneSignal oneSignalService = Get.find();
   late List<Advert> advertList;
   late Athletes entrantsList;
+  late Rx<MiniPlayerConfig?> miniPlayerConfig = Rx<MiniPlayerConfig?>(null);
   late Tracking? trackingData;
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
@@ -53,6 +55,7 @@ class DashboardController extends GetxController {
     Get.put(MoreController());
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
+    miniPlayerConfig.value = AppGlobals.appConfig!.miniPlayerConfig;
     final showAthletes = entrantsList.showAthletes ?? false;
     if (showAthletes) {
       menus.insert(
@@ -94,6 +97,11 @@ class DashboardController extends GetxController {
       });
     }
 
+  }
+
+  void setMiniPlayerConfig(MiniPlayerConfig? config) {
+    miniPlayerConfig.value = config;
+    update();
   }
 
   @override

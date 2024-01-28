@@ -1,3 +1,5 @@
+import 'package:evento_core/core/models/miniplayer.dart';
+
 import 'advert.dart';
 
 class AppConfig {
@@ -8,6 +10,7 @@ class AppConfig {
   Settings? settings;
   Tracking? tracking;
   AppTheme? theme;
+  MiniPlayerConfig? miniPlayerConfig;
   List<Advert>? adverts;
 
   AppConfig(
@@ -34,6 +37,7 @@ class AppConfig {
         json['settings'] != null ? Settings.fromJson(json['settings']) : null;
 
     theme = json['theme'] != null ? AppTheme.fromJson(json['theme']) : null;
+    miniPlayerConfig = json['miniplayer'] != null ? MiniPlayerConfig.fromJson(json['miniplayer']) : null;
     adverts = json['adverts'] != null ? (json['adverts'] as List).map((e) => Advert.fromJson(e)).toList() : [];
   }
 
@@ -59,6 +63,12 @@ class AppConfig {
     }
     if (theme != null) {
       data['theme'] = theme!.toJson();
+    }
+    if (miniPlayerConfig != null) {
+      data['mini_player'] = miniPlayerConfig!.toJson();
+    }
+    if (adverts != null) {
+      data['adverts'] = adverts?.map((e) => e.toJson()).toList();
     }
     return data;
   }
@@ -149,6 +159,7 @@ class Endpoint {
 
 class Items {
   String? type;
+  String? linkType;
   String? title;
   String? icon;
   bool? openExternal;
@@ -176,6 +187,7 @@ class Items {
       this.actions});
 
   Items.fromJson(Map<String, dynamic> json) {
+    linkType = json['link_type'];
     type = json['type'];
     title = json['title'];
     icon = json['icon'];
@@ -195,6 +207,7 @@ class Items {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['link_type'] = linkType;
     data['type'] = type;
     data['title'] = title;
     data['icon'] = icon;

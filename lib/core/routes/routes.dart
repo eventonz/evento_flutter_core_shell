@@ -2,6 +2,7 @@ class Routes {
   static const String landing = '/landing';
   static const String events = '/events';
   static const String dashboard = '/dashboard';
+  static const String miniplayer = '/miniplayer';
   static const String athleteDetails = '/athleteDetails';
   static const String webview = '/webview';
   static const String eventResults = '/eventResults';

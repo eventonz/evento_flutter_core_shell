@@ -25,7 +25,7 @@ class MoreController extends GetxController {
   void decideNextView(Items item) {
     final itemType = item.type!;
     if (itemType == 'link') {
-      AppHelper.showWebBottomSheet(item.title, item.link!.url!); //
+      AppHelper.showWebBottomSheet(item.title, item.link!.url!, item.linkType); //
     } else if (itemType == 'pages') {
       Get.toNamed(Routes.eventResults, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'carousel') {

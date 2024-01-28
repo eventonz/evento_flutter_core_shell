@@ -43,7 +43,10 @@ dependencies:
   pull_to_refresh: ^2.0.0
   flutter_map:
   latlong2:
-  geodart: 
+  geodart:
+  youtube_player_flutter:
+    path: ./youtube_player_flutter
+  miniplayer: ^1.0.1
 
 
 dev_dependencies:

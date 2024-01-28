@@ -5,6 +5,7 @@ import 'package:evento_core/ui/event_offers/event_offers.dart';
 import 'package:evento_core/ui/event_results/event_results.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:evento_core/ui/landing/landing.dart';
+import 'package:evento_core/ui/miniplayer/miniplayer_screen.dart';
 import 'package:evento_core/ui/qr_scanner/qr_scanner.dart';
 import 'package:evento_core/ui/schedule/schedule.dart';
 import 'package:evento_core/ui/settings/settings.dart';
@@ -26,6 +27,10 @@ class PageRouter {
     GetPage(
       name: Routes.dashboard,
       page: () => const DashboardScreen(),
+    ),
+    GetPage(
+      name: Routes.miniplayer,
+      page: () => const MiniPlayerScreen(),
     ),
     GetPage(
       name: Routes.athleteDetails,

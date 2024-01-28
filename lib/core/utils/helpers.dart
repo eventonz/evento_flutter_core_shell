@@ -51,7 +51,7 @@ class AppHelper {
     }
   }
 
-  static Future<void> showWebBottomSheet(String? title, String url) async {
+  static Future<void> showWebBottomSheet(String? title, String url, [String? linkType]) async {
     String pageTitle = '';
     if (title == null) {
       try {
@@ -103,7 +103,7 @@ class AppHelper {
               ),
             ),
             Expanded(
-              child: Platform.isAndroid && url.contains('.pdf')
+              child: Platform.isAndroid && linkType == 'pdf'
                   ? ColoredBox(
                       color: AppColors.white, child: SfPdfViewer.network(url))
                   : WebViewWidget(

@@ -1,14 +1,24 @@
+import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:miniplayer/miniplayer.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'dashboard_controller.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
+
+  _play(MiniPlayerConfig config) {
+    Get.toNamed(Routes.miniplayer, arguments: {
+      'config' : config,
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +52,92 @@ class DashboardScreen extends StatelessWidget {
                     ),
                   ),
                 )),
+            if(controller.miniPlayerConfig.value != null)
+            Positioned(
+              bottom: 4,
+              left: 0,
+              right: 0,
+              child: Obx(() => controller.miniPlayerConfig.value == null ? Container() : Miniplayer(backgroundColor: Colors.white, minHeight: 60, maxHeight: 250, builder: (height, percentage) {
+                  if(height == 60) {
+                    return Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: Row(
+                        children: [
+                          Image.network('https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller
+                              .miniPlayerConfig.value!
+                              .ytUrl!)}/0.jpg', width: 91, height: 51, fit: BoxFit
+                              .cover,),
+                          Expanded(child: Row(
+                            children: [
+                              const SizedBox(width: 16),
+                              Column(
+                                children: [
+                                  const SizedBox(height: 10),
+                                  Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                    ),),
+                                ],
+                              )
+                            ],
+                          )),
+                          IconButton(onPressed: () {
+                            _play(controller.miniPlayerConfig.value!);
+                          }, icon: Icon(
+                            Icons.play_arrow_outlined, size: 30,)),
+                          IconButton(onPressed: () {
+                            controller.setMiniPlayerConfig(null);
+                          }, icon: Icon(
+                              Icons.close, size: 30)),
+                        ],
+                      ),
+                    );
+                  }
+                  if(height == 250) {
+                    return Stack(
+                      children: [
+                        Center(
+                          child: Column(
+                            children: [
+                              const SizedBox(height: 20),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(5),
+                                child: Image.network(
+                                  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller
+                                      .miniPlayerConfig.value!
+                                      .ytUrl!)}/0.jpg', width: MediaQuery
+                                    .of(context)
+                                    .size
+                                    .width * 0.6, height: 140, fit: BoxFit
+                                    .cover,),
+                              ),
+                              const SizedBox(height: 4),
+                              IconButton(onPressed: () {
+                                _play(controller.miniPlayerConfig.value!);
+                              }, icon: Icon(
+                                Icons.play_arrow_outlined, size: 34,)),
+                              Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                style: TextStyle(
+                                  fontSize: 15,
+                                ),),
+                            ],
+                          ),
+                        ),
+                        Positioned(
+                          right: 4,
+                          top: 4,
+                          child: IconButton(onPressed: () {
+                            controller.setMiniPlayerConfig(null);
+                          }, icon: Icon(
+                            Icons.close, size: 28,)),
+                        ),
+                      ],
+                    );
+                  }
+                  return Container();
+                }),
+              ),
+            ),
           ],
         ),
         bottomNavigationBar: const AppBottomNav());
