@@ -37,7 +37,9 @@ class AppConfig {
         json['settings'] != null ? Settings.fromJson(json['settings']) : null;
 
     theme = json['theme'] != null ? AppTheme.fromJson(json['theme']) : null;
-    miniPlayerConfig = json['miniplayer'] != null ? MiniPlayerConfig.fromJson(json['miniplayer']) : null;
+    print(json['miniplayer']);
+
+    miniPlayerConfig = json['miniplayer'] != null ? MiniPlayerConfig.fromJson(json['miniplayer'][0]) : null;
     adverts = json['adverts'] != null ? (json['adverts'] as List).map((e) => Advert.fromJson(e)).toList() : [];
   }
 
