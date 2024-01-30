@@ -61,7 +61,7 @@ class AppStyles {
     scaffoldBackgroundColor: AppColors.black,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     primaryIconTheme: const IconThemeData(color: AppColors.white),
-    colorScheme: const ColorScheme.light().copyWith(
+    colorScheme: const ColorScheme.dark().copyWith(
         primary: AppColors.primary,
         brightness: Brightness.light,
         secondary: AppColors.white),

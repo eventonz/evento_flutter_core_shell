@@ -12,6 +12,7 @@ import 'package:evento_core/ui/settings/settings.dart';
 import 'package:evento_core/ui/user_challenge/challenge.dart';
 import 'package:evento_core/ui/webview/webview.dart';
 import 'package:get/get.dart';
+import '../../ui/storyslider/story_slider_screen.dart';
 import 'routes.dart';
 
 class PageRouter {
@@ -67,6 +68,10 @@ class PageRouter {
     GetPage(
       name: Routes.assistant,
       page: () => const AssistantScreen(),
+    ),
+    GetPage(
+      name: Routes.storySlider,
+      page: () => const StorySliderScreen(),
     ),
   ];
 }

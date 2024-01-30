@@ -45,8 +45,9 @@ dependencies:
   latlong2:
   geodart:
   youtube_player_flutter:
-    path: ./youtube_player_flutter
+    path: youtube_player_flutter
   miniplayer: ^1.0.1
+  dots_indicator: ^3.0.0
 
 
 dev_dependencies:
@@ -111,3 +112,5 @@ flutter:
     - packages/evento_core/assets/svgs/web.svg
 
     - packages/evento_core/assets/images/splash_image.png
+    - packages/evento_core/assets/images/instagram.png
+    - packages/evento_core/assets/images/share.png

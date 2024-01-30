@@ -167,6 +167,7 @@ class Items {
   bool? openExternal;
   int? id;
   String? sourceId;
+  Endpoint? storySlider;
   Endpoint? link;
   Endpoint? pages;
   Endpoint? schedule;
@@ -183,6 +184,7 @@ class Items {
       this.sourceId,
       this.link,
       this.pages,
+      this.storySlider,
       this.schedule,
       this.carousel,
       this.open,
@@ -198,6 +200,7 @@ class Items {
     sourceId = json['sourceId'];
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
     pages = json['pages'] != null ? Endpoint.fromJson(json['pages']) : null;
+    storySlider = json['storyslider'] != null ? Endpoint.fromJson(json['storyslider']) : null;
     schedule =
         json['schedule'] != null ? Endpoint.fromJson(json['schedule']) : null;
     carousel =
@@ -218,6 +221,9 @@ class Items {
     data['sourceId'] = sourceId;
     if (link != null) {
       data['link'] = link!.toJson();
+    }
+    if (storySlider != null) {
+      data['storyslider'] = storySlider!.toJson();
     }
     if (pages != null) {
       data['pages'] = pages!.toJson();

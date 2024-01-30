@@ -23,6 +23,13 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
+
+    if(controller.miniPlayerConfig.value != null) {
+      controller.setMiniPlayerConfig(AppGlobals.appConfig!.miniPlayerConfig);
+    }
+
+    print("hello");
+
     Get.put(TrackingController());
     return Scaffold(
         body: Stack(
@@ -57,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
               bottom: 4,
               left: 0,
               right: 0,
-              child: Obx(() => controller.miniPlayerConfig.value == null ? Container() : Miniplayer(backgroundColor: Colors.white, minHeight: 60, maxHeight: 250, builder: (height, percentage) {
+              child: Obx(() => controller.miniPlayerConfig.value == null ? Container() : Miniplayer(backgroundColor: Colors.white, minHeight: 60, maxHeight: 265, builder: (height, percentage) {
                   if(height == 60) {
                     return Padding(
                       padding: const EdgeInsets.all(4.0),
@@ -70,14 +77,17 @@ class DashboardScreen extends StatelessWidget {
                           Expanded(child: Row(
                             children: [
                               const SizedBox(width: 16),
-                              Column(
-                                children: [
-                                  const SizedBox(height: 10),
-                                  Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                    ),),
-                                ],
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                      ), maxLines: 2, overflow: TextOverflow.ellipsis,),
+                                  ],
+                                ),
                               )
                             ],
                           )),
@@ -93,7 +103,7 @@ class DashboardScreen extends StatelessWidget {
                       ),
                     );
                   }
-                  if(height == 250) {
+                  if(height == 265) {
                     return Stack(
                       children: [
                         Center(
@@ -116,10 +126,15 @@ class DashboardScreen extends StatelessWidget {
                                 _play(controller.miniPlayerConfig.value!);
                               }, icon: Icon(
                                 Icons.play_arrow_outlined, size: 34,)),
-                              Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                  child: Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                    ),),
+                                ),
+                              ),
                             ],
                           ),
                         ),

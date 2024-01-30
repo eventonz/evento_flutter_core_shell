@@ -26,9 +26,13 @@ class AthletesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    advertList = AppGlobals.appConfig!.adverts!;
     entrantsList = AppGlobals.appConfig!.athletes!;
     athleteText = AppHelper.setAthleteMenuText(entrantsList.text);
+    checkAdvert(true);
+  }
+
+  void checkAdvert([bool impression = true]) {
+    advertList = AppGlobals.appConfig!.adverts!;
     var advert = advertList.where((element) => element.type == AdvertType.banner).firstOrNull;
     if(advert != null) {
       if(advert.frequency == AdvertFrequency.daily) {
@@ -42,7 +46,9 @@ class AthletesController extends GetxController {
         Preferences.setString('last_banner_open', DateTime.now().toString());
       }
       showAdvert.value = true;
-      trackEvent('impression');
+      if(impression) {
+        trackEvent('impression');
+      }
     }
   }
 
