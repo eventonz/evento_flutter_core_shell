@@ -44,10 +44,10 @@ dependencies:
   flutter_map:
   latlong2:
   geodart:
-  youtube_player_flutter:
-    path: youtube_player_flutter
   miniplayer: ^1.0.1
   dots_indicator: ^3.0.0
+  share_plus: ^7.2.1
+  flutter_inappwebview: ^5.7.2+3
 
 
 dev_dependencies:
@@ -57,6 +57,7 @@ dev_dependencies:
   flutter_lints: ^2.0.3
   build_runner: ^2.2.0
   drift_dev: ^2.11.1
+  mocktail: ^0.3.0
 
 flavorizr:
   app:
@@ -113,4 +114,6 @@ flutter:
 
     - packages/evento_core/assets/images/splash_image.png
     - packages/evento_core/assets/images/instagram.png
+    - packages/evento_core/assets/images/general.png
     - packages/evento_core/assets/images/share.png
+    - packages/evento_core/assets/images/speedometer.webp

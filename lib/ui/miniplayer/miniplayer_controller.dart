@@ -1,9 +1,11 @@
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 import '../../core/models/miniplayer.dart';
 import '../../core/utils/app_global.dart';
+import '../../youtube_player_flutter/src/player/youtube_player.dart';
+import '../../youtube_player_flutter/src/utils/youtube_player_controller.dart';
+import '../../youtube_player_flutter/src/utils/youtube_player_flags.dart';
 
 class MiniPlayerController extends GetxController {
   late MiniPlayerConfig? miniPlayerConfig;

@@ -3,6 +3,8 @@ import 'package:evento_core/social_media_widgets/instagram_story_swipe.dart';
 import 'package:evento_core/ui/storyslider/story_slider_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class StorySliderScreen extends StatelessWidget {
   const StorySliderScreen({super.key});
@@ -10,6 +12,9 @@ class StorySliderScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(StorySliderController());
+
+
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Obx(() => Stack(
@@ -55,7 +60,11 @@ class StorySliderScreen extends StatelessWidget {
                     ),
                   ),
                   const Spacer(),
+              if(controller.sliders.isNotEmpty)
               InkWell(
+                onTap: () {
+                  launchUrl(Uri.parse('${controller.sliders[controller.position.value].openUrl}'), mode: LaunchMode.externalApplication);
+                },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   height: 30,
@@ -64,10 +73,15 @@ class StorySliderScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.background,
                     borderRadius: BorderRadius.circular(10)
                   ),
-                  child: Image.asset('packages/evento_core/assets/images/instagram.png', width: 21, color: Theme.of(context).iconTheme.color),
+                  child: Image.asset('packages/evento_core/assets/images/${controller.sliders[controller.position.value].type}.png', width: 21, color: Theme.of(context).iconTheme.color),
                 )),
                   const SizedBox(width: 6),
                   InkWell(
+                    onTap: () {
+                      Share.share(
+                          'Hello, this is just a text: ${controller.sliders[controller.position.value].openUrl}\n${controller.sliders[controller.position.value].image}',
+                      );
+                    },
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   height: 30,

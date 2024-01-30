@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../../youtube_player_flutter/src/player/youtube_player.dart';
 import 'dashboard_controller.dart';
 
 class DashboardScreen extends StatelessWidget {

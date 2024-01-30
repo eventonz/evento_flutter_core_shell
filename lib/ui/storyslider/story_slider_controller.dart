@@ -17,6 +17,8 @@ class StorySliderController extends GetxController {
 
   RxList<StorySlider> sliders = RxList([]);
 
+
+
   @override
   void onInit() {
     super.onInit();

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../../youtube_player_flutter/src/player/youtube_player.dart';
+import '../../youtube_player_flutter/src/widgets/youtube_player_builder.dart';
 
 class MiniPlayerScreen extends StatelessWidget {
   const MiniPlayerScreen({super.key});
