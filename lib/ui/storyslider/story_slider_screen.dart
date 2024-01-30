@@ -34,9 +34,9 @@ class StorySliderScreen extends StatelessWidget {
                   top: 0,
                   child: Container(
                     decoration: BoxDecoration(
-                      image: DecorationImage(image: NetworkImage(e.image!), fit: BoxFit.cover),
+                      image: e.video == null ? DecorationImage(image: NetworkImage(e.image!), fit: BoxFit.cover) : null,
                     ),
-                    child: Container(
+                    child: (e.videoPlayerController?.value.value.isBuffering ?? true) && e.video != null ? CircularProgressIndicator.adaptive() : Container(
                       margin: const EdgeInsets.only(),
                       child: e.video == null ? SizedBox() :  AspectRatio(aspectRatio: 9/16, child: VideoPlayer(
                           e.videoPlayerController!.value,

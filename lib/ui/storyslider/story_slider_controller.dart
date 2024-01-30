@@ -63,9 +63,10 @@ class StorySliderController extends GetxController {
         position.value = pos > d ? pos.ceil() : pos.floor();
         d = pos;
 
-        sliders[position.value].videoPlayerController?.value.seekTo(Duration.zero);
-        sliders[position.value].videoPlayerController?.value.play();
-        sliders[position.value].videoPlayerController?.value.setLooping(true);
+        sliders[position.value].videoPlayerController?.value.seekTo(Duration.zero).then((value) {
+          sliders[position.value].videoPlayerController?.value.play();
+        });
+        //sliders[position.value].videoPlayerController?.value.setLooping(true);
         update();
       });
     });
