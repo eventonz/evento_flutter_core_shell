@@ -48,7 +48,7 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   share_plus: ^7.2.1
   flutter_inappwebview: ^5.7.2+3
-  cached_video_player: ^2.0.4
+  video_player: ^2.8.2
   flutter_cache_manager: ^3.3.1
 
 

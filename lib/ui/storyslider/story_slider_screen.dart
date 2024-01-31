@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:cached_video_player/cached_video_player.dart';
+import 'package:video_player/video_player.dart';
 
 class StorySliderScreen extends StatelessWidget {
   const StorySliderScreen({super.key});
@@ -156,7 +156,7 @@ class SliderItem extends StatefulWidget {
 
 class _SliderItemState extends State<SliderItem> {
 
-  CachedVideoPlayerController? videoPlayerController;
+  VideoPlayerController? videoPlayerController;
 
   File? cacheFile;
 
@@ -169,7 +169,7 @@ class _SliderItemState extends State<SliderItem> {
 
     if(widget.item.video != null) {
       videoPlayerController =
-      (cacheFile == null ? CachedVideoPlayerController.network((widget.item.video!)) : CachedVideoPlayerController.file((cacheFile!)))
+      (cacheFile == null ? VideoPlayerController.networkUrl((Uri.parse(widget.item.video!))) : VideoPlayerController.file((cacheFile!)))
         ..initialize().then((value) {
           videoPlayerController?.setLooping(true);
           videoPlayerController?.play();
@@ -200,7 +200,7 @@ class _SliderItemState extends State<SliderItem> {
         ),
         child: Container(
             margin: const EdgeInsets.only(),
-            child: widget.item.video == null ? SizedBox() : CachedVideoPlayer(
+            child: widget.item.video == null ? SizedBox() : VideoPlayer(
               videoPlayerController!,
             )
         ),
