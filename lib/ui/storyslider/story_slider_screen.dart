@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:evento_core/core/models/storyslider.dart';
 import 'package:evento_core/social_media_widgets/instagram_story_swipe.dart';
 import 'package:evento_core/ui/storyslider/story_slider_controller.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:video_player/video_player.dart';
+import 'package:cached_video_player/cached_video_player.dart';
 
 class StorySliderScreen extends StatelessWidget {
   const StorySliderScreen({super.key});
@@ -32,18 +33,7 @@ class StorySliderScreen extends StatelessWidget {
                   left: 0,
                   right: 0,
                   top: 0,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: e.video == null ? DecorationImage(image: NetworkImage(e.image!), fit: BoxFit.cover) : null,
-                    ),
-                    child: (e.videoPlayerController?.value.value.isBuffering ?? true) && e.video != null ? CircularProgressIndicator.adaptive() : Container(
-                      margin: const EdgeInsets.only(),
-                      child: e.video == null ? SizedBox() :  AspectRatio(aspectRatio: 9/16, child: VideoPlayer(
-                          e.videoPlayerController!.value,
-                        ),
-                      )
-                    ),
-                  ),
+                  child: SliderItem(item: e),
                 )).toList()) : Center(
               child: CircularProgressIndicator.adaptive(),
             ),
@@ -152,3 +142,55 @@ class StorySliderScreen extends StatelessWidget {
     );
   }
 }
+
+class SliderItem extends StatefulWidget {
+
+  final StorySlider item;
+  const SliderItem({super.key, required this.item});
+
+  @override
+  State<SliderItem> createState() => _SliderItemState();
+}
+
+class _SliderItemState extends State<SliderItem> {
+
+  CachedVideoPlayerController? videoPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.item.video != null) {
+      videoPlayerController =
+      CachedVideoPlayerController.network((widget.item.video!))
+        ..initialize().then((value) {
+          videoPlayerController?.setLooping(true);
+          videoPlayerController?.play();
+          setState(() {});
+        });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    videoPlayerController?.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      child: Container(
+        decoration: BoxDecoration(
+          image: widget.item.video == null ? DecorationImage(image: NetworkImage(widget.item.image!), fit: BoxFit.cover) : null,
+        ),
+        child: Container(
+            margin: const EdgeInsets.only(),
+            child: widget.item.video == null ? SizedBox() : CachedVideoPlayer(
+              videoPlayerController!,
+            )
+        ),
+      ),
+    );
+  }
+}
+
