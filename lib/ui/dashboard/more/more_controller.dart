@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../core/models/storyslider.dart';
 
@@ -18,6 +19,8 @@ class MoreController extends GetxController {
   late Menu moreDetails;
   RefreshController refreshController =
       RefreshController(initialRefresh: false);
+
+  List<StorySlider>? sliders;
 
   @override
   void onInit() {
@@ -27,17 +30,22 @@ class MoreController extends GetxController {
   }
 
   storeCache() async {
+    int i = 0;
     moreDetails.items?.forEach((item) {
+      i++;
       if(item.type == 'storyslider') {
         final res = ApiHandler.genericGetHttp(url: item.storySlider!.url!).then((value) {
-          var sliders = (value.data['items'] as List).map((e) {
+          sliders = (value.data['items'] as List).map((e) {
             var slider = StorySlider.fromJson(e);
             return slider;
           }).toList();
-          if(sliders.isNotEmpty) {
-            DefaultCacheManager().getSingleFile(sliders.first.video ?? sliders.first.image!).then((value) {
+          if(sliders!.isNotEmpty) {
+            DefaultCacheManager().getSingleFile(sliders!.first.video ?? sliders!.first.image!).then((value) {
               print(value.path);
               print(value.path);
+              sliders![0].videoPlayerController = VideoPlayerController.file(value)..initialize().then((value) {
+
+              });
             });
           }
 
@@ -65,7 +73,7 @@ class MoreController extends GetxController {
       Get.toNamed(Routes.assistant, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'storyslider') {
       // DatabaseHandler.removeAllChatMessages();
-      Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item});
+      Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item, 'slides' : sliders});
     } else {
       ToastUtils.show('Something went wrong...');
     }

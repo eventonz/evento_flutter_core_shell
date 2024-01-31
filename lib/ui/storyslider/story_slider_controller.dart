@@ -26,6 +26,11 @@ class StorySliderController extends GetxController {
     getSlides();
   }
 
+  void updateSlide(int index, StorySlider slide) {
+    sliders[index] = slide;
+    update();
+  }
+
   void setSharing(bool sharing) {
     this.sharing.value = sharing;
     update();
@@ -33,11 +38,15 @@ class StorySliderController extends GetxController {
 
   getSlides() async {
     Items item = Get.arguments[AppKeys.moreItem];
-    final res = await ApiHandler.genericGetHttp(url: item.storySlider!.url!);
-    sliders.value = (res.data['items'] as List).map((e) {
+    if((Get.arguments['slides'] as List<StorySlider>?) != null) {
+      sliders.value = (Get.arguments['slides'] as List<StorySlider>?)!;
+    } else {
+      final res = await ApiHandler.genericGetHttp(url: item.storySlider!.url!);
+      sliders.value = (res.data['items'] as List).map((e) {
       var slider = StorySlider.fromJson(e);
       return slider;
-    }).toList();
+      }).toList();
+    }
     update();
 
     Future.delayed(const Duration(milliseconds: 200), () {

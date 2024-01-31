@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/storyslider.dart';
 import 'package:evento_core/social_media_widgets/instagram_story_swipe.dart';
 import 'package:evento_core/ui/storyslider/story_slider_controller.dart';
@@ -14,12 +15,12 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
 class StorySliderScreen extends StatelessWidget {
+
   const StorySliderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(StorySliderController());
-
 
 
     return Scaffold(
@@ -34,7 +35,11 @@ class StorySliderScreen extends StatelessWidget {
                   left: 0,
                   right: 0,
                   top: 0,
-                  child: SliderItem(item: e, nextItem: (controller.sliders.indexOf(e) == controller.sliders.length-1) ? null : controller.sliders[(controller.sliders.indexOf(e)+1)]),
+                  child: SliderItem(
+                      onNextItemUpdate: (StorySlider story) {
+                        controller.updateSlide(controller.sliders.indexOf(e)+1, story);
+                      },
+                      item: e, nextItem: (controller.sliders.indexOf(e) == controller.sliders.length-1) ? null : controller.sliders[(controller.sliders.indexOf(e)+1)]),
                 )).toList()) : Center(
               child: CircularProgressIndicator.adaptive(),
             ),
@@ -148,15 +153,14 @@ class SliderItem extends StatefulWidget {
 
   final StorySlider item;
   final StorySlider? nextItem;
-  const SliderItem({super.key, required this.item, required this.nextItem});
+  final Function(StorySlider) onNextItemUpdate;
+  const SliderItem({super.key, required this.item, required this.nextItem, required this.onNextItemUpdate});
 
   @override
   State<SliderItem> createState() => _SliderItemState();
 }
 
 class _SliderItemState extends State<SliderItem> {
-
-  VideoPlayerController? videoPlayerController;
 
   File? cacheFile;
 
@@ -165,22 +169,34 @@ class _SliderItemState extends State<SliderItem> {
     super.initState();
     DefaultCacheManager().getSingleFile((widget.item.video ?? widget.item.image)!).then((value) {
       cacheFile = value;
+      print('LOL'+value.path);
     });
 
-    if(widget.item.video != null) {
-      videoPlayerController =
+    if(widget.item.video != null && widget.item.videoPlayerController == null) {
+      widget.item.videoPlayerController =
       (cacheFile == null ? VideoPlayerController.networkUrl((Uri.parse(widget.item.video!))) : VideoPlayerController.file((cacheFile!)))
-        ..initialize().then((value) {
-          videoPlayerController?.setLooping(true);
-          videoPlayerController?.play();
+        ..initialize().then((value) async {
+          //videoPlayerController?.setLooping(true);
+          await widget.item.videoPlayerController?.setLooping(true);
+          await widget.item.videoPlayerController?.seekTo(Duration(milliseconds: 1));
+          await widget.item.videoPlayerController?.play();
           setState(() {});
         });
+    } else if (widget.item.video != null) {
+      widget.item.videoPlayerController?.setLooping(true).then((value) {
+      widget.item.videoPlayerController?.seekTo(Duration(milliseconds: 1)).then((value) {
+        widget.item.videoPlayerController?.play().then((value) {
+          setState(() {});
+        });
+      });
+      });
     }
 
-    if(widget.nextItem != null) {
-      DefaultCacheManager().downloadFile(widget.nextItem!.video ?? widget.nextItem!.image!).then((value) {
-        print(value.file.path);
-      });
+    if(widget.nextItem != null && widget.nextItem!.video != null) {
+        widget.nextItem!.videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(widget.nextItem!.video!))..initialize();
+        Future.delayed(const Duration(milliseconds: 10), () {
+          widget.onNextItemUpdate(widget.nextItem!);
+        });
     }
 
   }
@@ -188,7 +204,7 @@ class _SliderItemState extends State<SliderItem> {
   @override
   void dispose() {
     super.dispose();
-    videoPlayerController?.dispose();
+    widget.item.videoPlayerController?.pause();
   }
 
   @override
@@ -196,12 +212,12 @@ class _SliderItemState extends State<SliderItem> {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-          image: widget.item.video == null ? DecorationImage(image: cacheFile == null ? NetworkImage(widget.item.image!) : FileImage(cacheFile!) as ImageProvider, fit: BoxFit.cover) : null,
+          image: widget.item.video == null ? DecorationImage(image: cacheFile == null ? CachedNetworkImageProvider(widget.item.image!) : FileImage(cacheFile!) as ImageProvider, fit: BoxFit.cover) : null,
         ),
         child: Container(
             margin: const EdgeInsets.only(),
             child: widget.item.video == null ? SizedBox() : VideoPlayer(
-              videoPlayerController!,
+              widget.item.videoPlayerController!,
             )
         ),
       ),

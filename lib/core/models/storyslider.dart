@@ -1,11 +1,14 @@
 
+import 'package:video_player/video_player.dart';
+
 class StorySlider {
   String? openUrl;
   String? image;
   String? video;
   String? type;
+  VideoPlayerController? videoPlayerController;
 
-  StorySlider({this.openUrl, this.image, this.video, this.type});
+  StorySlider({this.openUrl, this.image, this.video, this.type, this.videoPlayerController});
 
   StorySlider.fromJson(Map<String, dynamic> json) {
     openUrl = json['open_url'];
