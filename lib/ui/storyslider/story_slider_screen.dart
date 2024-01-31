@@ -167,14 +167,14 @@ class _SliderItemState extends State<SliderItem> {
   @override
   void initState() {
     super.initState();
-    DefaultCacheManager().getSingleFile((widget.item.video ?? widget.item.image)!).then((value) {
-      cacheFile = value;
-      print('LOL'+value.path);
-    });
 
+    if(widget.nextItem != null && widget.nextItem!.video == null) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+      precacheImage(new NetworkImage(widget.nextItem!.image!), context);
+      });
+    }
     if(widget.item.video != null && widget.item.videoPlayerController == null) {
-      widget.item.videoPlayerController =
-      (cacheFile == null ? VideoPlayerController.networkUrl((Uri.parse(widget.item.video!))) : VideoPlayerController.file((cacheFile!)))
+      widget.item.videoPlayerController = VideoPlayerController.networkUrl((Uri.parse(widget.item.video!)))
         ..initialize().then((value) async {
           //videoPlayerController?.setLooping(true);
           await widget.item.videoPlayerController?.setLooping(true);
@@ -183,13 +183,16 @@ class _SliderItemState extends State<SliderItem> {
           setState(() {});
         });
     } else if (widget.item.video != null) {
-      widget.item.videoPlayerController?.setLooping(true).then((value) {
-      widget.item.videoPlayerController?.seekTo(Duration(milliseconds: 1)).then((value) {
-        widget.item.videoPlayerController?.play().then((value) {
-          setState(() {});
+      if(!(widget.item.videoPlayerController?.value.isPlaying ?? false)) {
+        widget.item.videoPlayerController?.setLooping(true).then((value) {
+          widget.item.videoPlayerController?.seekTo(Duration(milliseconds: 1))
+              .then((value) {
+            widget.item.videoPlayerController?.play().then((value) {
+              setState(() {});
+            });
+          });
         });
-      });
-      });
+      }
     }
 
     if(widget.nextItem != null && widget.nextItem!.video != null) {
@@ -212,7 +215,8 @@ class _SliderItemState extends State<SliderItem> {
     return GestureDetector(
       child: Container(
         decoration: BoxDecoration(
-          image: widget.item.video == null ? DecorationImage(image: cacheFile == null ? CachedNetworkImageProvider(widget.item.image!) : FileImage(cacheFile!) as ImageProvider, fit: BoxFit.cover) : null,
+          image: widget.item.video == null ? DecorationImage(
+            image: NetworkImage(widget.item.image!), fit: BoxFit.cover) : null,
         ),
         child: Container(
             margin: const EdgeInsets.only(),

@@ -53,9 +53,22 @@ class StorySliderController extends GetxController {
       swipeController.pageController.addListener(() {
 
         double pos = (swipeController.pageController.page ?? 0.0);
-        position.value = pos > d ? pos.ceil() : pos.floor();
-        d = pos;
 
+        bool changed = false;
+        if(position.value != (pos > d ? pos.ceil() : pos.floor())) {
+          sliders[position.value].videoPlayerController?.pause();
+          changed = true;
+        }
+        position.value = (pos > d ? pos.ceil() : pos.floor());
+        d = pos;
+        if(changed) {
+          if(sliders[position.value].videoPlayerController?.value.isInitialized ?? false) {
+            sliders[position.value].videoPlayerController?.seekTo(Duration(seconds: 0));
+            sliders[position.value].videoPlayerController?.play();
+            sliders[position.value].videoPlayerController?.setLooping(true);
+          }
+          
+        }
         update();
       });
     });
