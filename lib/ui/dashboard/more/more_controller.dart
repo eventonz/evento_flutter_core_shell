@@ -8,8 +8,11 @@ import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import '../../../core/models/storyslider.dart';
 
 class MoreController extends GetxController {
   late Menu moreDetails;
@@ -20,6 +23,27 @@ class MoreController extends GetxController {
   void onInit() {
     super.onInit();
     moreDetails = AppGlobals.appConfig!.menu!;
+    storeCache();
+  }
+
+  storeCache() async {
+    moreDetails.items?.forEach((item) {
+      if(item.type == 'storyslider') {
+        final res = ApiHandler.genericGetHttp(url: item.storySlider!.url!).then((value) {
+          var sliders = (value.data['items'] as List).map((e) {
+            var slider = StorySlider.fromJson(e);
+            return slider;
+          }).toList();
+          if(sliders.isNotEmpty) {
+            DefaultCacheManager().getSingleFile(sliders.first.video ?? sliders.first.image!).then((value) {
+              print(value.path);
+              print(value.path);
+            });
+          }
+
+        });
+      }
+    });
   }
 
   void decideNextView(Items item) {
@@ -72,6 +96,7 @@ class MoreController extends GetxController {
     Preferences.setInt(AppKeys.configLastUpdated,
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     moreDetails = AppGlobals.appConfig!.menu!;
+    storeCache();
     final accentColors = AppGlobals.appConfig!.theme!.accent;
     AppColors.accentLight = AppHelper.hexToColor(accentColors!.light!);
     AppColors.accentDark = AppHelper.hexToColor(accentColors.dark!);
