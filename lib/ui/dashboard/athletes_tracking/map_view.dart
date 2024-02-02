@@ -57,7 +57,7 @@ class TrackingMapView extends StatelessWidget {
                         //color: AppHelper.getRandomLightColor(),
                         color: Theme.of(context).brightness == Brightness.light
                             ? AppColors.accentDark
-                             : AppColors.accentLight,
+                            : AppColors.accentLight,
                         strokeWidth: 4.0,
                       ),
                   ],
@@ -189,13 +189,15 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   void moveMarker() async {
     if (isAnimatingMarker) return;
     isAnimatingMarker = true;
-    while (coveredDistance < lineStringPath.length.toPrecision(3)) {
+    while (coveredDistance < lineStringPath.length.toPrecision(4)) {
       if (newProgressUpdate) {
         setInitialDistance();
         newProgressUpdate = false;
       }
       coveredDistance =
-          getNewDistanceAfterOneSec() + coveredDistance.toPrecision(3);
+          getNewDistanceAfterOneSec() + coveredDistance.toPrecision(4);
+      print(coveredDistance);
+      print('---');
       final latLng = getLatlngFromDistance();
       if (mounted) {
         setState(() {
@@ -210,19 +212,19 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   LatLng getLatlngFromDistance() {
     final coordinate =
-        lineStringPath.along(coveredDistance.toPrecision(2)).coordinate;
+        lineStringPath.along(coveredDistance.toPrecision(4)).coordinate;
     return LatLng(coordinate.latitude, coordinate.longitude);
   }
 
   double getNewDistanceAfterOneSec() {
-    return currentSpeed * 1;
+    return currentSpeed/3600 * 1000;
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
-          duration: const Duration(milliseconds: 1600),
+          duration: const Duration(milliseconds: 1000),
           routePath: controller.getAthleteRouthPath(trackDetail),
           trackDetail: trackDetail,
           marker: Marker(
