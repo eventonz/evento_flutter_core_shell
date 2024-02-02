@@ -20,7 +20,7 @@ import 'package:latlong2/latlong.dart';
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
   late Tracking? trackingDetails;
-  late String eventId = '0';
+  late int eventId = 0;
   late Timer timer;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
@@ -37,11 +37,11 @@ class TrackingController extends GetxController
   void onInit() {
     super.onInit();
     trackingDetails = AppGlobals.appConfig!.tracking;
-    eventId = AppGlobals.appEventConfig.singleEventId ?? '';
+    eventId = AppGlobals.selEventId;//
     changeMapStyle(setDefault: true);
-    if (eventId.isEmpty) {
-      eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
-    }
+    //if (eventId.isEmpty) {
+    //  eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
+    //}
   }
 
   @override
