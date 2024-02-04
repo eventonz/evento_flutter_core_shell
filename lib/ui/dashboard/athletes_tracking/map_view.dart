@@ -196,7 +196,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       }
       coveredDistance =
           getNewDistanceAfterOneSec() + coveredDistance.toPrecision(4);
-      print(coveredDistance);
+      print(DateTime.now());
+      print('---- UPDATE for  ---' + trackDetail.track);
+      print(coveredDistance.toPrecision(4));
       print('---');
       final latLng = getLatlngFromDistance();
       if (mounted) {
@@ -205,6 +207,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
           longitude = latLng.longitude;
         });
       }
+
       await Future.delayed(const Duration(seconds: 1));
     }
     isAnimatingMarker = false;
@@ -217,7 +220,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   double getNewDistanceAfterOneSec() {
-    return currentSpeed/3600 * 1000;
+    return currentSpeed / 3600 * 1000;
   }
 
   @override
@@ -232,6 +235,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               height: 35,
               point: LatLng(latitude, longitude),
               builder: (_) {
+                
                 return Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.light
