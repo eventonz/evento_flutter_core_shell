@@ -164,7 +164,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   void setInitialRouteMarkerPath() {
-    print('LOL');
     final latLng = routePath.first;
     if (mounted) {
       setState(() {
@@ -234,6 +233,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
           routePath: controller.getAthleteRouthPath(trackDetail),
           trackDetail: trackDetail,
           marker: Marker(
+              rotate: true,
               width: trackDetail.isRaceNoBig() ? 70 : 35,
               height: 35,
               point: LatLng(latitude, longitude),
