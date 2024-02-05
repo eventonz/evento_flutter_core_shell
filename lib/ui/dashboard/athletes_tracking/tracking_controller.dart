@@ -102,7 +102,10 @@ class TrackingController extends GetxController
 
   void startTrackingTimer() {
     timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
-        (Timer t) => getAthleteTrackingInfo());
+        (Timer t){
+      print('LOL');
+      getAthleteTrackingInfo();
+    });
   }
 
   LineString? getLineStringForPath(String pathName) {
@@ -137,6 +140,8 @@ class TrackingController extends GetxController
     for (final AppAthleteDb entrant in entrants) {
       entrantsIds.add(entrant.athleteId);
     }
+    print(entrantsIds);
+    print('entrantsIds');
     final body = {
       'race_id': eventId,
       'web_tracking': true,
@@ -148,8 +153,16 @@ class TrackingController extends GetxController
       athleteTrackDetails.clear();
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
+      entrantsIds.forEach((element) {
+        if(athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
+          athleteTrackDetails.add(AthleteTrackDetail(
+            track: element,
+          ));
+        }
+      });
       athleteTrackDetails.refresh();
     }
+    print("LOL2");
     update();
   }
 
@@ -166,9 +179,13 @@ class TrackingController extends GetxController
   }
 
   AthleteTrackDetail? findTrackDetail(AppAthleteDb entrant) {
+    print(entrant.athleteId);
+    print(athleteTrackDetails.value.map((x) => x.track));
+    print('LOL8');
     final trackDetail = athleteTrackDetails.value
         .firstWhereOrNull((x) => x.track == entrant.athleteId);
     if (trackDetail != null) {
+      print('WHY');
       return trackDetail;
     }
     getAthleteTrackingInfo();

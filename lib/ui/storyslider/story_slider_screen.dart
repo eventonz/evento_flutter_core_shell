@@ -220,7 +220,7 @@ class _SliderItemState extends State<SliderItem> {
         ),
         child: Container(
             margin: const EdgeInsets.only(),
-            child: widget.item.video == null ? SizedBox() : VideoPlayer(
+            child: widget.item.video == null || !widget.item.videoPlayerController!.value.isInitialized ? SizedBox() : VideoPlayer(
               widget.item.videoPlayerController!,
             )
         ),

@@ -164,6 +164,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   void setInitialRouteMarkerPath() {
+    print('LOL');
     final latLng = routePath.first;
     if (mounted) {
       setState(() {
@@ -202,10 +203,10 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       print('---');
       final latLng = getLatlngFromDistance();
       if (mounted) {
-        setState(() {
+        //setState(() {
           latitude = latLng.latitude;
           longitude = latLng.longitude;
-        });
+        //});
       }
 
       await Future.delayed(const Duration(seconds: 1));
@@ -225,6 +226,8 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
+    print('LOL4');
+
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
           duration: const Duration(milliseconds: 1000),
