@@ -22,6 +22,7 @@ class TrackingController extends GetxController
   late Tracking? trackingDetails;
   late int eventId = 0;
   late Timer timer;
+  int currentII = 0;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
   final accessToken =
@@ -32,6 +33,10 @@ class TrackingController extends GetxController
   List<Paths> routePathLinks = [];
   List<MapPathMarkers> mapPathMarkers = [];
   Map<String, List<LatLng>> routePathsCordinates = {};
+  bool animated = false;
+  Map<String, LatLng> locations = {};
+
+  late StreamController<int> updateStream = StreamController<int>.broadcast();
 
   @override
   void onInit() {
@@ -39,6 +44,7 @@ class TrackingController extends GetxController
     trackingDetails = AppGlobals.appConfig!.tracking;
     eventId = AppGlobals.selEventId;//
     changeMapStyle(setDefault: true);
+    updateStream.add(1);
     //if (eventId.isEmpty) {
     //  eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
     //}
@@ -54,6 +60,14 @@ class TrackingController extends GetxController
   void onReady() {
     super.onReady();
     getRoutePaths();
+  }
+
+  Future<void> setLocation(String track, LatLng location, {bool wait = false}) async {
+    locations[track] = location;
+    if(wait) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    update();
   }
 
   Future<void> getRoutePaths() async {
@@ -133,8 +147,18 @@ class TrackingController extends GetxController
     yield* DatabaseHandler.getAthletes('', true);
   }
 
-  Future<void> getAthleteTrackingInfo() async {
+  Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
+    print('LOLL');
+    print(athleteTrackDetails.length);
+    print(athleteTrackDetails.map((element) => element.location));
     if (trackingDetails == null) return;
+    if(firstTime && athleteTrackDetails.isNotEmpty) {
+      print('okok');
+      currentII++;
+      print(athleteTrackDetails.map((element) => element.location));
+      return;
+    }
+
     final entrants = await watchFollowedAthletes().first;
     final entrantsIds = <String>[];
     for (final AppAthleteDb entrant in entrants) {
@@ -194,6 +218,11 @@ class TrackingController extends GetxController
 
   void toAthleteDetails(AppAthleteDb entrant) async {
     Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant});
+  }
+
+  void setAnimated(bool animated) {
+    this.animated = animated;
+    update();
   }
 
   List<LatLng> getAthleteRouthPath(AthleteTrackDetail athleteTrackDetail) {
