@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/overlays/fullscreen_advert.dart';
@@ -158,8 +160,10 @@ class DashboardController extends GetxController {
     if (selMenu.value!.label == 'track') {
       await Future.delayed(const Duration(seconds: 1));
       final TrackingController controller = Get.find();
-      controller.getAthleteTrackingInfo();
+      controller.getAthleteTrackingInfo(firstTime: true);
+      controller.updateStream.add(Random().nextInt(100));
     }
+
 
     // if (menu == menus.first) {
     //   homeController.startFade();

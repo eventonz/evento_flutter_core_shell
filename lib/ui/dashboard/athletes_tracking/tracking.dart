@@ -37,7 +37,7 @@ class TrackingScreen extends StatelessWidget {
                   }
                   entrants.sort((x, y) => x.raceno.compareTo(y.raceno));
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    controller.getAthleteTrackingInfo();
+                    controller.getAthleteTrackingInfo(firstTime: true);
                   });
                   return SafeArea(
                     child: Padding(

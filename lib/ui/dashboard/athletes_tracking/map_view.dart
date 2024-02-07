@@ -141,8 +141,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   bool isAnimatingMarker = false;
   double coveredDistance = 0;
-  double latitude = 0;
-  double longitude = 0;
   bool newProgressUpdate = false;
 
   @override
@@ -150,7 +148,20 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     super.initState();
     setInitialRouteMarkerPath();
     setInitialDistance();
+    controller.updateStream.stream.listen((event) {
+      Future.delayed(const Duration(milliseconds: 0), () {
+        setState(() {
+          oldProgress = widget.athleteTrackDetail.location ?? 0;
+          currentProgress = widget.athleteTrackDetail.location ?? 0;
+          currentSpeed = widget.athleteTrackDetail.speed ?? 0;
+          createLineStringPath();
+          newProgressUpdate = true;
+          moveMarker();
+        });
+      });
+    });
   }
+
 
   @override
   void didUpdateWidget(covariant AnimatedMarkerView oldWidget) {
@@ -165,11 +176,8 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   void setInitialRouteMarkerPath() {
     final latLng = routePath.first;
-    if (mounted) {
-      setState(() {
-        latitude = latLng.latitude;
-        longitude = latLng.longitude;
-      });
+    if (controller.locations[trackDetail.track] == null) {
+      controller.setLocation(trackDetail.track, latLng);
     }
   }
 
@@ -201,14 +209,13 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       print(coveredDistance.toPrecision(4));
       print('---');
       final latLng = getLatlngFromDistance();
-      if (mounted) {
-        //setState(() {
-          latitude = latLng.latitude;
-          longitude = latLng.longitude;
-        //});
-      }
+      //if (mounted) {
+        await controller.setLocation(trackDetail.track, latLng, wait: true);
+      setState(() {
 
-      await Future.delayed(const Duration(seconds: 1));
+        });
+      //}
+
     }
     isAnimatingMarker = false;
   }
@@ -225,20 +232,19 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-    print('LOL4');
 
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
-          duration: const Duration(milliseconds: 1000),
+          duration: Duration(milliseconds: 1000),
           routePath: controller.getAthleteRouthPath(trackDetail),
           trackDetail: trackDetail,
           marker: Marker(
               rotate: true,
               width: trackDetail.isRaceNoBig() ? 70 : 35,
               height: 35,
-              point: LatLng(latitude, longitude),
+              point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
               builder: (_) {
-                
+
                 return Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.light
