@@ -117,7 +117,7 @@ class TrackingController extends GetxController
   void startTrackingTimer() {
     timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
         (Timer t){
-      print('LOL');
+
       getAthleteTrackingInfo();
     });
   }
@@ -148,14 +148,9 @@ class TrackingController extends GetxController
   }
 
   Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
-    print('LOLL');
-    print(athleteTrackDetails.length);
-    print(athleteTrackDetails.map((element) => element.location));
     if (trackingDetails == null) return;
     if(firstTime && athleteTrackDetails.isNotEmpty) {
-      print('okok');
       currentII++;
-      print(athleteTrackDetails.map((element) => element.location));
       return;
     }
 
@@ -164,8 +159,6 @@ class TrackingController extends GetxController
     for (final AppAthleteDb entrant in entrants) {
       entrantsIds.add(entrant.athleteId);
     }
-    print(entrantsIds);
-    print('entrantsIds');
     final body = {
       'race_id': eventId,
       'web_tracking': true,
@@ -186,7 +179,6 @@ class TrackingController extends GetxController
       });
       athleteTrackDetails.refresh();
     }
-    print("LOL2");
     update();
   }
 
@@ -203,13 +195,9 @@ class TrackingController extends GetxController
   }
 
   AthleteTrackDetail? findTrackDetail(AppAthleteDb entrant) {
-    print(entrant.athleteId);
-    print(athleteTrackDetails.value.map((x) => x.track));
-    print('LOL8');
     final trackDetail = athleteTrackDetails.value
         .firstWhereOrNull((x) => x.track == entrant.athleteId);
     if (trackDetail != null) {
-      print('WHY');
       return trackDetail;
     }
     getAthleteTrackingInfo();

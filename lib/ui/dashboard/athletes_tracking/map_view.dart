@@ -156,7 +156,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
           currentSpeed = widget.athleteTrackDetail.speed ?? 0;
           createLineStringPath();
           newProgressUpdate = true;
-          print('kiki');
           moveMarker();
         });
       });
@@ -172,7 +171,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     currentSpeed = widget.athleteTrackDetail.speed ?? 0;
     createLineStringPath();
     newProgressUpdate = true;
-    print('kiki');
     moveMarker();
   }
 
@@ -234,7 +232,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-    print('LOL4');
 
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
