@@ -29,8 +29,7 @@ class MoreMenuTile extends StatelessWidget {
         Icons.arrow_circle_right_outlined,
         color: (Theme.of(context).brightness == Brightness.light
                 ? AppColors.accentDark
-                : AppColors.accentLight)
-            .withOpacity(0.5),
+                : AppColors.accentLight),
         size: 4.5.w,
       ),
     );
