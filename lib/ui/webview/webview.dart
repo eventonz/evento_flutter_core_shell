@@ -11,8 +11,10 @@ class WebviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    
     final controller = Get.put(WebviewController());
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(),
       body: SafeArea(
         child: Obx(() {
