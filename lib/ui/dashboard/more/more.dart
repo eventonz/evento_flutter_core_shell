@@ -21,6 +21,8 @@ class MoreScreen extends StatelessWidget {
     final MoreController controller = Get.find();
     return Scaffold(
         appBar: AppBar(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
           automaticallyImplyLeading: false,
           title: const AppText(
             'Menu',
