@@ -65,8 +65,10 @@ class MoreScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: controller.moreDetails.items!.length + 1,
                   separatorBuilder: (_, i) {
-                    return const Divider(
-                      height: 0,
+                    return Divider(
+                      height: 1,
+                      thickness: .5,
+                      color: Theme.of(context).disabledColor,
                     );
                   },
                   itemBuilder: (_, i) {
