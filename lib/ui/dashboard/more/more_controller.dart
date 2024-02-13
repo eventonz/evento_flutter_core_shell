@@ -93,7 +93,7 @@ class MoreController extends GetxController {
         return;
       } else {
         url =
-            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
+        AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
         Preferences.setString(AppKeys.eventUrl, url);
         AppGlobals.selEventId = int.parse(config.singleEventId!);
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
