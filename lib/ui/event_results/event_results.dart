@@ -43,6 +43,8 @@ class EventResultsScreen extends StatelessWidget {
                     separatorBuilder: (_, i) {
                       return const Divider(
                         height: 1,
+                        thickness: .5,
+                        color: AppColors.greyLight,
                       );
                     },
                     itemBuilder: (_, i) {

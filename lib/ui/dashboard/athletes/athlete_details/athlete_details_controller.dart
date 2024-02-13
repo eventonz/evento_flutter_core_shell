@@ -44,12 +44,13 @@ class AthleteDetailsController extends GetxController
       athleteSplitUrl = AppGlobals.appConfig!.athleteDetails!.url!;
     }
     String mainUrl = athleteSplitUrl.split('?').first;
+    print(mainUrl);
     mainUrl =
-        // 'http://127.0.0.1:8080/api/v3/api.cfm/splits/race/76?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
         '$mainUrl?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
 
     athleteSplitDataSnap.value = DataSnapShot.loading;
     try {
+      print(mainUrl);
       final res = await ApiHandler.genericGetHttp(url: mainUrl);
       if (res.statusCode == 200) {
         detailsTabs.clear();

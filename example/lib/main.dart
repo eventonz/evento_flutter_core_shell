@@ -10,6 +10,7 @@ void main() {
     appName: 'Single Event App',
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
     singleEventId: '116',
+    multiEventListId: null,
     splashImage: 'assets/images/splash_image.png',
   );
 
