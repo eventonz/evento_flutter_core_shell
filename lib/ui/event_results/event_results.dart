@@ -41,10 +41,11 @@ class EventResultsScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     itemCount: eventResults.length,
                     separatorBuilder: (_, i) {
-                      return const Divider(
+                      return  Divider(
                         height: 1,
                         thickness: .5,
-                        color: AppColors.greyLight,
+                        color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.darkgrey :AppColors.greyLight,
                       );
                     },
                     itemBuilder: (_, i) {

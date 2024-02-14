@@ -65,7 +65,11 @@ class AthleteDetailsScreen extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
+              
                 title: AppText(
+                  color:Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack,
                   controller.selEntrant.name,
                   fontWeight: FontWeight.bold,
                   fontSize: 24,

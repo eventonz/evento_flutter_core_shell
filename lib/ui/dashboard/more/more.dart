@@ -71,7 +71,8 @@ class MoreScreen extends StatelessWidget {
                     return Divider(
                       height: 1,
                       thickness: .5,
-                      color: AppColors.greyLight,
+                      color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.darkgrey :AppColors.greyLight,
                     );
                   },
                   itemBuilder: (_, i) {
