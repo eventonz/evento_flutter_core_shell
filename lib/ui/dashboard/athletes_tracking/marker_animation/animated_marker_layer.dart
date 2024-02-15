@@ -61,7 +61,6 @@ class _AnimatedMarkerLayerState<T>
     final markerWidget = (marker.rotate ?? widget.options.rotate ?? false)
         ? Transform.rotate(
       angle: -mapState.rotationRad,
-      origin: /*marker.rotateOrigin*/Offset.zero ?? widget.options.rotateOrigin,
       alignment:
       marker.alignment ?? widget.options.rotateAlignment,
       child: marker.child,
