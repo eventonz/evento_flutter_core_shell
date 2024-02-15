@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_map/plugin_api.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+
 import 'animated_marker_layer_options.dart';
 
 class AnimatedMarkerLayer<T> extends ImplicitlyAnimatedWidget {
@@ -9,18 +10,17 @@ class AnimatedMarkerLayer<T> extends ImplicitlyAnimatedWidget {
     Key? key,
     required this.options,
   }) : super(
-          key: key,
-          duration: options.duration,
-          curve: options.curve,
-        );
+    key: key,
+    duration: options.duration,
+    curve: options.curve,
+  );
 
   @override
-  AnimatedWidgetBaseState createState() => _AnimatedMarkerLayerState();
+  _AnimatedMarkerLayerState<T> createState() => _AnimatedMarkerLayerState<T>();
 }
 
-class _AnimatedMarkerLayerState
-    extends AnimatedWidgetBaseState<AnimatedMarkerLayer>
-    with AutomaticKeepAliveClientMixin {
+class _AnimatedMarkerLayerState<T>
+    extends AnimatedWidgetBaseState<AnimatedMarkerLayer<T>> {
   Tween<double>? _latitude;
   Tween<double>? _longitude;
 
@@ -34,40 +34,39 @@ class _AnimatedMarkerLayerState
   void forEachTween(TweenVisitor<dynamic> visitor) {
     _latitude = visitor(_latitude, widget.options.marker.point.latitude,
             (dynamic value) => Tween<double>(begin: value as double))
-        as Tween<double>?;
+    as Tween<double>?;
     _longitude = visitor(_longitude, widget.options.marker.point.longitude,
             (dynamic value) => Tween<double>(begin: value as double))
-        as Tween<double>?;
+    as Tween<double>?;
   }
 
   @override
-  void didUpdateWidget(covariant AnimatedMarkerLayer oldWidget) {
+  void didUpdateWidget(covariant AnimatedMarkerLayer<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    final map = FlutterMapState.maybeOf(context)!;
-    final pxPoint = map.project(LatLng(latitude, longitude));
-    final width = marker.width - marker.anchor.left;
-    final height = marker.height - marker.anchor.top;
+    final mapState = MapCamera.of(context);
+    final pxPoint = mapState.project(LatLng(latitude, longitude));
+    final width = marker.width - /*(marker).anchor.left*/0;
+    final height = marker.height - /*marker.anchor.top*/0;
     var sw = CustomPoint(pxPoint.x + width, pxPoint.y - height);
     var ne = CustomPoint(pxPoint.x - width, pxPoint.y + height);
-    if (!map.pixelBounds.containsPartialBounds(Bounds(sw, ne))) {
+    if (!mapState.pixelBounds.containsPartialBounds(Bounds(sw, ne))) {
       return const SizedBox();
     }
-    final pos = pxPoint - map.pixelOrigin;
+    final pos = pxPoint - mapState.pixelOrigin.toDoublePoint();
     final markerWidget = (marker.rotate ?? widget.options.rotate ?? false)
-        // Counter rotated marker to the map rotation
         ? Transform.rotate(
-            angle: -map.rotationRad,
-            origin: marker.rotateOrigin ?? widget.options.rotateOrigin,
-            alignment: marker.rotateAlignment ?? widget.options.rotateAlignment,
-            child: marker.builder(context),
-          )
-        : marker.builder(context);
+      angle: -mapState.rotationRad,
+      origin: /*marker.rotateOrigin*/Offset.zero ?? widget.options.rotateOrigin,
+      alignment:
+      marker.alignment ?? widget.options.rotateAlignment,
+      child: marker.child,
+    )
+        : marker.child;
     return Positioned(
       key: marker.key,
       width: marker.width,
@@ -77,7 +76,4 @@ class _AnimatedMarkerLayerState
       child: markerWidget,
     );
   }
-
-  @override
-  bool get wantKeepAlive => true;
 }

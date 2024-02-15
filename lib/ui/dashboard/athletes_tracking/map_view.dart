@@ -67,13 +67,11 @@ class TrackingMapView extends StatelessWidget {
                     for (MapPathMarkers marker in controller.mapPathMarkers)
                       Marker(
                           point: marker.latLng,
-                          builder: (_) {
-                            return CachedNetworkImage(
+                          child: CachedNetworkImage(
                               imageUrl: marker.iconUrl,
                               errorWidget: (context, url, error) =>
                                   const SizedBox(),
-                            );
-                          })
+                            ))
                   ],
                 ),
                 for (AthleteTrackDetail trackDetail
@@ -243,9 +241,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               width: trackDetail.isRaceNoBig() ? 70 : 35,
               height: 35,
               point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
-              builder: (_) {
-
-                return Container(
+              child: Container(
                   decoration: BoxDecoration(
                       color: Theme.of(context).brightness == Brightness.light
                           ? AppColors.accentDark
@@ -260,8 +256,8 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
                           : AppColors.white,
                     ),
                   ),
-                );
-              })),
+                )
+          )),
     );
   }
 }

@@ -95,7 +95,7 @@ class EventMapSheet extends StatelessWidget {
                                     width: 10.w,
                                     height: 10.w,
                                     point: controller.latLng!,
-                                    builder: (_) => Icon(
+                                    child:Icon(
                                       Icons.location_on,
                                       color: AppColors.primary,
                                       size: 10.w,
