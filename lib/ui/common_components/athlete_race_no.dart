@@ -24,7 +24,7 @@ class AthleteRaceNo extends StatelessWidget {
       case AthleteRaceNoStyle.solid:
       case AthleteRaceNoStyle.solidOutlined:
         return Theme.of(Get.context!).brightness == Brightness.light
-            ? AppColors.transparent
+            ? AppColors.grey
             : AppColors.greyLighter;
     }
   }
@@ -58,9 +58,13 @@ class AthleteRaceNo extends StatelessWidget {
       child: Center(
         child: AppText(
           raceNo(),
-          fontSize: 14,
+          fontSize: 16,
           fontWeight: FontWeight.bold,
           textAlign: TextAlign.center,
+          color:Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack,
+          
         ),
       ),
     );

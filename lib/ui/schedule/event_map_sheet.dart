@@ -22,8 +22,8 @@ class EventMapSheet extends StatelessWidget {
       ),
       child: Container(
         color: Theme.of(context).brightness == Brightness.light
-            ? AppColors.white
-            : AppColors.darkBlack,
+            ? AppColors.darkBlack
+            : AppColors.white,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -1,3 +1,4 @@
+import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/ui/common_components/more_menu_tile.dart';
 import 'package:evento_core/ui/common_components/more_menu_title.dart';
@@ -70,7 +71,8 @@ class MoreScreen extends StatelessWidget {
                     return Divider(
                       height: 1,
                       thickness: .5,
-                      color: Theme.of(context).disabledColor,
+                      color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.darkgrey :AppColors.greyLight,
                     );
                   },
                   itemBuilder: (_, i) {
