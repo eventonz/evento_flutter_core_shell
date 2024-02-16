@@ -42,8 +42,11 @@ class SettingsScreen extends StatelessWidget {
                     )),
               ),
             ),
-            const Divider(
-              height: 0,
+             Divider(
+                height: 1,
+                thickness: .5,
+                color: Theme.of(context).brightness == Brightness.light
+                                ?  AppColors.darkgrey :AppColors.greyLight
             ),
             ListTile(
               onTap: controller.getAthletes,
@@ -86,8 +89,11 @@ class SettingsScreen extends StatelessWidget {
                   AppCheckBox(isChecked: controller.showAthleteInfo.value)),
             ),
             */
-            const Divider(
-              height: 0,
+            Divider(
+                height: 1,
+                thickness: .5,
+                color: Theme.of(context).brightness == Brightness.light
+                                ?  AppColors.darkgrey :AppColors.greyLight
             ),
             const TitleDivider(title: 'Notification Settings'),
             ListTile(
@@ -98,7 +104,12 @@ class SettingsScreen extends StatelessWidget {
               trailing: Obx(() => AppCheckBox(
                   isChecked: controller.eventNotificationstatus.value)),
             ),
-            const Divider(),
+            Divider(
+                height: 1,
+                thickness: .5,
+                color: Theme.of(context).brightness == Brightness.light
+                                ?  AppColors.darkgrey :AppColors.greyLight
+            ),
             ListTile(
               title: AppText(
                 'Version ${AppGlobals.appVersion}',

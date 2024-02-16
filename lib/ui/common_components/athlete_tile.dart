@@ -91,7 +91,7 @@ class AthleteTile extends StatelessWidget {
                   ),
                   Icon(
                     Icons.keyboard_arrow_right_rounded,
-                    color: AppColors.primary.withOpacity(0.5),
+                    color: AppColors.primary,
                     size: 4.5.w,
                   ),
                 ],

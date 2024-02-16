@@ -129,78 +129,99 @@ class AthletesScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-          if(controller.showAdvert.value)
-            GestureDetector(
-              onTap: () {
-                controller.trackEvent('click');
-                launchUrl(Uri.parse(controller.advertList.where((element) => element.type == AdvertType.banner).first.openUrl!));
-              },
-              child: Container(
-                child: Image(image: CachedNetworkImageProvider(controller.advertList.where((element) => element.type == AdvertType.banner).first.image!), width: double.maxFinite),
-              ),
-            ),
-          Obx(() => controller.dashboardController.athleteSnapData.value ==
-                  DataSnapShot.loading
-              ? Container(
-            height: MediaQuery.of(context).size.height*0.5,
-                child: const Center(
-                    child: CircularProgressIndicator(color: Colors.black,),
+                if (controller.showAdvert.value)
+                  GestureDetector(
+                    onTap: () {
+                      controller.trackEvent('click');
+                      launchUrl(Uri.parse(controller.advertList
+                          .where((element) => element.type == AdvertType.banner)
+                          .first
+                          .openUrl!));
+                    },
+                    child: Container(
+                      child: Image(
+                          image: CachedNetworkImageProvider(controller
+                              .advertList
+                              .where((element) =>
+                                  element.type == AdvertType.banner)
+                              .first
+                              .image!),
+                          width: double.maxFinite),
+                    ),
                   ),
-              )
-              : GetBuilder<AthletesController>(
-                  builder: (_) {
-                    return StreamBuilder<List<AppAthleteDb>>(
-                        stream: controller
-                            .watchAthletes(controller.searchText.value),
-                        builder: (_, snap) {
-                          if (snap.hasData) {
-                            List<AppAthleteDb> entrants = snap.data!;
-                            if (entrants.isEmpty) {
-                              return Center(
-                                  child: NoDataFoundLayout(
-                                title: controller.showFollowed.value
-                                    ? 'No ${controller.athleteText} being followed'
-                                    : null,
-                                errorMessage: controller.showFollowed.value
-                                    ? 'When you follow ${controller.athleteText}, you\'ll see them here.'
-                                    : 'No ${controller.athleteText} Found At Present',
-                              ));
-                            }
-                            entrants =
-                                controller.sortFilterAthletes(entrants);
-                            return ListView.separated(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 0),
-                                itemCount: entrants.length + 2,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                separatorBuilder: (_, i) {
-                                  return const Divider(
-                                    height: 1,
-                                  );
-                                },
-                                itemBuilder: (_, i) {
-                                  if (i == 0 || i == entrants.length + 1) {
-                                    return const SizedBox.shrink();
+                Obx(() => controller
+                            .dashboardController.athleteSnapData.value ==
+                        DataSnapShot.loading
+                    ? Container(
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: Colors.black,
+                          ),
+                        ),
+                      )
+                    : GetBuilder<AthletesController>(
+                        builder: (_) {
+                          return StreamBuilder<List<AppAthleteDb>>(
+                              stream: controller
+                                  .watchAthletes(controller.searchText.value),
+                              builder: (_, snap) {
+                                if (snap.hasData) {
+                                  List<AppAthleteDb> entrants = snap.data!;
+                                  if (entrants.isEmpty) {
+                                    return Center(
+                                        child: NoDataFoundLayout(
+                                      title: controller.showFollowed.value
+                                          ? 'No ${controller.athleteText} being followed'
+                                          : null,
+                                      errorMessage: controller
+                                              .showFollowed.value
+                                          ? 'When you follow ${controller.athleteText}, you\'ll see them here.'
+                                          : 'No ${controller.athleteText} Found At Present',
+                                    ));
                                   }
-                                  final entrant = entrants[i - 1];
-                                  return AthleteTile(
-                                      entrant: entrant,
-                                      onTap: () => controller
-                                          .toAthleteDetails(entrant));
-                                });
-                          } else if (snap.hasError) {
-                            return Center(
-                                child:
-                                    RetryLayout(onTap: controller.update));
-                          } else {
-                            return const Center(
-                                child:
-                                    CircularProgressIndicator.adaptive());
-                          }
-                        });
-                  },
-                )),
+                                  entrants =
+                                      controller.sortFilterAthletes(entrants);
+                                  return ListView.separated(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 0),
+                                      itemCount: entrants.length + 2,
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      separatorBuilder: (_, i) {
+                                        return Divider(
+                                            height: 1,
+                                            thickness: .5,
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? AppColors.darkgrey
+                                                    : AppColors.greyLight);
+                                      },
+                                      itemBuilder: (_, i) {
+                                        if (i == 0 ||
+                                            i == entrants.length + 1) {
+                                          return const SizedBox.shrink();
+                                        }
+                                        final entrant = entrants[i - 1];
+                                        return AthleteTile(
+                                            entrant: entrant,
+                                            onTap: () => controller
+                                                .toAthleteDetails(entrant));
+                                      });
+                                } else if (snap.hasError) {
+                                  return Center(
+                                      child: RetryLayout(
+                                          onTap: controller.update));
+                                } else {
+                                  return const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive());
+                                }
+                              });
+                        },
+                      )),
               ],
             ),
           ),
