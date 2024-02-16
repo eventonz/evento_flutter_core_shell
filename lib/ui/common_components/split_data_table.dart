@@ -206,9 +206,7 @@ class SummaryDataContent extends StatelessWidget {
             ],
           ),
         ),
-        const Divider(
-          height: 0,
-        ),
+        const Divider(height: 1, thickness: .5, color: AppColors.greyLight),
         if (top.infoBar.isNotEmpty) ...[
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
@@ -237,8 +235,10 @@ class SummaryDataContent extends StatelessWidget {
           )
         ],
         const Divider(
-          height: 0,
-        )
+                height: 1,
+                thickness: .5,
+                color: AppColors.greyLight
+            ),
       ],
     );
   }
@@ -253,8 +253,7 @@ class SummaryDataContent extends StatelessWidget {
         itemCount: dataList.length,
         separatorBuilder: (_, i) {
           return const Divider(
-            height: 0,
-          );
+              height: 1, thickness: .5, color: AppColors.greyLight);
         },
         itemBuilder: (_, i) {
           final split = dataList[i];

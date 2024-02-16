@@ -65,9 +65,8 @@ class AthleteDetailsScreen extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
-              
                 title: AppText(
-                  color:Theme.of(context).brightness == Brightness.light
+                  color: Theme.of(context).brightness == Brightness.light
                       ? AppColors.white
                       : AppColors.darkBlack,
                   controller.selEntrant.name,
@@ -160,11 +159,13 @@ class AthleteDetailsScreen extends StatelessWidget {
                                   shrinkWrap: true,
                                   itemCount: details.length,
                                   separatorBuilder: (_, i) {
-                                    return const Divider(
-                                      indent: 2,
-                                      endIndent: 2,
-                                      height: 8,
-                                    );
+                                    return Divider(
+                                        height: 1,
+                                        thickness: .5,
+                                        color: Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.darkgrey
+                                            : AppColors.greyLight);
                                   },
                                   itemBuilder: (_, i) {
                                     return AthleteDetailsTile(
@@ -252,8 +253,11 @@ class AthleteDetailsScreen extends StatelessWidget {
                                 const SizedBox(
                                   height: 16,
                                 ),
-                                const Divider(
-                                  height: 0,
+                                Divider(
+                                    height: 1,
+                                    thickness: .5,
+                                    color: Theme.of(context).brightness == Brightness.light
+                                                    ?  AppColors.darkgrey :AppColors.grey
                                 ),
                               ],
                             );
@@ -292,8 +296,11 @@ class AthleteDetailsScreen extends StatelessWidget {
                           indicatorColor: AppColors.primary,
                           tabs: controller.detailsTabs,
                         ),
-                        const Divider(
-                          height: 0,
+                        Divider(
+                            height: 1,
+                            thickness: .5,
+                            color: Theme.of(context).brightness == Brightness.light
+                                            ?  AppColors.darkgrey :AppColors.greyLight
                         ),
                       ],
                     );
