@@ -19,6 +19,8 @@ class EventResultsScreen extends StatelessWidget {
     final controller = Get.put(EventResultsController());
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.white,
         title: AppText(
           controller.item.title!,
           style: AppStyles.appBarTitle,

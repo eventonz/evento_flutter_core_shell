@@ -21,6 +21,8 @@ class ScheduleScreen extends StatelessWidget {
     final controller = Get.put(ScheduleController());
     return Scaffold(
         appBar: AppBar(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
           title: const AppText(
             'Schedule',
             style: AppStyles.appBarTitle,

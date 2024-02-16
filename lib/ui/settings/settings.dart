@@ -18,6 +18,8 @@ class SettingsScreen extends StatelessWidget {
     final controller = Get.put(SettingsController());
     return Scaffold(
         appBar: AppBar(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
           title: const AppText(
             'Settings',
             style: AppStyles.appBarTitle,

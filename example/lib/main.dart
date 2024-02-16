@@ -9,7 +9,7 @@ void main() {
     oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
     appName: 'Single Event App',
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-    singleEventId: '93',
+    singleEventId: '95',
     multiEventListId: null,
     splashImage: 'assets/images/splash_image.png',
   );

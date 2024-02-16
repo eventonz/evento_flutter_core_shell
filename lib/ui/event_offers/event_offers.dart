@@ -19,6 +19,8 @@ class EventOffersScreen extends StatelessWidget {
     final controller = Get.put(EventOffersController());
     return Scaffold(
       appBar: AppBar(
+        surfaceTintColor: Colors.white,
+        shadowColor: Colors.white,
         title: const AppText(
           '',
           style: AppStyles.appBarTitle,

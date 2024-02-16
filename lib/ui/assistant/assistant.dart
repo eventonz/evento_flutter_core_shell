@@ -22,6 +22,8 @@ class AssistantScreen extends StatelessWidget {
                                 ? AppColors.darkBlack
                                 : AppColors.white,
         appBar: AppBar(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
            title: const AppText(
             '',
             style: AppStyles.appBarTitle,
