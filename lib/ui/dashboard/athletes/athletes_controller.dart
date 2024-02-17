@@ -14,6 +14,7 @@ import '../../../core/utils/preferences.dart';
 
 class AthletesController extends GetxController {
   late String athleteText;
+  late String athletelabel;
   final TextEditingController searchTextEditController =
       TextEditingController();
   final searchText = ''.obs;
@@ -33,30 +34,32 @@ class AthletesController extends GetxController {
 
   void checkAdvert([bool impression = true]) {
     advertList = AppGlobals.appConfig!.adverts!;
-    var advert = advertList.where((element) => element.type == AdvertType.banner).firstOrNull;
-    if(advert != null) {
-      if(advert.frequency == AdvertFrequency.daily) {
+    var advert = advertList
+        .where((element) => element.type == AdvertType.banner)
+        .firstOrNull;
+    if (advert != null) {
+      if (advert.frequency == AdvertFrequency.daily) {
         String lastOpen = Preferences.getString('last_banner_open', '');
-        if(lastOpen != '') {
+        if (lastOpen != '') {
           DateTime dateTime = DateTime.parse(lastOpen);
-          if(dateTime.day == DateTime.now().day) {
+          if (dateTime.day == DateTime.now().day) {
             return;
           }
         }
         Preferences.setString('last_banner_open', DateTime.now().toString());
       }
       showAdvert.value = true;
-      if(impression) {
+      if (impression) {
         trackEvent('impression');
       }
     }
   }
 
   Future<void> trackEvent(String action) async {
-    String url = 'adverts/${advertList.where((element) => element.type == AdvertType.banner).first.id}';
-    final res = await ApiHandler.postHttp(
-        endPoint: url, body: {
-      'action' : action,
+    String url =
+        'adverts/${advertList.where((element) => element.type == AdvertType.banner).first.id}';
+    final res = await ApiHandler.postHttp(endPoint: url, body: {
+      'action': action,
     });
     print(res.data);
   }

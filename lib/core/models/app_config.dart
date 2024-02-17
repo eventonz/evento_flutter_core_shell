@@ -307,6 +307,7 @@ class Athletes {
   int? lastUpdated;
   String? follow;
   String? url;
+  String? label;
   bool? showAthletes;
 
   Athletes(
@@ -314,6 +315,7 @@ class Athletes {
       this.text,
       this.lastUpdated,
       this.follow,
+      this.label,
       this.url,
       this.showAthletes});
 
@@ -323,6 +325,7 @@ class Athletes {
     lastUpdated = json['last_updated'];
     follow = json['follow'];
     url = json['url'];
+    label = json['label'];
     showAthletes = json['show_athletes'];
   }
 
@@ -333,6 +336,7 @@ class Athletes {
     data['last_updated'] = lastUpdated;
     data['follow'] = follow;
     data['url'] = url;
+    data['label'] = label;
     data['show_athletes'] = showAthletes;
     return data;
   }

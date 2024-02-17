@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/advert.dart';
+import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
@@ -24,6 +25,8 @@ class AthletesScreen extends StatelessWidget {
     return Column(
       children: [
         AppBar(
+          surfaceTintColor: Colors.white,
+          shadowColor: Colors.white,
           automaticallyImplyLeading: false,
           title: AppText(
             controller.athleteText,
@@ -122,6 +125,7 @@ class AthletesScreen extends StatelessWidget {
                   : AppColors.greyLighter,
               borderRadius: BorderRadius.circular(10)),
         ),
+
         SizedBox(
           height: 1.h,
         ),
@@ -149,6 +153,20 @@ class AthletesScreen extends StatelessWidget {
                           width: double.maxFinite),
                     ),
                   ),
+                  // This is the last updated value for athletes 
+                  Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(child: Text('Last Updated',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Theme.of(context).brightness == Brightness.light
+                                          ? AppColors.greyLighter
+                                          : AppColors.darkBlack
+                  
+                                        )
+                          )
+                    ),
+                ),
                 Obx(() => controller
                             .dashboardController.athleteSnapData.value ==
                         DataSnapShot.loading

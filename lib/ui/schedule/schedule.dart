@@ -94,7 +94,7 @@ class ScheduleScreen extends StatelessWidget {
                         child: scheduleItems.isEmpty
                             ? const Center(
                                 child: NoDataFoundLayout(
-                                  errorMessage: 'No events found for today',
+                                  errorMessage: 'No Schedule found',
                                 ),
                               )
                             : ListView.builder(
@@ -131,10 +131,13 @@ class ScheduleScreen extends StatelessWidget {
                                                     .scheduleDataItems.length +
                                                 2,
                                             separatorBuilder: (_, i) {
-                                              return const Divider(
-                                                height: 1,
-                                                indent: 10,
-                                              );
+                                              return Divider(
+                                            indent:10,
+                                            height: 1,
+                                            thickness: .5,
+                                            color:Theme.of(context).brightness == Brightness.light
+                                                    ? AppColors.darkgrey
+                                                    : AppColors.greyLight);
                                             },
                                             itemBuilder: (_, i) {
                                               if (i == 0 ||
