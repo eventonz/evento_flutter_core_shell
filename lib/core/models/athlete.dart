@@ -46,6 +46,7 @@ class Entrants {
       this.canFollow = true});
 
   Entrants.fromJson(Map<String, dynamic> json) {
+    print(json);
     info = json['info'] ?? '';
     number = json['number'] ?? '';
     name = json['name'] ?? '';

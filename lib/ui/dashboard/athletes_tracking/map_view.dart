@@ -74,9 +74,15 @@ class TrackingMapView extends StatelessWidget {
                             ))
                   ],
                 ),
-                for (AthleteTrackDetail trackDetail
+                Stack(
+                  children: [
+                    for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                      AnimatedMarkerView(athleteTrackDetail: trackDetail)
+                  ],
+                ),
+                /*for (AthleteTrackDetail trackDetail
                     in controller.athleteTrackDetails.value)
-                  AnimatedMarkerView(athleteTrackDetail: trackDetail)
+                  AnimatedMarkerView(athleteTrackDetail: trackDetail)*/
               ],
             ),
             // Positioned(

@@ -8,7 +8,6 @@ class Advert {
   Advert({this.openUrl});
 
   Advert.fromJson(Map<String, dynamic> json) {
-    print(json);
     id = json['id'];
     type = json['type'];
     openUrl = json['open_url'];

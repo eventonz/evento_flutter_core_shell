@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/routes/routes.dart';
@@ -22,7 +24,14 @@ class AthletesController extends GetxController {
   late List<Advert> advertList;
   final showFollowed = false.obs;
   final showAdvert = false.obs;
+  final offset = 0.obs;
+  int lastOffset = -1;
+  final limit = 200;
   final DashboardController dashboardController = Get.find();
+  final ScrollController scrollController = ScrollController();
+
+  List<AppAthleteDb> accumulatedList = [];
+
 
   @override
   void onInit() {
@@ -30,6 +39,19 @@ class AthletesController extends GetxController {
     entrantsList = AppGlobals.appConfig!.athletes!;
     athleteText = AppHelper.setAthleteMenuText(entrantsList.text);
     checkAdvert(true);
+    scrollController.addListener(onScroll);
+  }
+
+  void onScroll() {
+    print(scrollController.offset);
+    print(scrollController.position.maxScrollExtent);
+
+    if((scrollController.position.maxScrollExtent-scrollController.offset) < 400) {
+      if(lastOffset == offset.value) {
+        offset.value = offset.value + limit;
+        update();
+      }
+    }
   }
 
   void checkAdvert([bool impression = true]) {
@@ -71,16 +93,45 @@ class AthletesController extends GetxController {
 
   Future<void> searchAthletes(String val) async {
     searchText.value = val;
+    offset.value = 0;
+    lastOffset = -1;
+    accumulatedList = [];
     update();
   }
 
   Stream<List<AppAthleteDb>> watchAthletes(String val) async* {
-    yield* DatabaseHandler.getAthletes(val, showFollowed.value);
+    print('RUNNED');
+    print('$lastOffset');
+    print('$offset');
+
+    StreamController<List<AppAthleteDb>> controller = StreamController<List<AppAthleteDb>>();
+
+    if(lastOffset == offset.value) {
+      controller.add(accumulatedList);
+      yield* controller.stream;
+      return;
+    }
+    await for (final list in DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value)) {
+      // Accumulate items into a list
+      Future.delayed(const Duration(milliseconds: 100), () {
+        lastOffset = offset.value;
+        print(lastOffset);
+        print('lastOffset');
+      });
+      for (final item in list) {
+        accumulatedList.add(item);
+        yield List.from(accumulatedList); // Yield a copy of the accumulated list
+      }
+    }
+    //yield* DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value);
   }
 
   void clearSearchField() {
     searchText.value = '';
     searchTextEditController.clear();
+    offset.value = 0;
+    lastOffset = -1;
+    accumulatedList = [];
     update();
   }
 

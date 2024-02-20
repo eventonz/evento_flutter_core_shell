@@ -50,7 +50,7 @@ class AthleteRaceNo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: width,
-      padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 12),
       decoration: BoxDecoration(
           color: backgroundColor(),
           borderRadius: BorderRadius.circular(4),

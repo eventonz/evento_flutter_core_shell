@@ -73,16 +73,19 @@ class Detail {
 
 class Embed {
   String? url;
+  String? linkType;
 
-  Embed({this.url});
+  Embed({this.url, this.linkType});
 
   Embed.fromJson(Map<String, dynamic> json) {
     url = json['url'];
+    linkType = json['link_type'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['url'] = url;
+    data['link_type'] = linkType;
     return data;
   }
 }

@@ -114,6 +114,7 @@ class EventResultsController extends GetxController {
   void showWebSheet(EventResult result) {
     final title = result.listTitle?.title;
     final url = result.detail!.embed!.url!;
-    AppHelper.showWebBottomSheet(title, url);
+    final linkType = result.detail!.embed!.linkType;
+    AppHelper.showWebBottomSheet(title, url, linkType);
   }
 }

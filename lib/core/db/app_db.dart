@@ -83,7 +83,7 @@ class DatabaseHandler {
       });
       stopwatch.stop();
       
-     //   print('Function Execution Time save athletes : ${stopwatch.elapsed}');
+      //print('Function Execution Time save athletes : ${stopwatch.elapsed}');
       
 
     if (followedAthletes.isNotEmpty) {
@@ -118,39 +118,33 @@ class DatabaseHandler {
   }
 
   static Stream<List<AppAthleteDb>> getAthletes(
-      String searchValue, bool isFollowed) async* {
+      String searchValue, bool isFollowed, {int? offset, int? limit}) async* {
     searchValue = searchValue.toLowerCase();
+    Stopwatch stopWatch = Stopwatch();
+    stopWatch.start();
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
-    if (searchValue.isEmpty) {
+
+    var query = _db.athleteDb.select()
+      ..where((tbl) => tbl.eventId.equals(eventId))
+      ..orderBy([(athlete) => OrderingTerm(expression: athlete.raceno)]);
+
+    if (searchValue.isNotEmpty) {
       if (isFollowed) {
-        yield* (_db.athleteDb.select()
-              ..where((tbl) => tbl.isFollowed.equals(isFollowed))
-              ..where((tbl) => tbl.isFollowed.equals(isFollowed))
-              ..where((tbl) => tbl.eventId.equals(eventId))
-              ..orderBy(
-                  [(athlete) => OrderingTerm(expression: athlete.raceno)]))
-            .watch();
+        query.where((tbl) => tbl.searchTag.equals(searchValue));
+      } else {
+        query.where((tbl) => tbl.searchTag.contains(searchValue));
       }
-      yield* (_db.athleteDb.select()
-            ..where((tbl) => tbl.eventId.equals(eventId))
-            ..orderBy([(athlete) => OrderingTerm(expression: athlete.raceno)]))
-          .watch();
-    } else {
-      if (isFollowed) {
-        yield* (_db.athleteDb.select()
-              ..where((tbl) => tbl.searchTag.equals(searchValue))
-              ..where((tbl) => tbl.isFollowed.equals(isFollowed))
-              ..where((tbl) => tbl.eventId.equals(eventId))
-              ..orderBy(
-                  [(athlete) => OrderingTerm(expression: athlete.raceno)]))
-            .watch();
-      }
-      yield* (_db.athleteDb.select()
-            ..where((tbl) => tbl.searchTag.contains(searchValue))
-            ..where((tbl) => tbl.eventId.equals(eventId))
-            ..orderBy([(athlete) => OrderingTerm(expression: athlete.raceno)]))
-          .watch();
     }
+
+    if (isFollowed) {
+      query.where((tbl) => tbl.isFollowed.equals(isFollowed));
+    }
+
+    if(limit != null) {
+      query.limit(limit, offset: offset);
+    }
+
+    yield* query.watch();
   }
 
   static Stream<AppAthleteDb> getSingleAthlete(String athleteId) async* {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/core/initial_binding.dart';
 import 'package:evento_core/core/res/app_styles.dart';
@@ -7,6 +9,7 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:uni_links/uni_links.dart';
 
 class EventoApp extends StatelessWidget {
   const EventoApp({super.key, required this.appEventConfig});

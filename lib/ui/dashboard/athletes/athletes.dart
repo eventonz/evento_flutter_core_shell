@@ -131,6 +131,7 @@ class AthletesScreen extends StatelessWidget {
         ),
         Expanded(
           child: SingleChildScrollView(
+            controller: controller.scrollController,
             child: Column(
               children: [
                 if (controller.showAdvert.value)
@@ -156,7 +157,7 @@ class AthletesScreen extends StatelessWidget {
                   // This is the last updated value for athletes 
                   Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(child: Text('Last Updated',
+                  child: Container(child: Text('Last Updated: ${controller.entrantsList.label ?? ''}',
                                         style: TextStyle(
                                           fontSize: 12,
                                           color: Theme.of(context).brightness == Brightness.light
@@ -184,6 +185,8 @@ class AthletesScreen extends StatelessWidget {
                               stream: controller
                                   .watchAthletes(controller.searchText.value),
                               builder: (_, snap) {
+                                print(snap.data?.length);
+                                print(snap.hasData);
                                 if (snap.hasData) {
                                   List<AppAthleteDb> entrants = snap.data!;
                                   if (entrants.isEmpty) {
@@ -200,6 +203,7 @@ class AthletesScreen extends StatelessWidget {
                                   }
                                   entrants =
                                       controller.sortFilterAthletes(entrants);
+
                                   return ListView.separated(
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 0),

@@ -46,6 +46,7 @@ class EventOffersController extends GetxController {
   }
 
   void showWebSheet(String? title, String url) {
+    print('oka');
     AppHelper.showWebBottomSheet(title, url);
   }
 
