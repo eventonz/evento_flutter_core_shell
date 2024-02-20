@@ -65,6 +65,7 @@ class AthletesController extends GetxController {
         if (lastOpen != '') {
           DateTime dateTime = DateTime.parse(lastOpen);
           if (dateTime.day == DateTime.now().day) {
+            showAdvert.value = false;
             return;
           }
         }
@@ -74,6 +75,8 @@ class AthletesController extends GetxController {
       if (impression) {
         trackEvent('impression');
       }
+    } else {
+      showAdvert.value = false;
     }
   }
 
