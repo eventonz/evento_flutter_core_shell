@@ -91,6 +91,9 @@ class AthletesController extends GetxController {
 
   void toggleFollowed() {
     showFollowed.value = !showFollowed.value;
+    offset.value = 0;
+    lastOffset = -1;
+    accumulatedList = [];
     update();
   }
 
@@ -122,7 +125,13 @@ class AthletesController extends GetxController {
         print('lastOffset');
       });
       for (final item in list) {
-        accumulatedList.add(item);
+        int index = accumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
+        if(index == -1) {
+          accumulatedList.add(item);
+        } else {
+          accumulatedList.removeAt(index);
+          accumulatedList.insert(index, item);
+        }
         yield List.from(accumulatedList); // Yield a copy of the accumulated list
       }
     }
