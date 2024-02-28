@@ -21,6 +21,7 @@ class AthleteDetailsScreen extends StatelessWidget {
     final controller = Get.put(AthleteDetailsController());
     return Scaffold(
       appBar: AppBar(
+         surfaceTintColor: Colors.white,
         actions: [
           StreamBuilder<AppAthleteDb>(
               stream:
@@ -65,6 +66,7 @@ class AthleteDetailsScreen extends StatelessWidget {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverAppBar(
+                surfaceTintColor: Colors.white,
                 title: AppText(
                   color: Theme.of(context).brightness == Brightness.light
                       ? AppColors.white
@@ -81,6 +83,7 @@ class AthleteDetailsScreen extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  
                   children: [
                     const SizedBox(
                       height: 10,
@@ -277,6 +280,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                 ),
               ),
               SliverAppBar(
+                surfaceTintColor: Colors.white,
                 automaticallyImplyLeading: false,
                 pinned: true,
                 titleSpacing: 0,
@@ -289,11 +293,17 @@ class AthleteDetailsScreen extends StatelessWidget {
                         TabBar(
                           controller: controller.tabController,
                           enableFeedback: true,
-                          labelColor: AppColors.primary,
+                          labelColor: Theme.of(context).brightness == Brightness.light
+                                                    ? AppColors.accentDark
+                                                    : AppColors.accentLight,
                           unselectedLabelColor:
-                              AppColors.primary.withOpacity(0.6),
+                              Theme.of(context).brightness == Brightness.light
+                                                    ? AppColors.accentDark.withOpacity(0.8)
+                                                    : AppColors.accentLight.withOpacity(0.8),
                           indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorColor: AppColors.primary,
+                          indicatorColor: Theme.of(context).brightness == Brightness.light
+                                                    ? AppColors.accentDark.withOpacity(0.8)
+                                                    : AppColors.accentLight.withOpacity(0.8),
                           tabs: controller.detailsTabs,
                         ),
                         Divider(

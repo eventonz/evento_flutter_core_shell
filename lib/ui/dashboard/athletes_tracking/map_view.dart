@@ -58,7 +58,7 @@ class TrackingMapView extends StatelessWidget {
                         color: Theme.of(context).brightness == Brightness.light
                             ? AppColors.accentDark
                             : AppColors.accentLight,
-                        strokeWidth: 4.0,
+                        strokeWidth: 2.0,
                       ),
                   ],
                 ),
