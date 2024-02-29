@@ -30,8 +30,6 @@ class DashboardScreen extends StatelessWidget {
       controller.setMiniPlayerConfig(AppGlobals.appConfig!.miniPlayerConfig);
     }
 
-    print("hello");
-
     Get.put(TrackingController());
     return Scaffold(
         body: Stack(
