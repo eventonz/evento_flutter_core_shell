@@ -9,14 +9,14 @@ import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../common_components/no_data_found_layout.dart';
-import 'event_results_controller.dart';
+import 'list_page_controller.dart';
 
-class EventResultsScreen extends StatelessWidget {
-  const EventResultsScreen({Key? key}) : super(key: key);
+class ListPageScreen extends StatelessWidget {
+  const ListPageScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(EventResultsController());
+    final controller = Get.put(ListPageController());
     return Scaffold(
       appBar: AppBar(
         surfaceTintColor: Colors.white,

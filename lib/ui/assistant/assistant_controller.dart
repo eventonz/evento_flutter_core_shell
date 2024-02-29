@@ -10,6 +10,10 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
+import '../../core/utils/api_handler.dart';
+import '../../core/utils/app_global.dart';
+import '../../core/utils/preferences.dart';
+
 class AssistantController extends GetxController {
   late String url;
   final messagesSnapshot = DataSnapShot.loading.obs;
@@ -85,50 +89,71 @@ class AssistantController extends GetxController {
     addDefaultMessage();
   }
 
+  Future<void> callServer(String message) async {
+    String url = 'assistant';
+
+    final res = await ApiHandler.postHttp(
+        endPoint: url, body: {
+        'request' : message,
+        'race_id' : Preferences.getInt(AppKeys.eventId, 0),
+        'player_id' : AppGlobals.oneSignalUserId,
+    });
+    print(res.data);
+  }
+
   void sendMessage() async {
-    if (messageText.value.isEmpty) return;
-    final userMessage = ChatMessageM(role: 'user', content: messageText.value);
-    chatMessages.add(userMessage);
-    DatabaseHandler.insertChatMessage(userMessage);
-    messageTextEditingController.clear();
-    messageText.value = '';
-    scrollToBottom();
 
-    final headers = {
-      'content-Type': 'application/json',
-      'x-api-key': 'sec_qDPiWawARnBc2qT1iVDDOVHaiumJ0Tdr'
-    };
+    try {
+      if (messageText.value.isEmpty) return;
+      final userMessage = ChatMessageM(
+          role: 'user', content: messageText.value);
+      chatMessages.add(userMessage);
+      DatabaseHandler.insertChatMessage(userMessage);
+      messageTextEditingController.clear();
+      messageText.value = '';
+      scrollToBottom();
 
-    final data = {
-      'stream': true,
-      'sourceId': item.sourceId,
-      'messages': parsedMessages(chatMessages),
-    };
-    assistantResponseSnapshot.value = DataSnapShot.loading;
-    final response = await dio.post(
-      'https://api.chatpdf.com/v1/chats/message',
-      data: data,
-      options: Options(headers: headers, responseType: ResponseType.stream),
-    );
-    if (response.statusCode == 200) {
-      final Stream stream = response.data.stream;
-      String message = '';
-      final assistantMessage =
-          ChatMessageM(role: 'assistant', content: message);
-      chatMessages.add(assistantMessage);
-      stream.listen((chunk) {
-        final decodedChunk = utf8.decode(chunk);
-        message = message + decodedChunk;
-        chatMessages.last.content = message;
-        update();
-        scrollToBottom();
-      }, onDone: () {
-        debugPrint('Stream completed.');
-        DatabaseHandler.insertChatMessage(assistantMessage);
-        assistantResponseSnapshot.value = DataSnapShot.loaded;
-      });
-    } else {
-      assistantResponseSnapshot.value = DataSnapShot.error;
+      final headers = {
+        'content-Type': 'application/json',
+        'x-api-key': 'sec_qDPiWawARnBc2qT1iVDDOVHaiumJ0Tdr'
+      };
+
+      callServer(messageText.value);
+
+      final data = {
+        'stream': true,
+        'sourceId': item.sourceId,
+        'messages': parsedMessages(chatMessages),
+      };
+      assistantResponseSnapshot.value = DataSnapShot.loading;
+      final response = await dio.post(
+        'https://api.chatpdf.com/v1/chats/message',
+        data: data,
+        options: Options(headers: headers, responseType: ResponseType.stream),
+      );
+      if (response.statusCode == 200) {
+        final Stream stream = response.data.stream;
+        String message = '';
+        final assistantMessage =
+        ChatMessageM(role: 'assistant', content: message);
+        chatMessages.add(assistantMessage);
+        stream.listen((chunk) {
+          final decodedChunk = utf8.decode(chunk);
+          message = message + decodedChunk;
+          chatMessages.last.content = message;
+          update();
+          scrollToBottom();
+        }, onDone: () {
+          debugPrint('Stream completed.');
+          DatabaseHandler.insertChatMessage(assistantMessage);
+          assistantResponseSnapshot.value = DataSnapShot.loaded;
+        });
+      } else {
+        assistantResponseSnapshot.value = DataSnapShot.error;
+      }
+    } catch (e) {
+      print(((e as DioException).response?.data as ResponseBody));
+
     }
   }
 

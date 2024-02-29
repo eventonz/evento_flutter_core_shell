@@ -16,7 +16,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import '../../core/utils/helpers.dart';
 
-class EventResultsController extends GetxController {
+class ListPageController extends GetxController {
   late Items item;
   List<EventResult> eventResults = [];
   final dataSnapshot = DataSnapShot.loading.obs;

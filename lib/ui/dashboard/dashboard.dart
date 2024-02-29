@@ -44,7 +44,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: CircleAvatar(
-                        radius: 5.5.w,
+                        radius: 22,
                         backgroundColor:
                             Theme.of(context).brightness == Brightness.light
                                 ? AppColors.black.withOpacity(0.8)

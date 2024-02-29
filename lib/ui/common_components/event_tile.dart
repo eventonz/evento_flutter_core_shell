@@ -100,29 +100,33 @@ class EventTile extends StatelessWidget {
                     event.tag != null
                         ? Align(
                             alignment: Alignment.topRight,
-                            child: Container(
-                              width: 30.w,
-                              margin: const EdgeInsets.all(12),
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                  color: AppHelper.hexToColor(event.tag!.color),
-                                  borderRadius: BorderRadius.circular(4)),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  BlinkingLiveIcon(
-                                    isBlinking: event.tag!.blinking,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  margin: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                      color: AppHelper.hexToColor(event.tag!.color),
+                                      borderRadius: BorderRadius.circular(4)),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      BlinkingLiveIcon(
+                                        isBlinking: event.tag!.blinking,
+                                      ),
+                                      SizedBox(
+                                        width: 1.4.w,
+                                      ),
+                                      AppText(
+                                        event.tag!.text,
+                                        color: AppColors.white,
+                                        fontWeight: FontWeight.w600,
+                                      )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 1.4.w,
-                                  ),
-                                  AppText(
-                                    event.tag!.text,
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.w600,
-                                  )
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           )
                         : const SizedBox()

@@ -2,7 +2,7 @@ import 'package:evento_core/ui/assistant/assistant.dart';
 import 'package:evento_core/ui/dashboard/athletes/athlete_details/athlete_details.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:evento_core/ui/event_offers/event_offers.dart';
-import 'package:evento_core/ui/event_results/event_results.dart';
+import 'package:evento_core/ui/list_page/list_page.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:evento_core/ui/landing/landing.dart';
 import 'package:evento_core/ui/miniplayer/miniplayer_screen.dart';
@@ -43,7 +43,7 @@ class PageRouter {
     ),
     GetPage(
       name: Routes.eventResults,
-      page: () => const EventResultsScreen(),
+      page: () => const ListPageScreen(),
     ),
     GetPage(
       name: Routes.eventOffers,

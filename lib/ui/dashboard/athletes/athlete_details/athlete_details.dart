@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/core/db/models/athlete_extra_details.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
@@ -371,6 +372,7 @@ class AthleteDetailsTile extends StatelessWidget {
           ),
           const SizedBox(width: 12),
         ],
+        if(athleteExtraDetails.athleteNumber.isNotEmpty)
         Container(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
             decoration: BoxDecoration(
