@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -48,30 +50,44 @@ class _AnimatedMarkerLayerState<T>
 
   @override
   Widget build(BuildContext context) {
-    final mapState = MapCamera.of(context);
-    final pxPoint = mapState.project(LatLng(latitude, longitude));
-    final width = marker.width - /*(marker).anchor.left*/0;
-    final height = marker.height - /*marker.anchor.top*/0;
-    var sw = CustomPoint(pxPoint.x + width, pxPoint.y - height);
-    var ne = CustomPoint(pxPoint.x - width, pxPoint.y + height);
-    if (!mapState.pixelBounds.containsPartialBounds(Bounds(sw, ne))) {
+    final mapCamera = MapCamera.of(context);
+
+    final width = marker.width;
+    final height = marker.height;
+
+    final left = 0.5 * marker.width * ((marker.alignment ?? Alignment.center).x + 1);
+    final top = 0.5 * marker.height * ((marker.alignment ?? Alignment.center)!.y + 1);
+    final right = marker.width - left;
+    final bottom = marker.height - top;
+
+    // Perform projection
+    final pxPoint = mapCamera.project(marker.point);
+
+    // Cull if out of bounds
+    if (!mapCamera.pixelBounds.containsPartialBounds(
+      Bounds(
+        Point(pxPoint.x + left, pxPoint.y - bottom),
+        Point(pxPoint.x - right, pxPoint.y + top),
+      ),
+    )) {
       return const SizedBox();
     }
-    final pos = pxPoint - mapState.pixelOrigin.toDoublePoint();
+
+    final pos = pxPoint - mapCamera.pixelOrigin.toDoublePoint();
+
     final markerWidget = (marker.rotate ?? widget.options.rotate ?? false)
         ? Transform.rotate(
-      angle: -mapState.rotationRad,
-      alignment:
-      marker.alignment ?? widget.options.rotateAlignment,
+      angle: -mapCamera.rotationRad,
+      alignment: (marker.alignment ?? Alignment.center) * -1,
       child: marker.child,
-    )
-        : marker.child;
+    ) : marker.child;
+
     return Positioned(
       key: marker.key,
       width: marker.width,
       height: marker.height,
-      left: pos.x - width,
-      top: pos.y - height,
+      left: pos.x - right,
+      top: pos.y - bottom,
       child: markerWidget,
     );
   }

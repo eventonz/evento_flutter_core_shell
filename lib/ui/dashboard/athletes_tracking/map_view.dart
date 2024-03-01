@@ -74,11 +74,13 @@ class TrackingMapView extends StatelessWidget {
                             ))
                   ],
                 ),
-                Stack(
-                  children: [
-                    for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
-                      AnimatedMarkerView(athleteTrackDetail: trackDetail)
-                  ],
+                MobileLayerTransformer(
+                  child: Stack(
+                    children: [
+                      for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                        AnimatedMarkerView(athleteTrackDetail: trackDetail)
+                    ],
+                  ),
                 ),
                 /*for (AthleteTrackDetail trackDetail
                     in controller.athleteTrackDetails.value)
