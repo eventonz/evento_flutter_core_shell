@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import '../../evento_app.dart';
 import '../../youtube_player_flutter/src/player/youtube_player.dart';
 import 'athletes/athletes_controller.dart';
 import 'dashboard_controller.dart';
@@ -25,6 +26,10 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
     final controllerA = Get.put(AthletesController());
+
+    if(!notificationHandlerController.isClosed) {
+      notificationHandlerController.add(true);
+    }
 
     if(controller.miniPlayerConfig.value != null) {
       controller.setMiniPlayerConfig(AppGlobals.appConfig!.miniPlayerConfig);

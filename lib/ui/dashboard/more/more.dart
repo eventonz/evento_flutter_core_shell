@@ -20,6 +20,7 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MoreController controller = Get.find();
+    print( controller.moreDetails.items?.map((e) => e.id));
     return Scaffold(
         appBar: AppBar(
           surfaceTintColor: Colors.white,

@@ -11,6 +11,10 @@ import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:uni_links/uni_links.dart';
 
+final StreamController<bool> notificationHandlerController = StreamController<bool>.broadcast();
+
+bool canRunNotificationHandler = false;
+
 class EventoApp extends StatelessWidget {
   const EventoApp({super.key, required this.appEventConfig});
   final AppEventConfig appEventConfig;
@@ -18,6 +22,15 @@ class EventoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppGlobals.appEventConfig = appEventConfig;
+
+    notificationHandlerController.stream.listen((value) {
+      if (value) {
+        notificationHandlerController.close();
+        print('canRunNotificationHandler $value');
+        canRunNotificationHandler = true;
+      }
+    });
+
     return LayoutBuilder(
       builder: (_, constraints) {
         return OrientationBuilder(

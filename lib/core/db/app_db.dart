@@ -155,6 +155,14 @@ class DatabaseHandler {
         .watchSingle();
   }
 
+  static Future<AppAthleteDb?> getSingleAthleteOnce(String athleteId) async {
+    final eventId = Preferences.getInt(AppKeys.eventId, 0);
+    return await (_db.athleteDb.select()
+      ..where((tbl) => tbl.eventId.equals(eventId))
+      ..where((tbl) => tbl.athleteId.equals(athleteId)))
+        .getSingleOrNull();
+  }
+
   static Stream<List<AppAthleteExtraDetailsDb>> getSingleAthleteDetails(
       String athleteId) async* {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
