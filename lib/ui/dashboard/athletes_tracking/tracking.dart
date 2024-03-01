@@ -11,13 +11,16 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'tracking_controller.dart';
 
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({Key? key}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +48,26 @@ class TrackingScreen extends StatelessWidget {
                       child: Align(
                         alignment: Alignment.bottomCenter,
                         child: CarouselSlider(
+                          carouselController: controller.carouselController,
                           options: CarouselOptions(
                               height: 20.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
+                              onPageChanged: (index, reason) {
+                                final trackDetail = controller.athleteTrackDetails.value[index];;
+                                LatLng latLng = LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0);
+                                final bounds = LatLngBounds.fromPoints([
+                                  latLng,
+                                ]);
+
+                                final constrained = CameraFit.bounds(
+                                  bounds: bounds,
+                                  maxZoom: 15
+                                ).fit(controller.mapController.camera);
+                                controller.animatedMapMove(constrained.center, constrained.zoom);
+                                //controller.mapController.move(controller.mapPathMarkers[index].latLng, 13);
+                              },
                               enlargeFactor: 0.15),
                           items: entrants.map((x) {
                             return Builder(

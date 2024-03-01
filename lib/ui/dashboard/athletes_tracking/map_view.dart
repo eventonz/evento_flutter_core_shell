@@ -32,6 +32,7 @@ class TrackingMapView extends StatelessWidget {
         return Stack(
           children: [
             FlutterMap(
+              mapController: controller.mapController,
               options: MapOptions(
                 center: centerPoint,
                 zoom: 11,
