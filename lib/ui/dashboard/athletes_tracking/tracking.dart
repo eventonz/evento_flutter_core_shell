@@ -91,7 +91,7 @@ class SliderAthleteTile extends StatelessWidget {
 
   String trackDetailsInfo() {
     final infoText = trackDetail!.info ?? '';
-    return infoText.isEmpty ? 'No Data' : infoText.replaceAll('\\n', '\n').trim();
+    return infoText.isEmpty ? 'Tracking Not Available' : infoText.replaceAll('\\n', '\n').trim();
   }
 
   @override
