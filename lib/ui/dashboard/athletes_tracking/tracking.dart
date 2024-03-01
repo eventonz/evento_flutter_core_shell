@@ -55,7 +55,12 @@ class TrackingScreen extends StatelessWidget {
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
                               onPageChanged: (index, reason) {
-                                final trackDetail = controller.athleteTrackDetails.value[index];;
+                                final trackDetail = controller.athleteTrackDetails.value.where((element) {
+                                  print('element.track');
+                                  print(element.track);
+                                  print(entrants[index].athleteId);
+                                  return element.track == entrants[index].athleteId;
+                                }).first;
                                 LatLng latLng = LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0);
                                 final bounds = LatLngBounds.fromPoints([
                                   latLng,
