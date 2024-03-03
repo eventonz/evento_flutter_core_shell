@@ -68,7 +68,7 @@ class TrackingScreen extends StatelessWidget {
 
                                 final constrained = CameraFit.bounds(
                                   bounds: bounds,
-                                  maxZoom: 15
+                                  maxZoom: 13
                                 ).fit(controller.mapController.camera);
                                 controller.animatedMapMove(constrained.center, constrained.zoom);
                                 //controller.mapController.move(controller.mapPathMarkers[index].latLng, 13);
@@ -151,9 +151,12 @@ class SliderAthleteTile extends StatelessWidget {
               ],
             ),
           ),
-          const Divider(
-            height: 0,
-          ),
+           Divider(
+                  height: 1,
+                  thickness: .5,
+                  color: Theme.of(context).brightness == Brightness.light
+                                  ?  AppColors.darkgrey :AppColors.greyLight
+              ),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(

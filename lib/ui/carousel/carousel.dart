@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import '../common_components/no_data_found_layout.dart';
-import 'event_offers_controller.dart';
+import 'carousel_controller.dart';
 
 class EventOffersScreen extends StatelessWidget {
   const EventOffersScreen({Key? key}) : super(key: key);
