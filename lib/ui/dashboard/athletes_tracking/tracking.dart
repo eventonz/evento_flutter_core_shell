@@ -55,22 +55,34 @@ class TrackingScreen extends StatelessWidget {
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
                               onPageChanged: (index, reason) {
-                                final trackDetail = controller.athleteTrackDetails.value.where((element) {
-                                  print('element.track');
-                                  print(element.track);
-                                  print(entrants[index].athleteId);
-                                  return element.track == entrants[index].athleteId;
-                                }).first;
-                                LatLng latLng = LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0);
-                                final bounds = LatLngBounds.fromPoints([
-                                  latLng,
-                                ]);
+                                try {
+                                  final trackDetail = controller
+                                      .athleteTrackDetails.value.where((
+                                      element) {
+                                    print('element.track');
+                                    print(element.track);
+                                    print(entrants[index].athleteId);
+                                    return element.track ==
+                                        entrants[index].athleteId;
+                                  }).first;
+                                  LatLng latLng = LatLng(
+                                      controller.locations[trackDetail.track]
+                                          ?.latitude ?? 0,
+                                      controller.locations[trackDetail.track]
+                                          ?.longitude ?? 0);
+                                  final bounds = LatLngBounds.fromPoints([
+                                    latLng,
+                                  ]);
 
-                                final constrained = CameraFit.bounds(
-                                  bounds: bounds,
-                                  maxZoom: 13
-                                ).fit(controller.mapController.camera);
-                                controller.animatedMapMove(constrained.center, constrained.zoom);
+                                  final constrained = CameraFit.bounds(
+                                      bounds: bounds,
+                                      maxZoom: 15
+                                  ).fit(controller.mapController.camera);
+                                  controller.animatedMapMove(
+                                      constrained.center, constrained.zoom);
+                                } catch (e) {
+                                  //
+                                }
                                 //controller.mapController.move(controller.mapPathMarkers[index].latLng, 13);
                               },
                               enlargeFactor: 0.15),
@@ -151,12 +163,9 @@ class SliderAthleteTile extends StatelessWidget {
               ],
             ),
           ),
-           Divider(
-                  height: 1,
-                  thickness: .5,
-                  color: Theme.of(context).brightness == Brightness.light
-                                  ?  AppColors.darkgrey :AppColors.greyLight
-              ),
+          const Divider(
+            height: 0,
+          ),
           Padding(
             padding: const EdgeInsets.all(12),
             child: Row(
