@@ -102,10 +102,10 @@ class AthleteDetailsScreen extends StatelessWidget {
                                     duration: const Duration(milliseconds: 350),
                                     width: controller.showEnglargedImage.value
                                         ? 100.w
-                                        : 24.w,
+                                        : 20.w,
                                     height: controller.showEnglargedImage.value
-                                        ? 30.h
-                                        : 7.h,
+                                        ? 40.h
+                                        : 8.h,
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6),
                                       child: CachedNetworkImage(
