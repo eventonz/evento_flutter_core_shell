@@ -19,8 +19,8 @@ class EventsScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(physics: const BouncingScrollPhysics(), slivers: [
         SliverAppBar(
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+          surfaceTintColor: Colors.black,
+          shadowColor: Colors.black,
           expandedHeight: 10.h,
           floating: true,
           pinned: true,
