@@ -50,7 +50,7 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 17.h,
+                              height: 16.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
@@ -187,8 +187,8 @@ class SliderAthleteTile extends StatelessWidget {
                               errorWidget: (_, val, val2) => const Center(
                                   child: Center(
                                       child: Icon(FeatherIcons.alertTriangle))),
-                              width: 16.w,
-                              height: 16.w,
+                              width: 15.w,
+                              height: 15.w,
                               fit: BoxFit.cover,
                             ),
                           ),
