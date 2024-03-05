@@ -187,8 +187,8 @@ class SliderAthleteTile extends StatelessWidget {
                               errorWidget: (_, val, val2) => const Center(
                                   child: Center(
                                       child: Icon(FeatherIcons.alertTriangle))),
-                              width: 15.w,
-                              height: 15.w,
+                              width: 14.w,
+                              height: 14.w,
                               fit: BoxFit.cover,
                             ),
                           ),
