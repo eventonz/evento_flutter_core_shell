@@ -56,9 +56,7 @@ class TrackingMapView extends StatelessWidget {
                       Polyline(
                         points: routePath,
                         //color: AppHelper.getRandomLightColor(),
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? AppColors.accentDark
-                            : AppColors.accentLight,
+                        color: AppColors.accentLight,
                         strokeWidth: 2.0,
                       ),
                   ],
@@ -252,17 +250,13 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
               child: Container(
                   decoration: BoxDecoration(
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? AppColors.accentDark
-                          : AppColors.accentLight,
+                      color: AppColors.accentDark,
                       borderRadius: BorderRadius.circular(40)),
                   child: Center(
                     child: AppText(
                       trackDetail.track,
                       fontSize: 16,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? AppColors.black
-                          : AppColors.white,
+                      color: AppColors.white
                     ),
                   ),
                 )
