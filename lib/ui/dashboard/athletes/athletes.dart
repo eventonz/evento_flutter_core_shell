@@ -67,49 +67,51 @@ class AthletesScreen extends StatelessWidget {
         SizedBox(
           height: 1.h,
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          child: TextField(
-            controller: controller.searchTextEditController,
-            onChanged: (val) => controller.searchAthletes(val),
-            cursorColor: AppColors.grey,
-            style: const TextStyle(fontSize: 12),
-            decoration: InputDecoration(
-              isDense: true,
-              hintText: 'Search ${controller.athleteText}',
-              filled: true,
-              fillColor: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.white.withOpacity(0.045)
-                  : AppColors.black.withOpacity(0.045),
-              prefixIcon: Icon(
-                FeatherIcons.search,
-                size: 4.w,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.white
-                    : AppColors.black,
+        Obx(
+          () => controller.showFollowed.value ? const SizedBox() : Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: TextField(
+              controller: controller.searchTextEditController,
+              onChanged: (val) => controller.searchAthletes(val),
+              cursorColor: AppColors.grey,
+              style: const TextStyle(fontSize: 12),
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Search ${controller.athleteText}',
+                filled: true,
+                fillColor: Theme.of(context).brightness == Brightness.light
+                    ? AppColors.white.withOpacity(0.045)
+                    : AppColors.black.withOpacity(0.045),
+                prefixIcon: Icon(
+                  FeatherIcons.search,
+                  size: 4.w,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.black,
+                ),
+                suffixIcon: Obx(() => controller.searchText.value.isEmpty
+                    ? const SizedBox()
+                    : GestureDetector(
+                        onTap: controller.clearSearchField,
+                        child: Icon(
+                          FeatherIcons.x,
+                          size: 4.w,
+                          color: Theme.of(context).brightness == Brightness.light
+                              ? AppColors.white
+                              : AppColors.black,
+                        ))),
+                contentPadding: const EdgeInsets.all(12),
+                focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: AppColors.black, width: 0.8),
+                    borderRadius: BorderRadius.circular(8),
+                    gapPadding: 0),
+                enabledBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: AppColors.transparent, width: 0),
+                    borderRadius: BorderRadius.circular(8),
+                    gapPadding: 0),
               ),
-              suffixIcon: Obx(() => controller.searchText.value.isEmpty
-                  ? const SizedBox()
-                  : GestureDetector(
-                      onTap: controller.clearSearchField,
-                      child: Icon(
-                        FeatherIcons.x,
-                        size: 4.w,
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? AppColors.white
-                            : AppColors.black,
-                      ))),
-              contentPadding: const EdgeInsets.all(12),
-              focusedBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: AppColors.black, width: 0.8),
-                  borderRadius: BorderRadius.circular(8),
-                  gapPadding: 0),
-              enabledBorder: OutlineInputBorder(
-                  borderSide:
-                      const BorderSide(color: AppColors.transparent, width: 0),
-                  borderRadius: BorderRadius.circular(8),
-                  gapPadding: 0),
             ),
           ),
         ),

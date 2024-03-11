@@ -15,6 +15,7 @@ class BlurLoadingOverlay {
   factory BlurLoadingOverlay() => _instance;
 
   static void dismiss() {
+    _loadingText.value ='Please wait...';
     if (_isLoading) {
       Get.back();
       _isLoading = false;
