@@ -41,12 +41,12 @@ class DashboardController extends GetxController {
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
 
-  final menus = [
+  RxList<BottomNavMenu> menus = RxList([
     BottomNavMenu(
         view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home'),
     BottomNavMenu(
         view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu'),
-  ];
+  ]);
 
   @override
   void onInit() {
@@ -99,6 +99,51 @@ class DashboardController extends GetxController {
       });
     }
 
+  }
+
+  void reloadMenu() {
+    var entrantsList = AppGlobals.appConfig!.athletes!;
+    var trackingData = AppGlobals.appConfig!.tracking;
+    final showAthletes = entrantsList.showAthletes ?? false;
+
+    if (showAthletes) {
+      if(menus.where((element) => ![
+        'home',
+        'track',
+        'menu',
+      ].contains(element.label)).isEmpty) {
+        menus.insert(
+          1,
+          BottomNavMenu(
+              view: const AthletesScreen(),
+              iconData: FeatherIcons.users,
+              label: AppHelper.setAthleteMenuText(entrantsList.text)),
+        );
+      }
+    } else {
+      menus.removeWhere((element) => ![
+        'home',
+        'track',
+        'menu',
+      ].contains(element.label));
+    }
+
+      if(trackingData != null) {
+        print('trackingData');
+        if(menus.where((element) => element.label == 'track').isEmpty) {
+          menus.insert(
+            showAthletes ? 2 : 1,
+            BottomNavMenu(
+                view: const TrackingScreen(),
+                iconData: FeatherIcons.navigation,
+                label: 'track'),
+          );
+        }
+      } else {
+        menus.removeWhere((element) => element.label == 'track');
+      }
+      update();
+      //dashboardController.menus.removeAt(1);
   }
 
   void setMiniPlayerConfig(MiniPlayerConfig? config) {

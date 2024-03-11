@@ -27,53 +27,56 @@ class AppBottomNav extends StatelessWidget {
                   offset: const Offset(0, -10))
             ]),
         height: 7.5.h,
-        child: Row(
-          children: [
-            for (BottomNavMenu menu in controller.menus)
-              Obx(() => Visibility(
-                    visible: true,
-                    child: Expanded(
-                        child: Visibility(
+        child: Obx(
+          () => Row(
+
+            children: [
+              for (BottomNavMenu menu in controller.menus)
+                Visibility(
                       visible: true,
-                      child: InkWell(
-                        onTap: () {
-                          controller.selectMenu(menu);
-                        },
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(menu.iconData,
-                                  color: controller.selMenu.value == menu
-                                      ? (Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.accentDark
-                                          : AppColors.accentLight)
-                                      : Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.greyLight.withOpacity(0.4)
-                                          : AppColors.grey.withOpacity(0.8)),
-                              const SizedBox(
-                                height: 4,
-                              ),
-                              AppText(menu.label.capitalize!,
-                                  fontSize: 10,
-                                  color: controller.selMenu.value == menu
-                                      ? (Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.accentDark
-                                          : AppColors.accentLight)
-                                      : Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.greyLight.withOpacity(0.4)
-                                          : AppColors.grey.withOpacity(0.8))
-                            ],
+                      child: Expanded(
+                          child: Visibility(
+                        visible: true,
+                        child: InkWell(
+                          onTap: () {
+                            controller.selectMenu(menu);
+                          },
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(menu.iconData,
+                                    color: controller.selMenu.value == menu
+                                        ? (Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.accentDark
+                                            : AppColors.accentLight)
+                                        : Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.greyLight.withOpacity(0.4)
+                                            : AppColors.grey.withOpacity(0.8)),
+                                const SizedBox(
+                                  height: 4,
+                                ),
+                                AppText(menu.label.capitalize!,
+                                    fontSize: 10,
+                                    color: controller.selMenu.value == menu
+                                        ? (Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.accentDark
+                                            : AppColors.accentLight)
+                                        : Theme.of(context).brightness ==
+                                                Brightness.light
+                                            ? AppColors.greyLight.withOpacity(0.4)
+                                            : AppColors.grey.withOpacity(0.8))
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    )),
-                  ))
-          ],
+                      )),
+                    )
+            ],
+          ),
         ),
       ),
     );

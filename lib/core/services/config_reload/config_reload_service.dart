@@ -13,8 +13,11 @@ import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 
+import '../../../ui/dashboard/athletes/athletes.dart';
+import '../../../ui/dashboard/athletes_tracking/tracking.dart';
 import '../../utils/app_global.dart';
 
 class ConfigReload extends GetxController with WidgetsBindingObserver {
@@ -91,6 +94,9 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
     final MoreController moreController = Get.find();
     moreController.doRrefresh();
+
+    final DashboardController dashboardController = Get.find();
+    dashboardController.reloadMenu();
 
     await Future.delayed(const Duration(seconds: 1));
     if (newConfigLastUpdated != oldConfigLastUpdated) {
