@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/services/config_reload/config_reload_service.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
@@ -57,27 +58,48 @@ class TrackingMapView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TrackingController controller = Get.find();
+    final ConfigReload reloadController = Get.find();
     final mapDataSnap = controller.mapDataSnap;
 
-    List<LatLng> bounds = [];
+    print('bounds');
     return Obx(() {
+      List<LatLng> bounds = [];
+
+      print('bounds');
+
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final centerPoint = controller.initialPathCenterPoint();
           controller.routePathsCordinates.values.forEach((element) {
             bounds.addAll(element);
           });
-          /*Future.delayed(const Duration(milliseconds: 100), () {
-            controller.mapController.fitCamera(CameraFit.insideBounds(
-              padding: const EdgeInsets.all(200),
-              bounds: LatLngBounds.fromPoints(bounds)));
-          });*/
+          if(reloadController.reloaded) {
+            reloadController.reloaded = false;
+            try {
+              Future.delayed(const Duration(milliseconds: 100), () {
+                print('Future.delayed');
+                controller.mapController.move(centerPoint,
+                    dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
+                        {'height': MediaQuery
+                            .of(context)
+                            .size
+                            .height,
+                          'width': MediaQuery
+                              .of(context)
+                              .size
+                              .width}) * 1.02);
+              });
+            } catch (e) {
+              //
+            }
+          }
+
         return Stack(
           children: [
             FlutterMap(
               mapController: controller.mapController,
               options: MapOptions(
-                center: centerPoint,
-                zoom: dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
+                initialCenter: centerPoint,
+                initialZoom: dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
     {'height' : MediaQuery.of(context).size.height,
       'width' : MediaQuery.of(context).size.width})*1.02,
                 minZoom: 8,

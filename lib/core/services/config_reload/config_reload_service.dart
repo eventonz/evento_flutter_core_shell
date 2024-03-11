@@ -20,6 +20,8 @@ import '../../utils/app_global.dart';
 class ConfigReload extends GetxController with WidgetsBindingObserver {
   late AppLifecycleState cycleState;
 
+  bool reloaded = false;
+
   @override
   void onInit() {
     super.onInit();
@@ -84,6 +86,8 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     final TrackingController trackingController = Get.find();
     trackingController.onInit();
     trackingController.getRoutePaths();
+
+    reloaded = true;
 
     final MoreController moreController = Get.find();
     moreController.doRrefresh();
