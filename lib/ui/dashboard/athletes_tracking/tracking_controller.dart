@@ -36,7 +36,6 @@ class TrackingController extends GetxController
   List<MapPathMarkers> mapPathMarkers = [];
   Map<String, List<LatLng>> routePathsCordinates = {};
   bool animated = false;
-  bool fitted = false;
   Map<String, LatLng> locations = {};
 
   MapController mapController = MapController();

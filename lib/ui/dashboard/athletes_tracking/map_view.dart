@@ -1,5 +1,7 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -22,32 +24,62 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class TrackingMapView extends StatelessWidget {
   const TrackingMapView({super.key});
 
+  double dgetBoundsZoomLevel(LatLngBounds bounds, mapDim) {
+    var WORLD_DIM = Map.from(mapDim);
+    WORLD_DIM['width'] = WORLD_DIM['width'];
+    WORLD_DIM['height'] = WORLD_DIM['height'];
+    var ZOOM_MAX = 21;
+
+    double latRad(lat) {
+      var sin2 = sin(lat * pi / 180);
+      var radX2 = log((1 + sin2) / (1 - sin2)) / 2;
+      return max(min(radX2, pi), - pi) / 2;
+    }
+
+    double zoom(mapPx, worldPx, fraction) {
+      return (log(mapPx / worldPx / fraction) / ln2).floorToDouble();
+    }
+
+    var ne = bounds.northEast;
+    var sw = bounds.southWest;
+
+    var latFraction = (latRad(ne.latitude) - latRad(sw.latitude)) / pi;
+
+    var lngDiff = ne.longitude - sw.longitude;
+    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+    double latZoom = zoom(mapDim['height'], WORLD_DIM['height'], latFraction);
+    double lngZoom = zoom(mapDim['width'], WORLD_DIM['width'], lngFraction);
+
+    return min(latZoom, lngZoom);
+  }
+
   @override
   Widget build(BuildContext context) {
     final TrackingController controller = Get.find();
     final mapDataSnap = controller.mapDataSnap;
+
+    List<LatLng> bounds = [];
     return Obx(() {
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final centerPoint = controller.initialPathCenterPoint();
-        if(!controller.fitted) {
-          controller.fitted = true;
-          List<LatLng> bounds = [];
           controller.routePathsCordinates.values.forEach((element) {
             bounds.addAll(element);
           });
-          Future.delayed(const Duration(milliseconds: 100), () {
+          /*Future.delayed(const Duration(milliseconds: 100), () {
             controller.mapController.fitCamera(CameraFit.insideBounds(
               padding: const EdgeInsets.all(200),
               bounds: LatLngBounds.fromPoints(bounds)));
-          });
-        }
+          });*/
         return Stack(
           children: [
             FlutterMap(
               mapController: controller.mapController,
               options: MapOptions(
                 center: centerPoint,
-                zoom: 11,
+                zoom: dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
+    {'height' : MediaQuery.of(context).size.height,
+      'width' : MediaQuery.of(context).size.width})*1.02,
                 minZoom: 8,
                 maxZoom: 18,
               ),
@@ -69,7 +101,7 @@ class TrackingMapView extends StatelessWidget {
                         points: routePath,
                         //color: AppHelper.getRandomLightColor(),
                         color: AppColors.accentDark,
-                        strokeWidth: 2.0,
+                        strokeWidth: 3.5,
                       ),
                   ],
                 ),
@@ -111,7 +143,7 @@ class TrackingMapView extends StatelessWidget {
             //         )),
             //   ),
             // ),
-            Positioned(
+            /*Positioned(
               right: 2.w,
               top: 2.w,
               child: SafeArea(
@@ -124,7 +156,7 @@ class TrackingMapView extends StatelessWidget {
                       color: AppColors.black,
                     )),
               ),
-            ),
+            ),*/
           ],
         );
       } else if (mapDataSnap.value == DataSnapShot.error) {
