@@ -120,12 +120,10 @@ class MoreController extends GetxController {
   }
 
   Future<void> toSettingsScreen() async {
-    final config = AppGlobals.appEventConfig;
     await FirebaseAnalytics.instance.logEvent(
     name: "opened_settings",
     parameters: {
-         "event_id": config.singleEventId!,
-
+         "event_id": Preferences.getInt(AppKeys.eventId, 0),
     },
   );
     Get.toNamed(Routes.settings);
