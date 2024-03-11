@@ -29,6 +29,18 @@ class TrackingMapView extends StatelessWidget {
     return Obx(() {
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final centerPoint = controller.initialPathCenterPoint();
+        if(!controller.fitted) {
+          controller.fitted = true;
+          List<LatLng> bounds = [];
+          controller.routePathsCordinates.values.forEach((element) {
+            bounds.addAll(element);
+          });
+          Future.delayed(const Duration(milliseconds: 100), () {
+            controller.mapController.fitCamera(CameraFit.insideBounds(
+              padding: const EdgeInsets.all(200),
+              bounds: LatLngBounds.fromPoints(bounds)));
+          });
+        }
         return Stack(
           children: [
             FlutterMap(
@@ -41,8 +53,8 @@ class TrackingMapView extends StatelessWidget {
               ),
               children: [
                 TileLayer(
-                  urlTemplate:
-                      "https://api.mapbox.com/styles/v1/jethro0056/${controller.currentStyle.value}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
+                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      //"https://api.mapbox.com/styles/v1/jethro0056/${controller.currentStyle.value}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
                   subdomains: const ['a', 'b', 'c'],
                   additionalOptions: {
                     'mapStyleId': controller.terrainStyle,
