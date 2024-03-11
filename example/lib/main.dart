@@ -3,13 +3,11 @@ import 'package:evento_core/evento_app.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-
-
     final eventConfig = AppEventConfig(
     oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
     appName: 'Single Event App',
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-    singleEventId: '105',
+    singleEventId: '60',
     multiEventListId: null,
     splashImage: 'assets/images/splash_image.png',
   );

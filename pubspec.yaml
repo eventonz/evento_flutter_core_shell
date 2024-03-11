@@ -33,7 +33,7 @@ dependencies:
     git:
       url: git@github.com:coding-master15/geojson.git
   carousel_slider: ^4.2.1
-  firebase_core: ^2.25.4
+  firebase_core: ^2.27.0
   firebase_crashlytics: ^3.4.15
   sqlite3_flutter_libs: ^0.5.8
   drift_sqflite: ^2.0.1
