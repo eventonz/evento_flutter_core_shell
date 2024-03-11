@@ -105,7 +105,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
     try {
       BlurLoadingOverlay.updateLoaderText(
-          'Updating ${AppHelper.setAthleteMenuText(entrantsList.text)} List...');
+          'Updating ${AppHelper.setAthleteMenuText(entrantsList.text)} List');
       final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
       final athletesM = AthletesM.fromJson(res.data);
       await DatabaseHandler.insertAthletes(athletesM.entrants!);

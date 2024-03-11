@@ -159,7 +159,7 @@ class SettingsController extends GetxController {
     try {
       final athleteLabel = AppHelper.setAthleteMenuText(entrantsList.text);
       athletesloading.value = DataSnapShot.loading;
-      ToastUtils.show('Refreshing $athleteLabel List...');
+      ToastUtils.show('Updating $athleteLabel List');
       final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
       final athletesM = AthletesM.fromJson(res.data);
       await DatabaseHandler.insertAthletes(athletesM.entrants!);
@@ -168,7 +168,7 @@ class SettingsController extends GetxController {
       ToastUtils.show('Refreshed $athleteLabel List');
     } catch (e) {
       athletesloading.value = DataSnapShot.error;
-      ToastUtils.show('Unable to reload athletes, please try again later');
+      ToastUtils.show('Error loading athletes');
     }
   }
 }

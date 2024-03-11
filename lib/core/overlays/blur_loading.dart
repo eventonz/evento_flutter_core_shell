@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 class BlurLoadingOverlay {
   static final BlurLoadingOverlay _instance = BlurLoadingOverlay.internal();
   static bool _isLoading = false;
-  static final _loadingText = 'Please wait...'.obs;
+  static final _loadingText = 'Updating'.obs;
 
   BlurLoadingOverlay.internal();
 

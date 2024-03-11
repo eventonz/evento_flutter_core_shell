@@ -1,8 +1,19 @@
 import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/evento_app.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized(); 
+  try {
+    await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  } catch(e) {
+    print("Failed to initialize Firebase: $e");
+  }
 
 
     final eventConfig = AppEventConfig(
@@ -44,6 +55,7 @@ void main() {
     splashImage: 'assets/images/splash_image.png',
   );
 */
+
   runApp(EventoApp(
     appEventConfig: eventConfig,
   ));
