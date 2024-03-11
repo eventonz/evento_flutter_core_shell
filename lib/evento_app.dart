@@ -9,7 +9,7 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:uni_links/uni_links.dart';
+
 
 final StreamController<bool> notificationHandlerController = StreamController<bool>.broadcast();
 

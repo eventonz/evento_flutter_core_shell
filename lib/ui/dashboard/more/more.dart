@@ -32,6 +32,7 @@ class MoreScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
+              
                 onPressed: controller.toSettingsScreen,
                 icon: const Icon(
                   FeatherIcons.settings,

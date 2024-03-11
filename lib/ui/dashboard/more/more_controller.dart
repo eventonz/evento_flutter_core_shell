@@ -12,6 +12,9 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:video_player/video_player.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:evento_core/core/utils/app_global.dart';
+
 
 import '../../../core/models/storyslider.dart';
 
@@ -116,7 +119,15 @@ class MoreController extends GetxController {
         : AppColors.accentDark;
   }
 
-  void toSettingsScreen() {
+  Future<void> toSettingsScreen() async {
+    final config = AppGlobals.appEventConfig;
+    await FirebaseAnalytics.instance.logEvent(
+    name: "opened_settings",
+    parameters: {
+         "event_id": config.singleEventId!,
+
+    },
+  );
     Get.toNamed(Routes.settings);
   }
 }
