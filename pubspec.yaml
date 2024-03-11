@@ -35,6 +35,7 @@ dependencies:
   carousel_slider: ^4.2.1
   firebase_core: ^2.27.0
   firebase_crashlytics: ^3.4.15
+  firebase_analytics: ^10.8.9
   sqlite3_flutter_libs: ^0.5.8
   drift_sqflite: ^2.0.1
   drift: ^2.11.1
