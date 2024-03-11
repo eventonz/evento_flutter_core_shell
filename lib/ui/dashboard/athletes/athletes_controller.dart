@@ -94,8 +94,11 @@ class AthletesController extends GetxController {
     offset.value = 0;
     lastOffset = -1;
     accumulatedList = [];
+    searchText.value = '';
+    searchTextEditController.clear();
     update();
   }
+
 
   Future<void> searchAthletes(String val) async {
     searchText.value = val;
@@ -106,9 +109,7 @@ class AthletesController extends GetxController {
   }
 
   Stream<List<AppAthleteDb>> watchAthletes(String val) async* {
-    print('RUNNED');
-    print('$lastOffset');
-    print('$offset');
+    print('watchAthletes');
 
     StreamController<List<AppAthleteDb>> controller = StreamController<List<AppAthleteDb>>();
 
@@ -121,8 +122,6 @@ class AthletesController extends GetxController {
       // Accumulate items into a list
       Future.delayed(const Duration(milliseconds: 100), () {
         lastOffset = offset.value;
-        print(lastOffset);
-        print('lastOffset');
       });
       for (final item in list) {
         int index = accumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
@@ -132,8 +131,9 @@ class AthletesController extends GetxController {
           accumulatedList.removeAt(index);
           accumulatedList.insert(index, item);
         }
-        yield List.from(accumulatedList); // Yield a copy of the accumulated list
+        // Yield a copy of the accumulated list
       }
+      yield List.from(accumulatedList);
     }
     //yield* DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value);
   }
