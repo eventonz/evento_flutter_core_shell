@@ -87,7 +87,7 @@ class DashboardScreen extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     const SizedBox(height: 10),
-                                    Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                    Text('${controller.miniPlayerConfig.value!.title ?? ''}',
                                       style: TextStyle(
                                         fontSize: 13,
                                       ), maxLines: 2, overflow: TextOverflow.ellipsis,),
