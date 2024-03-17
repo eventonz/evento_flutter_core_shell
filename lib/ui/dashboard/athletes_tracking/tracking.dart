@@ -50,7 +50,7 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 16.h,
+                              height: 17.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,

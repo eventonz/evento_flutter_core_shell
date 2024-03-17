@@ -13,7 +13,15 @@ void main() {
   );*/
 
   // for running multi event app
+  final eventConfig = AppEventConfig(
+    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
+    appName: 'Single Event App',
+    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
+    singleEventId: '60',
+    splashImage: 'assets/images/splash_image.png',
+  );
 
+  /*
     final eventConfig = AppEventConfig(
    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
    appName: 'Multi Event App',
@@ -24,14 +32,8 @@ void main() {
 
 
   // for running single event app
-  /*
-  final eventConfig = AppEventConfig(
-    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
-    appName: 'Single Event App',
-    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-    singleEventId: '91',
-    splashImage: 'assets/images/splash_image.png',
-  );
+
+
 
   for running multi event app
     final eventConfig = AppEventConfig(

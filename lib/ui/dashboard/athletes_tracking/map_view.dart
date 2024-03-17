@@ -317,8 +317,8 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
           trackDetail: trackDetail,
           marker: Marker(
               rotate: true,
-              width: trackDetail.isRaceNoBig() ? 70 : 35,
-              height: 35,
+              width: trackDetail.isRaceNoBig() ? 70 : 40,
+              height: 40,
               point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
               child: Container(
                   decoration: BoxDecoration(
