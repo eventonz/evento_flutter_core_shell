@@ -235,7 +235,9 @@ class ScheduleTile extends StatelessWidget {
                     AppText(
                       getEventTimings(),
                       fontSize: 12,
-                      color: AppColors.grey,
+                      color: Theme.of(context).brightness == Brightness.light
+                                ? AppColors.greyLight
+                                : AppColors.grey,
                     ),
                     const SizedBox(
                       height: 2,
@@ -243,7 +245,7 @@ class ScheduleTile extends StatelessWidget {
                     AppText(
                       item.location!.title!,
                       fontSize: 12,
-                      color: AppColors.grey.withOpacity(0.6),
+                      color: AppColors.grey,
                     ),
                   ],
                 ),

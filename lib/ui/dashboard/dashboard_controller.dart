@@ -174,16 +174,20 @@ class DashboardController extends GetxController {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const AppText(
+            child:  AppText(
               'No thanks',
-                color: AppColors.faceBookColor,
+                color: Theme.of(context).brightness == Brightness.light
+                                ? AppColors.darkgrey
+                                : AppColors.white,
             ),
             onPressed: () => setShowNotification(NotificationStatus.hidden),
           ),
           CupertinoDialogAction(
             child: AppText(
               'Yes',
-              color: AppColors.faceBookColor,
+              color: Theme.of(context).brightness == Brightness.light
+                                ? AppColors.darkgrey
+                                : AppColors.white,
             ),
             onPressed: () => setShowNotification(NotificationStatus.show),
           ),
