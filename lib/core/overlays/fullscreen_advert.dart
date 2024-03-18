@@ -22,7 +22,7 @@ class FullscreenAdvert extends StatefulWidget {
 
 class _FullscreenAdvertState extends State<FullscreenAdvert> {
 
-  int seconds = 8;
+  int seconds = 5;
 
   late Timer timer;
 
