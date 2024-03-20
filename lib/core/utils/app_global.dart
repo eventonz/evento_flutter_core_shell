@@ -18,6 +18,7 @@ class AppGlobals {
   static EventM? eventM;
   static late int selEventId;
   static AppConfig? appConfig;
+  static AppConfig? oldAppConfig;
   static late String appVersion;
   static late String oneSignalUserId;
 

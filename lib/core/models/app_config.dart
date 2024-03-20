@@ -1,4 +1,5 @@
 import 'package:evento_core/core/models/miniplayer.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 
 import 'advert.dart';
 
@@ -74,6 +75,10 @@ class AppConfig {
     }
     return data;
   }
+
+  @override
+  int get hashCode => super.hashCode;
+
 }
 
 class AthleteDetails {
@@ -157,7 +162,19 @@ class Endpoint {
     data['url'] = url;
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Endpoint && other.url == url;
+  }
+
+  @override
+  int get hashCode => super.hashCode;
+
 }
+
 
 class Items {
   String? type;
@@ -242,6 +259,34 @@ class Items {
     }
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Items &&
+        type == other.type &&
+        linkType == other.linkType &&
+        title == other.title &&
+        icon == other.icon &&
+        openExternal == other.openExternal &&
+        id == other.id &&
+        sourceId == other.sourceId &&
+        storySlider == other.storySlider &&
+        link == other.link &&
+        pages == other.pages &&
+        schedule == other.schedule &&
+        carousel == other.carousel &&
+        open == other.open &&
+        actions == other.actions;
+  }
+
+  @override
+  int get hashCode => type.hashCode ^ linkType.hashCode ^ title.hashCode ^
+  icon.hashCode ^ openExternal.hashCode ^ id.hashCode ^ sourceId.hashCode ^
+  storySlider.hashCode ^ link.hashCode ^ pages.hashCode ^ schedule.hashCode ^
+  carousel.hashCode ^ open.hashCode ^ actions.hashCode;
+
 }
 
 class Tracking {
@@ -280,6 +325,26 @@ class Tracking {
     data['paths'] = paths.map((v) => v.toJson()).toList();
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Tracking &&
+        data == other.data &&
+        updateFreq == other.updateFreq &&
+        androidTracking == other.androidTracking &&
+        mapMarkers == other.mapMarkers &&
+        AppHelper.listsAreEqual(paths, other.paths); // Compare paths list
+  }
+
+  @override
+  int get hashCode =>
+      data.hashCode ^
+      updateFreq.hashCode ^
+      androidTracking.hashCode ^
+      mapMarkers.hashCode ^
+      paths.hashCode;
 }
 
 class Paths {
@@ -299,6 +364,18 @@ class Paths {
     data['name'] = name;
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Paths &&
+        url == other.url &&
+        name == other.name;
+  }
+
+  @override
+  int get hashCode => url.hashCode ^ name.hashCode;
 }
 
 class Athletes {
@@ -340,6 +417,29 @@ class Athletes {
     data['show_athletes'] = showAthletes;
     return data;
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Athletes &&
+        edition == other.edition &&
+        text == other.text &&
+        lastUpdated == other.lastUpdated &&
+        follow == other.follow &&
+        url == other.url &&
+        label == other.label &&
+        showAthletes == other.showAthletes;
+  }
+
+  @override
+  int get hashCode => edition.hashCode ^
+  text.hashCode ^
+  lastUpdated.hashCode ^
+  follow.hashCode ^
+  url.hashCode ^
+  label.hashCode ^
+  showAthletes.hashCode;
 }
 
 class Settings {

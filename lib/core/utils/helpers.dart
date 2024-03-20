@@ -33,6 +33,19 @@ class AppHelper {
     return Color(int.parse(color.replaceAll('#', '0xFF')));
   }
 
+  static bool listsAreEqual(List list1, List list2) {
+    if (list1.length != list2.length) {
+    }
+
+    for (int i = 0; i < list1.length; i++) {
+      if (list1[i] != list2[i]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
   static Future<String> getWebTitle(String url) async {
     (_dio.httpClientAdapter as IOHttpClientAdapter).onHttpClientCreate =
         (HttpClient client) {

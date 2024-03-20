@@ -43,13 +43,14 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     try {
       BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final recentlyUpdated = await checkConfigUpdatedDate();
-      if (recentlyUpdated) {
+      if (recentlyUpdated && AppGlobals.oldAppConfig != AppGlobals.appConfig) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         await getAthletes();
         Get.put(AthletesController());
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
       }
+      AppGlobals.oldAppConfig = AppGlobals.appConfig;
       BlurLoadingOverlay.dismiss();
     } catch (e) {
       debugPrint(e.toString());
@@ -78,25 +79,39 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       return false;
     }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+
+    AppGlobals.oldAppConfig ??= AppConfig.fromJson(res.data);
+
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;
     final oldConfigLastUpdated =
         Preferences.getInt(AppKeys.configLastUpdated, 0);
 
-    final HomeController homeController = Get.find();
-    homeController.loadImageLink();
+    if(AppGlobals.oldAppConfig?.home?.image != AppGlobals.appConfig?.home?.image) {
+      final HomeController homeController = Get.find();
+      homeController.loadImageLink();
+    }
 
-    final TrackingController trackingController = Get.find();
-    trackingController.onInit();
-    trackingController.getRoutePaths();
+    if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+      final TrackingController trackingController = Get.find();
+      trackingController.onInit();
+      trackingController.getRoutePaths();
+    }
 
     reloaded = true;
 
-    final MoreController moreController = Get.find();
-    moreController.doRrefresh();
+    if(!AppHelper.listsAreEqual(AppGlobals.oldAppConfig?.menu?.items ?? [], AppGlobals.appConfig?.menu?.items ?? [])) {
+      final MoreController moreController = Get.find();
+      moreController.doRrefresh();
+    }
 
-    final DashboardController dashboardController = Get.find();
-    dashboardController.reloadMenu();
+
+
+    if(AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes || AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+      final DashboardController dashboardController = Get.find();
+      dashboardController.reloadMenu();
+    }
+
 
     await Future.delayed(const Duration(seconds: 1));
     if (newConfigLastUpdated != oldConfigLastUpdated) {

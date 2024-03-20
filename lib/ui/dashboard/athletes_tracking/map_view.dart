@@ -61,7 +61,6 @@ class TrackingMapView extends StatelessWidget {
     final ConfigReload reloadController = Get.find();
     final mapDataSnap = controller.mapDataSnap;
 
-    print('bounds');
     return Obx(() {
       List<LatLng> bounds = [];
 
@@ -76,7 +75,6 @@ class TrackingMapView extends StatelessWidget {
             reloadController.reloaded = false;
             try {
               Future.delayed(const Duration(milliseconds: 100), () {
-                print('Future.delayed');
                 controller.mapController.move(centerPoint,
                     dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
                         {'height': MediaQuery

@@ -43,8 +43,6 @@ class AthletesController extends GetxController {
   }
 
   void onScroll() {
-    print(scrollController.offset);
-    print(scrollController.position.maxScrollExtent);
 
     if((scrollController.position.maxScrollExtent-scrollController.offset) < 400) {
       if(lastOffset == offset.value) {
@@ -109,7 +107,6 @@ class AthletesController extends GetxController {
   }
 
   Stream<List<AppAthleteDb>> watchAthletes(String val) async* {
-    print('watchAthletes');
 
     StreamController<List<AppAthleteDb>> controller = StreamController<List<AppAthleteDb>>();
 
