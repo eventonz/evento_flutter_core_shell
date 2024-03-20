@@ -107,7 +107,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       moreController.doRrefresh();
     }
 
-
+    //testing new branch
 
     if(AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes || AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
       BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
