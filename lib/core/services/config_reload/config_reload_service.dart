@@ -41,7 +41,6 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
   void checkAthletesUpdate() async {
     try {
-      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final recentlyUpdated = await checkConfigUpdatedDate();
       if (recentlyUpdated && AppGlobals.oldAppConfig != AppGlobals.appConfig) {
         DashboardController dashboardController = Get.find();
@@ -88,19 +87,22 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         Preferences.getInt(AppKeys.configLastUpdated, 0);
 
     if(AppGlobals.oldAppConfig?.home?.image != AppGlobals.appConfig?.home?.image) {
+      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final HomeController homeController = Get.find();
       homeController.loadImageLink();
     }
 
     if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final TrackingController trackingController = Get.find();
       trackingController.onInit();
-      trackingController.getRoutePaths();
+      await trackingController.getRoutePaths();
     }
 
     reloaded = true;
 
     if(!AppHelper.listsAreEqual(AppGlobals.oldAppConfig?.menu?.items ?? [], AppGlobals.appConfig?.menu?.items ?? [])) {
+      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final MoreController moreController = Get.find();
       moreController.doRrefresh();
     }
@@ -108,12 +110,14 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
 
     if(AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes || AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final DashboardController dashboardController = Get.find();
       dashboardController.reloadMenu();
     }
 
 
     await Future.delayed(const Duration(seconds: 1));
+    BlurLoadingOverlay.dismiss();
     if (newConfigLastUpdated != oldConfigLastUpdated) {
       Preferences.setInt(AppKeys.configLastUpdated, newConfigLastUpdated);
       return true;
