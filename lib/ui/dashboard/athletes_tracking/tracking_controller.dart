@@ -13,11 +13,13 @@ import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:geodart/geometries.dart';
+import 'package:geodart/geometries.dart' as geodart;
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:screenshot/screenshot.dart';
 
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -38,7 +40,11 @@ class TrackingController extends GetxController
   bool animated = false;
   Map<String, LatLng> locations = {};
 
+  PointAnnotationManager? pointAnnotationManager;
+  PolylineAnnotationManager? polylineAnnotationManager;
+
   MapController mapController = MapController();
+  ScreenshotController screenshotController = ScreenshotController();
 
   CarouselController carouselController = CarouselController();
 
@@ -54,6 +60,7 @@ class TrackingController extends GetxController
     eventId = AppGlobals.selEventId;//
     changeMapStyle(setDefault: true);
     updateStream.add(1);
+    MapboxOptions.setAccessToken(accessToken);
     //if (eventId.isEmpty) {
     //  eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
     //}
@@ -186,25 +193,25 @@ class TrackingController extends GetxController
     });
   }
 
-  LineString? getLineStringForPath(String pathName) {
+  geodart.LineString? getLineStringForPath(String pathName) {
     final routePath = routePathsCordinates[pathName];
     if (routePath != null) {
-      return LineString(routePath
-          .map((point) => Coordinate(point.latitude, point.longitude))
+      return geodart.LineString(routePath
+          .map((point) => geodart.Coordinate(point.latitude, point.longitude))
           .toList());
     } else {
       return null;
     }
   }
 
-  LatLng initialPathCenterPoint() {
+  Position initialPathCenterPoint() {
     final initalPathName = routePathsCordinates.keys.first;
     final lineString = getLineStringForPath(initalPathName);
     if (lineString != null) {
       final point = lineString.center;
-      return LatLng(point.lat, point.lng);
+      return Position(point.lng, point.lat);
     }
-    return LatLng(0, 0);
+    return Position(0, 0);
   }
 
   Stream<List<AppAthleteDb>> watchFollowedAthletes() async* {

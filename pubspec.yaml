@@ -54,6 +54,8 @@ dependencies:
   video_player: ^2.8.2
   flutter_cache_manager: ^3.3.1
   uni_links: ^0.5.1
+  mapbox_maps_flutter: ^1.0.0
+  screenshot: ^2.3.0
 
 dependency_overrides:
   latlong2: ^0.9.0
