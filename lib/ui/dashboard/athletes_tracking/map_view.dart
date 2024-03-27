@@ -71,7 +71,7 @@ class TrackingMapView extends StatelessWidget {
         controller.polylineAnnotationManager?.createMulti(positions
             .map((e) => PolylineAnnotationOptions(
             geometry: LineString(coordinates: e).toJson(),
-            lineColor: Colors.red.value, lineWidth: 3))
+            lineColor: AppColors.accentDark.value, lineWidth: 3))
             .toList());
     }
 
@@ -82,12 +82,14 @@ class TrackingMapView extends StatelessWidget {
           errorWidget: (context, url, error) =>
           const SizedBox(),
         );
-        controller.screenshotController.captureFromWidget(widget).then((value) {
+        widget = Container(width: 30, height: 30, color: Colors.red);
+        controller.screenshotController.captureFromLongWidget(widget).then((value) {
           controller.pointAnnotationManager?.create(PointAnnotationOptions(
               geometry: Point(
                   coordinates: Position(marker.latLng.longitude, marker.latLng.latitude)
               ).toJson(), image: value));
         });
+
       }
     }
 
@@ -119,42 +121,53 @@ class TrackingMapView extends StatelessWidget {
             }
           }
 
-          return MapWidget(
-            //styleUri: MapboxStyles.SATELLITE,
-            onMapCreated: (mapboxMap) {
-              mapboxMap.annotations.createPointAnnotationManager().then((value) async {
-                controller.pointAnnotationManager = value;
-                createMarkers();
-                /*controller.pointAnnotationManager
-                    ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
-              });
-              mapboxMap.annotations.createPolylineAnnotationManager().then((value) async {
-                controller.polylineAnnotationManager = value;
-                createRoute();
-                /*controller.pointAnnotationManager
-                    ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
-              });
-            },
-            cameraOptions: CameraOptions(
-              center: Point(coordinates: centerPoint).toJson(),
-              zoom: dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
-                    'height' : MediaQuery.of(context).size.height,
-                    'width' : MediaQuery.of(context).size.width})*1.02
-            ),
+          return Stack(
+            children: [
+              MapWidget(
+                //styleUri: MapboxStyles.SATELLITE,
+                onMapCreated: (mapboxMap) {
+                  mapboxMap.annotations.createPolylineAnnotationManager().then((value) async {
+                    controller.polylineAnnotationManager = value;
+                    createRoute();
+                    /*controller.pointAnnotationManager
+                        ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
+                  });
+                  mapboxMap.annotations.createPointAnnotationManager().then((value) async {
+                    controller.pointAnnotationManager = value;
+                    createMarkers();
+                    /*controller.pointAnnotationManager
+                        ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
+                  });
+                },
+                cameraOptions: CameraOptions(
+                  center: Point(coordinates: centerPoint).toJson(),
+                  zoom: dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
+                        'height' : MediaQuery.of(context).size.height,
+                        'width' : MediaQuery.of(context).size.width})*1.02
+                ),
+              ),
+              if(controller.pointAnnotationManager != null)
+              for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                AnimatedMarkerView(trackDetail: trackDetail),
+              Positioned(
+                right: 2.w,
+                top: 2.w,
+                child: SafeArea(
+                  child: CupertinoButton(
+                      padding: const EdgeInsets.all(0),
+                      color: AppColors.white,
+                      onPressed: controller.changeMapStyle,
+                      child: const Icon(
+                        Icons.layers_outlined,
+                        color: AppColors.black,
+                      )),
+                )),
+            ],
           );
 
        /* return Stack(
           children: [
             flutter_map.FlutterMap(
-              mapController: controller.mapController,
-              options: flutter_map.MapOptions(
-                initialCenter: centerPoint,
-                initialZoom: dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds),
-    {'height' : MediaQuery.of(context).size.height,
-      'width' : MediaQuery.of(context).size.width})*1.02,
-                minZoom: 8,
-                maxZoom: 18,
-              ),
               children: [
                 flutter_map.TileLayer(
                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -170,30 +183,6 @@ class TrackingMapView extends StatelessWidget {
                       //"https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                   subdomains: const ['a', 'b', 'c'],*//*
 
-                ),
-                flutter_map.PolylineLayer(
-                  polylines: [
-                    for (List<LatLng> routePath
-                        in controller.routePathsCordinates.values)
-                      flutter_map.Polyline(
-                        points: routePath,
-                        //color: AppHelper.getRandomLightColor(),
-                        color: AppColors.accentDark,
-                        strokeWidth: 3.5,
-                      ),
-                  ],
-                ),
-                flutter_map.MarkerLayer(
-                  markers: [
-                    for (MapPathMarkers marker in controller.mapPathMarkers)
-                      flutter_map.Marker(
-                          point: marker.latLng,
-                          child: CachedNetworkImage(
-                              imageUrl: marker.iconUrl,
-                              errorWidget: (context, url, error) =>
-                                  const SizedBox(),
-                            ))
-                  ],
                 ),
                 flutter_map.MobileLayerTransformer(
                   child: Stack(
@@ -247,17 +236,23 @@ class TrackingMapView extends StatelessWidget {
 }
 
 class AnimatedMarkerView extends StatefulWidget {
-  const AnimatedMarkerView({super.key, required this.athleteTrackDetail});
 
-  final AthleteTrackDetail athleteTrackDetail;
+  final AthleteTrackDetail trackDetail;
+  const AnimatedMarkerView({super.key, required this.trackDetail});
 
   @override
   State<AnimatedMarkerView> createState() => _AnimatedMarkerViewState();
 }
 
 class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
-  AthleteTrackDetail get trackDetail => widget.athleteTrackDetail;
+
+  AthleteTrackDetail get trackDetail => widget.trackDetail;
+
   late TrackingController controller = Get.find();
+
+  PointAnnotationManager get annotationManager => controller.pointAnnotationManager!;
+
+  PointAnnotation? annotation;
 
   List<LatLng> get routePath => controller.getAthleteRouthPath(trackDetail);
   geodart.LineString get lineStringPath => createLineStringPath();
@@ -270,6 +265,8 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   double coveredDistance = 0;
   bool newProgressUpdate = false;
 
+  bool disposed = false;
+
   @override
   void initState() {
     super.initState();
@@ -277,34 +274,69 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     setInitialDistance();
     controller.updateStream.stream.listen((event) {
       Future.delayed(const Duration(milliseconds: 0), () {
-        setState(() {
-          oldProgress = widget.athleteTrackDetail.location ?? 0;
-          currentProgress = widget.athleteTrackDetail.location ?? 0;
-          currentSpeed = widget.athleteTrackDetail.speed ?? 0;
-          createLineStringPath();
-          newProgressUpdate = true;
-          moveMarker();
-        });
+        oldProgress = trackDetail.location ?? 0;
+        currentProgress = trackDetail.location ?? 0;
+        currentSpeed = trackDetail.speed ?? 0;
+        createLineStringPath();
+        newProgressUpdate = true;
+        moveMarker();
       });
     });
   }
 
-
   @override
   void didUpdateWidget(covariant AnimatedMarkerView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldProgress = widget.athleteTrackDetail.location ?? 0;
-    currentProgress = widget.athleteTrackDetail.location ?? 0;
-    currentSpeed = widget.athleteTrackDetail.speed ?? 0;
+    oldProgress = trackDetail.location ?? 0;
+    currentProgress = trackDetail.location ?? 0;
+    currentSpeed = trackDetail.speed ?? 0;
     createLineStringPath();
     newProgressUpdate = true;
     moveMarker();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    disposed = true;
   }
 
   void setInitialRouteMarkerPath() {
     final latLng = routePath.first;
     if (controller.locations[trackDetail.track] == null) {
       controller.setLocation(trackDetail.track, latLng);
+    }
+    if(annotation == null) {
+      var widget = Container(width: 20, height: 20, decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.red,
+      ),);
+
+      var widget2 = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.5),
+      ), child: Text('Hello', style: TextStyle(
+        color: Colors.white,
+      ),),);
+
+      controller.screenshotController.captureFromWidget(widget).then((value) async {
+        controller.screenshotController.captureFromWidget(widget2).then((value2) async {
+        annotation = await annotationManager.create(PointAnnotationOptions(
+          image: value,
+          textField: 'Hello',
+          textOffset: [1,-1.3],
+          textEmissiveStrength: 20,
+          textHaloColor: Colors.black.withOpacity(0.5).value,
+          textHaloBlur: 50,
+          textColor: Colors.white.value,
+          textHaloWidth: 120,
+          geometry: Point(
+              coordinates: Position(latLng.longitude, latLng.latitude)
+          ).toJson(),
+        ));
+      });
+      });
     }
   }
 
@@ -325,6 +357,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     if (isAnimatingMarker) return;
     isAnimatingMarker = true;
     while (coveredDistance < lineStringPath.length.toPrecision(4)) {
+      if(disposed) {
+        break;
+      }
       if (newProgressUpdate) {
         setInitialDistance();
         newProgressUpdate = false;
@@ -337,12 +372,14 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       print('---');
       final latLng = getLatlngFromDistance();
       //if (mounted) {
-        await controller.setLocation(trackDetail.track, latLng, wait: true);
-      setState(() {
-
-        });
+      await controller.setLocation(trackDetail.track, latLng, wait: true);
+      annotation?.geometry = Point(
+          coordinates: Position(latLng.longitude, latLng.latitude)
+      ).toJson();
+      if(annotation != null) {
+        annotationManager.update(annotation!);
+      }
       //}
-
     }
     isAnimatingMarker = false;
   }
@@ -359,7 +396,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-
+    return SizedBox();
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
           duration: Duration(milliseconds: 1000),
@@ -371,18 +408,19 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               height: 40,
               point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
               child: Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.accentLight,
-                      borderRadius: BorderRadius.circular(40)),
-                  child: Center(
-                    child: AppText(
+                decoration: BoxDecoration(
+                    color: AppColors.accentLight,
+                    borderRadius: BorderRadius.circular(40)),
+                child: Center(
+                  child: AppText(
                       trackDetail.track,
                       fontSize: 16,
                       color: AppColors.white
-                    ),
                   ),
-                )
+                ),
+              )
           )),
     );
   }
 }
+
