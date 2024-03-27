@@ -23,6 +23,9 @@ class BlurLoadingOverlay {
   }
 
   static Future<void> show({String? loadingText}) async {
+    if(_isLoading) {
+      return;
+    }
     // if (_isLoading) {
     //   Get.back();
     //   _isLoading = false;
