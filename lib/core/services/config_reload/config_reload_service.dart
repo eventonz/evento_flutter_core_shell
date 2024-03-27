@@ -79,7 +79,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
 
-    AppGlobals.oldAppConfig ??= AppConfig.fromJson(res.data);
+    //AppGlobals.oldAppConfig ??= AppConfig.fromJson(res.data);
 
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;
@@ -93,6 +93,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
 
     if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+      print('different');
       BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final TrackingController trackingController = Get.find();
       trackingController.onInit();
