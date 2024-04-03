@@ -93,7 +93,6 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
 
     if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
-      print('different');
       BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
       final TrackingController trackingController = Get.find();
       trackingController.onInit();

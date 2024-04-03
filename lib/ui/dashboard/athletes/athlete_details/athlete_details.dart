@@ -203,14 +203,14 @@ class AthleteDetailsScreen extends StatelessWidget {
                                       horizontal: 16),
                                   duration: const Duration(milliseconds: 200),
                                   decoration: BoxDecoration(
-                                      color: isFollowed
+                                      color: !snap.data!.canFollow ? Theme.of(context).disabledColor : (isFollowed
                                           ? AppColors.transparent
                                           : Theme.of(context).brightness ==
-                                                  Brightness.light
-                                              ? AppColors.accentDark
-                                              : AppColors.accentLight,
+                                          Brightness.light
+                                          ? AppColors.accentDark
+                                          : AppColors.accentLight),
                                       borderRadius: BorderRadius.circular(6),
-                                      border: Border.all(
+                                      border: !snap.data!.canFollow ? null : Border.all(
                                           color: Theme.of(context).brightness ==
                                                   Brightness.light
                                               ? AppColors.accentDark
@@ -251,8 +251,15 @@ class AthleteDetailsScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      onPressed: () => controller.updateAthlete(
+                                      onPressed: !snap.data!.canFollow ? null : () => controller.updateAthlete(
                                           snap.data!, isFollowed)),
+                                ),
+                                if(!snap.data!.canFollow)
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0),
+                                  child: Text('Follow not available until Race Number has been assigned', style: TextStyle(
+                                    fontSize: 12.5,
+                                  ),),
                                 ),
                                 const SizedBox(
                                   height: 16,
