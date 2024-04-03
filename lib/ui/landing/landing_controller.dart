@@ -16,6 +16,9 @@ import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/overlays/toast.dart';
+import '../events/events.dart';
+
 class LandingController extends GetxController {
   bool isPrev = false;
 
@@ -35,37 +38,50 @@ class LandingController extends GetxController {
   }
 
   void navigate() async {
-    if (!isPrev) {
-      await AppGlobals.init();
-    }
-    await checkLaunchState();
-    late String url;
-    final config = AppGlobals.appEventConfig;
-    if (config.multiEventListId != null) {
-      url = Preferences.getString(AppKeys.eventUrl, '');
-      await getEvents(config);
-    } else {
-      url = AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
-      AppGlobals.selEventId = int.parse(config.singleEventId!);
-      Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
-    }
-    AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
-    checkTheme();
-    await Future.delayed(const Duration(milliseconds: 1300));
-    if (url.isEmpty) {
-      Get.offNamed(Routes.events);
-    } else {
-      await getConfigDetails(url);
-      await getAthletes();
-      if (isPrev) {
-        Get.off(
-          () => const DashboardScreen(),
-          routeName: Routes.dashboard,
-          transition: Transition.fadeIn,
-          duration: const Duration(milliseconds: 1000),
-        );
+    try {
+      if (!isPrev) {
+        await AppGlobals.init();
+      }
+      await checkLaunchState();
+      late String url;
+      final config = AppGlobals.appEventConfig;
+      if (config.multiEventListId != null) {
+        url = Preferences.getString(AppKeys.eventUrl, '');
+        await getEvents(config);
       } else {
-        Get.offNamed(Routes.dashboard);
+        url =
+            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
+        AppGlobals.selEventId = int.parse(config.singleEventId!);
+        Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
+      }
+      AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
+      checkTheme();
+      await Future.delayed(const Duration(milliseconds: 1300));
+      if (url.isEmpty) {
+        Get.offNamed(Routes.events);
+      } else {
+        await getConfigDetails(url);
+        await getAthletes();
+        if (isPrev) {
+          Get.off(
+                () => const DashboardScreen(),
+            routeName: Routes.dashboard,
+            transition: Transition.fadeIn,
+            duration: const Duration(milliseconds: 1000),
+          );
+        } else {
+          Get.offNamed(Routes.dashboard);
+        }
+      }
+    } catch (e) {
+      ToastUtils.show(e.toString());
+      if(AppGlobals.appEventConfig.multiEventListId != null) {
+        Preferences.setString(AppKeys.eventUrl, '');
+        Get.off(
+              () => const EventsScreen(),
+          routeName: Routes.events,
+          transition: Transition.leftToRightWithFade,
+        );
       }
     }
   }
