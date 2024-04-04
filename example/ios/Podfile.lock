@@ -14,14 +14,14 @@ PODS:
   - Firebase/Crashlytics (10.22.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 10.22.0)
-  - firebase_analytics (10.8.10):
+  - firebase_analytics (10.10.0):
     - Firebase/Analytics (= 10.22.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.27.1):
+  - firebase_core (2.28.0):
     - Firebase/CoreOnly (= 10.22.0)
     - Flutter
-  - firebase_crashlytics (3.4.19):
+  - firebase_crashlytics (3.5.0):
     - Firebase/Crashlytics (= 10.22.0)
     - firebase_core
     - Flutter
@@ -135,22 +135,12 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
-  - mapbox_maps_flutter (1.0.0):
-    - Flutter
-    - MapboxMaps (~> 11.2.0)
-  - MapboxCommon (24.2.0)
-  - MapboxCoreMaps (11.2.0):
-    - MapboxCommon (~> 24.2)
-  - MapboxMaps (11.2.0):
-    - MapboxCommon (= 24.2.0)
-    - MapboxCoreMaps (= 11.2.0)
-    - Turf (= 2.8.0)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
-  - onesignal_flutter (5.1.2):
+  - onesignal_flutter (5.1.3):
     - Flutter
     - OneSignalXCFramework (= 5.1.3)
   - OneSignalXCFramework (5.1.3):
@@ -232,7 +222,6 @@ PODS:
   - syncfusion_flutter_pdfviewer (0.0.1):
     - Flutter
   - Toast (4.1.0)
-  - Turf (2.8.0)
   - uni_links (0.0.1):
     - Flutter
   - url_launcher_ios (0.0.1):
@@ -252,7 +241,6 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
-  - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - OneSignalXCFramework (< 6.0, >= 5.0.0)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -281,9 +269,6 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
-    - MapboxCommon
-    - MapboxCoreMaps
-    - MapboxMaps
     - nanopb
     - OneSignalXCFramework
     - OrderedSet
@@ -292,7 +277,6 @@ SPEC REPOS:
     - ReachabilitySwift
     - sqlite3
     - Toast
-    - Turf
 
 EXTERNAL SOURCES:
   connectivity_plus:
@@ -311,8 +295,6 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
-  mapbox_maps_flutter:
-    :path: ".symlinks/plugins/mapbox_maps_flutter/ios"
   onesignal_flutter:
     :path: ".symlinks/plugins/onesignal_flutter/ios"
   package_info_plus:
@@ -341,12 +323,12 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/ios"
 
 SPEC CHECKSUMS:
-  connectivity_plus: 07c49e96d7fc92bc9920617b83238c4d178b446a
+  connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
-  firebase_analytics: 773f04fad34c0a4e442deb5bcfb6ffc8102b9221
-  firebase_core: d6dfb4cb86a9ebd92464bb8736075fe967211c97
-  firebase_crashlytics: 0be8c89a6b91fd964a7a8fe574109fd528d310bb
+  firebase_analytics: 3170fe7d05cf0cda05b06f6255d2e6fcf432796e
+  firebase_core: d955499180c3c8ef355adf46b8752c4c01d09e0a
+  firebase_crashlytics: 6ddcbdb33350f98b8e3becef289b98bcc00f0b5e
   FirebaseAnalytics: 8d0ff929c63b7f72260f332b86ccf569776b75d3
   FirebaseCore: 0326ec9b05fbed8f8716cddbf0e36894a13837f7
   FirebaseCoreExtension: 6394c00b887d0bebadbc7049c464aa0cbddc5d41
@@ -360,12 +342,8 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: ccefe3eac9b0aa27f96066809fb1a7fe4b462626
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
-  mapbox_maps_flutter: 7954cf84b3973ec17d49b483f31baad6abde6c48
-  MapboxCommon: f40f1e8c8f3ee8e2bee3b15437812ab114722420
-  MapboxCoreMaps: 4294d3178201702a95f2ae316bc4ad419f5fa16a
-  MapboxMaps: 413cb886e75b6703c0a3084ce84c29cd681d916f
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
-  onesignal_flutter: 708cf6614165bdf59ef2aa5750c11d30c70b35e3
+  onesignal_flutter: b2e0779721deaffb67ba8abaa5417da139318090
   OneSignalXCFramework: 613f696d70d7e544b9f99e7a21c8b49fa47d7942
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
@@ -381,7 +359,6 @@ SPEC CHECKSUMS:
   sqlite3_flutter_libs: af0e8fe9bce48abddd1ffdbbf839db0302d72d80
   syncfusion_flutter_pdfviewer: bb9998884b864cfedf72628df3503bdf57e397c0
   Toast: ec33c32b8688982cecc6348adeae667c1b9938da
-  Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
   video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
