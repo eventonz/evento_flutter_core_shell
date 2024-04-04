@@ -27,11 +27,13 @@ dependencies:
   path_provider: ^2.0.9
   flutter_feather_icons: ^2.0.0+1
   path: ^1.8.0
-  connectivity_plus: ^5.0.1
+  connectivity_plus: ^6.0.1
   syncfusion_flutter_pdfviewer: ^24.2.6
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
+
+  
   carousel_slider: ^4.2.1
   firebase_core: ^2.27.0
   firebase_crashlytics: ^3.4.15
