@@ -91,6 +91,12 @@ class TrackingMapView extends StatelessWidget {
             }
           }
 
+        for (String routePath
+        in controller.routePathsCordinates.keys) {
+          print(routePath);
+        }
+        print('hha');
+
         return Stack(
           children: [
             FlutterMap(
@@ -125,8 +131,8 @@ class TrackingMapView extends StatelessWidget {
                         in controller.routePathsCordinates.values)
                       Polyline(
                         points: routePath,
-                        //color: AppHelper.getRandomLightColor(),
-                        color: AppColors.accentDark,
+                        color: AppHelper.getRandomLightColor(),
+                        //color: AppColors.accentDark,
                         strokeWidth: 3.5,
                       ),
                   ],
@@ -250,9 +256,11 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   void setInitialRouteMarkerPath() {
-    final latLng = routePath.first;
-    if (controller.locations[trackDetail.track] == null) {
-      controller.setLocation(trackDetail.track, latLng);
+    if(routePath.isNotEmpty) {
+      final latLng = routePath.first;
+      if (controller.locations[trackDetail.track] == null) {
+        controller.setLocation(trackDetail.track, latLng);
+      }
     }
   }
 
@@ -262,6 +270,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   LineString createLineStringPath() {
+    if(routePath.isEmpty) {
+      return LineString([]);
+    }
     final Path path = Path.from(routePath);
     final Path steps = path.equalize(6, smoothPath: true);
     return LineString(steps.coordinates
@@ -279,6 +290,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       }
       coveredDistance =
           getNewDistanceAfterOneSec() + coveredDistance.toPrecision(4);
+      print(trackDetail.toJson());
       print(DateTime.now());
       print('---- UPDATE for  ---' + trackDetail.track);
       print(coveredDistance.toPrecision(4));
@@ -307,7 +319,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-
+    print(lineStringPath);
+    print(trackDetail.path);
+    print('hello');
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
           duration: Duration(milliseconds: 1000),

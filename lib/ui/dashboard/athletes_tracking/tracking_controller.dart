@@ -278,8 +278,7 @@ class TrackingController extends GetxController
   }
 
   List<LatLng> getAthleteRouthPath(AthleteTrackDetail athleteTrackDetail) {
-    return routePathsCordinates[athleteTrackDetail.path] ??
-        routePathsCordinates.values.first;
+    return routePathsCordinates[athleteTrackDetail.path] ?? [];
   }
 }
 

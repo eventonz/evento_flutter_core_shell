@@ -190,11 +190,12 @@ class AppHelper {
   }
 
   static Color getRandomLightColor() {
+
     Random random = Random();
 
-    int red = random.nextInt(128) + 140;
-    int green = random.nextInt(128) + 140;
-    int blue = random.nextInt(128) + 140;
+    int red = random.nextInt(250) + 5;
+    int green = random.nextInt(250) + 5;
+    int blue = random.nextInt(250) + 5;
 
     return Color.fromARGB(255, red, green, blue);
   }
