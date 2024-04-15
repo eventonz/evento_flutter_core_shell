@@ -132,6 +132,7 @@ class TrackingMapView extends StatelessWidget {
                       Polyline(
                         points: routePath,
                         color: AppColors.accentDark,
+                        // change the color here 
                         //color: AppColors.accentDark,
                         // color: AppHelper.getRandomLightColor(),
                         strokeWidth: 3.5,
