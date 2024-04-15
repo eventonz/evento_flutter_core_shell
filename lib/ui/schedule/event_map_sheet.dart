@@ -68,6 +68,10 @@ class EventMapSheet extends StatelessWidget {
                   AppText(
                     (controller.eventDetails.location?.title ?? ''),
                   ),
+                  AppText(
+                    (controller.eventDetails.content ?? ''),
+                    color: AppColors.grey,
+                  ),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -82,13 +86,17 @@ class EventMapSheet extends StatelessWidget {
                                   center: controller.latLng!, zoom: 16),
                               children: [
                                 TileLayer(
-                                  urlTemplate:
+                                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                                    subdomains: const ['a', 'b', 'c']
+                                
+                                  /*urlTemplate:
                                       "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
                                   subdomains: const ['a', 'b', 'c'],
                                   additionalOptions: {
                                     'mapStyleId': controller.terrainStyle,
                                     'accessToken': controller.accessToken,
                                   },
+                                  */
                                 ),
                                 MarkerLayer(markers: [
                                   Marker(
