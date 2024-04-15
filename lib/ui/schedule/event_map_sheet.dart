@@ -125,17 +125,16 @@ class EventMapSheet extends StatelessWidget {
                          SizedBox(
                     height: 2.h,
                   ),
-                  LimitedBox(
-                      maxHeight: 100, // no impact because it's child `Text` width/height isn't unconstrained
-                      child: AppText(
-                    (controller.eventDetails.content ?? ''),
-                     fontSize: 12,
-                    color: Theme.of(context).brightness == Brightness.light
+                  Text(
+              controller.eventDetails.content ?? '',
+              style:TextStyle(
+                fontSize: 12.0, 
+                color: Theme.of(context).brightness == Brightness.light
                   ? AppColors.white
-                  : AppColors.darkBlack,
+                  : AppColors.darkBlack,),
+                  maxLines: 5,
                   ),
-                    ),
-           
+
                 ],
               ),
             ),
