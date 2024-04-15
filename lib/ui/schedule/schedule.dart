@@ -23,10 +23,10 @@ class ScheduleScreen extends StatelessWidget {
         appBar: AppBar(
           surfaceTintColor: Colors.white,
           shadowColor: Colors.white,
-          title: const AppText(
-            'Schedule',
-            style: AppStyles.appBarTitle,
-          ),
+          title: AppText(
+          controller.item.title!,
+          style: AppStyles.appBarTitle,
+        ),
         ),
         body: Column(
           children: [
