@@ -238,8 +238,6 @@ class TrackingController extends GetxController
     };
     final res = await ApiHandler.postHttp(
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
-    print('okokok');
-    print(res.data);
     if (res.statusCode == 200) {
       athleteTrackDetails.clear();
       athleteTrackDetails

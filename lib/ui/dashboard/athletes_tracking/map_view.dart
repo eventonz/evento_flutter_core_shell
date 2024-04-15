@@ -425,7 +425,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-    print(';aok2');
     return SizedBox();
   }
 }
