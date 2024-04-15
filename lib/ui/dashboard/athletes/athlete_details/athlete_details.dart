@@ -258,7 +258,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0),
                                   child: Text('Follow not available until Race Number has been assigned', style: TextStyle(
-                                    fontSize: 12.5,
+                                    fontSize: 10,
                                   ),),
                                 ),
                                 const SizedBox(

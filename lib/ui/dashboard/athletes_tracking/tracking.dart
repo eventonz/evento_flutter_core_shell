@@ -14,6 +14,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'tracking_controller.dart';
@@ -42,6 +43,10 @@ class TrackingScreen extends StatelessWidget {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     controller.getAthleteTrackingInfo(firstTime: true);
                   });
+                  List<LatLng> bounds2 = [];
+                  controller.routePathsCordinates.values.forEach((element) {
+                    bounds2.addAll(element);
+                  });
                   return SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
@@ -55,7 +60,7 @@ class TrackingScreen extends StatelessWidget {
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
                               onPageChanged: (index, reason) {
-                                try {
+                                //try {
                                   final trackDetail = controller
                                       .athleteTrackDetails.value.where((
                                       element) {
@@ -65,24 +70,40 @@ class TrackingScreen extends StatelessWidget {
                                     return element.track ==
                                         entrants[index].athleteId;
                                   }).first;
-                                  LatLng latLng = LatLng(
-                                      controller.locations[trackDetail.track]
-                                          ?.latitude ?? 0,
-                                      controller.locations[trackDetail.track]
-                                          ?.longitude ?? 0);
+                                  LatLng latLng;
+                                  if(controller.locations[trackDetail.track] == null) {
+                                    latLng = LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble());
+                                  } else {
+                                    latLng = LatLng(
+                                        controller.locations[trackDetail.track]
+                                            ?.latitude ?? 0,
+                                        controller.locations[trackDetail.track]
+                                            ?.longitude ?? 0);
+                                  }
                                   final bounds = LatLngBounds.fromPoints([
                                     latLng,
                                   ]);
 
-                                  final constrained = CameraFit.bounds(
-                                      bounds: bounds,
-                                      maxZoom: 15
-                                  ).fit(controller.mapController.camera);
-                                  controller.animatedMapMove(
-                                      constrained.center, constrained.zoom);
-                                } catch (e) {
-                                  //
-                                }
+                                  double zoom = controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
+                                      {'height': MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height,
+                                        'width': MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width}) * 1.02 : 15;
+                                    print('fly');
+                                    controller.mapboxMap!.flyTo(CameraOptions(
+                                      zoom: zoom,
+                                      center: Point(coordinates: Position(latLng.longitude, latLng.latitude)).toJson(),
+                                    ), MapAnimationOptions(
+                                      duration: 500,
+                                      startDelay: 0,
+                                    ));
+                                /*} catch (e) {
+                                  print(e);
+                                }*/
                                 //controller.mapController.move(controller.mapPathMarkers[index].latLng, 13);
                               },
                               enlargeFactor: 0.15),

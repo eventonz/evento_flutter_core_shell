@@ -42,6 +42,7 @@ class TrackingController extends GetxController
 
   PointAnnotationManager? pointAnnotationManager;
   PolylineAnnotationManager? polylineAnnotationManager;
+  MapboxMap? mapboxMap;
 
   MapController mapController = MapController();
   ScreenshotController screenshotController = ScreenshotController();
@@ -237,6 +238,8 @@ class TrackingController extends GetxController
     };
     final res = await ApiHandler.postHttp(
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
+    print('okokok');
+    print(res.data);
     if (res.statusCode == 200) {
       athleteTrackDetails.clear();
       athleteTrackDetails
@@ -285,8 +288,7 @@ class TrackingController extends GetxController
   }
 
   List<LatLng> getAthleteRouthPath(AthleteTrackDetail athleteTrackDetail) {
-    return routePathsCordinates[athleteTrackDetail.path] ??
-        routePathsCordinates.values.first;
+    return routePathsCordinates[athleteTrackDetail.path] ?? [];
   }
 }
 

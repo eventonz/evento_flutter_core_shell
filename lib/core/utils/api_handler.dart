@@ -9,9 +9,7 @@ import 'package:path_provider/path_provider.dart' as path;
 
 class ApiHandler {
   static const _baseUrl = 'https://eventotracker.com';
-  // static const _baseUrl = 'http://www.eventotracker.com/';
    static String midpathApi = '/api/v3/api.cfm/';
-  //static String midpathApi = '/cdn/config/';
   static late Dio _dio;
 
   static Future<void> init() async {
