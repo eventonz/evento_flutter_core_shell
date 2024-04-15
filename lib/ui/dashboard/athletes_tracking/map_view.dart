@@ -407,6 +407,32 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       ).toJson();
       if(annotation != null) {
         annotationManager.update(annotation!);
+      } else {
+        var widget = Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(40)),
+          child: Center(
+            child: AppText(
+                trackDetail.track,
+                fontSize: 16,
+                color: AppColors.white
+            ),
+          ),
+        );
+
+        controller.screenshotController.captureFromWidget(widget).then((
+            value) async {
+          annotation = await annotationManager.create(PointAnnotationOptions(
+            image: value,
+            geometry: Point(
+                coordinates: Position(latLng.longitude, latLng.latitude)
+            ).toJson(),
+
+          ));
+        });
       }
       //}
     }
