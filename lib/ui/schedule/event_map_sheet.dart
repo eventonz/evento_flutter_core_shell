@@ -38,17 +38,26 @@ class EventMapSheet extends StatelessWidget {
                   },
                   icon: Icon(
                     FeatherIcons.x,
-                    color: AppColors.primary,
+                    color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.white
+                  : AppColors.darkBlack,
                   )),
-              title: AppText(
-                controller.eventDetails.title!,
-              ),
+             
             ),
             Padding(
-              padding: const EdgeInsets.all(12.0),
+              padding: const EdgeInsets.all(10.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text(
+              controller.eventDetails.title!,
+              style: TextStyle(fontSize: 24.0, color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.white
+                  : AppColors.darkBlack,),
+              maxLines: 2,),
+                  const SizedBox(
+                    height: 4,
+                  ),
                   AppText(
                     controller.getEventTimings(),
                     fontSize: 16,
@@ -60,21 +69,20 @@ class EventMapSheet extends StatelessWidget {
                   AppText(
                     controller.eventDetails.datetime!
                         .withDateFormat(format: 'E, dd MMMM'),
-                    color: AppColors.grey,
-                  ),
+                    color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.greyLight
+                  : AppColors.grey),
+                
                   SizedBox(
                     height: 2.h,
                   ),
                   AppText(
                     (controller.eventDetails.location?.title ?? ''),
                   ),
-                  AppText(
-                    (controller.eventDetails.content ?? ''),
-                    color: AppColors.grey,
-                  ),
                   SizedBox(
                     height: 2.h,
                   ),
+               
                   controller.latLng == null
                       ? const SizedBox()
                       : SizedBox(
@@ -113,7 +121,21 @@ class EventMapSheet extends StatelessWidget {
                               ],
                             ),
                           ),
-                        )
+                        ),
+                         SizedBox(
+                    height: 2.h,
+                  ),
+                  LimitedBox(
+                      maxHeight: 100, // no impact because it's child `Text` width/height isn't unconstrained
+                      child: AppText(
+                    (controller.eventDetails.content ?? ''),
+                     fontSize: 12,
+                    color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.white
+                  : AppColors.darkBlack,
+                  ),
+                    ),
+           
                 ],
               ),
             ),
@@ -126,7 +148,9 @@ class EventMapSheet extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: CupertinoButton(
-                          color: AppColors.accentLight,
+                          color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.darkgrey
+                  : AppColors.darkBlack,
                           onPressed: controller.showDirectionsOnMap,
                           padding: const EdgeInsets.all(8),
                           child: const AppText(
