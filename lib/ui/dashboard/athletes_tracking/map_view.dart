@@ -25,7 +25,7 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 class TrackingMapView extends StatelessWidget {
   const TrackingMapView({super.key});
 
-  double dgetBoundsZoomLevel(LatLngBounds bounds, mapDim) {
+  static double dgetBoundsZoomLevel(LatLngBounds bounds, mapDim) {
     var WORLD_DIM = Map.from(mapDim);
     WORLD_DIM['width'] = WORLD_DIM['width'];
     WORLD_DIM['height'] = WORLD_DIM['height'];

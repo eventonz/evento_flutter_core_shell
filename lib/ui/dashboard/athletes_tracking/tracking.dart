@@ -42,6 +42,10 @@ class TrackingScreen extends StatelessWidget {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     controller.getAthleteTrackingInfo(firstTime: true);
                   });
+                  List<LatLng> bounds2 = [];
+                  controller.routePathsCordinates.values.forEach((element) {
+                    bounds2.addAll(element);
+                  });
                   return SafeArea(
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
@@ -65,18 +69,31 @@ class TrackingScreen extends StatelessWidget {
                                     return element.track ==
                                         entrants[index].athleteId;
                                   }).first;
-                                  LatLng latLng = LatLng(
-                                      controller.locations[trackDetail.track]
-                                          ?.latitude ?? 0,
-                                      controller.locations[trackDetail.track]
-                                          ?.longitude ?? 0);
+                                  LatLng latLng;
+                                  if(controller.locations[trackDetail.track] == null) {
+                                    latLng = controller.initialPathCenterPoint();
+                                  } else {
+                                    latLng = LatLng(
+                                        controller.locations[trackDetail.track]
+                                            ?.latitude ?? 0,
+                                        controller.locations[trackDetail.track]
+                                            ?.longitude ?? 0);
+                                  }
                                   final bounds = LatLngBounds.fromPoints([
                                     latLng,
                                   ]);
 
                                   final constrained = CameraFit.bounds(
                                       bounds: bounds,
-                                      maxZoom: 15
+                                      maxZoom: controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
+                                          {'height': MediaQuery
+                                              .of(context)
+                                              .size
+                                              .height,
+                                            'width': MediaQuery
+                                                .of(context)
+                                                .size
+                                                .width}) * 1.02 : 15
                                   ).fit(controller.mapController.camera);
                                   controller.animatedMapMove(
                                       constrained.center, constrained.zoom);
