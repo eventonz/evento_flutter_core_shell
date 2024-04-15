@@ -328,6 +328,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   void dispose() {
     super.dispose();
     disposed = true;
+    if(annotation != null) {
+      annotationManager.delete(annotation!);
+    }
   }
 
   void setInitialRouteMarkerPath() {
