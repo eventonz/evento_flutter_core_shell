@@ -14,14 +14,14 @@ PODS:
   - Firebase/Crashlytics (10.22.0):
     - Firebase/CoreOnly
     - FirebaseCrashlytics (~> 10.22.0)
-  - firebase_analytics (10.10.1):
+  - firebase_analytics (10.10.0):
     - Firebase/Analytics (= 10.22.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.29.0):
+  - firebase_core (2.28.0):
     - Firebase/CoreOnly (= 10.22.0)
     - Flutter
-  - firebase_crashlytics (3.5.1):
+  - firebase_crashlytics (3.5.0):
     - Firebase/Crashlytics (= 10.22.0)
     - firebase_core
     - Flutter
@@ -135,51 +135,61 @@ PODS:
   - GoogleUtilities/UserDefaults (7.13.0):
     - GoogleUtilities/Logger
     - GoogleUtilities/Privacy
+  - mapbox_maps_flutter (1.0.0):
+    - Flutter
+    - MapboxMaps (~> 11.2.0)
+  - MapboxCommon (24.2.0)
+  - MapboxCoreMaps (11.2.0):
+    - MapboxCommon (~> 24.2)
+  - MapboxMaps (11.2.0):
+    - MapboxCommon (= 24.2.0)
+    - MapboxCoreMaps (= 11.2.0)
+    - Turf (= 2.8.0)
   - nanopb (2.30910.0):
     - nanopb/decode (= 2.30910.0)
     - nanopb/encode (= 2.30910.0)
   - nanopb/decode (2.30910.0)
   - nanopb/encode (2.30910.0)
-  - onesignal_flutter (5.1.4):
+  - onesignal_flutter (5.1.3):
     - Flutter
-    - OneSignalXCFramework (= 5.1.4)
-  - OneSignalXCFramework (5.1.4):
-    - OneSignalXCFramework/OneSignalComplete (= 5.1.4)
-  - OneSignalXCFramework/OneSignal (5.1.4):
+    - OneSignalXCFramework (= 5.1.3)
+  - OneSignalXCFramework (5.1.3):
+    - OneSignalXCFramework/OneSignalComplete (= 5.1.3)
+  - OneSignalXCFramework/OneSignal (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalExtension
     - OneSignalXCFramework/OneSignalNotifications
     - OneSignalXCFramework/OneSignalOSCore
     - OneSignalXCFramework/OneSignalOutcomes
     - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalComplete (5.1.4):
+  - OneSignalXCFramework/OneSignalComplete (5.1.3):
     - OneSignalXCFramework/OneSignal
     - OneSignalXCFramework/OneSignalInAppMessages
     - OneSignalXCFramework/OneSignalLocation
-  - OneSignalXCFramework/OneSignalCore (5.1.4)
-  - OneSignalXCFramework/OneSignalExtension (5.1.4):
+  - OneSignalXCFramework/OneSignalCore (5.1.3)
+  - OneSignalXCFramework/OneSignalExtension (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalInAppMessages (5.1.4):
+  - OneSignalXCFramework/OneSignalInAppMessages (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalNotifications
     - OneSignalXCFramework/OneSignalOSCore
     - OneSignalXCFramework/OneSignalOutcomes
     - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalLocation (5.1.4):
+  - OneSignalXCFramework/OneSignalLocation (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalNotifications
     - OneSignalXCFramework/OneSignalOSCore
     - OneSignalXCFramework/OneSignalUser
-  - OneSignalXCFramework/OneSignalNotifications (5.1.4):
+  - OneSignalXCFramework/OneSignalNotifications (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalExtension
     - OneSignalXCFramework/OneSignalOutcomes
-  - OneSignalXCFramework/OneSignalOSCore (5.1.4):
+  - OneSignalXCFramework/OneSignalOSCore (5.1.3):
     - OneSignalXCFramework/OneSignalCore
-  - OneSignalXCFramework/OneSignalOutcomes (5.1.4):
+  - OneSignalXCFramework/OneSignalOutcomes (5.1.3):
     - OneSignalXCFramework/OneSignalCore
-  - OneSignalXCFramework/OneSignalUser (5.1.4):
+  - OneSignalXCFramework/OneSignalUser (5.1.3):
     - OneSignalXCFramework/OneSignalCore
     - OneSignalXCFramework/OneSignalNotifications
     - OneSignalXCFramework/OneSignalOSCore
@@ -195,7 +205,7 @@ PODS:
   - PromisesObjC (2.4.0)
   - PromisesSwift (2.4.0):
     - PromisesObjC (= 2.4.0)
-  - ReachabilitySwift (5.2.1)
+  - ReachabilitySwift (5.2.2)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
@@ -222,6 +232,7 @@ PODS:
   - syncfusion_flutter_pdfviewer (0.0.1):
     - Flutter
   - Toast (4.1.1)
+  - Turf (2.8.0)
   - uni_links (0.0.1):
     - Flutter
   - url_launcher_ios (0.0.1):
@@ -241,6 +252,7 @@ DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_inappwebview (from `.symlinks/plugins/flutter_inappwebview/ios`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - mapbox_maps_flutter (from `.symlinks/plugins/mapbox_maps_flutter/ios`)
   - onesignal_flutter (from `.symlinks/plugins/onesignal_flutter/ios`)
   - OneSignalXCFramework (< 6.0, >= 5.0.0)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
@@ -269,6 +281,9 @@ SPEC REPOS:
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
+    - MapboxCommon
+    - MapboxCoreMaps
+    - MapboxMaps
     - nanopb
     - OneSignalXCFramework
     - OrderedSet
@@ -277,6 +292,7 @@ SPEC REPOS:
     - ReachabilitySwift
     - sqlite3
     - Toast
+    - Turf
 
 EXTERNAL SOURCES:
   connectivity_plus:
@@ -295,6 +311,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_inappwebview/ios"
   fluttertoast:
     :path: ".symlinks/plugins/fluttertoast/ios"
+  mapbox_maps_flutter:
+    :path: ".symlinks/plugins/mapbox_maps_flutter/ios"
   onesignal_flutter:
     :path: ".symlinks/plugins/onesignal_flutter/ios"
   package_info_plus:
@@ -326,9 +344,9 @@ SPEC CHECKSUMS:
   connectivity_plus: bf0076dd84a130856aa636df1c71ccaff908fa1d
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
-  firebase_analytics: 8e6cecb9b9541db49ac40a46eec7c0f519de7252
-  firebase_core: aaadbddb3cb2ee3792b9804f9dbb63e5f6f7b55c
-  firebase_crashlytics: 4271b5bb77f6169ac7c2a9d62ad0e6aa5f84c2fe
+  firebase_analytics: 3170fe7d05cf0cda05b06f6255d2e6fcf432796e
+  firebase_core: d955499180c3c8ef355adf46b8752c4c01d09e0a
+  firebase_crashlytics: 6ddcbdb33350f98b8e3becef289b98bcc00f0b5e
   FirebaseAnalytics: 8d0ff929c63b7f72260f332b86ccf569776b75d3
   FirebaseCore: 0326ec9b05fbed8f8716cddbf0e36894a13837f7
   FirebaseCoreExtension: af5fd85e817ea9d19f9a2659a376cf9cf99f03c0
@@ -342,16 +360,20 @@ SPEC CHECKSUMS:
   GoogleAppMeasurement: ccefe3eac9b0aa27f96066809fb1a7fe4b462626
   GoogleDataTransport: 6c09b596d841063d76d4288cc2d2f42cc36e1e2a
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
+  mapbox_maps_flutter: 7954cf84b3973ec17d49b483f31baad6abde6c48
+  MapboxCommon: f40f1e8c8f3ee8e2bee3b15437812ab114722420
+  MapboxCoreMaps: 4294d3178201702a95f2ae316bc4ad419f5fa16a
+  MapboxMaps: 413cb886e75b6703c0a3084ce84c29cd681d916f
   nanopb: 438bc412db1928dac798aa6fd75726007be04262
-  onesignal_flutter: 353c8035cdb0ac8fba18b32ad7e207c487a67633
-  OneSignalXCFramework: a334eb658aa87a1ea641bbdda64465f09dcfc37a
+  onesignal_flutter: b2e0779721deaffb67ba8abaa5417da139318090
+  OneSignalXCFramework: 613f696d70d7e544b9f99e7a21c8b49fa47d7942
   OrderedSet: aaeb196f7fef5a9edf55d89760da9176ad40b93c
   package_info_plus: 115f4ad11e0698c8c1c5d8a689390df880f47e85
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   permission_handler_apple: e76247795d700c14ea09e3a2d8855d41ee80a2e6
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  ReachabilitySwift: 5ae15e16814b5f9ef568963fb2c87aeb49158c66
+  ReachabilitySwift: 2128f3a8c9107e1ad33574c6e58e8285d460b149
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
   sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
@@ -359,9 +381,10 @@ SPEC CHECKSUMS:
   sqlite3_flutter_libs: af0e8fe9bce48abddd1ffdbbf839db0302d72d80
   syncfusion_flutter_pdfviewer: bb9998884b864cfedf72628df3503bdf57e397c0
   Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
+  Turf: aa2ede4298009639d10db36aba1a7ebaad072a5e
   uni_links: d97da20c7701486ba192624d99bffaaffcfc298a
   url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
-  video_player_avfoundation: 2b4384f3b157206b5e150a0083cdc0c905d260d3
+  video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
   webview_flutter_wkwebview: be0f0d33777f1bfd0c9fdcb594786704dbf65f36
 
 PODFILE CHECKSUM: 5860d8353930ddd89d96b08366c7be7c2009fdae
