@@ -150,6 +150,7 @@ class TrackingMapView extends StatelessWidget {
             if(controller.pointAnnotationManager != null)
               for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
                 AnimatedMarkerView(trackDetail: trackDetail),
+
             Positioned(
                 right: 2.w,
                 top: 2.w,
@@ -301,6 +302,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     super.initState();
     setInitialRouteMarkerPath();
     setInitialDistance();
+    print('animated marker init');
     controller.updateStream.stream.listen((event) {
       Future.delayed(const Duration(milliseconds: 0), () {
         oldProgress = trackDetail.location ?? 0;
@@ -330,13 +332,17 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     disposed = true;
     if(annotation != null) {
       annotationManager.delete(annotation!);
+      print('deleted annotation');
     }
   }
 
   void setInitialRouteMarkerPath() {
     if(routePath.isNotEmpty) {
+    //if(controller.locations[trackDetail.track] != null) {
       final latLng = routePath.first;
+      //final latLng = controller.locations[trackDetail.track]!;
       if (controller.locations[trackDetail.track] == null) {
+        print('location set ${trackDetail.track}');
         controller.setLocation(trackDetail.track, latLng);
       }
       if (annotation == null) {
@@ -355,16 +361,24 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
           ),
         );
 
+        print('annotation creating ${trackDetail.track}');
+
         controller.screenshotController.captureFromWidget(widget).then((
             value) async {
+          print('annotation creating ${trackDetail.track}');
           annotation = await annotationManager.create(PointAnnotationOptions(
             image: value,
             geometry: Point(
                 coordinates: Position(latLng.longitude, latLng.latitude)
             ).toJson(),
           ));
+          print('annotation created ${trackDetail.track}');
         });
+      } else {
+        print('annotation is not null ${trackDetail.track}');
       }
+    } else {
+      print('route path is empty ${trackDetail.track}');
     }
   }
 
@@ -411,7 +425,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       if(annotation != null) {
         annotationManager.update(annotation!);
       } else {
-        var widget = Container(
+        /*var widget = Container(
           width: 36,
           height: 36,
           decoration: BoxDecoration(
@@ -435,7 +449,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
             ).toJson(),
 
           ));
-        });
+        });*/
       }
       //}
     }

@@ -71,7 +71,7 @@ class TrackingScreen extends StatelessWidget {
                                         entrants[index].athleteId;
                                   }).first;
                                   LatLng latLng;
-                                  if(controller.locations[trackDetail.track] == null) {
+                                  if(controller.locations[trackDetail.track] == null || controller.getAthleteRouthPath(trackDetail).isEmpty) {
                                     latLng = LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble());
                                   } else {
                                     latLng = LatLng(
@@ -80,9 +80,6 @@ class TrackingScreen extends StatelessWidget {
                                         controller.locations[trackDetail.track]
                                             ?.longitude ?? 0);
                                   }
-                                  final bounds = LatLngBounds.fromPoints([
-                                    latLng,
-                                  ]);
 
                                   double zoom = controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
                                       {'height': MediaQuery
