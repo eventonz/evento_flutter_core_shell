@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:http/http.dart' as http;
 import 'package:evento_core/core/services/config_reload/config_reload_service.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -76,14 +77,12 @@ class TrackingMapView extends StatelessWidget {
     }
 
     createMarkers() async {
+
       for (MapPathMarkers marker in controller.mapPathMarkers) {
-        Widget widget = CachedNetworkImage(
-          imageUrl: marker.iconUrl,
-          errorWidget: (context, url, error) =>
-          const SizedBox(),
-        );
-        widget = Container(width: 30, height: 30, color: Colors.red);
-        controller.screenshotController.captureFromLongWidget(widget).then((value) {
+
+        http.Response response = await http.get(Uri.parse(marker.iconUrl));
+        Widget widget = Image.memory(response.bodyBytes, width: 30, height: 30);
+        controller.screenshotController.captureFromWidget(widget).then((value) {
           controller.pointAnnotationManager?.create(PointAnnotationOptions(
               geometry: Point(
                   coordinates: Position(marker.latLng.longitude, marker.latLng.latitude)
@@ -347,7 +346,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       }
       if (annotation == null) {
         var widget = Container(
-          width: 36,
+          width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
           height: 36,
           decoration: BoxDecoration(
               color: AppColors.accentLight,
