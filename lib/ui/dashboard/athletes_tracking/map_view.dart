@@ -26,7 +26,6 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 class TrackingMapView extends StatelessWidget {
   const TrackingMapView({super.key});
-
   static double dgetBoundsZoomLevel(flutter_map.LatLngBounds bounds, mapDim) {
     var WORLD_DIM = Map.from(mapDim);
     WORLD_DIM['width'] = WORLD_DIM['width'];
@@ -174,7 +173,7 @@ class TrackingMapView extends StatelessWidget {
                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
                   subdomains: const ['a', 'b', 'c']
 
-                  // evento one pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
+                  // evento one 2yJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
                   // "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}"
 
                   *//*urlTemplate: "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/wmts?access_token=pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg",

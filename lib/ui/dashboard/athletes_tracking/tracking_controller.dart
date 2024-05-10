@@ -29,7 +29,7 @@ class TrackingController extends GetxController
   int currentII = 0;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
-  final accessToken ='pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2c3FkNnJhMTJuazJqcDZiZTEweHZzaiJ9.ShZf5Rupiy7XuBjk3L5-qg';
+  final accessToken ='pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2enQ4a3FuMDdmaTJxcGY1MG1ldjh6diJ9.72FtQjCQ4uUiyFyzWCh5hA';
   final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
   final statelliteStyle = 'cl8bcpr5y004z15s12saxlpsb';
   final mapid =  'mapbox.mapbox-streets-v8';

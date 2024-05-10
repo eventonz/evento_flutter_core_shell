@@ -16,7 +16,7 @@ import 'package:latlong2/latlong.dart';
 
 class ScheduleController extends GetxController {
   final accessToken =
-      'pk.eyJ1IjoiamV0aHJvMDA1NiIsImEiOiJjazZwazBhYTIwMDhmM2hxbGs1bWp3Z3BuIn0.F54xb2r1CQfJByfhSaIs5g';
+      'pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2enQ4a3FuMDdmaTJxcGY1MG1ldjh6diJ9.72FtQjCQ4uUiyFyzWCh5hA';
   final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
   late Items item;
   List<ScheduleDataItems> scheduleDataItems = [];
