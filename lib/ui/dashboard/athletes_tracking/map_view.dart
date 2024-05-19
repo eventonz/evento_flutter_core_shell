@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:evento_core/core/services/config_reload/config_reload_service.dart';
 import 'package:evento_core/core/utils/enums.dart';
@@ -122,7 +123,7 @@ class TrackingMapView extends StatelessWidget {
         return Stack(
           children: [
             MapWidget(
-              //styleUri: MapboxStyles.SATELLITE,
+              styleUri: controller.currentStyle.value == 0 ? MapboxStyles.MAPBOX_STREETS : (controller.currentStyle.value == 1 ? MapboxStyles.STANDARD : MapboxStyles.SATELLITE),
               onMapCreated: (mapboxMap) {
                 controller.mapboxMap = mapboxMap;
                 mapboxMap.annotations.createPolylineAnnotationManager().then((value) async {
@@ -153,14 +154,21 @@ class TrackingMapView extends StatelessWidget {
                 right: 2.w,
                 top: 2.w,
                 child: SafeArea(
-                  child: CupertinoButton(
-                      padding: const EdgeInsets.all(0),
-                      color: AppColors.white,
-                      onPressed: controller.changeMapStyle,
-                      child: const Icon(
-                        Icons.layers_outlined,
-                        color: AppColors.black,
-                      )),
+                  child: Column(
+                    children: [
+                      CupertinoButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          onPressed: controller.changeMapStyle,
+                          child: SvgPicture.asset(AppHelper.getSvg('layers'), width: 28,)),
+                      const SizedBox(height: 16),
+                      CupertinoButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          onPressed: controller.showUserLocation,
+                          child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
+                    ],
+                  ),
                 )),
           ],
         );

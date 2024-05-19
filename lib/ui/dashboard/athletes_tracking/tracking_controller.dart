@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/routes/routes.dart';
@@ -30,10 +31,8 @@ class TrackingController extends GetxController
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
   final accessToken ='pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2enQ4a3FuMDdmaTJxcGY1MG1ldjh6diJ9.72FtQjCQ4uUiyFyzWCh5hA';
-  final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
-  final statelliteStyle = 'cl8bcpr5y004z15s12saxlpsb';
   final mapid =  'mapbox.mapbox-streets-v8';
-  final currentStyle = ''.obs;
+  final currentStyle = 0.obs;
   List<Paths> routePathLinks = [];
   List<MapPathMarkers> mapPathMarkers = [];
   Map<String, List<LatLng>> routePathsCordinates = {};
@@ -256,14 +255,60 @@ class TrackingController extends GetxController
 
   void changeMapStyle({bool setDefault = false}) {
     if (setDefault) {
-      currentStyle.value = terrainStyle;
+      currentStyle.value = 0;
     } else {
-      if (currentStyle.value == terrainStyle) {
-        currentStyle.value = statelliteStyle;
+      if (currentStyle.value == 0) {
+        currentStyle.value = 1;
+      } else if (currentStyle.value == 1) {
+        currentStyle.value = 2;
       } else {
-        currentStyle.value = terrainStyle;
+        currentStyle.value = 0;
       }
     }
+
+    mapboxMap?.loadStyleURI(currentStyle.value == 0 ? MapboxStyles.MAPBOX_STREETS : (currentStyle.value == 1 ? MapboxStyles.STANDARD : MapboxStyles.SATELLITE));
+    update();
+  }
+
+  Future<void> showUserLocation() async {
+    bool serviceEnabled;
+    geolocator.LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await geolocator.Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await geolocator.Geolocator.checkPermission();
+    if (permission == geolocator.LocationPermission.denied) {
+      permission = await geolocator.Geolocator.requestPermission();
+      if (permission == geolocator.LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        //return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == geolocator.LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      /*return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');*/
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    var position = await geolocator.Geolocator.getCurrentPosition();
+    mapboxMap!.setCamera(CameraOptions(
+      center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
+      zoom: 15,
+    ));
   }
 
   AthleteTrackDetail? findTrackDetail(AppAthleteDb entrant) {
