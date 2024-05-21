@@ -125,6 +125,10 @@ class TrackingMapView extends StatelessWidget {
             MapWidget(
               styleUri: controller.currentStyle.value == 0 ? MapboxStyles.MAPBOX_STREETS : (controller.currentStyle.value == 1 ? MapboxStyles.STANDARD : MapboxStyles.SATELLITE),
               onMapCreated: (mapboxMap) {
+                mapboxMap.location.updateSettings(LocationComponentSettings(
+                  enabled: true,
+                  pulsingEnabled: true
+                ));
                 controller.mapboxMap = mapboxMap;
                 mapboxMap.annotations.createPolylineAnnotationManager().then((value) async {
                   controller.polylineAnnotationManager = value;
