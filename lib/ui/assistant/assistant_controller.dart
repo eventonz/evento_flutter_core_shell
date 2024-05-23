@@ -90,23 +90,25 @@ class AssistantController extends GetxController {
   }
 
   Future<void> callServer(String message) async {
-    String url = 'assistant';
 
-    final res = await ApiHandler.postHttp(
-        endPoint: url, body: {
-        'request' : message,
-        'race_id' : Preferences.getInt(AppKeys.eventId, 0),
-        'player_id' : AppGlobals.oneSignalUserId,
+    String url = 'assistant';
+    final res = await ApiHandler.postHttp(endPoint: url, body: {
+      'request': message,
+      'race_id': Preferences.getInt(AppKeys.eventId, 0),
+      'player_id': AppGlobals.oneSignalUserId,
     });
-    print(res.data);
   }
 
   void sendMessage() async {
-
     try {
+
+      // send message to the server to record use 
+
+      callServer(messageText.value);
+      
       if (messageText.value.isEmpty) return;
-      final userMessage = ChatMessageM(
-          role: 'user', content: messageText.value);
+      final userMessage =
+          ChatMessageM(role: 'user', content: messageText.value);
       chatMessages.add(userMessage);
       DatabaseHandler.insertChatMessage(userMessage);
       messageTextEditingController.clear();
@@ -117,8 +119,8 @@ class AssistantController extends GetxController {
         'content-Type': 'application/json',
         'x-api-key': 'sec_qDPiWawARnBc2qT1iVDDOVHaiumJ0Tdr'
       };
-
-      callServer(messageText.value);
+      // call the evento API and record the message
+      
 
       final data = {
         'stream': true,
@@ -135,7 +137,7 @@ class AssistantController extends GetxController {
         final Stream stream = response.data.stream;
         String message = '';
         final assistantMessage =
-        ChatMessageM(role: 'assistant', content: message);
+            ChatMessageM(role: 'assistant', content: message);
         chatMessages.add(assistantMessage);
         stream.listen((chunk) {
           final decodedChunk = utf8.decode(chunk);
@@ -153,7 +155,6 @@ class AssistantController extends GetxController {
       }
     } catch (e) {
       print(((e as DioException).response?.data as ResponseBody));
-
     }
   }
 
@@ -178,7 +179,7 @@ class AssistantController extends GetxController {
           duration: const Duration(milliseconds: 1000),
           curve: Curves.fastEaseInToSlowEaseOut);
     });
-  } 
+  }
 }
 
 class ChatMessageM {
