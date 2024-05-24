@@ -179,8 +179,18 @@ class _EventoMapState extends State<EventoMap> {
                 Obx(
                       () {
 
-                        final points = controller.geoJson.features.where((element) => element.type == GeoJsonFeatureType.point);
+                        List<GeoJsonFeature<dynamic>> points = [];
 
+                        List<String> types = [];
+
+                        final list = controller.geoJson.features.where((element) => element.type == GeoJsonFeatureType.point);
+
+                        list.forEach((element) {
+                          if(!types.contains(element.properties?['type'])) {
+                            types.add(element.properties?['type']);
+                            points.add(element);
+                          }
+                        });
                         final selectedInterests = controller.selectedInterests.value;
 
                         return Column(
@@ -232,6 +242,7 @@ class _EventoMapState extends State<EventoMap> {
 
                                   },
                                   child: Container(
+                                    margin: const EdgeInsets.only(right: 16, bottom: 12),
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: selectedInterests.contains(e.properties?['type']) ? Colors.grey.shade300 : null,
@@ -267,221 +278,271 @@ class _EventoMapState extends State<EventoMap> {
 
         return controller.loading.value ? Center(
           child: CircularProgressIndicator(),
-        ) : MapWidget(
-          styleUri: controller.mapStyle.value,
-          cameraOptions: CameraOptions(
-              center: Point(coordinates:
-              controller.initialPathCenterPoint()
+        ) : Stack(
+          children: [
+            MapWidget(
+              styleUri: controller.mapStyle.value,
+              cameraOptions: CameraOptions(
+                  center: Point(coordinates:
+                  controller.initialPathCenterPoint()
 
-              ).toJson(),
-              zoom: TrackingMapView.dgetBoundsZoomLevel(
-                  LatLngBounds.fromPoints(bounds), {
-                'height': MediaQuery
-                    .of(context)
-                    .size
-                    .height,
-                'width': MediaQuery
-                    .of(context)
-                    .size
-                    .width})
-          ),
-          onCameraChangeListener: (data) async {
-            final state = await controller.mapboxMap?.getCameraState();
-            print(state?.zoom);
-            if((state?.zoom ?? 0) >= 14) {
-              if(controller.zoomedIn) {
-                return;
-              }
-              controller.zoomedIn = true;
-            } else {
-              if(!controller.zoomedIn) {
-                return;
-              }
-              controller.zoomedIn = false;
-            }
-              for(int i = 1; i < controller.totalDistance-1; i++) {
-                final annotation = controller.points[i];
-                if(annotation != null) {
-                  if((state?.zoom ?? 0) >= 14) {
-                    annotation.image = controller.images[i];
-                  } else {
-                    annotation.image = i % 5 == 0 ? controller.images[i] : null;
-                  }
-                  controller.pointAnnotationManager?.update(annotation);
-                }
-              }
-          },
-          onMapCreated: (mapboxMap) {
-            controller.mapboxMap = mapboxMap;
-            mapboxMap.location.updateSettings(LocationComponentSettings(
-                enabled: true,
-                pulsingEnabled: true
-            ));
-
-            mapboxMap.annotations.createPolylineAnnotationManager().then((
-                value) async {
-              final polylineAnnotationManager = value;
-              polylineAnnotationManager.create(PolylineAnnotationOptions(
-                  geometry: LineString(
-                      coordinates: controller.routePathsCordinates).toJson(),
-                  lineColor: AppHelper.hexToColor(controller.color).value, lineWidth: 3));
-            });
-              mapboxMap.annotations.createPointAnnotationManager().then((value) async {
-                final pointAnnotationManager = value;
-                controller.pointAnnotationManager = pointAnnotationManager;
-
-                if(controller.showStartIcon) {
-                  Widget widget = SvgPicture.asset(
-                      AppHelper.getSvg('startingpoint'), width: 27, height: 27);
-                  controller.screenshotController.captureFromWidget(widget)
-                      .then((value) {
-                    pointAnnotationManager.create(PointAnnotationOptions(
-                      geometry: Point(
-                          coordinates: controller.routePathsCordinates.first)
-                          .toJson(),
-                      image: value,
-                    ));
-                  });
-                }
-
-                if(controller.showFinishIcon) {
-                  Widget widget = SvgPicture.asset(
-                      AppHelper.getSvg('finishpoint'), width: 27, height: 27);
-                  controller.screenshotController.captureFromWidget(widget)
-                      .then((value) {
-                    pointAnnotationManager.create(PointAnnotationOptions(
-                      geometry: Point(
-                          coordinates: controller.routePathsCordinates.last)
-                          .toJson(),
-                      image: value,
-                    ));
-                  });
-                }
-
-                final points = controller.geoJson.features;
-                for (int index = 0; index < points.length; index++) {
-                  var element = points[index];
-                  if(element.type == GeoJsonFeatureType.point) {
-                    Widget widget = Image.asset(AppHelper.getImage('${element
-                        .properties?['type']}.png'), width: 30, height: 30);
-                    controller.screenshotController.captureFromWidget(widget)
-                        .then((value) async {
-                      PointAnnotation pointAnnotation = await pointAnnotationManager
-                          .create(PointAnnotationOptions(
-                        geometry: Point(coordinates: Position(
-                            (element.geometry as GeoJsonPoint).geoPoint
-                                .longitude,
-                            (element.geometry as GeoJsonPoint).geoPoint
-                                .latitude)).toJson(),
-                        image: value,
-                      ));
-                      if (controller.interestAnnotations[element
-                          .properties?['type']] == null) {
-                        controller.interestAnnotations[element
-                            .properties?['type']] = [];
-                        controller.interestImages[element
-                            .properties?['type']] = value;
-                      }
-                      controller.interestAnnotations[element
-                          .properties?['type']]!.add(pointAnnotation);
-                      controller.geoJson.features[index]
-                          .properties?['annotation'] = pointAnnotation.id;
-                    });
-                  }
-                  print(controller.geoJson.features.length);
-                }
-                pointAnnotationManager.addOnPointAnnotationClickListener(AnnotationClickListener((annotation) {
-                  var point = controller.geoJson.features.where((element) => element.properties?['annotation'] == annotation.id).firstOrNull;
-                  if(point == null) {
+                  ).toJson(),
+                  zoom: TrackingMapView.dgetBoundsZoomLevel(
+                      LatLngBounds.fromPoints(bounds), {
+                    'height': MediaQuery
+                        .of(context)
+                        .size
+                        .height,
+                    'width': MediaQuery
+                        .of(context)
+                        .size
+                        .width})
+              ),
+              onCameraChangeListener: (data) async {
+                final state = await controller.mapboxMap?.getCameraState();
+                print(state?.zoom);
+                if((state?.zoom ?? 0) >= 14) {
+                  if(controller.zoomedIn) {
                     return;
                   }
-                  showModalBottomSheet(context: context, builder: (_) => BottomSheet(
-                      elevation: 0,
-                      onClosing: () {}, builder: (_) => Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
-                          child: Row(
-                            children: [
-                              Image.asset(AppHelper.getImage('${point
-                                  .properties?['type']}.png'), width: 30, height: 30),
-                              const SizedBox(width: 8),
-                              Text('${point.properties?['title']}', style: TextStyle(
-                                fontSize: 17,
-                                fontWeight: FontWeight.w700,
-                              )),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Text('${point.properties?['description']}', style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          )),
-                        ),
-                        if(point.properties?['direction'] == true)
-                          ...[
-                            const SizedBox(height: 16),
+                  controller.zoomedIn = true;
+                } else {
+                  if(!controller.zoomedIn) {
+                    return;
+                  }
+                  controller.zoomedIn = false;
+                }
+                  for(int i = 1; i < controller.totalDistance-1; i++) {
+                    final annotation = controller.points[i];
+                    if(annotation != null) {
+                      if(!controller.showDistanceMarkers.value) {
+                        annotation.image = null;
+
+                      } else if((state?.zoom ?? 0) >= 14) {
+                        annotation.image = controller.images[i];
+                      } else {
+                        annotation.image = i % 5 == 0 ? controller.images[i] : null;
+                      }
+                      controller.pointAnnotationManager?.update(annotation);
+                    }
+                  }
+              },
+              onMapCreated: (mapboxMap) {
+                controller.mapboxMap = mapboxMap;
+                mapboxMap.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
+                // add the DEM source as a terrain layer with exaggerated height
+                //mapboxMap.style.til();
+                mapboxMap.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
+
+                mapboxMap.location.updateSettings(LocationComponentSettings(
+                    enabled: true,
+                    pulsingEnabled: true
+                ));
+
+                mapboxMap.compass.updateSettings(CompassSettings(
+                  marginTop: 60,
+                  marginRight: 16,
+                ));
+
+                mapboxMap.annotations.createPolylineAnnotationManager().then((
+                    value) async {
+                  final polylineAnnotationManager = value;
+                  polylineAnnotationManager.create(PolylineAnnotationOptions(
+                      geometry: LineString(
+                          coordinates: controller.routePathsCordinates).toJson(),
+                      lineColor: AppHelper.hexToColor(controller.color).value, lineWidth: 3));
+                });
+                  mapboxMap.annotations.createPointAnnotationManager().then((value) async {
+                    final pointAnnotationManager = value;
+                    controller.pointAnnotationManager = pointAnnotationManager;
+
+                    if(controller.showStartIcon) {
+                      Widget widget = SvgPicture.asset(
+                          AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+                      controller.screenshotController.captureFromWidget(widget)
+                          .then((value) {
+                        pointAnnotationManager.create(PointAnnotationOptions(
+                          geometry: Point(
+                              coordinates: controller.routePathsCordinates.first)
+                              .toJson(),
+                          image: value,
+                        ));
+                      });
+                    }
+
+                    if(controller.showFinishIcon) {
+                      Widget widget = SvgPicture.asset(
+                          AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+                      controller.screenshotController.captureFromWidget(widget)
+                          .then((value) {
+                        pointAnnotationManager.create(PointAnnotationOptions(
+                          geometry: Point(
+                              coordinates: controller.routePathsCordinates.last)
+                              .toJson(),
+                          image: value,
+                        ));
+                      });
+                    }
+
+                    final points = controller.geoJson.features;
+                    for (int index = 0; index < points.length; index++) {
+                      var element = points[index];
+                      if(element.type == GeoJsonFeatureType.point) {
+                        Widget widget = Image.asset(AppHelper.getImage('${element
+                            .properties?['type']}.png'), width: 30, height: 30);
+                        controller.screenshotController.captureFromWidget(widget)
+                            .then((value) async {
+                          PointAnnotation pointAnnotation = await pointAnnotationManager
+                              .create(PointAnnotationOptions(
+                            geometry: Point(coordinates: Position(
+                                (element.geometry as GeoJsonPoint).geoPoint
+                                    .longitude,
+                                (element.geometry as GeoJsonPoint).geoPoint
+                                    .latitude)).toJson(),
+                            image: value,
+                          ));
+                          if (controller.interestAnnotations[element
+                              .properties?['type']] == null) {
+                            controller.interestAnnotations[element
+                                .properties?['type']] = [];
+                            controller.interestImages[element
+                                .properties?['type']] = value;
+                          }
+                          controller.interestAnnotations[element
+                              .properties?['type']]!.add(pointAnnotation);
+                          controller.geoJson.features[index]
+                              .properties?['annotation'] = pointAnnotation.id;
+                        });
+                      }
+                      print(controller.geoJson.features.length);
+                    }
+                    pointAnnotationManager.addOnPointAnnotationClickListener(AnnotationClickListener((annotation) {
+                      var point = controller.geoJson.features.where((element) => element.properties?['annotation'] == annotation.id).firstOrNull;
+                      if(point == null) {
+                        return;
+                      }
+                      showModalBottomSheet(context: context, builder: (_) => BottomSheet(
+                          elevation: 0,
+                          onClosing: () {}, builder: (_) => Container(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
+                              child: Row(
+                                children: [
+                                  Image.asset(AppHelper.getImage('${point
+                                      .properties?['type']}.png'), width: 30, height: 30),
+                                  const SizedBox(width: 8),
+                                  Text('${point.properties?['title']}', style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w700,
+                                  )),
+                                ],
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                              child: ElevatedButton(onPressed: () {
-                                AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
-                              }, style: ButtonStyle(
-                                backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
-                                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                              ), child: Text('Get Directions', style: TextStyle(
-                                color: Theme.of(context).cardColor,
-                              ),),),
+                              child: Text('${point.properties?['description']}', style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              )),
                             ),
+                            if(point.properties?['direction'] == true)
+                              ...[
+                                const SizedBox(height: 16),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                                  child: ElevatedButton(onPressed: () {
+                                    AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                                  }, style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                                  ), child: Text('Get Directions', style: TextStyle(
+                                    color: Theme.of(context).cardColor,
+                                  ),),),
+                                ),
+                            ],
+                            SizedBox(height: MediaQuery.of(context).padding.bottom+8),
+                          ],
+                        ),
+                      )));
+                    }));
+
+                    //if(controller.showDistanceMarkers.value) {
+                      final lineString = controller.getLineStringForPath();
+                      final totalDistance = controller.calculateTotalDistance();
+
+                      for(int i = 1; i < totalDistance-1; i++) {
+                        Widget widget = Container(
+                          width: 26,
+                          height: 26,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1,
+                            )
+                          ),
+                          child: Center(
+                            child: Text('$i', style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),),
+                          ),
+                        );
+
+                        controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100)).then((bytes) {
+                          controller.images[i] = bytes;
+
+                          pointAnnotationManager.create(PointAnnotationOptions(
+                            geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)).toJson(),
+                            image: i % 5 == 0 ? controller.images[i] : null,
+                          )).then((pointAnnotation) {
+                            controller.points[i] = pointAnnotation;
+                          });
+                        });
+                      //}
+                    }
+                  });
+              },
+            ),
+            if(controller.showElevation.value)
+            Positioned(
+              top: MediaQuery.of(context).size.height*0.75,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
+                      child: Row(
+                        children: [
+                          Image.asset(AppHelper.getImage('aidstation.png'), width: 30, height: 30),
+                          const SizedBox(width: 10),
+                          Text('Elevation Profile', style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                          )),
                         ],
-                        SizedBox(height: MediaQuery.of(context).padding.bottom+8),
-                      ],
+                      ),
                     ),
-                  )));
-                }));
-
-                //if(controller.showDistanceMarkers.value) {
-                  final lineString = controller.getLineStringForPath();
-                  final totalDistance = controller.calculateTotalDistance();
-
-                  for(int i = 1; i < totalDistance-1; i++) {
-                    Widget widget = Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.black,
-                          width: 1,
-                        )
-                      ),
-                      child: Center(
-                        child: Text('$i', style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),),
-                      ),
-                    );
-
-                    controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100)).then((bytes) {
-                      controller.images[i] = bytes;
-
-                      pointAnnotationManager.create(PointAnnotationOptions(
-                        geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)).toJson(),
-                        image: i % 5 == 0 ? controller.images[i] : null,
-                      )).then((pointAnnotation) {
-                        controller.points[i] = pointAnnotation;
-                      });
-                    });
-                  //}
-                }
-              });
-          },
+                  ],
+                )
+              ),
+            ),
+          ],
         );
       }
       ),
