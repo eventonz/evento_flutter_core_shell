@@ -140,3 +140,19 @@ flutter:
     - packages/evento_core/assets/images/share.png
     - packages/evento_core/assets/images/speedometer.webp
     - packages/evento_core/assets/images/aidstation.png
+    - packages/evento_core/assets/images/camera.png
+    - packages/evento_core/assets/images/checkpoint.png
+    - packages/evento_core/assets/images/bagdrop.png
+    - packages/evento_core/assets/images/bus.png
+    - packages/evento_core/assets/images/caution.png
+    - packages/evento_core/assets/images/firstaid.png
+    - packages/evento_core/assets/images/info.png
+    - packages/evento_core/assets/images/mechanic.png
+    - packages/evento_core/assets/images/parking.png
+    - packages/evento_core/assets/images/roadclosure_marker.png
+    - packages/evento_core/assets/images/timing.png
+    - packages/evento_core/assets/images/wc.png
+    - packages/evento_core/assets/images/waterpoint_marker.png
+    - packages/evento_core/assets/images/turnaround.png
+    - packages/evento_core/assets/images/spectators.png
+
