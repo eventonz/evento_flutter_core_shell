@@ -95,9 +95,25 @@ class EventoMapController extends GetxController {
     update();
   }
 
-  void changeDistanceMarkers(bool show) {
+  void changeDistanceMarkers(bool show) async {
     showDistanceMarkers.value = show;
     update();
+
+    final state = await mapboxMap?.getCameraState();
+    print(state?.zoom);
+    for(int i = 1; i < totalDistance-1; i++) {
+      final annotation = points[i];
+      if(annotation != null) {
+        if(showDistanceMarkers.value == false) {
+          annotation.image = null;
+        } else if((state?.zoom ?? 0) >= 14) {
+          annotation.image = images[i];
+        } else {
+          annotation.image = i % 5 == 0 ? images[i] : null;
+        }
+        pointAnnotationManager?.update(annotation);
+      }
+    }
   }
 
   void updateSelectedInterests(List<String> values) {
@@ -142,6 +158,12 @@ class EventoMapController extends GetxController {
     mapStyle.value = mapStyles[index];
     mapboxMap?.loadStyleURI(mapStyles[index]);
     update();
+    
+
+    //mapboxMap?.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
+    // add the DEM source as a terrain layer with exaggerated height
+    //mapboxMap.style.til();
+    mapboxMap?.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
   }
 
   Future<void> getConfig() async {
