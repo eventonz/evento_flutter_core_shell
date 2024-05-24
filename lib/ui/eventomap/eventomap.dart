@@ -476,8 +476,8 @@ class _EventoMapState extends State<EventoMap> {
 
                       for(int i = 1; i < totalDistance-1; i++) {
                         Widget widget = Container(
-                          width: 26,
-                          height: 26,
+                          width: 16,
+                          height: 16,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
@@ -488,6 +488,7 @@ class _EventoMapState extends State<EventoMap> {
                           ),
                           child: Center(
                             child: Text('$i', style: const TextStyle(
+                              fontSize: 8,
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
                             ),),
