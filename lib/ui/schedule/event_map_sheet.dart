@@ -1,17 +1,20 @@
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/date_extensions.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'schedule_controller.dart';
 
 class EventMapSheet extends StatelessWidget {
-  const EventMapSheet({Key? key}) : super(key: key);
+  final LatLng? latLng;
+  const EventMapSheet({Key? key, required this.latLng}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -119,7 +122,9 @@ class EventMapSheet extends StatelessWidget {
                         padding: const EdgeInsets.all(16),
                         child: CupertinoButton(
                           color: AppColors.accentLight,
-                          onPressed: controller.showDirectionsOnMap,
+                          onPressed: () {
+                            AppHelper.showDirectionsOnMap(latLng);
+                          },
                           padding: const EdgeInsets.all(8),
                           child: const AppText(
                             'Get Directions',

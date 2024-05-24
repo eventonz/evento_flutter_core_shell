@@ -428,7 +428,9 @@ class _EventoMapState extends State<EventoMap> {
                             const SizedBox(height: 16),
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                              child: ElevatedButton(onPressed: () {}, style: ButtonStyle(
+                              child: ElevatedButton(onPressed: () {
+                                AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                              }, style: ButtonStyle(
                                 backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
                                 shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                               ), child: Text('Get Directions', style: TextStyle(

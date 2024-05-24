@@ -10,6 +10,7 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -32,6 +33,27 @@ class AppHelper {
     }
     return Color(int.parse(color.replaceAll('#', '0xFF')));
   }
+
+  static void showDirectionsOnMap(LatLng? latLng) async {
+    final lat = latLng?.latitude ?? 0;
+    final lon = latLng?.longitude ?? 0;
+    final appleUrl =
+        'https://maps.apple.com/?saddr=&daddr=$lat,$lon&directionsmode=driving';
+    final googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
+    const errorMessage = 'Error, while trying to open the direction in map';
+
+    if (Platform.isIOS) {
+      final googleUrlRes =
+      await AppHelper.launchUrlApp(googleUrl, showErrorMessage: false);
+      if (!googleUrlRes) {
+        await AppHelper.launchUrlApp(appleUrl, errorMessage: errorMessage);
+      }
+    } else {
+      await AppHelper.launchUrlApp(googleUrl, errorMessage: errorMessage);
+    }
+  }
+
 
   static bool listsAreEqual(List list1, List list2) {
     if (list1.length != list2.length) {

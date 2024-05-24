@@ -110,28 +110,9 @@ class ScheduleController extends GetxController {
       latLng = null;
     }
     await AppFixedBottomSheet(Get.context!, enableDrag: true)
-        .show(child: const EventMapSheet());
+        .show(child: EventMapSheet(latLng: latLng));
   }
 
-  void showDirectionsOnMap() async {
-    final lat = latLng?.latitude ?? 0;
-    final lon = latLng?.longitude ?? 0;
-    final appleUrl =
-        'https://maps.apple.com/?saddr=&daddr=$lat,$lon&directionsmode=driving';
-    final googleUrl =
-        'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
-    const errorMessage = 'Error, while trying to open the direction in map';
-
-    if (Platform.isIOS) {
-      final googleUrlRes =
-          await AppHelper.launchUrlApp(googleUrl, showErrorMessage: false);
-      if (!googleUrlRes) {
-        await AppHelper.launchUrlApp(appleUrl, errorMessage: errorMessage);
-      }
-    } else {
-      await AppHelper.launchUrlApp(googleUrl, errorMessage: errorMessage);
-    }
-  }
 }
 
 class ScheduleItem {
