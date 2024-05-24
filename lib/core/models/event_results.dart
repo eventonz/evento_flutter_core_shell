@@ -28,6 +28,7 @@ class EventResult {
   EventResult({this.detail, this.listTitle});
 
   EventResult.fromJson(Map<String, dynamic> json) {
+    print(json);
     detail = json['detail'] != null ? Detail.fromJson(json['detail']) : null;
     listTitle = json['list'] != null ? ListTitle.fromJson(json['list']) : null;
   }

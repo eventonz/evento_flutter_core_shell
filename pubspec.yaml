@@ -32,6 +32,7 @@ dependencies:
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
+      ref: 92a14cd631d537a24a40a84b677a38c314beb723
 
   
   carousel_slider: ^4.2.1
@@ -59,6 +60,8 @@ dependencies:
   mapbox_maps_flutter: ^1.0.0
   screenshot: ^2.3.0
   geolocator: ^12.0.0
+  geodesy: ^0.10.2
+  fl_chart: ^0.68.0
 
 
 dependency_overrides:
@@ -128,9 +131,12 @@ flutter:
     - packages/evento_core/assets/svgs/watch_later.svg
     - packages/evento_core/assets/svgs/wb_sunny.svg
     - packages/evento_core/assets/svgs/web.svg
+    - packages/evento_core/assets/svgs/startingpoint.svg
+    - packages/evento_core/assets/svgs/finishpoint.svg
 
     - packages/evento_core/assets/images/splash_image.png
     - packages/evento_core/assets/images/instagram.png
     - packages/evento_core/assets/images/general.png
     - packages/evento_core/assets/images/share.png
     - packages/evento_core/assets/images/speedometer.webp
+    - packages/evento_core/assets/images/aidstation.png

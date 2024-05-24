@@ -361,6 +361,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  equatable:
+    dependency: transitive
+    description:
+      name: equatable
+      sha256: c2b87cb7756efdf69892005af546c56c0b5037f54d2a88269b4f347a505e3ca2
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.5"
   extra_pedantic:
     dependency: transitive
     description:
@@ -465,6 +473,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
+  fl_chart:
+    dependency: "direct main"
+    description:
+      name: fl_chart
+      sha256: d0f0d49112f2f4b192481c16d05b6418bd7820e021e265a3c22db98acf7ed7fb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.68.0"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -561,19 +577,19 @@ packages:
     source: hosted
     version: "0.3.5"
   geodesy:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: geodesy
-      sha256: f1fce7dda4b5c1533ac6fae33636cc7c90749bdc87190fff93fd1ca5a458e3d2
+      sha256: e8f843c57e27e562755272a5fe6700c04567d7a6069881d0966ccda71c0f69ad
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.2"
+    version: "0.10.2"
   geojson:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: "8b2a1408cc19494052321647d3ffd7d0679161ae"
+      ref: "92a14cd631d537a24a40a84b677a38c314beb723"
+      resolved-ref: "92a14cd631d537a24a40a84b677a38c314beb723"
       url: "git@github.com:coding-master15/geojson.git"
     source: git
     version: "1.0.0"

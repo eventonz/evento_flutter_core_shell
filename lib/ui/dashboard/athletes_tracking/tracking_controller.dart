@@ -53,6 +53,7 @@ class TrackingController extends GetxController
   static const _startedId = 'AnimatedMapController#MoveStarted';
   static const _inProgressId = 'AnimatedMapController#MoveInProgress';
   static const _finishedId = 'AnimatedMapController#MoveFinished';
+
   @override
   void onInit() {
     super.onInit();
