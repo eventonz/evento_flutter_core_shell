@@ -193,6 +193,7 @@ class _EventoMapState extends State<EventoMap> {
                             const SizedBox(height: 10),
                             Wrap(
                               children: [
+
                                 GestureDetector(
                                   onTap: () {
                                     if(controller.selectedInterests.value.contains('')) {
@@ -232,6 +233,7 @@ class _EventoMapState extends State<EventoMap> {
 
                                   },
                                   child: Container(
+                                    margin: const EdgeInsets.only(right: 8, bottom:6),
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
                                       color: selectedInterests.contains(e.properties?['type']) ? Colors.grey.shade300 : null,
