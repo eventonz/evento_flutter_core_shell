@@ -3,7 +3,7 @@ class Trail {
   final String geojsonFile;
   final String uuid;
   final String title;
-  final List<List<double>> elevationData;
+  final List<List<num>> elevationData;
 
   Trail({
     required this.defaultStyle,
@@ -18,7 +18,7 @@ class Trail {
         geojsonFile: json['geojson_file'] as String,
         uuid: json['uuid'] as String,
         title: json['title'] as String,
-        elevationData: (json['elevationData'] as List?)?.map((e) => (e as List<dynamic>).cast<double>())
+        elevationData: (json['elevationData'] as List?)?.map((e) => (e as List<dynamic>).cast<num>())
             .toList() ?? [],
       );
 }

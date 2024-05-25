@@ -1,11 +1,14 @@
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/eventomap/eventomap_controller.dart';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geojson/geojson.dart';
@@ -70,7 +73,7 @@ class _EventoMapState extends State<EventoMap> {
                   ),
                   child: Center(child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Icon(Icons.menu, color: Theme.of(context).colorScheme.primary, size: 24,),
+                    child: Icon(Icons.menu, size: 24,),
                   ))),
             ),
           ),
@@ -104,7 +107,7 @@ class _EventoMapState extends State<EventoMap> {
                             ),
                             child: Center(child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.close, color: Theme.of(context).colorScheme.primary, size: 24,),
+                              child: Icon(Icons.close, size: 24,),
                             ))),
                       ),
                     ),
@@ -276,6 +279,170 @@ class _EventoMapState extends State<EventoMap> {
         });
       }
 
+      List<Color> gradientColors = [
+        AppColors.splitGreen,
+        AppColors.splitOrange,
+      ];
+
+      Widget bottomTitleWidgets(double value, TitleMeta meta) {
+        const style = TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+        );
+        Widget text = Container();
+        int first = ((controller.trail.value?.elevationData.sorted((a, b) => a.last.compareTo(b.last)))?.first.last.toDouble() ?? 0).toInt();
+        if(value.toInt() == first) {
+          text = const Text('MAR', style: style);
+        }
+        switch (value.toInt()) {
+          case 5:
+            text = const Text('JUN', style: style);
+            break;
+          case 8:
+            text = const Text('SEP', style: style);
+            break;
+        }
+
+        return SideTitleWidget(
+          axisSide: meta.axisSide,
+          child: text,
+        );
+      }
+
+      Widget leftTitleWidgets(double value, TitleMeta meta) {
+        const style = TextStyle(
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        );
+
+        double maxElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b) ?? 0;
+        double step = maxElevation / 5;
+
+        double top = 0;
+        double bottom = 0;
+
+        String text = '';
+        if (value == step * 1) {
+          top = 36;
+          text = (step * 1).toStringAsFixed(0) + 'm';
+        /*} else if (value == step * 2) {
+          text = (step * 2).toStringAsFixed(0) + 'm';
+        } else if (value == step * 3) {
+          text = (step * 3).toStringAsFixed(0) + 'm';
+        } else if (value == step * 4) {
+          text = (step * 4).toStringAsFixed(0) + 'm';
+        */} else if (value == step * 5) {
+          top = 0;
+          text = (step * 5).toStringAsFixed(0) + 'm';
+        }
+
+        return Container(
+            margin: EdgeInsets.only(top: top, bottom: bottom),
+            child: Text(text, style: style, textAlign: TextAlign.left));
+      }
+
+      LineChartData mainData() {
+        List<List<num>> elevationData = controller.trail.value?.elevationData ?? [];
+        double maxX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a > b ? a : b);
+        double maxY = elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b);
+        double minX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a < b ? a : b);
+        return LineChartData(
+          lineTouchData: LineTouchData(
+              handleBuiltInTouches: true,
+              touchCallback: (event, response) {
+                if(!event.isInterestedForInteractions) {
+                  controller.elevationAnnotation!.image = null;
+                  controller.pointAnnotationManager?.update(
+                      controller.elevationAnnotation!);
+                  return;
+                }
+              if (response == null || response.lineBarSpots == null) {
+                return;
+              }
+                if(controller.elevationAnnotation != null) {
+                  controller.elevationAnnotation!.image = controller.elevationImage;
+                  controller.elevationAnnotation!.geometry = Point(coordinates: Position(controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lng, controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lat)).toJson();
+                  controller.pointAnnotationManager?.update(
+                      controller.elevationAnnotation!);
+              }
+
+            }
+          ),
+          gridData: FlGridData(
+            show: true,
+            drawVerticalLine: false,
+            horizontalInterval: (maxY*1.1) / 1,
+            verticalInterval: maxX / 2,
+            getDrawingHorizontalLine: (value) {
+              return const FlLine(
+                color: AppColors.black,
+                strokeWidth: 1,
+              );
+            },
+            getDrawingVerticalLine: (value) {
+              return const FlLine(
+                color: AppColors.black,
+                strokeWidth: 1,
+              );
+            },
+          ),
+          titlesData: FlTitlesData(
+            show: true,
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: false,
+              ),
+            ),
+            leftTitles: AxisTitles(
+              sideTitles: SideTitles(
+                showTitles: true,
+                interval: maxY / 5,
+                getTitlesWidget: leftTitleWidgets,
+                reservedSize: 45,
+              ),
+            ),
+          ),
+          borderData: FlBorderData(
+            show: true,
+            border: Border.all(color: const Color(0xff37434d)),
+          ),
+          minX: minX,
+          maxX: maxX,
+          minY: 0,
+          maxY: maxY*1.1,
+          lineBarsData: [
+            LineChartBarData(
+              spots: [
+                ...controller.trail.value?.elevationData.map((e) => FlSpot(e.first.toDouble(), e.last.toDouble())).toList() ?? [],
+              ],
+              isCurved: true,
+              gradient: LinearGradient(
+                colors: gradientColors,
+              ),
+              barWidth: 5,
+              isStrokeCapRound: true,
+              dotData: const FlDotData(
+                show: false,
+              ),
+              belowBarData: BarAreaData(
+                show: true,
+                gradient: LinearGradient(
+                  colors: gradientColors
+                      .map((color) => color.withOpacity(0.3))
+                      .toList(),
+                ),
+              ),
+            ),
+          ],
+        );
+      }
+
         return controller.loading.value ? Center(
           child: CircularProgressIndicator(),
         ) : Stack(
@@ -369,6 +536,28 @@ class _EventoMapState extends State<EventoMap> {
                         ));
                       });
                     }
+
+                    Widget widget = Container(
+                      padding: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                      child: SvgPicture.asset(
+                          AppHelper.getSvg('startingpoint'), color: Colors.black, width: 16, height: 16),
+                    );
+                    controller.screenshotController.captureFromWidget(widget)
+                        .then((value) {
+                      pointAnnotationManager.create(PointAnnotationOptions(
+                        geometry: Point(
+                            coordinates: controller.routePathsCordinates.first)
+                            .toJson(),
+                        image: value,
+                      )).then((val) {
+                        controller.elevationAnnotation = val;
+                        controller.elevationImage = value;
+                      });
+                    });
 
                     if(controller.showFinishIcon) {
                       Widget widget = SvgPicture.asset(
@@ -511,7 +700,7 @@ class _EventoMapState extends State<EventoMap> {
             ),
             if(controller.showElevation.value)
             Positioned(
-              top: MediaQuery.of(context).size.height*0.75,
+              top: MediaQuery.of(context).size.height*0.7,
               left: 0,
               right: 0,
               bottom: 0,
@@ -526,7 +715,7 @@ class _EventoMapState extends State<EventoMap> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
+                      padding: const EdgeInsets.only(left: 24.0, right: 16.0, top: 24.0, bottom: 12.0),
                       child: Row(
                         children: [
                           Image.asset(AppHelper.getImage('aidstation.png'), width: 30, height: 30),
@@ -535,7 +724,27 @@ class _EventoMapState extends State<EventoMap> {
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                           )),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: () {
+                              controller.changeElevation(false);
+                            },
+                            icon: Icon(Icons.close),
+                          ),
                         ],
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          right: 18,
+                          left: 12,
+                          top: 12,
+                          bottom: 12,
+                        ),
+                        child: LineChart(
+                          mainData(),
+                        ),
                       ),
                     ),
                   ],

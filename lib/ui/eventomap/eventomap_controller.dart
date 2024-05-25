@@ -27,6 +27,9 @@ class EventoMapController extends GetxController {
 
   List<Position> routePathsCordinates = [];
 
+  PointAnnotation? elevationAnnotation;
+  Uint8List? elevationImage;
+
   bool showStartIcon = false;
   bool showFinishIcon = false;
   String color = '#000000';
@@ -158,7 +161,7 @@ class EventoMapController extends GetxController {
     mapStyle.value = mapStyles[index];
     mapboxMap?.loadStyleURI(mapStyles[index]);
     update();
-    
+
 
     //mapboxMap?.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
     // add the DEM source as a terrain layer with exaggerated height
