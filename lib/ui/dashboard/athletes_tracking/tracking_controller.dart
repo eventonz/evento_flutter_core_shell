@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
@@ -38,6 +39,8 @@ class TrackingController extends GetxController
   Map<String, List<LatLng>> routePathsCordinates = {};
   bool animated = false;
   Map<String, LatLng> locations = {};
+
+  bool isFirstTime = true;
 
   PointAnnotationManager? pointAnnotationManager;
   PolylineAnnotationManager? polylineAnnotationManager;
@@ -144,6 +147,7 @@ class TrackingController extends GetxController
 
   Future<void> getRoutePaths() async {
     if (trackingDetails == null) return;
+    print('getRoutePaths');
     routePathLinks = List.from(trackingDetails!.paths);
     try {
       mapDataSnap.value = DataSnapShot.loading;
@@ -190,7 +194,11 @@ class TrackingController extends GetxController
     timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
         (Timer t){
 
-      getAthleteTrackingInfo();
+      DashboardController controller = Get.find();
+
+      if(controller.selMenu.value?.label == 'track') {
+        getAthleteTrackingInfo();
+      }
     });
   }
 
@@ -220,6 +228,7 @@ class TrackingController extends GetxController
   }
 
   Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
+
     if (trackingDetails == null) return;
     if(firstTime && athleteTrackDetails.isNotEmpty) {
       currentII++;
@@ -236,6 +245,7 @@ class TrackingController extends GetxController
       'web_tracking': true,
       'tracks': entrantsIds
     };
+    print('this one');
     final res = await ApiHandler.postHttp(
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
     if (res.statusCode == 200) {
