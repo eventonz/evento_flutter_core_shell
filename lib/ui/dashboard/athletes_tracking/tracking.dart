@@ -1,5 +1,8 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
@@ -55,7 +58,7 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 18.h,
+                              height: 18.5.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
@@ -91,13 +94,17 @@ class TrackingScreen extends StatelessWidget {
                                             .size
                                             .width}) * 1.02 : 15;
                                     print('fly');
-                                    controller.mapboxMap!.flyTo(CameraOptions(
-                                      zoom: zoom,
-                                      center: Point(coordinates: Position(latLng.longitude, latLng.latitude)).toJson(),
-                                    ), MapAnimationOptions(
-                                      duration: 500,
-                                      startDelay: 0,
-                                    ));
+                                    if(Platform.isIOS) {
+                                      controller.appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(latLng.latitude, latLng.longitude), zoom: zoom)));
+                                    } else {
+                                      controller.mapboxMap!.flyTo(CameraOptions(
+                                        zoom: zoom,
+                                        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)).toJson(),
+                                      ), MapAnimationOptions(
+                                        duration: 500,
+                                        startDelay: 0,
+                                      ));
+                                    }
                                 /*} catch (e) {
                                   print(e);
                                 }*/
@@ -152,6 +159,7 @@ class SliderAthleteTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        clipBehavior: Clip.hardEdge,
         margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.light

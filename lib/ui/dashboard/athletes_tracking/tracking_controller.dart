@@ -1,8 +1,10 @@
 // ignore_for_file: invalid_use_of_protected_member
 import 'dart:io';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:evento_core/core/models/app_config.dart';
@@ -18,6 +20,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:geodart/geometries.dart' as geodart;
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
@@ -40,6 +43,13 @@ class TrackingController extends GetxController
   bool animated = false;
   Map<String, LatLng> locations = {};
 
+  bool isAnimatingMarkers = false;
+
+  apple_maps.AppleMapController? appleMapController;
+  Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines = Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
+  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+
+  Map<String, TrackProgress> trackProgressMap = {};
   bool isFirstTime = true;
 
   PointAnnotationManager? pointAnnotationManager;
@@ -68,6 +78,16 @@ class TrackingController extends GetxController
     //if (eventId.isEmpty) {
     //  eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
     //}
+  }
+  
+  void addPolyline(polylineId, polyline) {
+    polylines.value[polylineId] = polyline;
+    update();
+  }
+
+  void addAnnotation(annotationId, annotation) {
+    annotations.value[annotationId] = annotation;
+    update();
   }
 
   void animatedMapMove(LatLng destLocation, double destZoom) {

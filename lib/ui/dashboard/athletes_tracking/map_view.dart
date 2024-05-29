@@ -1,7 +1,11 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -64,9 +68,35 @@ class TrackingMapView extends StatelessWidget {
     final mapDataSnap = controller.mapDataSnap;
 
     createRoute() async {
+
+
       final positions = <List<Position>>[];
+      final positionsApple = <apple_maps.LatLng>[];
       for (List<LatLng> routePath in controller.routePathsCordinates.values) {
+        routePath.forEach((latLng) {
+          positionsApple.add(apple_maps.LatLng(latLng.latitude, latLng.longitude));
+        });
         positions.add(routePath.map((e) => Position(e.longitude, e.latitude)).toList());
+      }
+
+      if(Platform.isIOS) {
+
+        final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
+        final apple_maps.PolylineId polylineId = apple_maps.PolylineId(polylineIdVal);
+
+        final apple_maps.Polyline polyline = apple_maps.Polyline(
+          polylineId: polylineId,
+          consumeTapEvents: true,
+          color: AppColors.accentDark,
+          width: 3,
+          points: positionsApple,
+          onTap: () {
+
+          },
+        );
+
+        controller.addPolyline(polylineId, polyline);
+        return;
       }
 
       controller.polylineAnnotationManager?.createMulti(positions
@@ -76,19 +106,49 @@ class TrackingMapView extends StatelessWidget {
           .toList());
     }
 
+    Future<Uint8List> widgetToBytes(Widget widget) async {
+      var value = await controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100));
+      Codec codec = await instantiateImageCodec(value);
+      FrameInfo fi = await codec.getNextFrame();
+      var bytes = (await fi.image.toByteData(format: ImageByteFormat.png))!
+      .buffer
+      .asUint8List();
+      return bytes;
+    }
+
     createMarkers() async {
 
       for (MapPathMarkers marker in controller.mapPathMarkers) {
 
-        http.Response response = await http.get(Uri.parse(marker.iconUrl));
-        Widget widget = Image.memory(response.bodyBytes, width: 30, height: 30);
-        controller.screenshotController.captureFromWidget(widget).then((value) {
-          controller.pointAnnotationManager?.create(PointAnnotationOptions(
-              geometry: Point(
-                  coordinates: Position(marker.latLng.longitude, marker.latLng.latitude)
-              ).toJson(), image: value));
-        });
+        if(Platform.isIOS) {
+          http.Response response = await http.get(Uri.parse(marker.iconUrl));
+          Widget widget = Image.memory(
+              response.bodyBytes, width: 30, height: 30);
+          final String annotationIdVal = 'annotation_id_${controller.polylines.value.length}';
+          final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(annotationIdVal);
+            var bytes = await widgetToBytes(widget);
+            final apple_maps.Annotation annotation = apple_maps.Annotation(
+              annotationId: polygonId,
+              icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+              position: apple_maps.LatLng( marker.latLng.latitude, marker.latLng.longitude),
+              onTap: () {
 
+              },
+            );
+            controller.annotations.value[polygonId] = annotation;
+        } else {
+          http.Response response = await http.get(Uri.parse(marker.iconUrl));
+          Widget widget = Image.memory(
+              response.bodyBytes, width: 30, height: 30);
+          controller.screenshotController.captureFromWidget(widget).then((
+              value) {
+            controller.pointAnnotationManager?.create(PointAnnotationOptions(
+                geometry: Point(
+                    coordinates: Position(
+                        marker.latLng.longitude, marker.latLng.latitude)
+                ).toJson(), image: value));
+          });
+        }
       }
     }
 
@@ -118,6 +178,198 @@ class TrackingMapView extends StatelessWidget {
           } catch (e) {
             //
           }
+        }
+
+        if(Platform.isIOS) {
+
+          void updateTrackProgress() {
+            for (var trackDetail in controller.athleteTrackDetails.value) {
+              final progress = controller.trackProgressMap[trackDetail.track]!;
+              progress.oldProgress = trackDetail.location ?? 0;
+              progress.currentProgress = trackDetail.location ?? 0;
+              progress.currentSpeed = trackDetail.speed ?? 0;
+              progress.newProgressUpdate = true;
+            }
+          }
+
+          void setInitialRouteMarkerPaths() async {
+            for (var trackDetail in controller.athleteTrackDetails.value) {
+              final routePath = controller.getAthleteRouthPath(trackDetail);
+              if (routePath.isNotEmpty) {
+                print('routePath');
+                final latLng = routePath.first;
+                controller.setLocation(trackDetail.track, latLng);
+                var bytes = await widgetToBytes(Container(
+                  width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                      color: AppColors.accentLight,
+                      borderRadius: BorderRadius.circular(40)),
+                  child: Center(
+                    child: AppText(
+                        trackDetail.track,
+                        fontSize: 16,
+                        color: AppColors.white
+                    ),
+                  ),
+                ));
+                var marker = apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId(trackDetail.track),
+                  position: apple_maps.LatLng(latLng.latitude, latLng.longitude),
+                  infoWindow: apple_maps.InfoWindow(title: trackDetail.track),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+                );
+                controller.addAnnotation(apple_maps.AnnotationId(trackDetail.track), marker);
+                print(controller.annotations.value.length);
+                print('controller.annotations.value.length');
+              }
+            }
+          }
+
+          geodart.LineString createLineStringPath(List<LatLng> routePath) {
+            if (routePath.isEmpty) {
+              return geodart.LineString([]);
+            }
+            final path = Path.from(routePath);
+            final steps = path.equalize(6, smoothPath: true);
+            return geodart.LineString(steps.coordinates
+                .map((latLng) => geodart.Coordinate(latLng.latitude, latLng.longitude))
+                .toList());
+          }
+
+          void setInitialDistances() {
+            for (var trackDetail in controller.athleteTrackDetails.value) {
+              final progress = TrackProgress(
+                coveredDistance: (trackDetail.location ?? 0) / 100 *
+                    createLineStringPath(controller.getAthleteRouthPath(trackDetail)).length.toPrecision(3),
+              );
+              controller.trackProgressMap[trackDetail.track] = progress;
+            }
+          }
+
+          LatLng getLatlngFromDistance(geodart.LineString lineStringPath, double coveredDistance) {
+            final coordinate =
+                lineStringPath.along(coveredDistance.toPrecision(4)).coordinate;
+            return LatLng(coordinate.latitude, coordinate.longitude);
+          }
+
+          double getNewDistanceAfterOneSec(double speed) {
+            return speed / 3600 * 1000;
+          }
+
+          void updateMarkers() async {
+            print('hello');
+            //if (controller.isAnimatingMarkers) return;
+            //controller.isAnimatingMarkers = true;
+
+            for (var trackDetail in controller.athleteTrackDetails.value) {
+              final progress = controller.trackProgressMap[trackDetail.track]!;
+
+              final routePath = controller.getAthleteRouthPath(trackDetail);
+
+              if (routePath.isNotEmpty) {
+                final geodart.LineString lineStringPath = createLineStringPath(
+                    routePath);
+
+                double coveredDistance = progress.coveredDistance;
+                while (coveredDistance < lineStringPath.length.toPrecision(4)) {
+                  if (progress.newProgressUpdate) {
+                    progress.coveredDistance =
+                        (progress.currentProgress / 100) *
+                            lineStringPath.length.toPrecision(3);
+                    progress.newProgressUpdate = false;
+                  }
+                  print(getNewDistanceAfterOneSec(progress.currentSpeed));
+                  progress.coveredDistance =
+                      getNewDistanceAfterOneSec(progress.currentSpeed) +
+                          progress.coveredDistance.toPrecision(4);
+                  final latLng = getLatlngFromDistance(
+                      lineStringPath, progress.coveredDistance);
+
+                  await controller.setLocation(
+                      trackDetail.track, latLng, wait: true);
+
+                  if(controller.annotations.value[trackDetail.track] != null) {
+                    controller.annotations.value[apple_maps.AnnotationId(
+                        trackDetail.track)] =
+                        controller.annotations.value[trackDetail.track]
+                            !.copyWith(
+                            positionParam: apple_maps.LatLng(
+                                latLng.latitude, latLng.longitude));
+                  }
+
+
+                  progress.oldProgress = trackDetail.location ?? 0;
+                  progress.currentProgress = trackDetail.location ?? 0;
+                  progress.currentSpeed = trackDetail.speed ?? 0;
+                  createLineStringPath(
+                      controller.getAthleteRouthPath(trackDetail));
+                  updateMarkers();
+                }
+              }
+            }
+            //controller.isAnimatingMarkers = false;
+          }
+
+          setInitialRouteMarkerPaths();
+          setInitialDistances();
+          controller.updateStream.stream.listen((event) {
+            Future.delayed(const Duration(milliseconds: 200), () {
+              updateTrackProgress();
+              updateMarkers();
+            });
+          });
+
+          print('aa ${controller.athleteTrackDetails.value.length}');
+
+          return Stack(
+            children: [
+              apple_maps.AppleMap(
+                mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
+                onMapCreated: (appleMapController) {
+                  controller.appleMapController = appleMapController;
+                  createRoute();
+
+                  /*appleMapController.location.updateSettings(LocationComponentSettings(
+                      enabled: true,
+                      pulsingEnabled: true
+                  ));*/
+                },
+                polylines: Set<apple_maps.Polyline>.of(controller.polylines.value.values),
+                annotations: Set<apple_maps.Annotation>.of(controller.annotations.value.values),
+                initialCameraPosition: apple_maps.CameraPosition(
+                    target: apple_maps.LatLng(centerPoint.lat.toDouble(), centerPoint.lng.toDouble()),
+                    zoom: dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
+                      'height' : MediaQuery.of(context).size.height,
+                      'width' : MediaQuery.of(context).size.width})*1.02
+                ),
+              ),
+              if(/*controller.pointAnnotationManager != null*/false)
+                for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                  AnimatedMarkerView(trackDetail: trackDetail),
+
+              Positioned(
+                  right: 2.w,
+                  top: 2.w,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        CupertinoButton(
+                            padding: const EdgeInsets.all(0),
+                            color: AppColors.white,
+                            onPressed: controller.changeMapStyle,
+                            child: SvgPicture.asset(AppHelper.getSvg('layers'), width: 28,)),
+                        const SizedBox(height: 16),
+                        CupertinoButton(
+                            padding: const EdgeInsets.all(0),
+                            color: AppColors.white,
+                            onPressed: controller.showUserLocation,
+                            child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
+                      ],
+                    ),
+                  )),
+            ],
+          );
         }
 
         return Stack(
@@ -176,96 +428,6 @@ class TrackingMapView extends StatelessWidget {
                 )),
           ],
         );
-
-        /* return Stack(
-          children: [
-            flutter_map.FlutterMap(
-              children: [
-                flutter_map.TileLayer(
-                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: const ['a', 'b', 'c']
-
-                  // evento one 2yJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
-                  // "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}"
-
-                  *//*urlTemplate: "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/wmts?access_token=pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg",
-
-                  //Openstreet
-
-                      //"https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  subdomains: const ['a', 'b', 'c'],*//*
-
-                ),
-<<<<<<< HEAD
-                flutter_map.MobileLayerTransformer(
-=======
-                PolylineLayer(
-                  polylines: [
-                    for (List<LatLng> routePath
-                        in controller.routePathsCordinates.values)
-                      Polyline(
-                        points: routePath,
-                        color: AppHelper.getRandomLightColor(),
-                        //color: AppColors.accentDark,
-                        strokeWidth: 3.5,
-                      ),
-                  ],
-                ),
-                MarkerLayer(
-                  markers: [
-                    for (MapPathMarkers marker in controller.mapPathMarkers)
-                      Marker(
-                          point: marker.latLng,
-                          child: CachedNetworkImage(
-                              imageUrl: marker.iconUrl,
-                              errorWidget: (context, url, error) =>
-                                  const SizedBox(),
-                            ))
-                  ],
-                ),
-                MobileLayerTransformer(
->>>>>>> main
-                  child: Stack(
-                    children: [
-                      for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
-                        AnimatedMarkerView(athleteTrackDetail: trackDetail)
-                    ],
-                  ),
-                ),
-                *//*for (AthleteTrackDetail trackDetail
-                    in controller.athleteTrackDetails.value)
-                  AnimatedMarkerView(athleteTrackDetail: trackDetail)*//*
-              ],
-            ),
-            // Positioned(
-            //   top: 2.w,
-            //   child: SafeArea(
-            //     child: CupertinoButton(
-            //         padding: const EdgeInsets.all(0),
-            //         color: AppColors.white,
-            //         onPressed: controller.getRoutePaths,
-            //         child: const Icon(
-            //           Icons.layers_outlined,
-            //           color: AppColors.black,
-            //         )),
-            //   ),
-            // ),
-            *//*Positioned(
-              right: 2.w,
-              top: 2.w,
-              child: SafeArea(
-                child: CupertinoButton(
-                    padding: const EdgeInsets.all(0),
-                    color: AppColors.white,
-                    onPressed: controller.changeMapStyle,
-                    child: const Icon(
-                      Icons.layers_outlined,
-                      color: AppColors.black,
-                    )),
-              ),
-            ),*//*
-          ],
-        );*/
       } else if (mapDataSnap.value == DataSnapShot.error) {
         return Center(child: RetryLayout(onTap: controller.getRoutePaths));
       } else {
@@ -482,3 +644,18 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 }
 
+class TrackProgress {
+  double oldProgress;
+  double currentProgress;
+  double currentSpeed;
+  double coveredDistance;
+  bool newProgressUpdate;
+
+  TrackProgress({
+    this.oldProgress = 0,
+    this.currentProgress = 0,
+    this.currentSpeed = 0,
+    this.coveredDistance = 0,
+    this.newProgressUpdate = false,
+  });
+}
