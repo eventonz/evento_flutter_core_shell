@@ -87,6 +87,12 @@ class TrackingController extends GetxController
 
   void addAnnotation(annotationId, annotation) {
     annotations.value[annotationId] = annotation;
+    annotations.refresh();
+    update();
+  }
+
+  void updateAnnotation(annotationId, annotation) {
+    annotations.value[annotationId] = annotationId;
     update();
   }
 
