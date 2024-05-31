@@ -2,8 +2,12 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/trail.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geodart/geometries.dart' as geodart;
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
@@ -15,6 +19,7 @@ import 'package:screenshot/screenshot.dart';
 
 import '../../core/utils/api_handler.dart';
 import '../../core/utils/app_global.dart';
+import '../../core/utils/helpers.dart';
 import '../../core/utils/keys.dart';
 import '../../core/utils/preferences.dart';
 import 'package:latlong2/latlong.dart' as latlong;
@@ -28,6 +33,7 @@ class EventoMapController extends GetxController {
   List<Position> routePathsCordinates = [];
 
   PointAnnotation? elevationAnnotation;
+  Rx<apple_maps.Annotation?> elevationAnnotationApple = Rx(null);
   Uint8List? elevationImage;
 
   bool showStartIcon = false;
@@ -41,11 +47,20 @@ class EventoMapController extends GetxController {
   Rx<List<String>> selectedInterests = Rx(['']);
 
   Rx<String> mapStyle = MapboxStyles.OUTDOORS.obs;
+  Rx<apple_maps.MapType> mapType = apple_maps.MapType.standard.obs;
+
+  RxMap<apple_maps.AnnotationId, apple_maps.Annotation> annotations = <apple_maps.AnnotationId, apple_maps.Annotation>{}.obs;
 
   List<String> mapStyles = [
     MapboxStyles.OUTDOORS,
     MapboxStyles.SATELLITE,
     MapboxStyles.STANDARD,
+  ];
+
+  List<apple_maps.MapType> mapTypes = <apple_maps.MapType>[
+    apple_maps.MapType.standard,
+    apple_maps.MapType.satellite,
+    apple_maps.MapType.hybrid,
   ];
 
   final Map<String, String> iopTypesMap = {
@@ -63,15 +78,17 @@ class EventoMapController extends GetxController {
     "firstaid": "First Aid"
   };
 
-  Map<int, PointAnnotation> points = {};
+  RxMap<int, dynamic> points = <int, dynamic>{}.obs;
   Map<int, Uint8List> images = {};
 
-  Map<String, List<PointAnnotation>> interestAnnotations = {};
+  RxMap<String, List<dynamic>> interestAnnotations = <String, List<dynamic>>{}.obs;
   Map<String, Uint8List> interestImages = {};
 
   double totalDistance = 0;
 
   PointAnnotationManager? pointAnnotationManager;
+
+  apple_maps.AppleMapController? appleMapsController;
 
   bool zoomedIn = false;
   RxBool showElevation = false.obs;
@@ -104,17 +121,33 @@ class EventoMapController extends GetxController {
 
     final state = await mapboxMap?.getCameraState();
     print(state?.zoom);
-    for(int i = 1; i < totalDistance-1; i++) {
+    for(int i = 1; i < totalDistance; i++) {
       final annotation = points[i];
       if(annotation != null) {
-        if(showDistanceMarkers.value == false) {
-          annotation.image = null;
-        } else if((state?.zoom ?? 0) >= 14) {
-          annotation.image = images[i];
+        if(!Platform.isIOS) {
+          if(showDistanceMarkers.value == false) {
+            annotation.image = null;
+          } else if((state?.zoom ?? 0) >= 14) {
+            annotation.image = images[i];
+          } else {
+            annotation.image = i % 5 == 0 ? images[i] : null;
+          }
+          pointAnnotationManager?.update(annotation);
         } else {
-          annotation.image = i % 5 == 0 ? images[i] : null;
+          var zoom = await appleMapsController?.getZoomLevel()??0;
+          var annotation = points[i] as apple_maps.Annotation;
+          if(!showDistanceMarkers.value) {
+            annotation = annotation.copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+
+          } else if((zoom) >= 14) {
+            annotation = annotation.copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(images[i]!));
+          } else {
+            annotation = annotation.copyWith(iconParam: i % 5 == 0 ? apple_maps.BitmapDescriptor.fromBytes(images[i]!) : apple_maps.BitmapDescriptor.fromBytes(AppHelper.emptyImage));
+          }
+          points[i] = annotation;
+          points.refresh();
         }
-        pointAnnotationManager?.update(annotation);
+
       }
     }
   }
@@ -124,25 +157,44 @@ class EventoMapController extends GetxController {
     update();
     if(values.contains('')) {
       interestAnnotations.keys.forEach((value) {
+        int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          element.image = interestImages[value];
-          pointAnnotationManager?.update(element);
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          } else {
+            element.image = interestImages[value];
+            pointAnnotationManager?.update(element);
+          }
+          index++;
         });
       });
     } else {
       interestAnnotations.keys.forEach((value) {
+        int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          element.image = null;
-          pointAnnotationManager?.update(element);
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+          } else {
+            element.image = null;
+            pointAnnotationManager?.update(element);
+          }
+          index++;
         });
       });
       for (var value in values) {
+        int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          element.image = interestImages[value];
-          pointAnnotationManager?.update(element);
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          } else {
+            element.image = interestImages[value];
+            pointAnnotationManager?.update(element);
+          }
+          index++;
         });
       }
     }
+    interestAnnotations.refresh();
   }
 
   String getStyleName(String style) {
@@ -151,7 +203,7 @@ class EventoMapController extends GetxController {
     } else if(style == MapboxStyles.SATELLITE) {
       return 'Satellite';
     } else if(style == MapboxStyles.STANDARD) {
-      return '3D';
+      return Platform.isIOS ? 'Hybrid' : '3D';
     } else {
       return 'Default';
     }
@@ -159,6 +211,7 @@ class EventoMapController extends GetxController {
 
   void changeStyle(int index) {
     mapStyle.value = mapStyles[index];
+    mapType.value = mapTypes[index];
     mapboxMap?.loadStyleURI(mapStyles[index]);
     update();
 
@@ -201,6 +254,193 @@ class EventoMapController extends GetxController {
     if (geoPoints.isNotEmpty) {
       routePathsCordinates =
           geoPoints.map((e) => Position(e.longitude, e.latitude)).toList();
+    }
+
+    if(Platform.isIOS) {
+      if (showStartIcon) {
+        Widget widget = SvgPicture.asset(
+            AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+        annotations[apple_maps.AnnotationId('start_icon')] =
+            apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('start_icon'),
+                position: apple_maps.LatLng(
+                    routePathsCordinates.first.lat.toDouble(),
+                    routePathsCordinates.first.lng.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    await AppHelper.widgetToBytes(widget)));
+      }
+
+      if (showFinishIcon) {
+        Widget widget = SvgPicture.asset(
+            AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+
+        annotations[apple_maps.AnnotationId('finish_icon')] =
+            apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('finish_icon'),
+                position: apple_maps.LatLng(
+                    routePathsCordinates.last.lat.toDouble(),
+                    routePathsCordinates.last.lng.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    await AppHelper.widgetToBytes(widget)));
+      }
+
+      Widget widget = Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+        ),
+        child: SvgPicture.asset(
+            AppHelper.getSvg('startingpoint'), color: Colors.black,
+            width: 16,
+            height: 16),
+      );
+
+      AppHelper.widgetToBytes(widget).then((bytes) {
+        elevationAnnotationApple.value =
+            apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('elevation_icon'),
+                position: apple_maps.LatLng(
+                    routePathsCordinates.first.lat.toDouble(),
+                    routePathsCordinates.first.lng.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+        elevationImage = bytes;
+      });
+
+      final points = geoJson.features;
+      for (int index = 0; index < points.length; index++) {
+        var element = points[index];
+        if(element.type == GeoJsonFeatureType.point) {
+          print(geoJson.features[index]
+              .properties);
+          Widget widget = Image.asset(AppHelper.getImage('${element
+              .properties?['type']}.png'), width: 30, height: 30);
+          AppHelper.widgetToBytes(widget)
+              .then((value) async {
+           apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+               annotationId: apple_maps.AnnotationId(element
+               .properties?['id']), icon: apple_maps.BitmapDescriptor.fromBytes(value), position: apple_maps.LatLng(
+               (element.geometry as GeoJsonPoint).geoPoint
+                   .latitude,
+               (element.geometry as GeoJsonPoint).geoPoint
+                   .longitude),
+             onTap: () {
+               var point = geoJson.features.where((element) => element.properties?['annotation'] == element
+                   .properties?['id']).firstOrNull;
+               if(point == null) {
+                 return;
+               }
+               showModalBottomSheet(context: Get.context!, builder: (_) => BottomSheet(
+                   elevation: 0,
+                   onClosing: () {}, builder: (_) => Container(
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.stretch,
+                   mainAxisSize: MainAxisSize.min,
+                   children: [
+                     Padding(
+                       padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
+                       child: Row(
+                         children: [
+                           Image.asset(AppHelper.getImage('${point
+                               .properties?['type']}.png'), width: 30, height: 30),
+                           const SizedBox(width: 8),
+                           Text('${point.properties?['title']}', style: TextStyle(
+                             fontSize: 17,
+                             fontWeight: FontWeight.w700,
+                           )),
+                         ],
+                       ),
+                     ),
+                     Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                       child: Text('${point.properties?['description']}', style: TextStyle(
+                         fontSize: 14,
+                         fontWeight: FontWeight.w500,
+                       )),
+                     ),
+                     if(point.properties?['direction'] == true)
+                       ...[
+                         const SizedBox(height: 16),
+                         Padding(
+                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                           child: ElevatedButton(onPressed: () {
+                             AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                           }, style: ButtonStyle(
+                             backgroundColor: MaterialStateProperty.all(Theme.of(Get.context!).colorScheme.primary),
+                             shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                           ), child: Text('Get Directions', style: TextStyle(
+                             color: Theme.of(Get.context!).cardColor,
+                           ),),),
+                         ),
+                       ],
+                     SizedBox(height: MediaQuery.of(Get.context!).padding.bottom+8),
+                   ],
+                 ),
+               )));
+             },
+           );
+            if (interestAnnotations[element
+                .properties?['type']] == null) {
+              interestAnnotations[element
+                  .properties?['type']] = [];
+              interestImages[element
+                  .properties?['type']] = value;
+            }
+            interestAnnotations[element
+                .properties?['type']]!.add(pointAnnotation);
+            geoJson.features[index]
+                .properties?['annotation'] = pointAnnotation.annotationId.value;
+           interestAnnotations.refresh();
+           update();
+          });
+
+        }
+        print(geoJson.features.length);
+      }
+
+      if(showDistanceMarkers.value) {
+        final lineString = getLineStringForPath();
+        final totalDistance = calculateTotalDistance();
+
+        for (int i = 1; i < totalDistance; i++) {
+          Widget widget = Container(
+            width: Platform.isIOS ? 24 : 16,
+            height: Platform.isIOS ? 24 : 16,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                )
+            ),
+            child: Center(
+              child: Text('$i', style: const TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),),
+            ),
+          );
+
+          AppHelper.widgetToBytes(widget).then((bytes) {
+            images[i] = bytes;
+
+            apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('distance_$i'),
+                position: apple_maps.LatLng(lineString
+                    .along(i.toDouble() * 1000)
+                    .lat, lineString
+                    .along(i.toDouble() * 1000)
+                    .lng),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    i % 5 == 0 ? images[i]! : Uint8List(0)));
+            this.points[i] = pointAnnotation;
+            this.points.refresh();
+          });
+          //}
+        }
+      }
     }
 
 

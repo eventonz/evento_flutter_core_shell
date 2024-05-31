@@ -77,23 +77,25 @@ class _TrackingMapViewState extends State<TrackingMapView> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
       final mapDataSnap = controller.mapDataSnap;
       print('bb ${controller.athleteTrackDetails.value.length}');
       if(mapDataSnap.value == DataSnapShot.loaded) {
-        setInitialRouteMarkerPaths();
+        timer.cancel();
+        await setInitialRouteMarkerPaths();
         setInitialDistances();
-        Future.delayed(const Duration(milliseconds: 200), () {
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          updateTrackProgress();
+          updateMarkers();
           controller.updateStream.stream.listen((event) {
           Future.delayed(const Duration(milliseconds: 0), () {
-            updateTrackProgress();
-            updateMarkers();
+
           });
         });
-          controller.updateStream.add(1);
+          //controller.updateStream.add(1);
 
         });
-        timer.cancel();
       }
     });
 
@@ -118,14 +120,14 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     }
   }
 
-  void setInitialRouteMarkerPaths() async {
+  Future<void> setInitialRouteMarkerPaths() async {
     for (var trackDetail in controller.athleteTrackDetails.value) {
       final routePath = controller.getAthleteRouthPath(trackDetail);
       if (routePath.isNotEmpty) {
         print('routePath');
         final latLng = routePath.first;
         controller.setLocation(trackDetail.track, latLng);
-        var bytes = await widgetToBytes(Container(
+        var bytes = await AppHelper.widgetToBytes(Container(
           width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
           height: 36,
           decoration: BoxDecoration(
@@ -166,16 +168,6 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         .toList());
   }
 
-  Future<Uint8List> widgetToBytes(Widget widget) async {
-    var value = await controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100));
-    Codec codec = await instantiateImageCodec(value);
-    FrameInfo fi = await codec.getNextFrame();
-    var bytes = (await fi.image.toByteData(format: ImageByteFormat.png))!
-        .buffer
-        .asUint8List();
-    return bytes;
-  }
-
   void setInitialDistances() {
     for (var trackDetail in controller.athleteTrackDetails.value) {
       final progress = TrackProgress(
@@ -209,24 +201,40 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     //controller.isAnimatingMarkers = true;
 
     for (var trackDetail in controller.athleteTrackDetails.value) {
+      if (_isDisposed) {
+        print('disposed');
+        break;
+      }
+
       final progress = controller.trackProgressMap[trackDetail.track]!;
 
       final routePath = controller.getAthleteRouthPath(trackDetail);
 
+      print('routePath ${trackDetail.track}: $routePath');
       if (routePath.isNotEmpty) {
         final geodart.LineString lineStringPath = createLineStringPath(
             routePath);
 
+        print('lineString ${trackDetail.track} ${lineStringPath}');
+
         double coveredDistance = progress.coveredDistance;
-        while (coveredDistance < lineStringPath.length.toPrecision(4)) {
-          if (_isDisposed) break;
+         if(coveredDistance < lineStringPath.length.toPrecision(4)) {
+          print('track '+ trackDetail.track);
+          print('location ${trackDetail.location}');
+          print('speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
+          print('distance: $coveredDistance ${lineStringPath.length.toPrecision(4)}');
+          /*if (_isDisposed) {
+            print('disposed');
+            break;
+          }*/
           if (progress.newProgressUpdate) {
             progress.coveredDistance =
                 (progress.currentProgress / 100) *
                     lineStringPath.length.toPrecision(3);
             progress.newProgressUpdate = false;
           }
-          print(getNewDistanceAfterOneSec(progress.currentSpeed));
+          print('distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
+
           progress.coveredDistance =
               getNewDistanceAfterOneSec(progress.currentSpeed) +
                   progress.coveredDistance.toPrecision(4);
@@ -249,7 +257,6 @@ class _TrackingMapViewState extends State<TrackingMapView> {
             });*/
           }
 
-
           progress.oldProgress = trackDetail.location ?? 0;
           progress.currentProgress = trackDetail.location ?? 0;
           progress.currentSpeed = trackDetail.speed ?? 0;
@@ -258,6 +265,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         }
       }
     }
+    updateMarkers();
     //controller.isAnimatingMarkers = false;
   }
 
@@ -316,7 +324,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
               response.bodyBytes, width: 30, height: 30);
           final String annotationIdVal = 'annotation_id_${controller.polylines.value.length}';
           final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(annotationIdVal);
-            var bytes = await widgetToBytes(widget);
+            var bytes = await AppHelper.widgetToBytes(widget);
             final apple_maps.Annotation annotation = apple_maps.Annotation(
               annotationId: polygonId,
               icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
@@ -376,6 +384,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
           return Stack(
             children: [
+
               Obx(
                 () => apple_maps.AppleMap(
                   mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
