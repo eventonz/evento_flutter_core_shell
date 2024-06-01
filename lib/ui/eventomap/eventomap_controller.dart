@@ -98,8 +98,8 @@ class EventoMapController extends GetxController {
   void onInit() {
     super.onInit();
     final res = Get.arguments;
-    Items item = res[AppKeys.moreItem];
-    Uri uri = Uri.parse(item.sourceId!);
+    sourceId = res['source_id'];
+    Uri uri = Uri.parse(sourceId!);
     List<String> pathSegments = uri.pathSegments;
     sourceId = pathSegments.last;
     getConfig();
@@ -364,7 +364,7 @@ class EventoMapController extends GetxController {
                          Padding(
                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
                            child: ElevatedButton(onPressed: () {
-                             AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                             AppHelper.showDirectionsOnMap(apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
                            }, style: ButtonStyle(
                              backgroundColor: MaterialStateProperty.all(Theme.of(Get.context!).colorScheme.primary),
                              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:collection/collection.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/schedule.dart';
@@ -12,7 +13,9 @@ import 'package:evento_core/ui/common_components/bottom_sheet.dart';
 import 'package:evento_core/ui/schedule/event_map_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
+
+import '../../core/res/app_colors.dart';
 
 class ScheduleController extends GetxController {
   final accessToken =
@@ -28,6 +31,7 @@ class ScheduleController extends GetxController {
   final currentPageIndex = 0.obs;
   late ScheduleDataItems eventDetails;
   late LatLng? latLng;
+  Rx<Annotation?> annotation = Rx(null);
 
   @override
   void onInit() {
@@ -106,9 +110,22 @@ class ScheduleController extends GetxController {
     if (item.location!.coordinate != null) {
       final coordinate = item.location!.coordinate!;
       latLng = LatLng(coordinate.latitude!, coordinate.longitude!);
+      AppHelper.widgetToBytes(Padding(
+        padding: const EdgeInsets.only(top: 0.0),
+        child: Icon(
+          Icons.location_on,
+          color: AppColors.primary,
+          size: 10.w,
+        ),
+      )).then((value) {
+        annotation.value = Annotation(annotationId: AnnotationId('marker'), position: latLng!, icon: BitmapDescriptor.fromBytes(value));
+        annotation.refresh();
+
+      });
     } else {
       latLng = null;
     }
+
     await AppFixedBottomSheet(Get.context!, enableDrag: true)
         .show(child: EventMapSheet(latLng: latLng));
   }

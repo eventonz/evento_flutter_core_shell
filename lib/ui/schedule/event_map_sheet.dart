@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/date_extensions.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -7,7 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'schedule_controller.dart';
@@ -80,32 +83,37 @@ class EventMapSheet extends StatelessWidget {
                           height: 40.h,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: FlutterMap(
-                              options: MapOptions(
-                                  center: controller.latLng!, zoom: 16),
-                              children: [
-                                TileLayer(
-                                  urlTemplate:
-                                      "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
-                                  subdomains: const ['a', 'b', 'c'],
-                                  additionalOptions: {
-                                    'mapStyleId': controller.terrainStyle,
-                                    'accessToken': controller.accessToken,
-                                  },
-                                ),
-                                MarkerLayer(markers: [
-                                  Marker(
-                                    width: 10.w,
-                                    height: 10.w,
-                                    point: controller.latLng!,
-                                    child:Icon(
-                                      Icons.location_on,
-                                      color: AppColors.primary,
-                                      size: 10.w,
-                                    ),
-                                  )
-                                ])
-                              ],
+                            child: Platform.isIOS ? AppleMap(
+                              rotateGesturesEnabled: false,
+                              zoomGesturesEnabled: false,
+                              pitchGesturesEnabled: false,
+                              scrollGesturesEnabled: false,
+                              initialCameraPosition: CameraPosition(
+
+                                  target: LatLng(controller.latLng!.latitude, controller.latLng!.longitude), zoom: 16),
+                              annotations: Set.of([if(controller.annotation.value != null)controller.annotation.value!]),
+                            ) : MapWidget(
+                              cameraOptions: CameraOptions(
+                                zoom: 16,
+                                center: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                              ),
+                                gestureRecognizers: Set.of([]),
+                              onMapCreated: (map) async {
+                                var image = await AppHelper.widgetToBytes(Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: AppColors.primary,
+                                    size: 10.w,
+                                  ),
+                                ));
+                                map.annotations.createPointAnnotationManager().then((value) {
+                                  value.create(PointAnnotationOptions(
+                                    geometry: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                                    image: image,
+                                  ));
+                                });
+                              },
                             ),
                           ),
                         )

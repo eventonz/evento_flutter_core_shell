@@ -61,20 +61,24 @@ class EventsScreen extends StatelessWidget {
                       child: ColoredBox(
                     color: AppHelper.hexToColor(controller.headerColor),
                   )),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: CachedNetworkImage(
-                        imageUrl: controller.headerLogo,
-                        placeholder: (_, val) => const Center(
-                            child: CircularProgressIndicator.adaptive()),
-                        errorWidget: (_, val, val2) => const Center(
-                            child: NoDataFoundLayout(
-                          errorMessage: 'No Image Found',
-                        )),
-                        width: 60.w,
-                        fit: BoxFit.cover,
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: CachedNetworkImage(
+                          imageUrl: controller.headerLogo,
+                          placeholder: (_, val) => const Center(
+                              child: CircularProgressIndicator.adaptive()),
+                          errorWidget: (_, val, val2) => const Center(
+                              child: NoDataFoundLayout(
+                            errorMessage: 'No Image Found',
+                          )),
+                          width: 60.w,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),

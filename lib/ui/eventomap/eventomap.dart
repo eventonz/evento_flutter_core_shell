@@ -103,7 +103,7 @@ class _EventoMapState extends State<EventoMap> {
                 backgroundColor: Theme.of(context).cardColor,
                 child: Center(child: Padding(
                   padding: const EdgeInsets.only(left: 8.0),
-                  child: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.primary, size: 24,),
+                  child: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.secondary, size: 24,),
                 ))),
           ),
         ),
@@ -150,12 +150,13 @@ class _EventoMapState extends State<EventoMap> {
                             height: 38,
                             width: 38,
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade200,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.grey : Colors.grey.shade200,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Center(child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.close, size: 24,),
+                              child: Icon(Icons.close, size: 24,color: Theme.of(context).colorScheme.secondary),
+
                             ))),
                       ),
                     ),
@@ -515,7 +516,7 @@ class _EventoMapState extends State<EventoMap> {
       }
 
         return controller.loading.value ? Center(
-          child: CircularProgressIndicator(),
+          child: CircularProgressIndicator(color: Theme.of(context).colorScheme.secondary, strokeWidth: 1),
         ) : Stack(
           children: [
             if(Platform.isIOS)
@@ -717,7 +718,7 @@ class _EventoMapState extends State<EventoMap> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                   child: ElevatedButton(onPressed: () {
-                                    AppHelper.showDirectionsOnMap(LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                                    AppHelper.showDirectionsOnMap(apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
                                   }, style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
                                     shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),

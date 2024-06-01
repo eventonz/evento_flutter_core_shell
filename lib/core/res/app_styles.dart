@@ -50,6 +50,7 @@ class AppStyles {
         iconTheme: IconThemeData(
           color: AppColors.white,
         )),
+    //brightness: Brightness.dark,
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.lightblack,
     ),

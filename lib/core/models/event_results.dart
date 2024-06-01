@@ -49,14 +49,16 @@ class Detail {
   Embed? embed;
   Content? content;
   String? type;
+  String? endpoint;
 
-  Detail({this.embed, this.content, this.type});
+  Detail({this.embed, this.content, this.type, this.endpoint});
 
   Detail.fromJson(Map<String, dynamic> json) {
     embed = json['embed'] != null ? Embed.fromJson(json['embed']) : null;
     content =
         json['content'] != null ? Content.fromJson(json['content']) : null;
     type = json['type'];
+    endpoint = json['endpoint'];
   }
 
   Map<String, dynamic> toJson() {
@@ -68,6 +70,7 @@ class Detail {
       data['content'] = content!.toJson();
     }
     data['type'] = type;
+    data['endpoint'] = endpoint;
     return data;
   }
 }
