@@ -16,7 +16,7 @@ class AppColors {
   static const Color instagramColor = Color(0xFFC13584);
   static const Color darkPink = Color(0xFF140007);
   static Color primary = const Color(0xFF1D1D1D);
-  static Color secondary = const Color(0xFFEAAC15);
+  static Color secondary = const Color(0x621D1D1D);
   static Color accentLight = const Color(0xFF1D1D1D);
   static Color accentDark = const Color(0xFFF5F5F5);
 
