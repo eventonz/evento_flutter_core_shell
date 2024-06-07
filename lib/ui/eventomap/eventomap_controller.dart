@@ -17,6 +17,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 
+import '../../core/overlays/toast.dart';
 import '../../core/utils/api_handler.dart';
 import '../../core/utils/app_global.dart';
 import '../../core/utils/helpers.dart';
@@ -223,224 +224,269 @@ class EventoMapController extends GetxController {
   }
 
   Future<void> getConfig() async {
-    final url = 'maps/${sourceId}';
-    final res = await ApiHandler.getHttp(endPoint: url);
-    trail.value = Trail.fromJson((res.data));
+    try {
+      final url = 'maps/${sourceId}';
+      final res = await ApiHandler.getHttp(endPoint: url);
+      trail.value = Trail.fromJson((res.data));
 
-    final res2 = await ApiHandler.downloadFile(baseUrl: trail.value!.geojsonFile);
+      final res2 = await ApiHandler.downloadFile(
+          baseUrl: trail.value!.geojsonFile);
 
-    final geoJsonFile = File(res2.data['file_path']);
-    final map = await geoJsonFile.readAsString();
-    final mapJson = jsonDecode(map);
+      final geoJsonFile = File(res2.data['file_path']);
+      final map = await geoJsonFile.readAsString();
+      final mapJson = jsonDecode(map);
 
-    final features = mapJson['features'] as List;
-    for (var feature in features) {
-      if (feature['geometry']['type'] == 'Point') {
-        final coordinates = feature['geometry']['coordinates'] as Map;
-        print(coordinates);
-        feature['geometry']['coordinates'] = [coordinates['lng'], coordinates['lat']];
-      }
-    }
-
-
-    await geoJson.parse(jsonEncode(mapJson));
-    final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
-
-    showStartIcon = geoJson.features.where((element) => element.properties?['start_icon'] == true).isNotEmpty;
-    showFinishIcon = geoJson.features.where((element) => element.properties?['finish_icon'] == true).isNotEmpty;
-    showDistanceMarkers.value = geoJson.features.where((element) => element.properties?['distance_markers'] == true).isNotEmpty;
-    color = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'] ?? '#000000';
-
-    if (geoPoints.isNotEmpty) {
-      routePathsCordinates =
-          geoPoints.map((e) => Position(e.longitude, e.latitude)).toList();
-    }
-
-    if(Platform.isIOS) {
-      if (showStartIcon) {
-        Widget widget = SvgPicture.asset(
-            AppHelper.getSvg('startingpoint'), width: 27, height: 27);
-        annotations[apple_maps.AnnotationId('start_icon')] =
-            apple_maps.Annotation(
-                annotationId: apple_maps.AnnotationId('start_icon'),
-                position: apple_maps.LatLng(
-                    routePathsCordinates.first.lat.toDouble(),
-                    routePathsCordinates.first.lng.toDouble()),
-                icon: apple_maps.BitmapDescriptor.fromBytes(
-                    await AppHelper.widgetToBytes(widget)));
+      final features = mapJson['features'] as List;
+      for (var feature in features) {
+        if (feature['geometry']['type'] == 'Point') {
+          final coordinates = feature['geometry']['coordinates'] as Map;
+          print(coordinates);
+          feature['geometry']['coordinates'] =
+          [coordinates['lng'], coordinates['lat']];
+        }
       }
 
-      if (showFinishIcon) {
-        Widget widget = SvgPicture.asset(
-            AppHelper.getSvg('finishpoint'), width: 27, height: 27);
 
-        annotations[apple_maps.AnnotationId('finish_icon')] =
-            apple_maps.Annotation(
-                annotationId: apple_maps.AnnotationId('finish_icon'),
-                position: apple_maps.LatLng(
-                    routePathsCordinates.last.lat.toDouble(),
-                    routePathsCordinates.last.lng.toDouble()),
-                icon: apple_maps.BitmapDescriptor.fromBytes(
-                    await AppHelper.widgetToBytes(widget)));
+      await geoJson.parse(jsonEncode(mapJson));
+      final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
+
+      showStartIcon = geoJson.features
+          .where((element) => element.properties?['start_icon'] == true)
+          .isNotEmpty;
+      showFinishIcon = geoJson.features
+          .where((element) => element.properties?['finish_icon'] == true)
+          .isNotEmpty;
+      showDistanceMarkers.value = geoJson.features
+          .where((element) => element.properties?['distance_markers'] == true)
+          .isNotEmpty;
+      color = geoJson.features
+          .where((element) => element.properties?['color'] != null)
+          .firstOrNull
+          ?.properties?['color'] ?? '#000000';
+
+      if (geoPoints.isNotEmpty) {
+        routePathsCordinates =
+            geoPoints.map((e) => Position(e.longitude, e.latitude)).toList();
       }
 
-      Widget widget = Container(
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
-        child: SvgPicture.asset(
-            AppHelper.getSvg('startingpoint'), color: Colors.black,
-            width: 16,
-            height: 16),
-      );
+      if (Platform.isIOS) {
+        if (showStartIcon) {
+          Widget widget = SvgPicture.asset(
+              AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+          annotations[apple_maps.AnnotationId('start_icon')] =
+              apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId('start_icon'),
+                  position: apple_maps.LatLng(
+                      routePathsCordinates.first.lat.toDouble(),
+                      routePathsCordinates.first.lng.toDouble()),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(
+                      await AppHelper.widgetToBytes(widget)));
+        }
 
-      AppHelper.widgetToBytes(widget).then((bytes) {
-        elevationAnnotationApple.value =
-            apple_maps.Annotation(
-                annotationId: apple_maps.AnnotationId('elevation_icon'),
+        if (showFinishIcon) {
+          Widget widget = SvgPicture.asset(
+              AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+
+          annotations[apple_maps.AnnotationId('finish_icon')] =
+              apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId('finish_icon'),
+                  position: apple_maps.LatLng(
+                      routePathsCordinates.last.lat.toDouble(),
+                      routePathsCordinates.last.lng.toDouble()),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(
+                      await AppHelper.widgetToBytes(widget)));
+        }
+
+        Widget widget = Container(
+          padding: const EdgeInsets.all(3),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+          ),
+          child: SvgPicture.asset(
+              AppHelper.getSvg('startingpoint'), color: Colors.black,
+              width: 16,
+              height: 16),
+        );
+
+        AppHelper.widgetToBytes(widget).then((bytes) {
+          elevationAnnotationApple.value =
+              apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId('elevation_icon'),
+                  position: apple_maps.LatLng(
+                      routePathsCordinates.first.lat.toDouble(),
+                      routePathsCordinates.first.lng.toDouble()),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+          elevationImage = bytes;
+        });
+
+        final points = geoJson.features;
+        for (int index = 0; index < points.length; index++) {
+          var element = points[index];
+          if (element.type == GeoJsonFeatureType.point) {
+            print(geoJson.features[index]
+                .properties);
+            Widget widget = Image.asset(AppHelper.getImage('${element
+                .properties?['type']}.png'), width: 30, height: 30);
+            AppHelper.widgetToBytes(widget)
+                .then((value) async {
+              apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId(element
+                    .properties?['id']),
+                icon: apple_maps.BitmapDescriptor.fromBytes(value),
                 position: apple_maps.LatLng(
-                    routePathsCordinates.first.lat.toDouble(),
-                    routePathsCordinates.first.lng.toDouble()),
-                icon: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
-        elevationImage = bytes;
-      });
-
-      final points = geoJson.features;
-      for (int index = 0; index < points.length; index++) {
-        var element = points[index];
-        if(element.type == GeoJsonFeatureType.point) {
-          print(geoJson.features[index]
-              .properties);
-          Widget widget = Image.asset(AppHelper.getImage('${element
-              .properties?['type']}.png'), width: 30, height: 30);
-          AppHelper.widgetToBytes(widget)
-              .then((value) async {
-           apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
-               annotationId: apple_maps.AnnotationId(element
-               .properties?['id']), icon: apple_maps.BitmapDescriptor.fromBytes(value), position: apple_maps.LatLng(
-               (element.geometry as GeoJsonPoint).geoPoint
-                   .latitude,
-               (element.geometry as GeoJsonPoint).geoPoint
-                   .longitude),
-             onTap: () {
-               var point = geoJson.features.where((element) => element.properties?['annotation'] == element
-                   .properties?['id']).firstOrNull;
-               if(point == null) {
-                 return;
-               }
-               showModalBottomSheet(context: Get.context!, builder: (_) => BottomSheet(
-                   elevation: 0,
-                   onClosing: () {}, builder: (_) => Container(
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.stretch,
-                   mainAxisSize: MainAxisSize.min,
-                   children: [
-                     Padding(
-                       padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
-                       child: Row(
-                         children: [
-                           Image.asset(AppHelper.getImage('${point
-                               .properties?['type']}.png'), width: 30, height: 30),
-                           const SizedBox(width: 8),
-                           Text('${point.properties?['title']}', style: TextStyle(
-                             fontSize: 17,
-                             fontWeight: FontWeight.w700,
-                           )),
-                         ],
-                       ),
-                     ),
-                     Padding(
-                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                       child: Text('${point.properties?['description']}', style: TextStyle(
-                         fontSize: 14,
-                         fontWeight: FontWeight.w500,
-                       )),
-                     ),
-                     if(point.properties?['direction'] == true)
-                       ...[
-                         const SizedBox(height: 16),
-                         Padding(
-                           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                           child: ElevatedButton(onPressed: () {
-                             AppHelper.showDirectionsOnMap(apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
-                           }, style: ButtonStyle(
-                             backgroundColor: MaterialStateProperty.all(Theme.of(Get.context!).colorScheme.primary),
-                             shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                           ), child: Text('Get Directions', style: TextStyle(
-                             color: Theme.of(Get.context!).cardColor,
-                           ),),),
-                         ),
-                       ],
-                     SizedBox(height: MediaQuery.of(Get.context!).padding.bottom+8),
-                   ],
-                 ),
-               )));
-             },
-           );
-            if (interestAnnotations[element
-                .properties?['type']] == null) {
+                    (element.geometry as GeoJsonPoint).geoPoint
+                        .latitude,
+                    (element.geometry as GeoJsonPoint).geoPoint
+                        .longitude),
+                onTap: () {
+                  var point = element;
+                  showModalBottomSheet(context: Get.context!, builder: (_) =>
+                      BottomSheet(
+                          elevation: 0,
+                          onClosing: () {}, builder: (_) =>
+                          Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24.0,
+                                      right: 24.0,
+                                      top: 24.0,
+                                      bottom: 12.0),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(AppHelper.getImage('${point
+                                          .properties?['type']}.png'),
+                                          width: 30, height: 30),
+                                      const SizedBox(width: 8),
+                                      Text('${point.properties?['title']}',
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w700,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24.0),
+                                  child: Text(
+                                      '${point.properties?['description']}',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                      )),
+                                ),
+                                if(point.properties?['direction'] == true)
+                                  ...[
+                                    const SizedBox(height: 16),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24.0),
+                                      child: ElevatedButton(onPressed: () {
+                                        AppHelper.showDirectionsOnMap(
+                                            apple_maps.LatLng(
+                                                (point.geometry as GeoJsonPoint)
+                                                    .geoPoint.latitude,
+                                                (point.geometry as GeoJsonPoint)
+                                                    .geoPoint.longitude));
+                                      },
+                                        style: ButtonStyle(
+                                          backgroundColor: MaterialStateProperty
+                                              .all(Theme
+                                              .of(Get.context!)
+                                              .colorScheme
+                                              .primary),
+                                          shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius
+                                                      .circular(5))),
+                                        ),
+                                        child: Text(
+                                          'Get Directions', style: TextStyle(
+                                          color: Theme
+                                              .of(Get.context!)
+                                              .cardColor,
+                                        ),),),
+                                    ),
+                                  ],
+                                SizedBox(height: MediaQuery
+                                    .of(Get.context!)
+                                    .padding
+                                    .bottom + 8),
+                              ],
+                            ),
+                          )));
+                },
+              );
+              if (interestAnnotations[element
+                  .properties?['type']] == null) {
+                interestAnnotations[element
+                    .properties?['type']] = [];
+                interestImages[element
+                    .properties?['type']] = value;
+              }
               interestAnnotations[element
-                  .properties?['type']] = [];
-              interestImages[element
-                  .properties?['type']] = value;
-            }
-            interestAnnotations[element
-                .properties?['type']]!.add(pointAnnotation);
-            geoJson.features[index]
-                .properties?['annotation'] = pointAnnotation.annotationId.value;
-           interestAnnotations.refresh();
-           update();
-          });
-
+                  .properties?['type']]!.add(pointAnnotation);
+              geoJson.features[index]
+                  .properties?['annotation'] =
+                  pointAnnotation.annotationId.value;
+              interestAnnotations.refresh();
+              update();
+            });
+          }
+          print(geoJson.features.length);
         }
-        print(geoJson.features.length);
-      }
 
-      if(showDistanceMarkers.value) {
-        final lineString = getLineStringForPath();
-        final totalDistance = calculateTotalDistance();
+        if (showDistanceMarkers.value) {
+          final lineString = getLineStringForPath();
+          final totalDistance = calculateTotalDistance();
 
-        for (int i = 1; i < totalDistance; i++) {
-          Widget widget = Container(
-            width: Platform.isIOS ? 24 : 16,
-            height: Platform.isIOS ? 24 : 16,
-            decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                border: Border.all(
+          for (int i = 1; i < totalDistance; i++) {
+            Widget widget = Container(
+              width: Platform.isIOS ? 24 : 16,
+              height: Platform.isIOS ? 24 : 16,
+              decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.black,
+                    width: 1,
+                  )
+              ),
+              child: Center(
+                child: Text('$i', style: const TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black,
-                  width: 1,
-                )
-            ),
-            child: Center(
-              child: Text('$i', style: const TextStyle(
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),),
-            ),
-          );
+                ),),
+              ),
+            );
 
-          AppHelper.widgetToBytes(widget).then((bytes) {
-            images[i] = bytes;
+            AppHelper.widgetToBytes(widget).then((bytes) {
+              images[i] = bytes;
 
-            apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
-                annotationId: apple_maps.AnnotationId('distance_$i'),
-                position: apple_maps.LatLng(lineString
-                    .along(i.toDouble() * 1000)
-                    .lat, lineString
-                    .along(i.toDouble() * 1000)
-                    .lng),
-                icon: apple_maps.BitmapDescriptor.fromBytes(
-                    i % 5 == 0 ? images[i]! : Uint8List(0)));
-            this.points[i] = pointAnnotation;
-            this.points.refresh();
-          });
-          //}
+              apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId('distance_$i'),
+                  position: apple_maps.LatLng(lineString
+                      .along(i.toDouble() * 1000)
+                      .lat, lineString
+                      .along(i.toDouble() * 1000)
+                      .lng),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(
+                      i % 5 == 0 ? images[i]! : Uint8List(0)));
+              this.points[i] = pointAnnotation;
+              this.points.refresh();
+            });
+            //}
+          }
         }
       }
+    } catch(e) {
+      ToastUtils.show(null);
+
     }
 
 
@@ -486,7 +532,7 @@ class EventoMapController extends GetxController {
 
   Position initialPathCenterPoint() {
     final lineString = getLineStringForPath();
-    if (lineString != null) {
+    if (lineString.length != 0) {
 
       final point = lineString.center;
       return Position(point.lng, point.lat);
