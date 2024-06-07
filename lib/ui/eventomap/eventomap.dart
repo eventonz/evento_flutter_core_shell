@@ -19,6 +19,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 import '../../core/res/app_colors.dart';
+import '../common_components/no_data_found_layout.dart';
 import '../dashboard/athletes_tracking/map_view.dart';
 
 class EventoMap extends StatefulWidget {
@@ -527,9 +528,10 @@ class _EventoMapState extends State<EventoMap> {
                   onZoom(zoom);
                 },
                 initialCameraPosition: apple_maps.CameraPosition(
-                target: apple_maps.LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble()),
-                zoom: TrackingMapView.dgetBoundsZoomLevel(
+                target: controller.initialPathCenterPoint().lat.toDouble() == 0.0 ? apple_maps.LatLng(-42.0178775,174.3417791) : apple_maps.LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble()),
+                zoom: bounds.isEmpty ? 5 : TrackingMapView.dgetBoundsZoomLevel(
                     LatLngBounds.fromPoints(bounds), {
+
                   'height': MediaQuery
                       .of(context)
                       .size
@@ -817,7 +819,9 @@ class _EventoMapState extends State<EventoMap> {
                           top: 12,
                           bottom: 12,
                         ),
-                        child: LineChart(
+                        child: (controller.trail.value?.elevationData ?? []).isEmpty ? Container(
+                          child: Center(child: NoDataFoundLayout(title: 'No Data Found', errorMessage: '',))
+                        ) : LineChart(
                           mainData(),
                         ),
                       ),
