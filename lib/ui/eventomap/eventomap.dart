@@ -6,6 +6,7 @@ import 'package:collection/collection.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/eventomap/eventomap_controller.dart';
+import 'package:evento_core/ui/eventomap/side_drawer.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -130,201 +131,7 @@ class _EventoMapState extends State<EventoMap> {
           const SizedBox(width: 16),
         ],
       ),
-      endDrawer: Drawer(
-        backgroundColor: Theme.of(context).cardColor,
-        elevation: 0,
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 24.0, right: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
-                      child: GestureDetector(
-                        onTap: () {
-                          _scaffoldKey.currentState?.closeEndDrawer();
-                        },
-                        child: Container(
-                            height: 38,
-                            width: 38,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade500,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.close, size: 24,color: Theme.of(context).scaffoldBackgroundColor),
-
-                            ))),
-                      ),
-                    ),
-                  ],
-                ),
-                Text('Map Style', style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                ),),
-                const SizedBox(height: 8),
-                SizedBox(
-                    height: 100,
-                    child: ListView.builder(itemBuilder: (_, index) {
-                      return Obx(
-                        () => GestureDetector(
-                          onTap: () {
-                            controller.changeStyle(index);
-                          },
-                          child: Column(
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.only(right: 8),
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(5),
-                                  border: controller.mapStyle.value == controller.mapStyles[index] ? Border.all(
-                                    color: Colors.green,
-                                    width: 3,
-                                  ) : null,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-
-                              Text(controller.getStyleName(controller.mapStyles[index])),
-                            ],
-                          ),
-                        ),
-                      );
-                    }, scrollDirection: Axis.horizontal, shrinkWrap: true, itemCount: controller.mapStyles.length),
-                ),
-                const SizedBox(height: 20),
-                Obx(
-                  () => SwitchListTile(
-                    contentPadding: EdgeInsets.only(right: 16.0),
-                    title: const Text('Elevation Profile', style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),),
-                    value: controller.showElevation.value,
-                    onChanged: (bool value) {
-                      controller.changeElevation(value);
-                    },
-                    activeColor: Colors.blue,
-                  ),
-                ),
-                Obx(
-                      () => SwitchListTile(
-                    contentPadding: EdgeInsets.only(right: 16.0),
-                    title: const Text('Distance Markers', style: TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),),
-                    value: controller.showDistanceMarkers.value,
-                    onChanged: (bool value) {
-                      controller.changeDistanceMarkers(value);
-                    },
-                    activeColor: Colors.blue,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Obx(
-                      () {
-
-                        List<GeoJsonFeature<dynamic>> points = [];
-
-                        List<String> types = [];
-
-                        final list = controller.geoJson.features.where((element) => element.type == GeoJsonFeatureType.point);
-
-                        list.forEach((element) {
-                          if(!types.contains(element.properties?['type'])) {
-                            types.add(element.properties?['type']);
-                            points.add(element);
-                          }
-                        });
-                        final selectedInterests = controller.selectedInterests.value;
-
-                        final settingsController = Get.put(SettingsController());
-
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const Text('Points of Interest', style: TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 16,
-                            )),
-                            const SizedBox(height: 10),
-                            Wrap(
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    if(controller.selectedInterests.value.contains('')) {
-                                      controller.updateSelectedInterests([]);
-                                    } else {
-                                      controller.updateSelectedInterests(['']);
-                                    }
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(right: 16),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: selectedInterests.contains('') ? Theme.of(context).colorScheme.secondary.withOpacity(0.4) : null,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text('All', style: TextStyle(
-                                      //color: selectedInterests.contains('') ? Theme.of(context).scaffoldBackgroundColor : null,
-                                    )),
-                                  ),
-                                ),
-                                ...points.map((e) => GestureDetector(
-                                  onTap: () {
-                                    if(controller.selectedInterests.value.contains('')) {
-                                      controller.updateSelectedInterests([]);
-                                    }
-                                    if(controller.selectedInterests.value.contains(e.properties?['type'])) {
-                                      controller.updateSelectedInterests(
-                                        List.from(controller.selectedInterests.value)..remove(e.properties?['type']),
-                                      );
-                                    } else {
-                                      controller.updateSelectedInterests([
-                                        e.properties?['type'],
-                                        ...controller.selectedInterests.value
-                                      ]);
-                                    }
-
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(right: 16, bottom: 12),
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                    decoration: BoxDecoration(
-                                      color: selectedInterests.contains(e.properties?['type']) ? Theme.of(context).colorScheme.secondary.withOpacity(0.4) : null,
-                                      border: Border.all(
-                                        color: Colors.black,
-                                      ),
-                                      borderRadius: BorderRadius.circular(5),
-                                    ),
-                                    child: Text('${controller.iopTypesMap[e.properties?['type']]}', style: TextStyle(
-                                      //color: selectedInterests.contains(e.properties?['type']) ? Theme.of(context).scaffoldBackgroundColor : null,
-                                    ),),
-                                  ),
-                                )),
-                              ],
-                            ),
-                          ],
-                        );
-                      }
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      endDrawer: CustomDrawer(_scaffoldKey),
 
       body: Obx(() {
 
@@ -337,34 +144,9 @@ class _EventoMapState extends State<EventoMap> {
       }
 
       List<Color> gradientColors = [
-        AppColors.splitGreen,
-        AppColors.splitOrange,
+        AppColors.contentColorCyan,
+        AppColors.contentColorBlue,
       ];
-
-      Widget bottomTitleWidgets(double value, TitleMeta meta) {
-        const style = TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 16,
-        );
-        Widget text = Container();
-        int first = ((controller.trail.value?.elevationData.sorted((a, b) => a.last.compareTo(b.last)))?.first.last.toDouble() ?? 0).toInt();
-        if(value.toInt() == first) {
-          text = const Text('MAR', style: style);
-        }
-        switch (value.toInt()) {
-          case 5:
-            text = const Text('JUN', style: style);
-            break;
-          case 8:
-            text = const Text('SEP', style: style);
-            break;
-        }
-
-        return SideTitleWidget(
-          axisSide: meta.axisSide,
-          child: text,
-        );
-      }
 
       Widget leftTitleWidgets(double value, TitleMeta meta) {
         const style = TextStyle(
@@ -382,13 +164,7 @@ class _EventoMapState extends State<EventoMap> {
         if (value == step * 1) {
           top = 36;
           text = (step * 1).toStringAsFixed(0) + 'm';
-        /*} else if (value == step * 2) {
-          text = (step * 2).toStringAsFixed(0) + 'm';
-        } else if (value == step * 3) {
-          text = (step * 3).toStringAsFixed(0) + 'm';
-        } else if (value == step * 4) {
-          text = (step * 4).toStringAsFixed(0) + 'm';
-        */} else if (value == step * 5) {
+        } else if (value == step * 5) {
           top = 0;
           text = (step * 5).toStringAsFixed(0) + 'm';
         }
@@ -806,7 +582,7 @@ class _EventoMapState extends State<EventoMap> {
                         children: [
                           Image.asset(AppHelper.getImage('aidstation.png'), width: 30, height: 30),
                           const SizedBox(width: 10),
-                          Text('Elevation Profile', style: TextStyle(
+                          const Text('Elevation Profile', style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                           )),
