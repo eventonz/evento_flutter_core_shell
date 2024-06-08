@@ -21,6 +21,7 @@ import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import '../../core/res/app_colors.dart';
 import '../common_components/no_data_found_layout.dart';
 import '../dashboard/athletes_tracking/map_view.dart';
+import '../settings/settings_controller.dart';
 
 class EventoMap extends StatefulWidget {
   const EventoMap({super.key});
@@ -151,12 +152,12 @@ class _EventoMapState extends State<EventoMap> {
                             height: 38,
                             width: 38,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.grey : Colors.grey.shade200,
+                              color: Colors.grey.shade500,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Center(child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.close, size: 24,color: Theme.of(context).colorScheme.secondary),
+                              child: Icon(Icons.close, size: 24,color: Theme.of(context).scaffoldBackgroundColor),
 
                             ))),
                       ),
@@ -246,6 +247,8 @@ class _EventoMapState extends State<EventoMap> {
                         });
                         final selectedInterests = controller.selectedInterests.value;
 
+                        final settingsController = Get.put(SettingsController());
+
                         return Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
@@ -268,13 +271,15 @@ class _EventoMapState extends State<EventoMap> {
                                     margin: const EdgeInsets.only(right: 16),
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: selectedInterests.contains('') ? Colors.grey.shade300 : null,
+                                      color: selectedInterests.contains('') ? Theme.of(context).colorScheme.secondary.withOpacity(0.4) : null,
                                       border: Border.all(
                                         color: Colors.black,
                                       ),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    child: const Text('All'),
+                                    child: Text('All', style: TextStyle(
+                                      //color: selectedInterests.contains('') ? Theme.of(context).scaffoldBackgroundColor : null,
+                                    )),
                                   ),
                                 ),
                                 ...points.map((e) => GestureDetector(
@@ -298,13 +303,15 @@ class _EventoMapState extends State<EventoMap> {
                                     margin: const EdgeInsets.only(right: 16, bottom: 12),
                                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: selectedInterests.contains(e.properties?['type']) ? Colors.grey.shade300 : null,
+                                      color: selectedInterests.contains(e.properties?['type']) ? Theme.of(context).colorScheme.secondary.withOpacity(0.4) : null,
                                       border: Border.all(
                                         color: Colors.black,
                                       ),
                                       borderRadius: BorderRadius.circular(5),
                                     ),
-                                    child: Text('${controller.iopTypesMap[e.properties?['type']]}'),
+                                    child: Text('${controller.iopTypesMap[e.properties?['type']]}', style: TextStyle(
+                                      //color: selectedInterests.contains(e.properties?['type']) ? Theme.of(context).scaffoldBackgroundColor : null,
+                                    ),),
                                   ),
                                 )),
                               ],
@@ -484,7 +491,7 @@ class _EventoMapState extends State<EventoMap> {
           lineBarsData: [
             LineChartBarData(
               spots: [
-                ...controller.trail.value?.elevationData.map((e) => FlSpot(e.first.toDouble(), e.last.toDouble())).toList() ?? [],
+                ...controller.trail.value?.elevationData.map((e) => FlSpot(double.parse(e.first.toStringAsFixed(0)), double.parse(e.last.toStringAsFixed(0)))).toList() ?? [],
               ],
               isCurved: true,
               gradient: LinearGradient(
@@ -527,6 +534,8 @@ class _EventoMapState extends State<EventoMap> {
                   final zoom = cameraPosition.zoom;
                   onZoom(zoom);
                 },
+                compassEnabled: false,
+                padding: const EdgeInsets.only(top: 60, right: 10),
                 initialCameraPosition: apple_maps.CameraPosition(
                 target: controller.initialPathCenterPoint().lat.toDouble() == 0.0 ? apple_maps.LatLng(-42.0178775,174.3417791) : apple_maps.LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble()),
                 zoom: bounds.isEmpty ? 5 : TrackingMapView.dgetBoundsZoomLevel(
@@ -819,9 +828,7 @@ class _EventoMapState extends State<EventoMap> {
                           top: 12,
                           bottom: 12,
                         ),
-                        child: (controller.trail.value?.elevationData ?? []).isEmpty ? Container(
-                          child: Center(child: NoDataFoundLayout(title: 'No Data Found', errorMessage: '',))
-                        ) : LineChart(
+                        child: (controller.trail.value?.elevationData ?? []).isEmpty ? const Center(child: NoDataFoundLayout(title: 'No Data Found', errorMessage: '',)) : LineChart(
                           mainData(),
                         ),
                       ),
