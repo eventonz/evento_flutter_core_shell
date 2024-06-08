@@ -271,9 +271,10 @@ class TrackingController extends GetxController
       'web_tracking': true,
       'tracks': entrantsIds
     };
-    print('this one');
     final res = await ApiHandler.postHttp(
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
+    print(res.data);
+    print('res.data');
     if (res.statusCode == 200) {
       athleteTrackDetails.clear();
       athleteTrackDetails

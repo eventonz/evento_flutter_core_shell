@@ -80,7 +80,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     Timer.periodic(const Duration(seconds: 1), (timer) async {
       final mapDataSnap = controller.mapDataSnap;
       print('bb ${controller.athleteTrackDetails.value.length}');
-      if(mapDataSnap.value == DataSnapShot.loaded) {
+      if(mapDataSnap.value == DataSnapShot.loaded && controller.athleteTrackDetails.value.isNotEmpty) {
         timer.cancel();
         await setInitialRouteMarkerPaths();
         setInitialDistances();
@@ -388,9 +388,11 @@ class _TrackingMapViewState extends State<TrackingMapView> {
               Obx(
                 () => apple_maps.AppleMap(
                   mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
-                  onMapCreated: (appleMapController) {
+                  onMapCreated: (appleMapController) async {
                     controller.appleMapController = appleMapController;
                     createRoute();
+                    createMarkers();
+
 
                     /*appleMapController.location.updateSettings(LocationComponentSettings(
                         enabled: true,
