@@ -348,20 +348,23 @@ class Tracking {
 }
 
 class Paths {
+  String? color;
   String? url;
   String? name;
 
-  Paths({this.url, this.name});
+  Paths({this.url, this.name, this.color});
 
   Paths.fromJson(Map<String, dynamic> json) {
     url = json['url'];
     name = json['name'];
+    color = json['path_color'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['url'] = url;
     data['name'] = name;
+    data['color'] = color;
     return data;
   }
 

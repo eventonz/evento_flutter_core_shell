@@ -5,8 +5,10 @@ import 'dart:typed_data';
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/trail.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geodart/geometries.dart' as geodart;
 import 'package:geojson/geojson.dart';
@@ -351,12 +353,18 @@ class EventoMapController extends GetxController {
                         .latitude,
                     (element.geometry as GeoJsonPoint).geoPoint
                         .longitude),
-                onTap: () {
+                onTap: () async {
                   var point = element;
-                  showModalBottomSheet(context: Get.context!, builder: (_) =>
+                  print(point.geometry);
+                  appleMapsController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude), zoom: 18)));
+                  await showModalBottomSheet(
+                      barrierColor: Colors.black.withOpacity(0.04),
+                      context: Get.context!, builder: (_) =>
                       BottomSheet(
                           elevation: 0,
-                          onClosing: () {}, builder: (_) =>
+                          onClosing: () {
+
+                          }, builder: (_) =>
                           Container(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -431,6 +439,25 @@ class EventoMapController extends GetxController {
                               ],
                             ),
                           )));
+                  List<LatLng> bounds = [];
+
+                  routePathsCordinates.forEach((element) {
+                    bounds.add(LatLng(element.lat.toDouble(), element.lng.toDouble()));
+                  });
+                  appleMapsController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(
+                    target: initialPathCenterPoint().lat.toDouble() == 0.0 ? apple_maps.LatLng(-42.0178775,174.3417791) : apple_maps.LatLng(initialPathCenterPoint().lat.toDouble(), initialPathCenterPoint().lng.toDouble()),
+                    zoom: bounds.isEmpty ? 5 : TrackingMapView.dgetBoundsZoomLevel(
+                        LatLngBounds.fromPoints(bounds), {
+
+                      'height': MediaQuery
+                          .of(Get.context!)
+                          .size
+                          .height,
+                      'width': MediaQuery
+                          .of(Get.context!)
+                          .size
+                          .width})*1.05,
+                  )));
                 },
               );
               if (interestAnnotations[element

@@ -8,6 +8,7 @@ import 'dart:ui';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -279,39 +280,43 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
 
       final positions = <List<Position>>[];
-      final positionsApple = <apple_maps.LatLng>[];
+      final positionsApple = <List<apple_maps.LatLng>>[];
+      int i = 0;
       for (List<LatLng> routePath in controller.routePathsCordinates.values) {
+        positionsApple.add([]);
         routePath.forEach((latLng) {
-          positionsApple.add(apple_maps.LatLng(latLng.latitude, latLng.longitude));
+          positionsApple[i].add(apple_maps.LatLng(latLng.latitude, latLng.longitude));
         });
         positions.add(routePath.map((e) => Position(e.longitude, e.latitude)).toList());
+        i++;
       }
 
       if(Platform.isIOS) {
 
-        final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
-        final apple_maps.PolylineId polylineId = apple_maps.PolylineId(polylineIdVal);
+        positionsApple.forEachIndexed((index, element) {
+          final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
+          final apple_maps.PolylineId polylineId = apple_maps.PolylineId(polylineIdVal);
 
-        final apple_maps.Polyline polyline = apple_maps.Polyline(
-          polylineId: polylineId,
-          consumeTapEvents: true,
-          color: controller.routePathsColors.values.firstOrNull != null ? AppHelper.hexToColor(controller.routePathsColors.values.firstOrNull) : AppColors.accentDark,
-          width: 3,
-          points: positionsApple,
-          onTap: () {
+          final apple_maps.Polyline polyline = apple_maps.Polyline(
+            polylineId: polylineId,
+            consumeTapEvents: true,
+            color: controller.routePathsColors.values.toList()[index] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[index]) : AppColors.accentDark,
+            width: 3,
+            points: positionsApple[index],
+            onTap: () {
 
-          },
-        );
+            },
+          );
 
-        controller.addPolyline(polylineId, polyline);
+          controller.addPolyline(polylineId, polyline);
+        });
         return;
       }
 
-      controller.polylineAnnotationManager?.createMulti(positions
-          .map((e) => PolylineAnnotationOptions(
-          geometry: LineString(coordinates: e).toJson(),
+      controller.polylineAnnotationManager?.createMulti(List.generate(positions.length, (index) => PolylineAnnotationOptions(
+          geometry: LineString(coordinates: positions[index]).toJson(),
 
-          lineColor: controller.routePathsColors.values.firstOrNull != null ? AppHelper.hexToColor(controller.routePathsColors.values.firstOrNull).value : AppColors.accentDark.value, lineWidth: 3))
+          lineColor: controller.routePathsColors.values.toList()[index] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[index]).value : AppColors.accentDark.value, lineWidth: 3))
           .toList());
     }
 

@@ -40,7 +40,7 @@ class TrackingController extends GetxController
   List<Paths> routePathLinks = [];
   List<MapPathMarkers> mapPathMarkers = [];
   Map<String, List<LatLng>> routePathsCordinates = {};
-  Map<String, String> routePathsColors = {};
+  Map<String, String?> routePathsColors = {};
   bool animated = false;
   Map<String, LatLng> locations = {};
 
@@ -180,6 +180,7 @@ class TrackingController extends GetxController
       mapDataSnap.value = DataSnapShot.loading;
       for (Paths path in routePathLinks) {
         final geoJson = GeoJson();
+        routePathsColors[path.name ?? 'path'] = path.color;
         final res = await ApiHandler.downloadFile(baseUrl: path.url!);
         final geoJsonFile = File(res.data['file_path']);
         print(await geoJsonFile.readAsString());
@@ -188,7 +189,7 @@ class TrackingController extends GetxController
         if (geoPoints.isNotEmpty) {
           routePathsCordinates[path.name ?? 'path'] =
               geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
-          routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
+          //routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
         }
       }
       if (trackingDetails!.mapMarkers != null) {
