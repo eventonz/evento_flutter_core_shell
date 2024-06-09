@@ -408,7 +408,7 @@ class EventoMapController extends GetxController {
                                           'Get Directions', style: TextStyle(
                                           color: Theme
                                               .of(Get.context!)
-                                              .cardColor,
+                                              .colorScheme.secondary,
                                         ),),),
                                     ),
                                   ],
