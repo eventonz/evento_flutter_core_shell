@@ -295,7 +295,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         final apple_maps.Polyline polyline = apple_maps.Polyline(
           polylineId: polylineId,
           consumeTapEvents: true,
-          color: AppColors.accentDark,
+          color: controller.routePathsColors.values.firstOrNull != null ? AppHelper.hexToColor(controller.routePathsColors.values.firstOrNull) : AppColors.accentDark,
           width: 3,
           points: positionsApple,
           onTap: () {
@@ -310,7 +310,8 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       controller.polylineAnnotationManager?.createMulti(positions
           .map((e) => PolylineAnnotationOptions(
           geometry: LineString(coordinates: e).toJson(),
-          lineColor: AppColors.accentDark.value, lineWidth: 3))
+
+          lineColor: controller.routePathsColors.values.firstOrNull != null ? AppHelper.hexToColor(controller.routePathsColors.values.firstOrNull).value : AppColors.accentDark.value, lineWidth: 3))
           .toList());
     }
 

@@ -210,6 +210,18 @@ class EventoMapController extends GetxController {
     }
   }
 
+  String getStyleImage(String style) {
+    if(style == MapboxStyles.OUTDOORS) {
+      return 'square.png';
+    } else if(style == MapboxStyles.SATELLITE) {
+      return 'square2.png';
+    } else if(style == MapboxStyles.STANDARD) {
+      return Platform.isIOS ? 'square3.png' : 'square3.png';
+    } else {
+      return 'square3.png';
+    }
+  }
+
   void changeStyle(int index) {
     mapStyle.value = mapStyles[index];
     mapType.value = mapTypes[index];

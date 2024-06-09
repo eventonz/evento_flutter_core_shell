@@ -33,10 +33,11 @@ class BlurLoadingOverlay {
     _isLoading = true;
     await Get.dialog(
         Scaffold(
-          backgroundColor: AppColors.black.withOpacity(0.15),
-          body: BackdropFilter(
+          //backgroundColor: AppColors.black.withOpacity(0.15),
+          backgroundColor: AppColors.transparent,
+          body:/* BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-            child: Center(
+            child:*/ Center(
               child: Column(
                 children: [
                   const Spacer(flex: 5),
@@ -61,7 +62,7 @@ class BlurLoadingOverlay {
                 ],
               ),
             ),
-          ),
+          /*),*/
         ),
         barrierColor: AppColors.transparent,
         barrierDismissible: false);
