@@ -19,6 +19,7 @@ class AppColors {
   static Color secondary = const Color(0x621D1D1D);
   static Color accentLight = const Color(0xFF1D1D1D);
   static Color accentDark = const Color(0xFFF5F5F5);
+  static Color buttonDark = const Color(0x3DFFFFFF);
 
   //Split data in dev
   static Color separator = const Color(0xFFF4F4F4);

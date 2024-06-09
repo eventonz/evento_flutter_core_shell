@@ -151,12 +151,13 @@ class _EventoMapState extends State<EventoMap> {
                             height: 38,
                             width: 38,
                             decoration: BoxDecoration(
-                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.grey : Colors.grey.shade200,
+                              color: Theme.of(context).brightness == Brightness.dark ? AppColors.darkgrey : AppColors.buttonDark,
                               borderRadius: BorderRadius.circular(5),
                             ),
                             child: Center(child: Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Icon(Icons.close, size: 24,color: Theme.of(context).colorScheme.secondary),
+                              child: Icon(Icons.close, size: 24,
+                                                        color: Theme.of(context).colorScheme.secondary),
 
                             ))),
                       ),
