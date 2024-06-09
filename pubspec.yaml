@@ -156,4 +156,4 @@ flutter:
     - packages/evento_core/assets/images/waterpoint_marker.png
     - packages/evento_core/assets/images/turnaround.png
     - packages/evento_core/assets/images/spectators.png
-
+    - packages/evento_core/assets/images/square.png

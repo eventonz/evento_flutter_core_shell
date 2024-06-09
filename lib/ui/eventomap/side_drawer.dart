@@ -127,6 +127,10 @@ class MapStyleSection extends StatelessWidget {
                         width: 70,
                         height: 70,
                         decoration: BoxDecoration(
+                          image: const DecorationImage(
+                            image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl-2.jpg'),
+                            fit: BoxFit.cover,
+                          ),
                           borderRadius: BorderRadius.circular(5),
                           border: controller.mapStyle.value == controller.mapStyles[index]
                               ? Border.all(color: Colors.green, width: 3)
