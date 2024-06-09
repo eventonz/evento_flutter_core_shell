@@ -1,3 +1,4 @@
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
@@ -135,6 +136,10 @@ class MapStyleSection extends StatelessWidget {
                           border: controller.mapStyle.value == controller.mapStyles[index]
                               ? Border.all(color: Colors.green, width: 3)
                               : null,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(5),
+                          child: Image.asset(AppHelper.getImage(controller.getStyleImage(controller.mapStyles[index]))),
                         ),
                       ),
                       const SizedBox(height: 8),
