@@ -105,6 +105,7 @@ class AssistantController extends GetxController {
 
     try {
       if (messageText.value.isEmpty) return;
+      callServer(messageText.value);
       final userMessage = ChatMessageM(
           role: 'user', content: messageText.value);
       chatMessages.add(userMessage);
@@ -118,7 +119,9 @@ class AssistantController extends GetxController {
         'x-api-key': 'sec_qDPiWawARnBc2qT1iVDDOVHaiumJ0Tdr'
       };
 
-      callServer(messageText.value);
+      
+
+      
 
       final data = {
         'stream': true,
