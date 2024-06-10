@@ -18,6 +18,7 @@ import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 import 'package:latlong2/latlong.dart';
+import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -27,10 +28,11 @@ class TrackingController extends GetxController
   int currentII = 0;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
-  final accessToken ='pk.eyJ1IjoidG9kZGdpbGVzIiwiYSI6ImNsdG5qYnk0ZDA0cnAya3QweTd3b2tsOGcifQ.0XC7vt0QI2JwGtAbwF9dAg';
+  final accessToken =
+      'pk.eyJ1IjoidG9kZGdpbGVzIiwiYSI6ImNsdG5qYnk0ZDA0cnAya3QweTd3b2tsOGcifQ.0XC7vt0QI2JwGtAbwF9dAg';
   final terrainStyle = 'cl8bcmdxd001c15p9c5mua0jk';
   final statelliteStyle = 'cl8bcpr5y004z15s12saxlpsb';
-  final mapid =  'mapbox.mapbox-streets-v8';
+  final mapid = 'mapbox.mapbox-streets-v8';
   final currentStyle = ''.obs;
   List<Paths> routePathLinks = [];
   List<MapPathMarkers> mapPathMarkers = [];
@@ -39,7 +41,7 @@ class TrackingController extends GetxController
   Map<String, LatLng> locations = {};
 
   MapController mapController = MapController();
-
+  bool isFirstTime = true;
   CarouselController carouselController = CarouselController();
 
   late StreamController<int> updateStream = StreamController<int>.broadcast();
@@ -51,7 +53,7 @@ class TrackingController extends GetxController
   void onInit() {
     super.onInit();
     trackingDetails = AppGlobals.appConfig!.tracking;
-    eventId = AppGlobals.selEventId;//
+    eventId = AppGlobals.selEventId; //
     changeMapStyle(setDefault: true);
     updateStream.add(1);
     //if (eventId.isEmpty) {
@@ -75,7 +77,7 @@ class TrackingController extends GetxController
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     final Animation<double> animation =
-    CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
     // Note this method of encoding the target destination is a workaround.
     // When proper animated movement is supported (see #1263) we should be able
@@ -113,7 +115,6 @@ class TrackingController extends GetxController
     controller.forward();
   }
 
-
   @override
   void onClose() {
     super.onClose();
@@ -126,9 +127,10 @@ class TrackingController extends GetxController
     getRoutePaths();
   }
 
-  Future<void> setLocation(String track, LatLng location, {bool wait = false}) async {
+  Future<void> setLocation(String track, LatLng location,
+      {bool wait = false}) async {
     locations[track] = location;
-    if(wait) {
+    if (wait) {
       await Future.delayed(const Duration(seconds: 1));
     }
     update();
@@ -179,10 +181,13 @@ class TrackingController extends GetxController
   }
 
   void startTrackingTimer() {
-    timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
-        (Timer t){
+    timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 90),
+        (Timer t) {
+      DashboardController controller = Get.find();
 
-      getAthleteTrackingInfo();
+      if (controller.selMenu.value?.label == 'track') {
+        getAthleteTrackingInfo();
+      }
     });
   }
 
@@ -213,7 +218,7 @@ class TrackingController extends GetxController
 
   Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
     if (trackingDetails == null) return;
-    if(firstTime && athleteTrackDetails.isNotEmpty) {
+    if (firstTime && athleteTrackDetails.isNotEmpty) {
       currentII++;
       return;
     }
@@ -228,6 +233,10 @@ class TrackingController extends GetxController
       'web_tracking': true,
       'tracks': entrantsIds
     };
+    
+    print('Getting Athlete data');
+    print(DateTime.now().millisecondsSinceEpoch);
+
     final res = await ApiHandler.postHttp(
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
     if (res.statusCode == 200) {
@@ -235,7 +244,7 @@ class TrackingController extends GetxController
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
       entrantsIds.forEach((element) {
-        if(athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
+        if (athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
           athleteTrackDetails.add(AthleteTrackDetail(
             track: element,
           ));
