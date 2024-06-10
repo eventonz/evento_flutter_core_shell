@@ -102,9 +102,10 @@ class $AthleteDbTable extends AthleteDb
         searchTag
       ];
   @override
-  String get aliasedName => _alias ?? 'athlete_db';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'athlete_db';
+  String get actualTableName => $name;
+  static const String $name = 'athlete_db';
   @override
   VerificationContext validateIntegrity(Insertable<AppAthleteDb> instance,
       {bool isInserting = false}) {
@@ -610,9 +611,10 @@ class $AthleteExtraDetailsDbTable extends AthleteExtraDetailsDb
   List<GeneratedColumn> get $columns =>
       [id, athleteId, name, eventId, country, athleteNumber];
   @override
-  String get aliasedName => _alias ?? 'athlete_extra_details_db';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'athlete_extra_details_db';
+  String get actualTableName => $name;
+  static const String $name = 'athlete_extra_details_db';
   @override
   VerificationContext validateIntegrity(
       Insertable<AppAthleteExtraDetailsDb> instance,
@@ -912,6 +914,12 @@ class $ChatMessageDbTable extends ChatMessageDb
   late final GeneratedColumn<String> role = GeneratedColumn<String>(
       'role', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _eventIdMeta =
+      const VerificationMeta('eventId');
+  @override
+  late final GeneratedColumn<String> eventId = GeneratedColumn<String>(
+      'event_id', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _contentMeta =
       const VerificationMeta('content');
   @override
@@ -919,11 +927,12 @@ class $ChatMessageDbTable extends ChatMessageDb
       'content', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
   @override
-  List<GeneratedColumn> get $columns => [id, role, content];
+  List<GeneratedColumn> get $columns => [id, role, eventId, content];
   @override
-  String get aliasedName => _alias ?? 'chat_message_db';
+  String get aliasedName => _alias ?? actualTableName;
   @override
-  String get actualTableName => 'chat_message_db';
+  String get actualTableName => $name;
+  static const String $name = 'chat_message_db';
   @override
   VerificationContext validateIntegrity(Insertable<AppChatMessageDb> instance,
       {bool isInserting = false}) {
@@ -937,6 +946,10 @@ class $ChatMessageDbTable extends ChatMessageDb
           _roleMeta, role.isAcceptableOrUnknown(data['role']!, _roleMeta));
     } else if (isInserting) {
       context.missing(_roleMeta);
+    }
+    if (data.containsKey('event_id')) {
+      context.handle(_eventIdMeta,
+          eventId.isAcceptableOrUnknown(data['event_id']!, _eventIdMeta));
     }
     if (data.containsKey('content')) {
       context.handle(_contentMeta,
@@ -957,6 +970,8 @@ class $ChatMessageDbTable extends ChatMessageDb
           .read(DriftSqlType.int, data['${effectivePrefix}id'])!,
       role: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}role'])!,
+      eventId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}event_id']),
       content: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}content'])!,
     );
@@ -972,14 +987,21 @@ class AppChatMessageDb extends DataClass
     implements Insertable<AppChatMessageDb> {
   final int id;
   final String role;
+  final String? eventId;
   final String content;
   const AppChatMessageDb(
-      {required this.id, required this.role, required this.content});
+      {required this.id,
+      required this.role,
+      this.eventId,
+      required this.content});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['role'] = Variable<String>(role);
+    if (!nullToAbsent || eventId != null) {
+      map['event_id'] = Variable<String>(eventId);
+    }
     map['content'] = Variable<String>(content);
     return map;
   }
@@ -988,6 +1010,9 @@ class AppChatMessageDb extends DataClass
     return ChatMessageDbCompanion(
       id: Value(id),
       role: Value(role),
+      eventId: eventId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(eventId),
       content: Value(content),
     );
   }
@@ -998,6 +1023,7 @@ class AppChatMessageDb extends DataClass
     return AppChatMessageDb(
       id: serializer.fromJson<int>(json['id']),
       role: serializer.fromJson<String>(json['role']),
+      eventId: serializer.fromJson<String?>(json['eventId']),
       content: serializer.fromJson<String>(json['content']),
     );
   }
@@ -1007,14 +1033,20 @@ class AppChatMessageDb extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'role': serializer.toJson<String>(role),
+      'eventId': serializer.toJson<String?>(eventId),
       'content': serializer.toJson<String>(content),
     };
   }
 
-  AppChatMessageDb copyWith({int? id, String? role, String? content}) =>
+  AppChatMessageDb copyWith(
+          {int? id,
+          String? role,
+          Value<String?> eventId = const Value.absent(),
+          String? content}) =>
       AppChatMessageDb(
         id: id ?? this.id,
         role: role ?? this.role,
+        eventId: eventId.present ? eventId.value : this.eventId,
         content: content ?? this.content,
       );
   @override
@@ -1022,54 +1054,65 @@ class AppChatMessageDb extends DataClass
     return (StringBuffer('AppChatMessageDb(')
           ..write('id: $id, ')
           ..write('role: $role, ')
+          ..write('eventId: $eventId, ')
           ..write('content: $content')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, role, content);
+  int get hashCode => Object.hash(id, role, eventId, content);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is AppChatMessageDb &&
           other.id == this.id &&
           other.role == this.role &&
+          other.eventId == this.eventId &&
           other.content == this.content);
 }
 
 class ChatMessageDbCompanion extends UpdateCompanion<AppChatMessageDb> {
   final Value<int> id;
   final Value<String> role;
+  final Value<String?> eventId;
   final Value<String> content;
   const ChatMessageDbCompanion({
     this.id = const Value.absent(),
     this.role = const Value.absent(),
+    this.eventId = const Value.absent(),
     this.content = const Value.absent(),
   });
   ChatMessageDbCompanion.insert({
     this.id = const Value.absent(),
     required String role,
+    this.eventId = const Value.absent(),
     required String content,
   })  : role = Value(role),
         content = Value(content);
   static Insertable<AppChatMessageDb> custom({
     Expression<int>? id,
     Expression<String>? role,
+    Expression<String>? eventId,
     Expression<String>? content,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (role != null) 'role': role,
+      if (eventId != null) 'event_id': eventId,
       if (content != null) 'content': content,
     });
   }
 
   ChatMessageDbCompanion copyWith(
-      {Value<int>? id, Value<String>? role, Value<String>? content}) {
+      {Value<int>? id,
+      Value<String>? role,
+      Value<String?>? eventId,
+      Value<String>? content}) {
     return ChatMessageDbCompanion(
       id: id ?? this.id,
       role: role ?? this.role,
+      eventId: eventId ?? this.eventId,
       content: content ?? this.content,
     );
   }
@@ -1083,6 +1126,9 @@ class ChatMessageDbCompanion extends UpdateCompanion<AppChatMessageDb> {
     if (role.present) {
       map['role'] = Variable<String>(role.value);
     }
+    if (eventId.present) {
+      map['event_id'] = Variable<String>(eventId.value);
+    }
     if (content.present) {
       map['content'] = Variable<String>(content.value);
     }
@@ -1094,6 +1140,7 @@ class ChatMessageDbCompanion extends UpdateCompanion<AppChatMessageDb> {
     return (StringBuffer('ChatMessageDbCompanion(')
           ..write('id: $id, ')
           ..write('role: $role, ')
+          ..write('eventId: $eventId, ')
           ..write('content: $content')
           ..write(')'))
         .toString();

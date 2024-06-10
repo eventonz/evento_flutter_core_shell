@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:evento_core/core/db/models/athlete_extra_details.dart';
 import 'package:evento_core/core/db/models/chat_message.dart';
 import 'package:evento_core/core/models/athlete.dart';
+import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/assistant/assistant_controller.dart';
@@ -21,13 +22,23 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration {
     return MigrationStrategy(
       beforeOpen: (OpeningDetails details) async {
         await customStatement('PRAGMA foreign_keys = ON');
+      },
+      onCreate: (Migrator m) async {
+        await m.createAll();
+      },
+      onUpgrade: (Migrator m, int from, int to) async {
+        if (from < 2) {
+          // we added the dueDate property in the change from version 1 to
+          // version 2
+          await m.addColumn(chatMessageDb, chatMessageDb.eventId);
+        }
       },
     );
   }
@@ -201,11 +212,13 @@ class DatabaseHandler {
 
   static Future<int> insertChatMessage(ChatMessageM message) {
     return _db.into(_db.chatMessageDb).insert(ChatMessageDbCompanion.insert(
-        role: message.role!, content: message.content!));
+        role: message.role!, content: message.content!, eventId: Value(Preferences.getInt(AppKeys.eventId, 0).toString())));
   }
 
   static Future<List<ChatMessageM>> getAllChatMessages() async {
-    final messages = await _db.chatMessageDb.select().get();
+    var eventId = Preferences.getInt(AppKeys.eventId, 0).toString();
+    final messages = await (_db.chatMessageDb.select()
+      ..where((tbl) => tbl.eventId.equals(eventId))).get();
     return messages
         .map((message) => ChatMessageM.fromJson(message.toJson()))
         .toList();
