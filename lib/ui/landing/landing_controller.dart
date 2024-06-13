@@ -63,10 +63,12 @@ class LandingController extends GetxController {
       if (url.isEmpty) {
         Get.offNamed(Routes.events);
       } else {
-        await getConfigDetails(url);
-        await getAthletes();
-        webViewController = WebViewController();
         final webUrl = Preferences.getString(AppKeys.eventLink, '');
+        if(webUrl == '') {
+          await getConfigDetails(url);
+          await getAthletes();
+        }
+        webViewController = WebViewController();
         if(webUrl != '') {
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;

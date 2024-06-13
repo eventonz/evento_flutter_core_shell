@@ -5,6 +5,7 @@ import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/event_tile.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -21,7 +22,7 @@ class EventsScreen extends StatelessWidget {
         SliverAppBar(
           surfaceTintColor: Colors.black,
           shadowColor: Colors.black,
-          expandedHeight: 10.h,
+          expandedHeight: true || controller.searchBar ? 16.h : 10.h,
           floating: true,
           pinned: true,
           snap: true,
@@ -65,16 +66,64 @@ class EventsScreen extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(bottom: 12),
-                      child: CachedNetworkImage(
-                        imageUrl: controller.headerLogo,
-                        placeholder: (_, val) => const Center(
-                            child: CircularProgressIndicator.adaptive()),
-                        errorWidget: (_, val, val2) => const Center(
-                            child: NoDataFoundLayout(
-                          errorMessage: 'No Image Found',
-                        )),
-                        width: 60.w,
-                        fit: BoxFit.cover,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: controller.headerLogo,
+                            placeholder: (_, val) => const Center(
+                                child: CircularProgressIndicator.adaptive()),
+                            errorWidget: (_, val, val2) => const Center(
+                                child: NoDataFoundLayout(
+                              errorMessage: 'No Image Found',
+                            )),
+                            width: 60.w,
+                            fit: BoxFit.cover,
+                          ),
+                          //if(controller.searchBar)
+                          const SizedBox(height: 8),
+                          //if(controller.searchBar)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2  ),
+                              child: TextField(controller: controller.searchController,
+                                onChanged: (val) {
+                                  controller.onSearch(val);
+                                },
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 13,
+                                ),
+                                decoration: InputDecoration(
+                                hintText: 'Search...',
+                                hintStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 13,
+                                ),
+                                prefixIcon: Icon(CupertinoIcons.search, color: Colors.white, size: 18,),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.white,
+                                    width: .5,
+                                  )
+                                ),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.white,
+                                        width: .5,
+                                      )
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: Colors.white,
+                                        width: .5,
+                                      )
+                                  )
+                              ),),
+                            ),
+                        ],
                       ),
                     ),
                   ),
@@ -88,22 +137,24 @@ class EventsScreen extends StatelessWidget {
             [
               Column(
                 children: [
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                    itemCount: controller.events.length,
-                    separatorBuilder: (_, i) {
-                      return const SizedBox(
-                        height: 16,
-                      );
-                    },
-                    itemBuilder: (_, i) {
-                      final event = controller.events[i];
-                      return EventTile(
-                          onTap: () => controller.selectEvent(event),
-                          event: event);
-                    },
+                  Obx(
+                    () => ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                      itemCount: controller.events.length,
+                      separatorBuilder: (_, i) {
+                        return const SizedBox(
+                          height: 16,
+                        );
+                      },
+                      itemBuilder: (_, i) {
+                        final event = controller.events[i];
+                        return EventTile(
+                            onTap: () => controller.selectEvent(event),
+                            event: event);
+                      },
+                    ),
                   ),
                 ],
               ),

@@ -17,10 +17,13 @@ import 'subevent_sheet.dart';
 class EventsController extends GetxController {
   late int eventId;
   late EventM eventM;
-  late List<Event> events;
+  late List<Event> allEvents;
+  late RxList<Event> events;
   late String headerColor;
   late String headerLogo;
+  late bool searchBar;
   late Event selEvent;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void onInit() {
@@ -28,7 +31,16 @@ class EventsController extends GetxController {
     eventM = AppGlobals.eventM!;
     headerLogo = eventM.header!.logo ?? '';
     headerColor = eventM.header!.color ?? '';
-    events = eventM.events!;
+    searchBar = eventM.searchBar!;
+    events = eventM.events!.obs;
+    allEvents = eventM.events!;
+  }
+
+  onSearch(String val) {
+    events.value = allEvents.where((element) => element.title.toLowerCase().contains(val.toLowerCase())).toList();
+    update();
+    events.refresh();
+
   }
 
   void toLanding() async {

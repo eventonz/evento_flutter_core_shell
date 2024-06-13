@@ -1,10 +1,12 @@
 class EventM {
   List<Event>? events;
   Header? header;
+  bool? searchBar;
 
-  EventM({this.events, this.header});
+  EventM({this.events, this.header, this.searchBar = false});
 
   EventM.fromJson(Map<String, dynamic> json) {
+    searchBar = json['searchbar'] ?? false;
     if (json['items'] != null) {
       events = <Event>[];
       json['items'].forEach((v) {
