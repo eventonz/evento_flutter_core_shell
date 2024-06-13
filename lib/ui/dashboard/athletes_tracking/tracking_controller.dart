@@ -238,8 +238,10 @@ class TrackingController extends GetxController
     print(DateTime.now().millisecondsSinceEpoch);
 
     final res = await ApiHandler.postHttp(
+
         baseUrl: trackingDetails!.data!, endPoint: '', body: body);
     if (res.statusCode == 200) {
+      print(res.data);
       athleteTrackDetails.clear();
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());

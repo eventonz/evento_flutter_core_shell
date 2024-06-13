@@ -60,9 +60,9 @@ class $AthleteDbTable extends AthleteDb
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _racenoMeta = const VerificationMeta('raceno');
   @override
-  late final GeneratedColumn<int> raceno = GeneratedColumn<int>(
+  late final GeneratedColumn<String> raceno = GeneratedColumn<String>(
       'raceno', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: true);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _eventIdMeta =
       const VerificationMeta('eventId');
   @override
@@ -208,7 +208,7 @@ class $AthleteDbTable extends AthleteDb
       profileImage: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}profile_image'])!,
       raceno: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}raceno'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}raceno'])!,
       eventId: attachedDatabase.typeMapping
           .read(DriftSqlType.int, data['${effectivePrefix}event_id'])!,
       info: attachedDatabase.typeMapping
@@ -234,7 +234,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
   final String name;
   final String extra;
   final String profileImage;
-  final int raceno;
+  final String raceno;
   final int eventId;
   final String info;
   final int contestNo;
@@ -262,7 +262,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
     map['name'] = Variable<String>(name);
     map['extra'] = Variable<String>(extra);
     map['profile_image'] = Variable<String>(profileImage);
-    map['raceno'] = Variable<int>(raceno);
+    map['raceno'] = Variable<String>(raceno);
     map['event_id'] = Variable<int>(eventId);
     map['info'] = Variable<String>(info);
     map['contest_no'] = Variable<int>(contestNo);
@@ -298,7 +298,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       name: serializer.fromJson<String>(json['name']),
       extra: serializer.fromJson<String>(json['extra']),
       profileImage: serializer.fromJson<String>(json['profileImage']),
-      raceno: serializer.fromJson<int>(json['raceno']),
+      raceno: serializer.fromJson<String>(json['raceno']),
       eventId: serializer.fromJson<int>(json['eventId']),
       info: serializer.fromJson<String>(json['info']),
       contestNo: serializer.fromJson<int>(json['contestNo']),
@@ -316,7 +316,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       'name': serializer.toJson<String>(name),
       'extra': serializer.toJson<String>(extra),
       'profileImage': serializer.toJson<String>(profileImage),
-      'raceno': serializer.toJson<int>(raceno),
+      'raceno': serializer.toJson<String>(raceno),
       'eventId': serializer.toJson<int>(eventId),
       'info': serializer.toJson<String>(info),
       'contestNo': serializer.toJson<int>(contestNo),
@@ -332,7 +332,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           String? name,
           String? extra,
           String? profileImage,
-          int? raceno,
+          String? raceno,
           int? eventId,
           String? info,
           int? contestNo,
@@ -399,7 +399,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
   final Value<String> name;
   final Value<String> extra;
   final Value<String> profileImage;
-  final Value<int> raceno;
+  final Value<String> raceno;
   final Value<int> eventId;
   final Value<String> info;
   final Value<int> contestNo;
@@ -426,7 +426,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     required String name,
     required String extra,
     required String profileImage,
-    required int raceno,
+    required String raceno,
     required int eventId,
     required String info,
     required int contestNo,
@@ -450,7 +450,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     Expression<String>? name,
     Expression<String>? extra,
     Expression<String>? profileImage,
-    Expression<int>? raceno,
+    Expression<String>? raceno,
     Expression<int>? eventId,
     Expression<String>? info,
     Expression<int>? contestNo,
@@ -480,7 +480,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       Value<String>? name,
       Value<String>? extra,
       Value<String>? profileImage,
-      Value<int>? raceno,
+      Value<String>? raceno,
       Value<int>? eventId,
       Value<String>? info,
       Value<int>? contestNo,
@@ -526,7 +526,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       map['profile_image'] = Variable<String>(profileImage.value);
     }
     if (raceno.present) {
-      map['raceno'] = Variable<int>(raceno.value);
+      map['raceno'] = Variable<String>(raceno.value);
     }
     if (eventId.present) {
       map['event_id'] = Variable<int>(eventId.value);

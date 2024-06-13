@@ -207,6 +207,7 @@ class AnimatedMarkerView extends StatefulWidget {
 
   final AthleteTrackDetail athleteTrackDetail;
 
+
   @override
   State<AnimatedMarkerView> createState() => _AnimatedMarkerViewState();
 }

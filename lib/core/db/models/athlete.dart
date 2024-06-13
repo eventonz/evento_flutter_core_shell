@@ -9,7 +9,7 @@ class AthleteDb extends Table {
   TextColumn get name => text()();
   TextColumn get extra => text()();
   TextColumn get profileImage => text()();
-  IntColumn get raceno => integer()();
+  TextColumn get raceno => text()();
   IntColumn get eventId => integer()();
   TextColumn get info => text()();
   IntColumn get contestNo => integer()();
