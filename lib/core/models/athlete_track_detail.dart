@@ -53,7 +53,7 @@ class AthleteTrackDetail {
   }
 
   bool isRaceNoBig() {
-    return track.length > 3;
+    return marker_text.length > 3;
   }
 
   Map<String, dynamic> toJson() {
