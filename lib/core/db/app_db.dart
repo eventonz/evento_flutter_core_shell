@@ -173,10 +173,12 @@ class DatabaseHandler {
 
   static Stream<AppAthleteDb> getSingleAthlete(String athleteId) async* {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
-    yield* (_db.athleteDb.select()
+    Stream<AppAthleteDb> stream = (_db.athleteDb.select()
+          ..limit(1)
           ..where((tbl) => tbl.eventId.equals(eventId))
           ..where((tbl) => tbl.athleteId.equals(athleteId)))
         .watchSingle();
+    yield* stream;
   }
 
   static Future<AppAthleteDb?> getSingleAthleteOnce(String athleteId) async {

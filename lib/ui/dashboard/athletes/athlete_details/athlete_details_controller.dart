@@ -102,7 +102,7 @@ class AthleteDetailsController extends GetxController
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
-      'number': athelete.id
+      'number': athelete.athleteId
     };
     final res = await ApiHandler.postHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);
@@ -117,7 +117,7 @@ class AthleteDetailsController extends GetxController
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
-      'number': athelete.id
+      'number': athelete.athleteId
     };
     final res = await ApiHandler.deleteHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);

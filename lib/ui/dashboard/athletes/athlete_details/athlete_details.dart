@@ -191,7 +191,9 @@ class AthleteDetailsScreen extends StatelessWidget {
                     StreamBuilder<AppAthleteDb>(
                         stream: controller
                             .getSingleAthlete(controller.selEntrant.athleteId),
+
                         builder: (_, snap) {
+                          print('snap ${controller.selEntrant.athleteId} ${snap.data}');
                           if (snap.hasData) {
                             final isFollowed = snap.data!.isFollowed;
                             return Column(
