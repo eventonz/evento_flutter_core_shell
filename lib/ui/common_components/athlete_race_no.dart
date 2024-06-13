@@ -14,7 +14,7 @@ class AthleteRaceNo extends StatelessWidget {
   });
 
   final double width;
-  final int number;
+  final String number;
   final AthleteRaceNoStyle athleteRaceNoStyle;
 
   Color backgroundColor() {

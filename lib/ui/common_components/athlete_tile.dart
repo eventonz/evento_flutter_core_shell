@@ -14,7 +14,7 @@ class AthleteTile extends StatelessWidget {
   final VoidCallback onTap;
 
   String raceNo() {
-    if (entrant.raceno == -1) {
+    if (entrant.raceno == '') {
       return 'TBC';
     }
     return entrant.raceno.toString();
