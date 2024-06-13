@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:get/get.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/models/advert.dart';
 import 'home/home.dart';
 import 'athletes/athletes.dart';
@@ -40,6 +41,7 @@ class DashboardController extends GetxController {
   late Tracking? trackingData;
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
+  WebViewController? webViewController;
 
   RxList<BottomNavMenu> menus = RxList([
     BottomNavMenu(
@@ -99,6 +101,14 @@ class DashboardController extends GetxController {
       });
     }
 
+    if(AppGlobals.appConfig?.menu?.items?.length == 0) {
+      menus.removeLast();
+    }
+
+    if(Get.arguments != null && Get.arguments is WebViewController) {
+      webViewController = Get.arguments;
+    }
+
   }
 
   void reloadMenu() {
@@ -144,6 +154,9 @@ class DashboardController extends GetxController {
       }
       update();
       //dashboardController.menus.removeAt(1);
+    if(AppGlobals.appConfig?.menu?.items?.length == 0) {
+      menus.removeWhere((element) => element.label == 'menu');
+    }
   }
 
   void setMiniPlayerConfig(MiniPlayerConfig? config) {

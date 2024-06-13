@@ -15,12 +15,15 @@ import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/overlays/toast.dart';
 import '../events/events.dart';
 
 class LandingController extends GetxController {
   bool isPrev = false;
+  
+  WebViewController? webViewController;
 
   @override
   void onInit() {
@@ -62,6 +65,31 @@ class LandingController extends GetxController {
       } else {
         await getConfigDetails(url);
         await getAthletes();
+        webViewController = WebViewController();
+        final webUrl = Preferences.getString(AppKeys.eventLink, '');
+        if(webUrl != '') {
+          await webViewController!.loadRequest(Uri.parse(webUrl));
+          bool done = false;
+          webViewController!.setNavigationDelegate(NavigationDelegate(
+            onPageFinished: (val) {
+              if(!done) {
+                done = true;
+                if (isPrev) {
+                  Get.off(
+                        () => const DashboardScreen(),
+                    routeName: Routes.dashboard,
+                    transition: Transition.fadeIn,
+                    duration: const Duration(milliseconds: 1000),
+                    arguments: webViewController
+                  );
+                } else {
+                  Get.offNamed(Routes.dashboard, arguments: webViewController);
+                }
+              }
+            }
+          ));
+          return;
+        }
         if (isPrev) {
           Get.off(
                 () => const DashboardScreen(),

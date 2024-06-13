@@ -79,6 +79,7 @@ class EventsController extends GetxController {
 
   void saveEventSelection(dynamic event) {
     Preferences.setString(AppKeys.eventUrl, event.config!);
+    Preferences.setString(AppKeys.eventLink, event.link!);
     Preferences.setInt(AppKeys.eventId, event.id);
     AppGlobals.selEventId = event.id;
   }

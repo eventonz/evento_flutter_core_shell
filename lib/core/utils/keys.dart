@@ -7,6 +7,7 @@ class AppKeys {
   static const String prevEventId = 'prev_event_id';
   static const String eventId = 'event_id';
   static const String eventUrl = 'event_url';
+  static const String eventLink = 'event_link';
   static const String eventConfig = 'event_config';
   static const String eventListId = 'event_list_id';
   static const String eventListUrl = 'event_list_url';

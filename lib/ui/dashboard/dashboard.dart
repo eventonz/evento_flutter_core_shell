@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:miniplayer/miniplayer.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../evento_app.dart';
 import '../../youtube_player_flutter/src/player/youtube_player.dart';
 import 'athletes/athletes_controller.dart';
@@ -37,7 +38,35 @@ class DashboardScreen extends StatelessWidget {
 
     Get.put(TrackingController());
     return Scaffold(
-        body: Stack(
+        body: controller.webViewController != null ? Stack(
+          children: [
+            WebViewWidget(controller: controller.webViewController!),
+            Obx(() => Visibility(
+              visible: controller.selMenu.value == controller.menus.first &&
+                  AppGlobals.appEventConfig.multiEventListId != null,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: CircleAvatar(
+                    radius: 22,
+                    backgroundColor:
+                    Theme.of(context).brightness == Brightness.light
+                        ? AppColors.black.withOpacity(0.8)
+                        : AppColors.white.withOpacity(0.8),
+                    child: IconButton(
+                      onPressed: controller.goBack,
+                      color:
+                      Theme.of(context).brightness == Brightness.light
+                          ? AppColors.accentDark
+                          : AppColors.accentLight,
+                      icon: const Icon(Icons.arrow_circle_left_outlined),
+                    ),
+                  ),
+                ),
+              ),
+            )),
+          ],
+        ) : Stack(
           children: [
             Obx(() => controller.selMenu.value!.view),
             Obx(() => Visibility(
@@ -160,6 +189,6 @@ class DashboardScreen extends StatelessWidget {
             ),
           ],
         ),
-        bottomNavigationBar: const AppBottomNav());
+        bottomNavigationBar: controller.webViewController != null ? null : const AppBottomNav());
   }
 }

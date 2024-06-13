@@ -23,6 +23,7 @@ class Event {
   int? id;
   String? config;
   String? type;
+  String? link;
   late String subtitle;
   late String title;
   String? smallImage;
@@ -37,6 +38,7 @@ class Event {
       this.id,
       this.config,
       this.type,
+      this.link,
       this.subtitle = 'dsd',
       this.title = '',
       this.smallImage,
@@ -50,6 +52,7 @@ class Event {
     id = json['id'];
     config = json['config'];
     type = json['type'] ?? '';
+    link = json['link'] ?? '';
     subtitle = json['subtitle'] ?? '';
     title = json['title'];
     smallImage = json['small_image'];
