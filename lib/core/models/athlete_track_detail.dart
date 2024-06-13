@@ -29,7 +29,7 @@ class AthleteTrackDetail {
   double? prevLocation;
   String? path;
   String? status;
-  String? markerText;
+  String marker_text = '';
 
   AthleteTrackDetail(
       {this.track = '',
@@ -39,7 +39,7 @@ class AthleteTrackDetail {
       this.prevLocation,
       this.path,
       this.status,
-      this.markerText});
+      this.marker_text = ''});
 
   AthleteTrackDetail.fromJson(Map<String, dynamic> json) {
     track = json['track'];
@@ -49,7 +49,7 @@ class AthleteTrackDetail {
     prevLocation = json['prev_location']?.toDouble();
     path = json['path'];
     status = json['status'];
-    markerText = json['marker_text'];
+    marker_text = json['marker_text'];
   }
 
   bool isRaceNoBig() {
@@ -65,7 +65,7 @@ class AthleteTrackDetail {
     data['prev_location'] = prevLocation;
     data['path'] = path;
     data['status'] = status;
-    data['marker_text'] = markerText;
+    data['marker_text'] = marker_text;
     return data;
   }
 }

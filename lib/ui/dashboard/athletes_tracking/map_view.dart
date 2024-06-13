@@ -34,7 +34,7 @@ class TrackingMapView extends StatelessWidget {
     double latRad(lat) {
       var sin2 = sin(lat * pi / 180);
       var radX2 = log((1 + sin2) / (1 - sin2)) / 2;
-      return max(min(radX2, pi), - pi) / 2;
+      return max(min(radX2, pi), -pi) / 2;
     }
 
     double zoom(mapPx, worldPx, fraction) {
@@ -68,31 +68,27 @@ class TrackingMapView extends StatelessWidget {
 
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final centerPoint = controller.initialPathCenterPoint();
-          controller.routePathsCordinates.values.forEach((element) {
-            bounds.addAll(element);
-          });
-          if(reloadController.reloaded) {
-            reloadController.reloaded = false;
-            try {
-              Future.delayed(const Duration(milliseconds: 100), () {
-                controller.mapController.move(centerPoint,
-                    dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
-                        {'height': MediaQuery
-                            .of(context)
-                            .size
-                            .height,
-                          'width': MediaQuery
-                              .of(context)
-                              .size
-                              .width}) * 1.02);
-              });
-            } catch (e) {
-              //
-            }
+        controller.routePathsCordinates.values.forEach((element) {
+          bounds.addAll(element);
+        });
+        if (reloadController.reloaded) {
+          reloadController.reloaded = false;
+          try {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              controller.mapController.move(
+                  centerPoint,
+                  dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds), {
+                        'height': MediaQuery.of(context).size.height,
+                        'width': MediaQuery.of(context).size.width
+                      }) *
+                      1.02);
+            });
+          } catch (e) {
+            //
           }
+        }
 
-        for (String routePath
-        in controller.routePathsCordinates.keys) {
+        for (String routePath in controller.routePathsCordinates.keys) {
           print(routePath);
         }
         print('hha');
@@ -103,28 +99,32 @@ class TrackingMapView extends StatelessWidget {
               mapController: controller.mapController,
               options: MapOptions(
                 initialCenter: centerPoint,
-                initialZoom: dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds),
-    {'height' : MediaQuery.of(context).size.height,
-      'width' : MediaQuery.of(context).size.width})*1.02,
+                initialZoom:
+                    dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds), {
+                          'height': MediaQuery.of(context).size.height,
+                          'width': MediaQuery.of(context).size.width
+                        }) *
+                        1.02,
                 minZoom: 8,
                 maxZoom: 18,
               ),
               children: [
                 TileLayer(
-                  urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                  subdomains: const ['a', 'b', 'c']
+                    urlTemplate:
+                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    subdomains: const ['a', 'b', 'c']
 
-                  // evento one pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
-                  // "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}"
+                    // evento one pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
+                    // "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}"
 
-                  /*urlTemplate: "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/wmts?access_token=pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg",
+                    /*urlTemplate: "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/wmts?access_token=pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg",
        
                   //Openstreet
 
                       //"https://tile.openstreetmap.org/{z}/{x}/{y}.png"
                   subdomains: const ['a', 'b', 'c'],*/
 
-                ),
+                    ),
                 PolylineLayer(
                   polylines: [
                     for (List<LatLng> routePath
@@ -132,7 +132,7 @@ class TrackingMapView extends StatelessWidget {
                       Polyline(
                         points: routePath,
                         color: AppColors.accentDark,
-                        // change the color here 
+                        // change the color here
                         //color: AppColors.accentDark,
                         // color: AppHelper.getRandomLightColor(),
                         strokeWidth: 3.5,
@@ -145,16 +145,17 @@ class TrackingMapView extends StatelessWidget {
                       Marker(
                           point: marker.latLng,
                           child: CachedNetworkImage(
-                              imageUrl: marker.iconUrl,
-                              errorWidget: (context, url, error) =>
-                                  const SizedBox(),
-                            ))
+                            imageUrl: marker.iconUrl,
+                            errorWidget: (context, url, error) =>
+                                const SizedBox(),
+                          ))
                   ],
                 ),
                 MobileLayerTransformer(
                   child: Stack(
                     children: [
-                      for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                      for (AthleteTrackDetail trackDetail
+                          in controller.athleteTrackDetails.value)
                         AnimatedMarkerView(athleteTrackDetail: trackDetail)
                     ],
                   ),
@@ -207,7 +208,6 @@ class AnimatedMarkerView extends StatefulWidget {
 
   final AthleteTrackDetail athleteTrackDetail;
 
-
   @override
   State<AnimatedMarkerView> createState() => _AnimatedMarkerViewState();
 }
@@ -246,7 +246,6 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     });
   }
 
-
   @override
   void didUpdateWidget(covariant AnimatedMarkerView oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -259,7 +258,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   void setInitialRouteMarkerPath() {
-    if(routePath.isNotEmpty) {
+    if (routePath.isNotEmpty) {
       final latLng = routePath.first;
       if (controller.locations[trackDetail.track] == null) {
         controller.setLocation(trackDetail.track, latLng);
@@ -273,7 +272,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   }
 
   LineString createLineStringPath() {
-    if(routePath.isEmpty) {
+    if (routePath.isEmpty) {
       return LineString([]);
     }
     final Path path = Path.from(routePath);
@@ -300,12 +299,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       print('---');
       final latLng = getLatlngFromDistance();
       //if (mounted) {
-        await controller.setLocation(trackDetail.track, latLng, wait: true);
-      setState(() {
-
-        });
+      await controller.setLocation(trackDetail.track, latLng, wait: true);
+      setState(() {});
       //}
-
     }
     isAnimatingMarker = false;
   }
@@ -325,6 +321,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     print(lineStringPath);
     print(trackDetail.path);
     print('hello');
+    const mytext = 'BC';
     return AnimatedMarkerLayer(
       options: AnimatedMarkerLayerOptions(
           duration: Duration(milliseconds: 1000),
@@ -334,20 +331,18 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               rotate: true,
               width: trackDetail.isRaceNoBig() ? 70 : 40,
               height: 40,
-              point: LatLng(controller.locations[trackDetail.track]?.latitude ?? 0, controller.locations[trackDetail.track]?.longitude ?? 0),
+              point: LatLng(
+                  controller.locations[trackDetail.track]?.latitude ?? 0,
+                  controller.locations[trackDetail.track]?.longitude ?? 0),
               child: Container(
-                  decoration: BoxDecoration(
-                      color: AppColors.accentLight,
-                      borderRadius: BorderRadius.circular(40)),
-                  child: Center(
-                    child: AppText(
-                      trackDetail.track,
-                      fontSize: 16,
-                      color: AppColors.white
-                    ),
-                  ),
-                )
-          )),
+                decoration: BoxDecoration(
+                    color: AppColors.accentLight,
+                    borderRadius: BorderRadius.circular(40)),
+                child: Center(
+                  child: AppText(trackDetail.marker_text,
+                      fontSize: 14, color: AppColors.white),
+                ),
+              ))),
     );
   }
 }

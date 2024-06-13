@@ -230,7 +230,6 @@ class TrackingController extends GetxController
     }
     final body = {
       'race_id': eventId,
-      'web_tracking': true,
       'tracks': entrantsIds
     };
     
