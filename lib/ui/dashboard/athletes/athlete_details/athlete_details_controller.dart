@@ -23,6 +23,8 @@ class AthleteDetailsController extends GetxController
   final List<Tab> detailsTabs = [];
   final List<String> tabTitles = [];
   late int selectedTabIndex = 0;
+
+  bool canFollow = true;
   final ScrollController scrollController = ScrollController();
 
   @override
@@ -31,6 +33,7 @@ class AthleteDetailsController extends GetxController
     final res = Get.arguments;
     entrantsList = AppGlobals.appConfig!.athletes!;
     selEntrant = res[AppKeys.athlete];
+    canFollow = res['can_follow'] ?? true;
   }
 
   @override

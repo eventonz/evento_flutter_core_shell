@@ -77,6 +77,8 @@ class MoreController extends GetxController {
     } else if (itemType == 'storyslider') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item, 'slides' : sliders});
+    } else if (itemType == 'results') {
+      Get.toNamed(Routes.results, arguments: {AppKeys.moreItem: item});
     } else {
       ToastUtils.show('Something went wrong...');
     }

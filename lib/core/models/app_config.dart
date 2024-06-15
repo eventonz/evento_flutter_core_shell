@@ -179,6 +179,8 @@ class Endpoint {
 class Items {
   String? type;
   String? linkType;
+  String? supplier;
+  int? sportSplitsRaceId;
   String? title;
   String? icon;
   bool? openExternal;
@@ -196,6 +198,8 @@ class Items {
       {this.type,
       this.title,
       this.icon,
+      this.supplier,
+      this.sportSplitsRaceId,
       this.openExternal,
       this.id,
       this.sourceId,
@@ -211,6 +215,8 @@ class Items {
     linkType = json['link_type'];
     type = json['type'];
     title = json['title'];
+    supplier = json['supplier'];
+    sportSplitsRaceId = json['sportsplits_raceid'];
     icon = json['icon'];
     openExternal = json['open_external'];
     id = json['id'];
@@ -231,6 +237,8 @@ class Items {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['link_type'] = linkType;
     data['type'] = type;
+    data['supplier'] = supplier;
+    data['sportsplits_raceid'] = sportSplitsRaceId;
     data['title'] = title;
     data['icon'] = icon;
     data['open_external'] = openExternal;

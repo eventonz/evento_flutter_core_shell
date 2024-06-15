@@ -13,4 +13,5 @@ class Routes {
   static const String schedule = '/schedule';
   static const String assistant = '/assistant';
   static const String storySlider = '/storySlider';
+  static const String results = '/results';
 }

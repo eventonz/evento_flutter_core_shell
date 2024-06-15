@@ -28,7 +28,7 @@ class AthleteDetailsScreen extends StatelessWidget {
               stream:
                   controller.getSingleAthlete(controller.selEntrant.athleteId),
               builder: (_, snap) {
-                if (snap.hasData) {
+                if (snap.hasData && controller.canFollow) {
                   final isFollowed = snap.data!.isFollowed;
                   if (isFollowed) {
                     return IconButton(
@@ -194,7 +194,7 @@ class AthleteDetailsScreen extends StatelessWidget {
 
                         builder: (_, snap) {
                           print('snap ${controller.selEntrant.athleteId} ${snap.data}');
-                          if (snap.hasData) {
+                          if (snap.hasData && controller.canFollow) {
                             final isFollowed = snap.data!.isFollowed;
                             return Column(
                               children: [

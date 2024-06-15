@@ -1,3 +1,4 @@
+import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/ui/common_components/more_menu_tile.dart';
@@ -79,6 +80,34 @@ class MoreScreen extends StatelessWidget {
                   },
                   itemBuilder: (_, i) {
                     if (i == controller.moreDetails.items!.length) {
+                      Items item2 = Items(
+                        type: 'results',
+                        supplier: 'sportsplits',
+                        title: '2024 Results 2',
+                        sportSplitsRaceId: 18409,
+                        id: 14214,
+                        icon: 'terrain',
+                      );
+
+                      Items item = Items(
+                        type: 'results',
+                        supplier: 'sportsplits',
+                        title: '2024 Results',
+                        sportSplitsRaceId: 18507,
+                        id: 1704,
+                        icon: 'terrain',
+                      );
+
+                      return Column(
+                        children: [
+                          MoreMenuTile(
+                              onTap: () => controller.decideNextView(item),
+                              item: item),
+                          MoreMenuTile(
+                              onTap: () => controller.decideNextView(item2),
+                              item: item2),
+                        ],
+                      );
                       return const SizedBox();
                     }
                     final item = controller.moreDetails.items![i];

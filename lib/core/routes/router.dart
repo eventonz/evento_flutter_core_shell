@@ -7,6 +7,7 @@ import 'package:evento_core/ui/events/events.dart';
 import 'package:evento_core/ui/landing/landing.dart';
 import 'package:evento_core/ui/miniplayer/miniplayer_screen.dart';
 import 'package:evento_core/ui/qr_scanner/qr_scanner.dart';
+import 'package:evento_core/ui/results/results_screen.dart';
 import 'package:evento_core/ui/schedule/schedule.dart';
 import 'package:evento_core/ui/settings/settings.dart';
 import 'package:evento_core/ui/user_challenge/challenge.dart';
@@ -72,6 +73,10 @@ class PageRouter {
     GetPage(
       name: Routes.storySlider,
       page: () => const StorySliderScreen(),
+    ),
+    GetPage(
+      name: Routes.results,
+      page: () => const ResultsScreen(),
     ),
   ];
 }
