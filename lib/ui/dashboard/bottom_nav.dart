@@ -29,7 +29,6 @@ class AppBottomNav extends StatelessWidget {
         height: 7.5.h,
         child: Obx(
           () => Row(
-
             children: [
               for (BottomNavMenu menu in controller.menus)
                 Visibility(
