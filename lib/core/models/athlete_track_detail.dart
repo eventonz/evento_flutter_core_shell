@@ -49,7 +49,7 @@ class AthleteTrackDetail {
     prevLocation = json['prev_location']?.toDouble();
     path = json['path'];
     status = json['status'];
-    marker_text = json['marker_text'];
+    marker_text = json['marker_text'] ?? '';
   }
 
   bool isRaceNoBig() {

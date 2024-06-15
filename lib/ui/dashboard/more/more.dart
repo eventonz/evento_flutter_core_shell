@@ -87,6 +87,7 @@ class MoreScreen extends StatelessWidget {
                         sportSplitsRaceId: 18409,
                         id: 14214,
                         icon: 'terrain',
+                        linkToDetail: true
                       );
 
                       Items item = Items(

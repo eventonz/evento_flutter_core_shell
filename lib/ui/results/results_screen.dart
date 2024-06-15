@@ -1,5 +1,6 @@
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/routes/routes.dart';
+import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/ui/results/results_screen_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 import '../../core/models/app_config.dart';
+import '../../core/res/app_colors.dart';
 import '../common_components/text.dart';
 
 class ResultsScreen extends StatelessWidget {
@@ -223,11 +225,12 @@ class ResultsScreen extends StatelessWidget {
                 Container(
                   height: 50,
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent,
+                    color: AppColors.primary,
+                    
                   ),
                   child: Row(
                     children: [
-                      Container(
+                      SizedBox(
                         width: 60,
                         child: Center(child: Text('Pos.', style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
@@ -287,6 +290,9 @@ class ResultsScreen extends StatelessWidget {
 
                   return GestureDetector(
                     onTap: () {
+                      if(!(controller.items?.linkToDetail ?? false)) {
+                        return;
+                      }
                       AppAthleteDb athleteDb = AppAthleteDb(id: athlete.raceNo!, athleteId: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', raceno: athlete.raceNo!.toString(), eventId: athlete.eventId!, info: '', contestNo: athlete.overallPos!, searchTag: '');
                       Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: athleteDb, 'can_follow': false});
                     },

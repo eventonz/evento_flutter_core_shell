@@ -83,6 +83,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       print('bb ${controller.athleteTrackDetails.value.length}');
       if(mapDataSnap.value == DataSnapShot.loaded && controller.athleteTrackDetails.value.isNotEmpty) {
         timer.cancel();
+        print('CANCELLED');
         await setInitialRouteMarkerPaths();
         setInitialDistances();
 

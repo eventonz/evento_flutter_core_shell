@@ -184,6 +184,7 @@ class Items {
   String? title;
   String? icon;
   bool? openExternal;
+  bool? linkToDetail;
   int? id;
   String? sourceId;
   Endpoint? storySlider;
@@ -200,6 +201,7 @@ class Items {
       this.icon,
       this.supplier,
       this.sportSplitsRaceId,
+      this.linkToDetail,
       this.openExternal,
       this.id,
       this.sourceId,
@@ -219,6 +221,7 @@ class Items {
     sportSplitsRaceId = json['sportsplits_raceid'];
     icon = json['icon'];
     openExternal = json['open_external'];
+    linkToDetail = json['linktodetail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
@@ -242,6 +245,7 @@ class Items {
     data['title'] = title;
     data['icon'] = icon;
     data['open_external'] = openExternal;
+    data['linktodetail'] = linkToDetail;
     data['id'] = id;
     data['sourceId'] = sourceId;
     if (link != null) {
