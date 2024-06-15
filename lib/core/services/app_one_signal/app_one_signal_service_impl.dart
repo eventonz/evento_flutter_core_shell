@@ -104,6 +104,7 @@ class AppOneSignalImpl implements AppOneSignal {
   @override
   Future<String> setOneSignalUserId() async {
     String userId = '';
+    await Preferences.init();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       userId = OneSignal.User.pushSubscription.id ?? '';
       if (userId.isNotEmpty) {

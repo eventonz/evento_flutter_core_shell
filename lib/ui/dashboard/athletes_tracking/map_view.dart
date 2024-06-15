@@ -1,10 +1,18 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:async';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
 
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:collection/collection.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:http/http.dart' as http;
 import 'package:evento_core/core/services/config_reload/config_reload_service.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -15,17 +23,19 @@ import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/anim
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_map/flutter_map.dart';
-import 'package:geodart/geometries.dart';
+import 'package:flutter_map/flutter_map.dart' as flutter_map;
+import 'package:geodart/geometries.dart' as geodart;
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:path/path.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-class TrackingMapView extends StatelessWidget {
+
+class TrackingMapView extends StatefulWidget {
   const TrackingMapView({super.key});
 
-  static double dgetBoundsZoomLevel(LatLngBounds bounds, mapDim) {
+  static double dgetBoundsZoomLevel(flutter_map.LatLngBounds bounds, mapDim) {
     var WORLD_DIM = Map.from(mapDim);
     WORLD_DIM['width'] = WORLD_DIM['width'];
     WORLD_DIM['height'] = WORLD_DIM['height'];
@@ -34,7 +44,7 @@ class TrackingMapView extends StatelessWidget {
     double latRad(lat) {
       var sin2 = sin(lat * pi / 180);
       var radX2 = log((1 + sin2) / (1 - sin2)) / 2;
-      return max(min(radX2, pi), -pi) / 2;
+      return max(min(radX2, pi), - pi) / 2;
     }
 
     double zoom(mapPx, worldPx, fraction) {
@@ -56,142 +66,438 @@ class TrackingMapView extends StatelessWidget {
   }
 
   @override
+  State<TrackingMapView> createState() => _TrackingMapViewState();
+}
+
+class _TrackingMapViewState extends State<TrackingMapView> {
+
+  final TrackingController controller = Get.find();
+
+  bool _isDisposed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
+      final mapDataSnap = controller.mapDataSnap;
+      print('bb ${controller.athleteTrackDetails.value.length}');
+      if(mapDataSnap.value == DataSnapShot.loaded && controller.athleteTrackDetails.value.isNotEmpty) {
+        timer.cancel();
+        await setInitialRouteMarkerPaths();
+        setInitialDistances();
+
+        Future.delayed(const Duration(milliseconds: 100), () {
+          updateTrackProgress();
+          updateMarkers();
+          controller.updateStream.stream.listen((event) {
+          Future.delayed(const Duration(milliseconds: 0), () {
+
+          });
+        });
+          //controller.updateStream.add(1);
+
+        });
+      }
+    });
+
+  }
+
+  @override
+  void didUpdateWidget(covariant TrackingMapView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    //updateMarkers();
+  }
+
+
+  void updateTrackProgress() {
+    for (var trackDetail in controller.athleteTrackDetails.value) {
+      final progress = controller.trackProgressMap[trackDetail.track];
+      if(progress != null) {
+        progress.oldProgress = trackDetail.location ?? 0;
+        progress.currentProgress = trackDetail.location ?? 0;
+        progress.currentSpeed = trackDetail.speed ?? 0;
+        progress.newProgressUpdate = true;
+      }
+    }
+  }
+
+  Future<void> setInitialRouteMarkerPaths() async {
+    for (var trackDetail in controller.athleteTrackDetails.value) {
+      final routePath = controller.getAthleteRouthPath(trackDetail);
+      if (routePath.isNotEmpty) {
+        print('routePath');
+        final latLng = routePath.first;
+        controller.setLocation(trackDetail.track, latLng);
+        var bytes = await AppHelper.widgetToBytes(Container(
+          width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+          height: 36,
+          decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(40)),
+          child: Center(
+            child: AppText(
+                trackDetail.track,
+                fontSize: 16,
+                color: AppColors.white
+            ),
+          ),
+        ));
+        var marker = apple_maps.Annotation(
+          annotationId: apple_maps.AnnotationId(trackDetail.track),
+          position: apple_maps.LatLng(latLng.latitude, latLng.longitude),
+          infoWindow: apple_maps.InfoWindow(title: trackDetail.track),
+          icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+        );
+        controller.addAnnotation(apple_maps.AnnotationId(trackDetail.track), marker);
+        setState(() {
+
+        });
+        print(controller.annotations.value.length);
+        print('controller.annotations.value.length');
+      }
+    }
+  }
+
+  geodart.LineString createLineStringPath(List<LatLng> routePath) {
+    if (routePath.isEmpty) {
+      return geodart.LineString([]);
+    }
+    final path = Path.from(routePath);
+    final steps = path.equalize(6, smoothPath: true);
+    return geodart.LineString(steps.coordinates
+        .map((latLng) => geodart.Coordinate(latLng.latitude, latLng.longitude))
+        .toList());
+  }
+
+  void setInitialDistances() {
+    for (var trackDetail in controller.athleteTrackDetails.value) {
+      final progress = TrackProgress(
+        coveredDistance: (trackDetail.location ?? 0) / 100 *
+            createLineStringPath(controller.getAthleteRouthPath(trackDetail)).length.toPrecision(3),
+      );
+
+      controller.trackProgressMap[trackDetail.track] = progress;
+    }
+  }
+
+  LatLng getLatlngFromDistance(geodart.LineString lineStringPath, double coveredDistance) {
+    final coordinate =
+        lineStringPath.along(coveredDistance.toPrecision(4)).coordinate;
+    return LatLng(coordinate.latitude, coordinate.longitude);
+  }
+
+  double getNewDistanceAfterOneSec(double speed) {
+    return speed / 3600 * 1000;
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true; // Set the flag to true to stop the loop
+    super.dispose();
+  }
+
+  void updateMarkers() async {
+    print('hello');
+    //if (controller.isAnimatingMarkers) return;
+    //controller.isAnimatingMarkers = true;
+
+    for (var trackDetail in controller.athleteTrackDetails.value) {
+      if (_isDisposed) {
+        print('disposed');
+        break;
+      }
+
+      final progress = controller.trackProgressMap[trackDetail.track]!;
+
+      final routePath = controller.getAthleteRouthPath(trackDetail);
+
+      print('routePath ${trackDetail.track}: $routePath');
+      if (routePath.isNotEmpty) {
+        final geodart.LineString lineStringPath = createLineStringPath(
+            routePath);
+
+        print('lineString ${trackDetail.track} ${lineStringPath}');
+
+        double coveredDistance = progress.coveredDistance;
+         if(coveredDistance < lineStringPath.length.toPrecision(4)) {
+          print('track '+ trackDetail.track);
+          print('location ${trackDetail.location}');
+          print('speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
+          print('distance: $coveredDistance ${lineStringPath.length.toPrecision(4)}');
+          /*if (_isDisposed) {
+            print('disposed');
+            break;
+          }*/
+          if (progress.newProgressUpdate) {
+            progress.coveredDistance =
+                (progress.currentProgress / 100) *
+                    lineStringPath.length.toPrecision(3);
+            progress.newProgressUpdate = false;
+          }
+          print('distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
+
+          progress.coveredDistance =
+              getNewDistanceAfterOneSec(progress.currentSpeed) +
+                  progress.coveredDistance.toPrecision(4);
+          final latLng = getLatlngFromDistance(
+              lineStringPath, progress.coveredDistance);
+
+          await controller.setLocation(
+              trackDetail.track, latLng, wait: true);
+
+          if(controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)] != null) {
+            print('annotation update');
+            controller.addAnnotation(apple_maps.AnnotationId(
+                trackDetail.track),
+                controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)]
+                !.copyWith(
+                    positionParam: apple_maps.LatLng(
+                        latLng.latitude, latLng.longitude)));
+            /*setState(() {
+
+            });*/
+          }
+
+          progress.oldProgress = trackDetail.location ?? 0;
+          progress.currentProgress = trackDetail.location ?? 0;
+          progress.currentSpeed = trackDetail.speed ?? 0;
+          createLineStringPath(
+              controller.getAthleteRouthPath(trackDetail));
+        }
+      }
+    }
+    updateMarkers();
+    //controller.isAnimatingMarkers = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final TrackingController controller = Get.find();
     final ConfigReload reloadController = Get.find();
     final mapDataSnap = controller.mapDataSnap;
 
+    createRoute() async {
+
+
+      final positions = <List<Position>>[];
+      final positionsApple = <List<apple_maps.LatLng>>[];
+      int i = 0;
+      for (List<LatLng> routePath in controller.routePathsCordinates.values) {
+        positionsApple.add([]);
+        routePath.forEach((latLng) {
+          positionsApple[i].add(apple_maps.LatLng(latLng.latitude, latLng.longitude));
+        });
+        positions.add(routePath.map((e) => Position(e.longitude, e.latitude)).toList());
+        i++;
+      }
+
+      if(Platform.isIOS) {
+
+        positionsApple.forEachIndexed((index, element) {
+          final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
+          final apple_maps.PolylineId polylineId = apple_maps.PolylineId(polylineIdVal);
+
+          final apple_maps.Polyline polyline = apple_maps.Polyline(
+            polylineId: polylineId,
+            consumeTapEvents: true,
+            color: controller.routePathsColors.values.toList()[index] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[index]) : AppColors.accentDark,
+            width: 3,
+            points: positionsApple[index],
+            onTap: () {
+
+            },
+          );
+
+          controller.addPolyline(polylineId, polyline);
+        });
+        return;
+      }
+
+      controller.polylineAnnotationManager?.createMulti(List.generate(positions.length, (index) => PolylineAnnotationOptions(
+          geometry: LineString(coordinates: positions[index]).toJson(),
+
+          lineColor: controller.routePathsColors.values.toList()[index] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[index]).value : AppColors.accentDark.value, lineWidth: 3))
+          .toList());
+    }
+
+    createMarkers() async {
+
+      for (MapPathMarkers marker in controller.mapPathMarkers) {
+
+        if(Platform.isIOS) {
+          http.Response response = await http.get(Uri.parse(marker.iconUrl));
+          Widget widget = Image.memory(
+              response.bodyBytes, width: 30, height: 30);
+          final String annotationIdVal = 'annotation_id_${controller.polylines.value.length}';
+          final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(annotationIdVal);
+            var bytes = await AppHelper.widgetToBytes(widget);
+            final apple_maps.Annotation annotation = apple_maps.Annotation(
+              annotationId: polygonId,
+              icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+              position: apple_maps.LatLng( marker.latLng.latitude, marker.latLng.longitude),
+              onTap: () {
+
+              },
+            );
+            controller.annotations.value[polygonId] = annotation;
+        } else {
+          http.Response response = await http.get(Uri.parse(marker.iconUrl));
+          Widget widget = Image.memory(
+              response.bodyBytes, width: 30, height: 30);
+          controller.screenshotController.captureFromWidget(widget).then((
+              value) {
+            controller.pointAnnotationManager?.create(PointAnnotationOptions(
+                geometry: Point(
+                    coordinates: Position(
+                        marker.latLng.longitude, marker.latLng.latitude)
+                ).toJson(), image: value));
+          });
+        }
+      }
+    }
+
     return Obx(() {
       List<LatLng> bounds = [];
-
-      print('bounds');
 
       if (mapDataSnap.value == DataSnapShot.loaded) {
         final centerPoint = controller.initialPathCenterPoint();
         controller.routePathsCordinates.values.forEach((element) {
           bounds.addAll(element);
         });
-        if (reloadController.reloaded) {
+        if(reloadController.reloaded) {
           reloadController.reloaded = false;
           try {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              controller.mapController.move(
-                  centerPoint,
-                  dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds), {
-                        'height': MediaQuery.of(context).size.height,
-                        'width': MediaQuery.of(context).size.width
-                      }) *
-                      1.02);
-            });
+            /*Future.delayed(const Duration(milliseconds: 100), () {
+                controller.mapController.move(centerPoint,
+                    dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds),
+                        {'height': MediaQuery
+                            .of(context)
+                            .size
+                            .height,
+                          'width': MediaQuery
+                              .of(context)
+                              .size
+                              .width}) * 1.02);
+              });*/
           } catch (e) {
             //
           }
         }
 
-        for (String routePath in controller.routePathsCordinates.keys) {
-          print(routePath);
+        if(Platform.isIOS) {
+
+          print('aa ${controller.athleteTrackDetails.value.length}');
+
+          return Stack(
+            children: [
+
+              Obx(
+                () => apple_maps.AppleMap(
+                  mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
+                  onMapCreated: (appleMapController) async {
+                    controller.appleMapController = appleMapController;
+                    createRoute();
+                    createMarkers();
+
+
+                    /*appleMapController.location.updateSettings(LocationComponentSettings(
+                        enabled: true,
+                        pulsingEnabled: true
+                    ));*/
+                  },
+
+                  polylines: Set<apple_maps.Polyline>.of(controller.polylines.value.values),
+                  annotations: controller.annotations.value.values.toSet(),
+                  initialCameraPosition: apple_maps.CameraPosition(
+                      target: apple_maps.LatLng(centerPoint.lat.toDouble(), centerPoint.lng.toDouble()),
+                      zoom: TrackingMapView.dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
+                        'height' : MediaQuery.of(context).size.height,
+                        'width' : MediaQuery.of(context).size.width})*1.02
+                  ),
+                ),
+              ),
+              if(/*controller.pointAnnotationManager != null*/false)
+                for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                  AnimatedMarkerView(trackDetail: trackDetail),
+
+              Positioned(
+                  right: 2.w,
+                  top: 2.w,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        CupertinoButton(
+                            padding: const EdgeInsets.all(0),
+                            color: AppColors.white,
+                            onPressed: controller.changeMapStyle,
+                            child: SvgPicture.asset(AppHelper.getSvg('layers'), width: 28,)),
+                        const SizedBox(height: 16),
+                        CupertinoButton(
+                            padding: const EdgeInsets.all(0),
+                            color: AppColors.white,
+                            onPressed: controller.showUserLocation,
+                            child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
+                      ],
+                    ),
+                  )),
+            ],
+          );
         }
-        print('hha');
 
         return Stack(
           children: [
-            FlutterMap(
-              mapController: controller.mapController,
-              options: MapOptions(
-                initialCenter: centerPoint,
-                initialZoom:
-                    dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds), {
-                          'height': MediaQuery.of(context).size.height,
-                          'width': MediaQuery.of(context).size.width
-                        }) *
-                        1.02,
-                minZoom: 8,
-                maxZoom: 18,
+            MapWidget(
+              styleUri: controller.currentStyle.value == 0 ? MapboxStyles.MAPBOX_STREETS : (controller.currentStyle.value == 1 ? MapboxStyles.STANDARD : MapboxStyles.SATELLITE),
+              onMapCreated: (mapboxMap) {
+                mapboxMap.location.updateSettings(LocationComponentSettings(
+                  enabled: true,
+                  pulsingEnabled: true
+                ));
+                controller.mapboxMap = mapboxMap;
+                mapboxMap.annotations.createPolylineAnnotationManager().then((value) async {
+                  controller.polylineAnnotationManager = value;
+                  createRoute();
+                  /*controller.pointAnnotationManager
+                        ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
+                });
+                mapboxMap.annotations.createPointAnnotationManager().then((value) async {
+                  controller.pointAnnotationManager = value;
+                  createMarkers();
+                  /*controller.pointAnnotationManager
+                        ?.addOnPointAnnotationClickListener(AnnotationClickListener());*/
+                });
+              },
+              cameraOptions: CameraOptions(
+                  center: Point(coordinates: centerPoint).toJson(),
+                  zoom: TrackingMapView.dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
+                    'height' : MediaQuery.of(context).size.height,
+                    'width' : MediaQuery.of(context).size.width})*1.02
               ),
-              children: [
-                TileLayer(
-                    urlTemplate:
-                        "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    subdomains: const ['a', 'b', 'c']
+            ),
+            if(controller.pointAnnotationManager != null)
+              for (AthleteTrackDetail trackDetail in controller.athleteTrackDetails.value)
+                AnimatedMarkerView(trackDetail: trackDetail),
 
-                    // evento one pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg
-                    // "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}"
-
-                    /*urlTemplate: "https://api.mapbox.com/styles/v1/eventonz/ckbu2fmwe02uw1iqq6gu54h9t/wmts?access_token=pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2lqdDViNTU2MGs0NnRobTU0aTRhanR2ayJ9.Jrzvj7GXCqWrgV3gWiIRsg",
-       
-                  //Openstreet
-
-                      //"https://tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  subdomains: const ['a', 'b', 'c'],*/
-
-                    ),
-                PolylineLayer(
-                  polylines: [
-                    for (List<LatLng> routePath
-                        in controller.routePathsCordinates.values)
-                      Polyline(
-                        points: routePath,
-                        color: AppColors.accentDark,
-                        // change the color here
-                        //color: AppColors.accentDark,
-                        // color: AppHelper.getRandomLightColor(),
-                        strokeWidth: 3.5,
-                      ),
-                  ],
-                ),
-                MarkerLayer(
-                  markers: [
-                    for (MapPathMarkers marker in controller.mapPathMarkers)
-                      Marker(
-                          point: marker.latLng,
-                          child: CachedNetworkImage(
-                            imageUrl: marker.iconUrl,
-                            errorWidget: (context, url, error) =>
-                                const SizedBox(),
-                          ))
-                  ],
-                ),
-                MobileLayerTransformer(
-                  child: Stack(
+            Positioned(
+                right: 2.w,
+                top: 2.w,
+                child: SafeArea(
+                  child: Column(
                     children: [
-                      for (AthleteTrackDetail trackDetail
-                          in controller.athleteTrackDetails.value)
-                        AnimatedMarkerView(athleteTrackDetail: trackDetail)
+                      CupertinoButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          onPressed: controller.changeMapStyle,
+                          child: SvgPicture.asset(AppHelper.getSvg('layers'), width: 28,)),
+                      const SizedBox(height: 16),
+                      CupertinoButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          onPressed: controller.showUserLocation,
+                          child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
                     ],
                   ),
-                ),
-                /*for (AthleteTrackDetail trackDetail
-                    in controller.athleteTrackDetails.value)
-                  AnimatedMarkerView(athleteTrackDetail: trackDetail)*/
-              ],
-            ),
-            // Positioned(
-            //   top: 2.w,
-            //   child: SafeArea(
-            //     child: CupertinoButton(
-            //         padding: const EdgeInsets.all(0),
-            //         color: AppColors.white,
-            //         onPressed: controller.getRoutePaths,
-            //         child: const Icon(
-            //           Icons.layers_outlined,
-            //           color: AppColors.black,
-            //         )),
-            //   ),
-            // ),
-            /*Positioned(
-              right: 2.w,
-              top: 2.w,
-              child: SafeArea(
-                child: CupertinoButton(
-                    padding: const EdgeInsets.all(0),
-                    color: AppColors.white,
-                    onPressed: controller.changeMapStyle,
-                    child: const Icon(
-                      Icons.layers_outlined,
-                      color: AppColors.black,
-                    )),
-              ),
-            ),*/
+                )),
           ],
         );
       } else if (mapDataSnap.value == DataSnapShot.error) {
@@ -204,20 +510,26 @@ class TrackingMapView extends StatelessWidget {
 }
 
 class AnimatedMarkerView extends StatefulWidget {
-  const AnimatedMarkerView({super.key, required this.athleteTrackDetail});
 
-  final AthleteTrackDetail athleteTrackDetail;
+  final AthleteTrackDetail trackDetail;
+  const AnimatedMarkerView({super.key, required this.trackDetail});
 
   @override
   State<AnimatedMarkerView> createState() => _AnimatedMarkerViewState();
 }
 
 class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
-  AthleteTrackDetail get trackDetail => widget.athleteTrackDetail;
+
+  AthleteTrackDetail get trackDetail => widget.trackDetail;
+
   late TrackingController controller = Get.find();
 
+  PointAnnotationManager get annotationManager => controller.pointAnnotationManager!;
+
+  PointAnnotation? annotation;
+
   List<LatLng> get routePath => controller.getAthleteRouthPath(trackDetail);
-  LineString get lineStringPath => createLineStringPath();
+  geodart.LineString get lineStringPath => createLineStringPath();
 
   double oldProgress = 0;
   double currentProgress = 0;
@@ -227,21 +539,22 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   double coveredDistance = 0;
   bool newProgressUpdate = false;
 
+  bool disposed = false;
+
   @override
   void initState() {
     super.initState();
     setInitialRouteMarkerPath();
     setInitialDistance();
+    print('animated marker init');
     controller.updateStream.stream.listen((event) {
       Future.delayed(const Duration(milliseconds: 0), () {
-        setState(() {
-          oldProgress = widget.athleteTrackDetail.location ?? 0;
-          currentProgress = widget.athleteTrackDetail.location ?? 0;
-          currentSpeed = widget.athleteTrackDetail.speed ?? 0;
-          createLineStringPath();
-          newProgressUpdate = true;
-          moveMarker();
-        });
+        oldProgress = trackDetail.location ?? 0;
+        currentProgress = trackDetail.location ?? 0;
+        currentSpeed = trackDetail.speed ?? 0;
+        createLineStringPath();
+        newProgressUpdate = true;
+        moveMarker();
       });
     });
   }
@@ -249,20 +562,67 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   @override
   void didUpdateWidget(covariant AnimatedMarkerView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldProgress = widget.athleteTrackDetail.location ?? 0;
-    currentProgress = widget.athleteTrackDetail.location ?? 0;
-    currentSpeed = widget.athleteTrackDetail.speed ?? 0;
+    oldProgress = trackDetail.location ?? 0;
+    currentProgress = trackDetail.location ?? 0;
+    currentSpeed = trackDetail.speed ?? 0;
     createLineStringPath();
     newProgressUpdate = true;
     moveMarker();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    disposed = true;
+    if(annotation != null) {
+      annotationManager.delete(annotation!);
+      print('deleted annotation');
+    }
+  }
+
   void setInitialRouteMarkerPath() {
-    if (routePath.isNotEmpty) {
+    if(routePath.isNotEmpty) {
+    //if(controller.locations[trackDetail.track] != null) {
       final latLng = routePath.first;
+      //final latLng = controller.locations[trackDetail.track]!;
       if (controller.locations[trackDetail.track] == null) {
+        print('location set ${trackDetail.track}');
         controller.setLocation(trackDetail.track, latLng);
       }
+      if (annotation == null) {
+        var widget = Container(
+          width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+          height: 36,
+          decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(40)),
+          child: Center(
+            child: AppText(
+                trackDetail.track,
+                fontSize: 16,
+                color: AppColors.white
+            ),
+          ),
+        );
+
+        print('annotation creating ${trackDetail.track}');
+
+        controller.screenshotController.captureFromWidget(widget).then((
+            value) async {
+          print('annotation creating ${trackDetail.track}');
+          annotation = await annotationManager.create(PointAnnotationOptions(
+            image: value,
+            geometry: Point(
+                coordinates: Position(latLng.longitude, latLng.latitude)
+            ).toJson(),
+          ));
+          print('annotation created ${trackDetail.track}');
+        });
+      } else {
+        print('annotation is not null ${trackDetail.track}');
+      }
+    } else {
+      print('route path is empty ${trackDetail.track}');
     }
   }
 
@@ -271,14 +631,14 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
         (currentProgress / 100) * lineStringPath.length.toPrecision(3);
   }
 
-  LineString createLineStringPath() {
-    if (routePath.isEmpty) {
-      return LineString([]);
+  geodart.LineString createLineStringPath() {
+    if(routePath.isEmpty) {
+      return geodart.LineString([]);
     }
     final Path path = Path.from(routePath);
     final Path steps = path.equalize(6, smoothPath: true);
-    return LineString(steps.coordinates
-        .map((latLng) => Coordinate(latLng.latitude, latLng.longitude))
+    return geodart.LineString(steps.coordinates
+        .map((latLng) => geodart.Coordinate(latLng.latitude, latLng.longitude))
         .toList());
   }
 
@@ -286,6 +646,9 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
     if (isAnimatingMarker) return;
     isAnimatingMarker = true;
     while (coveredDistance < lineStringPath.length.toPrecision(4)) {
+      if(disposed) {
+        break;
+      }
       if (newProgressUpdate) {
         setInitialDistance();
         newProgressUpdate = false;
@@ -300,7 +663,38 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       final latLng = getLatlngFromDistance();
       //if (mounted) {
       await controller.setLocation(trackDetail.track, latLng, wait: true);
-      setState(() {});
+      annotation?.geometry = Point(
+          coordinates: Position(latLng.longitude, latLng.latitude)
+      ).toJson();
+      if(annotation != null) {
+        annotationManager.update(annotation!);
+      } else {
+        /*var widget = Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+              color: AppColors.accentLight,
+              borderRadius: BorderRadius.circular(40)),
+          child: Center(
+            child: AppText(
+                trackDetail.track,
+                fontSize: 16,
+                color: AppColors.white
+            ),
+          ),
+        );
+
+        controller.screenshotController.captureFromWidget(widget).then((
+            value) async {
+          annotation = await annotationManager.create(PointAnnotationOptions(
+            image: value,
+            geometry: Point(
+                coordinates: Position(latLng.longitude, latLng.latitude)
+            ).toJson(),
+
+          ));
+        });*/
+      }
       //}
     }
     isAnimatingMarker = false;
@@ -318,31 +712,22 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
 
   @override
   Widget build(BuildContext context) {
-    print(lineStringPath);
-    print(trackDetail.path);
-    print('hello');
-    const mytext = 'BC';
-    return AnimatedMarkerLayer(
-      options: AnimatedMarkerLayerOptions(
-          duration: Duration(milliseconds: 1000),
-          routePath: controller.getAthleteRouthPath(trackDetail),
-          trackDetail: trackDetail,
-          marker: Marker(
-              rotate: true,
-              width: trackDetail.isRaceNoBig() ? 70 : 40,
-              height: 40,
-              point: LatLng(
-                  controller.locations[trackDetail.track]?.latitude ?? 0,
-                  controller.locations[trackDetail.track]?.longitude ?? 0),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: AppColors.accentLight,
-                    borderRadius: BorderRadius.circular(40)),
-                child: Center(
-                  child: AppText(trackDetail.marker_text,
-                      fontSize: 14, color: AppColors.white),
-                ),
-              ))),
-    );
+    return SizedBox();
   }
+}
+
+class TrackProgress {
+  double oldProgress;
+  double currentProgress;
+  double currentSpeed;
+  double coveredDistance;
+  bool newProgressUpdate;
+
+  TrackProgress({
+    this.oldProgress = 0,
+    this.currentProgress = 0,
+    this.currentSpeed = 0,
+    this.coveredDistance = 0,
+    this.newProgressUpdate = false,
+  });
 }

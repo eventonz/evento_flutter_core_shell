@@ -1,17 +1,23 @@
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/date_extensions.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'schedule_controller.dart';
 
 class EventMapSheet extends StatelessWidget {
-  const EventMapSheet({Key? key}) : super(key: key);
+  final LatLng? latLng;
+  const EventMapSheet({Key? key, required this.latLng}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,26 +44,17 @@ class EventMapSheet extends StatelessWidget {
                   },
                   icon: Icon(
                     FeatherIcons.x,
-                    color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.white
-                  : AppColors.darkBlack,
+                    color: AppColors.primary,
                   )),
-             
+              title: AppText(
+                controller.eventDetails.title!,
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-              controller.eventDetails.title!,
-              style: TextStyle(fontSize: 24.0, color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.white
-                  : AppColors.darkBlack,),
-              maxLines: 2,),
-                  const SizedBox(
-                    height: 4,
-                  ),
                   AppText(
                     controller.getEventTimings(),
                     fontSize: 16,
@@ -69,10 +66,8 @@ class EventMapSheet extends StatelessWidget {
                   AppText(
                     controller.eventDetails.datetime!
                         .withDateFormat(format: 'E, dd MMMM'),
-                    color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.greyLight
-                  : AppColors.grey),
-                
+                    color: AppColors.grey,
+                  ),
                   SizedBox(
                     height: 2.h,
                   ),
@@ -82,59 +77,46 @@ class EventMapSheet extends StatelessWidget {
                   SizedBox(
                     height: 2.h,
                   ),
-               
                   controller.latLng == null
                       ? const SizedBox()
                       : SizedBox(
                           height: 40.h,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: FlutterMap(
-                              options: MapOptions(
-                                  center: controller.latLng!, zoom: 16),
-                              children: [
-                                TileLayer(
-                                   urlTemplate: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
-                                    subdomains: const ['a', 'b', 'c']
-                                
-                                  /*urlTemplate:
-                                      "https://api.mapbox.com/styles/v1/jethro0056/${controller.terrainStyle}/tiles/256/{z}/{x}/{y}@2x?access_token=${controller.accessToken}",
-                                  subdomains: const ['a', 'b', 'c'],
-                                  additionalOptions: {
-                                    'mapStyleId': controller.terrainStyle,
-                                    'accessToken': controller.accessToken,
-                                  },
-                                  */
-                                ),
-                                MarkerLayer(markers: [
-                                  Marker(
-                                    width: 10.w,
-                                    height: 10.w,
-                                    point: controller.latLng!,
-                                    child:Icon(
-                                      Icons.location_on,
-                                      color: AppColors.primary,
-                                      size: 10.w,
-                                    ),
-                                  )
-                                ])
-                              ],
+                            child: Platform.isIOS ? AppleMap(
+                              rotateGesturesEnabled: false,
+                              zoomGesturesEnabled: false,
+                              pitchGesturesEnabled: false,
+                              scrollGesturesEnabled: false,
+                              initialCameraPosition: CameraPosition(
+
+                                  target: LatLng(controller.latLng!.latitude, controller.latLng!.longitude), zoom: 16),
+                              annotations: Set.of([if(controller.annotation.value != null)controller.annotation.value!]),
+                            ) : MapWidget(
+                              cameraOptions: CameraOptions(
+                                zoom: 16,
+                                center: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                              ),
+                                gestureRecognizers: Set.of([]),
+                              onMapCreated: (map) async {
+                                var image = await AppHelper.widgetToBytes(Padding(
+                                  padding: const EdgeInsets.only(top: 10.0),
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: AppColors.primary,
+                                    size: 10.w,
+                                  ),
+                                ));
+                                map.annotations.createPointAnnotationManager().then((value) {
+                                  value.create(PointAnnotationOptions(
+                                    geometry: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                                    image: image,
+                                  ));
+                                });
+                              },
                             ),
                           ),
-                        ),
-                         SizedBox(
-                    height: 2.h,
-                  ),
-                  Text(
-              controller.eventDetails.content ?? '',
-              style:TextStyle(
-                fontSize: 12.0, 
-                color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.white
-                  : AppColors.darkBlack,),
-                  maxLines: 5,
-                  ),
-
+                        )
                 ],
               ),
             ),
@@ -147,10 +129,10 @@ class EventMapSheet extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: CupertinoButton(
-                          color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.darkgrey
-                  : AppColors.darkBlack,
-                          onPressed: controller.showDirectionsOnMap,
+                          color: AppColors.accentLight,
+                          onPressed: () {
+                            AppHelper.showDirectionsOnMap(latLng);
+                          },
                           padding: const EdgeInsets.all(8),
                           child: const AppText(
                             'Get Directions',

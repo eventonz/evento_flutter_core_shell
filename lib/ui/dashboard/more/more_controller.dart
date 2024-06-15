@@ -63,6 +63,8 @@ class MoreController extends GetxController {
       AppHelper.showWebBottomSheet(item.title, item.link!.url!, item.linkType); //
     } else if (itemType == 'pages') {
       Get.toNamed(Routes.eventResults, arguments: {AppKeys.moreItem: item});
+    } else if (itemType == 'eventomap') {
+      Get.toNamed(Routes.eventoMap, arguments: {'source_id': item.sourceId});
     } else if (itemType == 'carousel') {
       Get.toNamed(Routes.eventOffers, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'schedule') {

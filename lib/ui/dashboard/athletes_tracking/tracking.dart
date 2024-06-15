@@ -1,5 +1,8 @@
 // ignore_for_file: invalid_use_of_protected_member
 
+import 'dart:io';
+
+import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
@@ -14,6 +17,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'tracking_controller.dart';
@@ -54,12 +58,12 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 18.h,
+                              height: 18.5.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
                               onPageChanged: (index, reason) {
-                                try {
+                                //try {
                                   final trackDetail = controller
                                       .athleteTrackDetails.value.where((
                                       element) {
@@ -70,8 +74,8 @@ class TrackingScreen extends StatelessWidget {
                                         entrants[index].athleteId;
                                   }).first;
                                   LatLng latLng;
-                                  if(controller.locations[trackDetail.track] == null) {
-                                    latLng = controller.initialPathCenterPoint();
+                                  if(controller.locations[trackDetail.track] == null || controller.getAthleteRouthPath(trackDetail).isEmpty) {
+                                    latLng = LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble());
                                   } else {
                                     latLng = LatLng(
                                         controller.locations[trackDetail.track]
@@ -79,27 +83,31 @@ class TrackingScreen extends StatelessWidget {
                                         controller.locations[trackDetail.track]
                                             ?.longitude ?? 0);
                                   }
-                                  final bounds = LatLngBounds.fromPoints([
-                                    latLng,
-                                  ]);
 
-                                  final constrained = CameraFit.bounds(
-                                      bounds: bounds,
-                                      maxZoom: controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
-                                          {'height': MediaQuery
-                                              .of(context)
-                                              .size
-                                              .height,
-                                            'width': MediaQuery
-                                                .of(context)
-                                                .size
-                                                .width}) * 1.02 : 15
-                                  ).fit(controller.mapController.camera);
-                                  controller.animatedMapMove(
-                                      constrained.center, constrained.zoom);
-                                } catch (e) {
-                                  //
-                                }
+                                  double zoom = controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
+                                      {'height': MediaQuery
+                                          .of(context)
+                                          .size
+                                          .height,
+                                        'width': MediaQuery
+                                            .of(context)
+                                            .size
+                                            .width}) * 1.02 : 15;
+                                    print('fly');
+                                    if(Platform.isIOS) {
+                                      controller.appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(latLng.latitude, latLng.longitude), zoom: zoom)));
+                                    } else {
+                                      controller.mapboxMap!.flyTo(CameraOptions(
+                                        zoom: zoom,
+                                        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)).toJson(),
+                                      ), MapAnimationOptions(
+                                        duration: 500,
+                                        startDelay: 0,
+                                      ));
+                                    }
+                                /*} catch (e) {
+                                  print(e);
+                                }*/
                                 //controller.mapController.move(controller.mapPathMarkers[index].latLng, 13);
                               },
                               enlargeFactor: 0.15),
@@ -151,6 +159,7 @@ class SliderAthleteTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
+        clipBehavior: Clip.hardEdge,
         margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.light

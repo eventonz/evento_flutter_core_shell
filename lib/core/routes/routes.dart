@@ -6,6 +6,7 @@ class Routes {
   static const String athleteDetails = '/athleteDetails';
   static const String webview = '/webview';
   static const String eventResults = '/eventResults';
+  static const String eventoMap = '/eventoMap';
   static const String eventOffers = '/eventOffers';
   static const String settings = '/settings';
   static const String qrScanner = '/qrScanner';

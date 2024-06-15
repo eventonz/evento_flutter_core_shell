@@ -14,6 +14,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../core/routes/routes.dart';
 import '../../core/utils/helpers.dart';
 
 class ListPageController extends GetxController {
@@ -50,6 +51,8 @@ class ListPageController extends GetxController {
       showInfoSheet(result);
     } else if (type == 'embed') {
       showWebSheet(result);
+    } else if (type == 'eventomap') {
+      Get.toNamed(Routes.eventoMap, arguments: {'source_id': result.detail?.endpoint});
     } else {
       ToastUtils.show('Something went wrong...');
     }

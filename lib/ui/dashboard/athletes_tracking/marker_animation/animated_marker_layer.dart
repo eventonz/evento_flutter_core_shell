@@ -50,6 +50,7 @@ class _AnimatedMarkerLayerState<T>
 
   @override
   Widget build(BuildContext context) {
+    return marker.child;
     final mapCamera = MapCamera.of(context);
 
     final width = marker.width;

@@ -50,6 +50,7 @@ class AppStyles {
         iconTheme: IconThemeData(
           color: AppColors.white,
         )),
+    //brightness: Brightness.dark,
     bottomSheetTheme: const BottomSheetThemeData(
       backgroundColor: AppColors.lightblack,
     ),
@@ -62,7 +63,7 @@ class AppStyles {
     visualDensity: VisualDensity.adaptivePlatformDensity,
     primaryIconTheme: const IconThemeData(color: AppColors.white),
     colorScheme: const ColorScheme.dark().copyWith(
-        primary: AppColors.primary,
+        primary: AppColors.secondary,
         brightness: Brightness.light,
         secondary: AppColors.white),
   );

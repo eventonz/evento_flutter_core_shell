@@ -10,7 +10,7 @@ class AppFixedBottomSheet {
   Future<void> show({required Widget child}) async {
     await showModalBottomSheet(
         context: context,
-        backgroundColor: AppColors.transparent,
+        //backgroundColor: AppColors.transparent,
         isScrollControlled: true,
         enableDrag: enableDrag,
         constraints:

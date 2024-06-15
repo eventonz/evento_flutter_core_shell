@@ -1,5 +1,8 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
+import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:evento_core/core/overlays/progress_dialog.dart';
@@ -11,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -18,6 +22,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 class AppHelper {
   static String getImage(String imageName) =>
       'packages/evento_core/assets/images/$imageName';
+
+  static Uint8List emptyImage = Uint8List.fromList([
+    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
+    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
+    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x60, 0x60, 0x60, 0x00,
+    0x00, 0x00, 0x05, 0x00, 0x01, 0xA5, 0xF6, 0x45, 0x40, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
+    0x44, 0xAE, 0x42, 0x60, 0x82
+  ]);
 
   static String getSvg(String imageName) =>
       'packages/evento_core/assets/svgs/$imageName.svg';
@@ -32,6 +44,39 @@ class AppHelper {
     }
     return Color(int.parse(color.replaceAll('#', '0xFF')));
   }
+
+  static Future<Uint8List> widgetToBytes(Widget widget) async {
+    ScreenshotController screenshotController = ScreenshotController();
+    var value = await screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100));
+    return value;
+    Codec codec = await instantiateImageCodec(value);
+    FrameInfo fi = await codec.getNextFrame();
+    var bytes = (await fi.image.toByteData(format: ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
+    return bytes;
+  }
+
+  static void showDirectionsOnMap(LatLng? latLng) async {
+    final lat = latLng?.latitude ?? 0;
+    final lon = latLng?.longitude ?? 0;
+    final appleUrl =
+        'https://maps.apple.com/?saddr=&daddr=$lat,$lon&directionsmode=driving';
+    final googleUrl =
+        'https://www.google.com/maps/search/?api=1&query=$lat,$lon';
+    const errorMessage = 'Error, while trying to open the direction in map';
+
+    if (Platform.isIOS) {
+      final googleUrlRes =
+      await AppHelper.launchUrlApp(googleUrl, showErrorMessage: false);
+      if (!googleUrlRes) {
+        await AppHelper.launchUrlApp(appleUrl, errorMessage: errorMessage);
+      }
+    } else {
+      await AppHelper.launchUrlApp(googleUrl, errorMessage: errorMessage);
+    }
+  }
+
 
   static bool listsAreEqual(List list1, List list2) {
     if (list1.length != list2.length) {

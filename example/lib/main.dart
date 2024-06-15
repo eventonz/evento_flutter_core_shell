@@ -17,23 +17,33 @@ void main() {
     oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
     appName: 'Single Event App',
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-    singleEventId: '99',
+    singleEventId: '91',
     splashImage: 'assets/images/splash_image.png',
   );
 
-    /*final eventConfig = AppEventConfig(
+  /*final eventConfig = AppEventConfig(
+    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
+    appName: 'Multi Event App',
+    multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
+    multiEventListId: '2',
+    splashImage: 'assets/images/splash_image.png',
+  );*/
+
+
+  /*
+    final eventConfig = AppEventConfig(
    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
    appName: 'Multi Event App',
    multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
-  multiEventListId: '23',
+  multiEventListId: '2',
     splashImage: 'assets/images/splash_image.png',
-  );*/
+  );
 
 
   // for running single event app
 
 
-/*cd example
+
   for running multi event app
     final eventConfig = AppEventConfig(
    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
