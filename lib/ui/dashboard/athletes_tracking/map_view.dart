@@ -78,7 +78,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
   @override
   void initState() {
     super.initState();
-    if(!Platform.isIOS) {
+    if(Platform.isIOS) {
       Timer.periodic(const Duration(seconds: 1), (timer) async {
         final mapDataSnap = controller.mapDataSnap;
         print('bb ${controller.athleteTrackDetails.value.length}');
@@ -294,7 +294,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         i++;
       }
 
-      if(!Platform.isIOS) {
+      if(Platform.isIOS) {
 
         positionsApple.forEachIndexed((index, element) {
           final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
@@ -327,7 +327,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
       for (MapPathMarkers marker in controller.mapPathMarkers) {
 
-        if(!Platform.isIOS) {
+        if(Platform.isIOS) {
           http.Response response = await http.get(Uri.parse(marker.iconUrl));
           Widget widget = Image.memory(
               response.bodyBytes, width: 30, height: 30);
@@ -387,7 +387,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
           }
         }
 
-        if(!Platform.isIOS) {
+        if(Platform.isIOS) {
 
           print('aa ${controller.athleteTrackDetails.value.length}');
 

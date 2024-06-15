@@ -94,7 +94,7 @@ class TrackingScreen extends StatelessWidget {
                                             .size
                                             .width}) * 1.02 : 15;
                                     print('fly');
-                                    if(!Platform.isIOS) {
+                                    if(Platform.isIOS) {
                                       controller.appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(latLng.latitude, latLng.longitude), zoom: zoom)));
                                     } else {
                                       controller.mapboxMap!.flyTo(CameraOptions(
