@@ -100,7 +100,9 @@ class MoreScreen extends StatelessWidget {
                       );
 
                       return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
+
                           MoreMenuTile(
                               onTap: () => controller.decideNextView(item),
                               item: item),

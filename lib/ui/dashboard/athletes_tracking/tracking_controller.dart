@@ -164,12 +164,14 @@ class TrackingController extends GetxController
     getRoutePaths();
   }
 
-  Future<void> setLocation(String track, LatLng location, {bool wait = false}) async {
+  Future<void> setLocation(String track, LatLng location, {bool wait = false, bool update = true}) async {
     locations[track] = location;
     if(wait) {
       await Future.delayed(const Duration(seconds: 1));
     }
-    update();
+    if(update) {
+      this.update();
+    }
   }
 
   Future<void> getRoutePaths() async {

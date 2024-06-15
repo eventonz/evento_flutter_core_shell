@@ -7,7 +7,6 @@ import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:collection/collection.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -18,8 +17,6 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
-import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer.dart';
-import 'package:evento_core/ui/dashboard/athletes_tracking/marker_animation/animated_marker_layer_options.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +25,6 @@ import 'package:geodart/geometries.dart' as geodart;
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
-import 'package:path/path.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 
@@ -195,82 +191,113 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
   @override
   void dispose() {
+    controller.appleMapController = null;
     _isDisposed = true; // Set the flag to true to stop the loop
     super.dispose();
   }
 
-  void updateMarkers() async {
-    print('hello');
-    //if (controller.isAnimatingMarkers) return;
-    //controller.isAnimatingMarkers = true;
-
-    for (var trackDetail in controller.athleteTrackDetails.value) {
+  void updateMarkers() {
+    Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (_isDisposed) {
-        print('disposed');
-        break;
+        timer.cancel();
+        print('Timer cancelled because _isDisposed is true');
+        return;
       }
 
-      final progress = controller.trackProgressMap[trackDetail.track]!;
+      for (var trackDetail in controller.athleteTrackDetails.value) {
+        if (_isDisposed) {
+          timer.cancel();
+          print('Timer cancelled during iteration because _isDisposed is true');
+          break;
+        }
 
-      final routePath = controller.getAthleteRouthPath(trackDetail);
+        var progress = controller.trackProgressMap[trackDetail.track];
 
-      print('routePath ${trackDetail.track}: $routePath');
-      if (routePath.isNotEmpty) {
-        final geodart.LineString lineStringPath = createLineStringPath(
-            routePath);
+        if(progress == null) {
+          final routePath = controller.getAthleteRouthPath(trackDetail);
 
-        print('lineString ${trackDetail.track} ${lineStringPath}');
+          progress = controller.trackProgressMap[trackDetail.track];
 
-        double coveredDistance = progress.coveredDistance;
-         if(coveredDistance < lineStringPath.length.toPrecision(4)) {
-          print('track '+ trackDetail.track);
-          print('location ${trackDetail.location}');
-          print('speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
-          print('distance: $coveredDistance ${lineStringPath.length.toPrecision(4)}');
-          /*if (_isDisposed) {
-            print('disposed');
-            break;
-          }*/
-          if (progress.newProgressUpdate) {
+          if (routePath.isNotEmpty) {
+            print('routePath');
+            final latLng = routePath.first;
+            controller.setLocation(trackDetail.track, latLng);
+            var bytes = await AppHelper.widgetToBytes(Container(
+              width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+              height: 36,
+              decoration: BoxDecoration(
+                  color: AppColors.accentLight,
+                  borderRadius: BorderRadius.circular(40)),
+              child: Center(
+                child: AppText(
+                    trackDetail.track,
+                    fontSize: 16,
+                    color: AppColors.white
+                ),
+              ),
+            ));
+            var marker = apple_maps.Annotation(
+              annotationId: apple_maps.AnnotationId(trackDetail.track),
+              position: apple_maps.LatLng(latLng.latitude, latLng.longitude),
+              infoWindow: apple_maps.InfoWindow(title: trackDetail.track),
+              icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+            );
+            controller.addAnnotation(apple_maps.AnnotationId(trackDetail.track), marker);
+            setState(() {
+
+            });
+            print(controller.annotations.value.length);
+            print('controller.annotations.value.length');
+          }
+        }
+
+        final routePath = controller.getAthleteRouthPath(trackDetail);
+
+        print('routePath ${trackDetail.track}: $routePath');
+        if (routePath.isNotEmpty) {
+          final geodart.LineString lineStringPath = createLineStringPath(routePath);
+
+          print('lineString ${trackDetail.track} ${lineStringPath}');
+
+          double coveredDistance = progress!.coveredDistance;
+          if (coveredDistance < lineStringPath.length.toPrecision(4)) {
+            print('track '+ trackDetail.track);
+            print('location ${trackDetail.location}');
+            print('speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
+            print('distance: $coveredDistance ${lineStringPath.length.toPrecision(4)}');
+
+            if (progress.newProgressUpdate) {
+              progress.coveredDistance =
+                  (progress.currentProgress / 100) *
+                      lineStringPath.length.toPrecision(3);
+              progress.newProgressUpdate = false;
+            }
+            print('distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
+
             progress.coveredDistance =
-                (progress.currentProgress / 100) *
-                    lineStringPath.length.toPrecision(3);
-            progress.newProgressUpdate = false;
+                getNewDistanceAfterOneSec(progress.currentSpeed) +
+                    progress.coveredDistance.toPrecision(4);
+            final latLng = getLatlngFromDistance(lineStringPath, progress.coveredDistance);
+
+            await controller.setLocation(trackDetail.track, latLng, wait: false, update: false);
+
+            if (controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)] != null) {
+              print('annotation update');
+              controller.addAnnotation(
+                apple_maps.AnnotationId(trackDetail.track),
+                controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)]!
+                    .copyWith(positionParam: apple_maps.LatLng(latLng.latitude, latLng.longitude)),
+              );
+            }
+
+            progress.oldProgress = trackDetail.location ?? 0;
+            progress.currentProgress = trackDetail.location ?? 0;
+            progress.currentSpeed = trackDetail.speed ?? 0;
+            createLineStringPath(controller.getAthleteRouthPath(trackDetail));
           }
-          print('distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
-
-          progress.coveredDistance =
-              getNewDistanceAfterOneSec(progress.currentSpeed) +
-                  progress.coveredDistance.toPrecision(4);
-          final latLng = getLatlngFromDistance(
-              lineStringPath, progress.coveredDistance);
-
-          await controller.setLocation(
-              trackDetail.track, latLng, wait: true);
-
-          if(controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)] != null) {
-            print('annotation update');
-            controller.addAnnotation(apple_maps.AnnotationId(
-                trackDetail.track),
-                controller.annotations.value[apple_maps.AnnotationId(trackDetail.track)]
-                !.copyWith(
-                    positionParam: apple_maps.LatLng(
-                        latLng.latitude, latLng.longitude)));
-            /*setState(() {
-
-            });*/
-          }
-
-          progress.oldProgress = trackDetail.location ?? 0;
-          progress.currentProgress = trackDetail.location ?? 0;
-          progress.currentSpeed = trackDetail.speed ?? 0;
-          createLineStringPath(
-              controller.getAthleteRouthPath(trackDetail));
         }
       }
-    }
-    updateMarkers();
-    //controller.isAnimatingMarkers = false;
+    });
   }
 
   @override

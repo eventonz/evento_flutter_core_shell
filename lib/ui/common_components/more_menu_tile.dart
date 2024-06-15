@@ -20,7 +20,7 @@ class MoreMenuTile extends StatelessWidget {
           fit: BoxFit.cover,
           color: Theme.of(context).brightness == Brightness.light
               ? AppColors.accentDark
-              : AppColors.accentLight),
+              : AppColors.accentLight, width: 24,),
       title: AppText(
         item.title!,
         fontSize: 14,
