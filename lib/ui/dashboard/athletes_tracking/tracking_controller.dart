@@ -181,6 +181,7 @@ class TrackingController extends GetxController
     routePathLinks = List.from(trackingDetails!.paths);
     try {
       mapDataSnap.value = DataSnapShot.loading;
+      mapPathMarkers.clear();
       for (Paths path in routePathLinks) {
         final geoJson = GeoJson();
         routePathsColors[path.name ?? 'path'] = path.color;
@@ -203,8 +204,8 @@ class TrackingController extends GetxController
         print(geoJsonFile.readAsString());
         await geoJson.parse(await geoJsonFile.readAsString());
         final markerPoints = geoJson.features;
+        print(markerPoints.map((e) => e.properties));
         if (markerPoints.isNotEmpty) {
-          mapPathMarkers.clear();
           for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
             final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
             mapPathMarkers.add(MapPathMarkers(

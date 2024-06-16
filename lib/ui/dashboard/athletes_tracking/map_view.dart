@@ -369,17 +369,19 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
       for (MapPathMarkers marker in controller.mapPathMarkers) {
 
+        print('marker ${marker.latLng.toJson()}');
+
         if(Platform.isIOS) {
           http.Response response = await http.get(Uri.parse(marker.iconUrl));
           Widget widget = Image.memory(
               response.bodyBytes, width: 30, height: 30);
-          final String annotationIdVal = 'annotation_id_${controller.polylines.value.length}';
+          final String annotationIdVal = 'annotation_id_${controller.annotations.value.length}';
           final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(annotationIdVal);
             var bytes = await AppHelper.widgetToBytes(widget);
             final apple_maps.Annotation annotation = apple_maps.Annotation(
               annotationId: polygonId,
-              //icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
-              icon: apple_maps.BitmapDescriptor.defaultAnnotation,
+              icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+              //icon: apple_maps.BitmapDescriptor.defaultAnnotation,
               position: apple_maps.LatLng( marker.latLng.latitude, marker.latLng.longitude),
               onTap: () {
 
