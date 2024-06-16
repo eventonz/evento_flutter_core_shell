@@ -231,6 +231,8 @@ class TrackingController extends GetxController
 
       DashboardController controller = Get.find();
 
+      print(controller.selMenu.value?.label);
+      print('okak');
       if(controller.selMenu.value?.label == 'track') {
         getAthleteTrackingInfo();
       }

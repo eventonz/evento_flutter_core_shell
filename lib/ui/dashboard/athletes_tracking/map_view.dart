@@ -266,9 +266,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
         final routePath = controller.getAthleteRouthPath(trackDetail);
 
-
-
-        print('routePath ${trackDetail.track}: $routePath');
+        print('routePath ${trackDetail.track} ${trackDetail.path}: $routePath');
         if (routePath.isNotEmpty) {
           final geodart.LineString lineStringPath = createLineStringPath(routePath);
 
@@ -320,6 +318,9 @@ class _TrackingMapViewState extends State<TrackingMapView> {
     final TrackingController controller = Get.find();
     final ConfigReload reloadController = Get.find();
     final mapDataSnap = controller.mapDataSnap;
+
+    print(controller.trackingDetails?.updateFreq);
+    print('updateFreq');
 
     createRoute() async {
 
