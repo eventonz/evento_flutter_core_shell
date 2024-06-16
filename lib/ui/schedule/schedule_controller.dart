@@ -120,7 +120,6 @@ class ScheduleController extends GetxController {
       )).then((value) {
         annotation.value = Annotation(annotationId: AnnotationId('marker'), position: latLng!, icon: BitmapDescriptor.fromBytes(value));
         annotation.refresh();
-
       });
     } else {
       latLng = null;

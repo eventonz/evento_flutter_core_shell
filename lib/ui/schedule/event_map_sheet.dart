@@ -83,15 +83,17 @@ class EventMapSheet extends StatelessWidget {
                           height: 40.h,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(12),
-                            child: Platform.isIOS ? AppleMap(
-                              rotateGesturesEnabled: false,
-                              zoomGesturesEnabled: false,
-                              pitchGesturesEnabled: false,
-                              scrollGesturesEnabled: false,
-                              initialCameraPosition: CameraPosition(
+                            child: Platform.isIOS ? Obx(
+                              () => AppleMap(
+                                rotateGesturesEnabled: false,
+                                zoomGesturesEnabled: false,
+                                pitchGesturesEnabled: false,
+                                scrollGesturesEnabled: false,
+                                initialCameraPosition: CameraPosition(
 
-                                  target: LatLng(controller.latLng!.latitude, controller.latLng!.longitude), zoom: 16),
-                              annotations: Set.of([if(controller.annotation.value != null)controller.annotation.value!]),
+                                    target: LatLng(controller.latLng!.latitude, controller.latLng!.longitude), zoom: 16),
+                                annotations: Set.of([if(controller.annotation.value != null)controller.annotation.value!]),
+                              ),
                             ) : MapWidget(
                               cameraOptions: CameraOptions(
                                 zoom: 16,
