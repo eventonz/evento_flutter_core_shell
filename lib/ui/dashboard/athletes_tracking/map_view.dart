@@ -74,6 +74,8 @@ class _TrackingMapViewState extends State<TrackingMapView> {
   @override
   void initState() {
     super.initState();
+    controller.polylines.value.clear();
+    controller.annotations.value.clear();
     if(Platform.isIOS) {
       Timer.periodic(const Duration(seconds: 1), (timer) async {
         final mapDataSnap = controller.mapDataSnap;
@@ -82,8 +84,8 @@ class _TrackingMapViewState extends State<TrackingMapView> {
             controller.athleteTrackDetails.value.isNotEmpty) {
           timer.cancel();
           print('CANCELLED');
-          await setInitialRouteMarkerPaths();
           setInitialDistances();
+          await setInitialRouteMarkerPaths();
 
           Future.delayed(const Duration(milliseconds: 100), () {
             updateTrackProgress();
@@ -125,7 +127,12 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       final routePath = controller.getAthleteRouthPath(trackDetail);
       if (routePath.isNotEmpty) {
         print('routePath');
-        final latLng = routePath.first;
+        final progress = controller.trackProgressMap[trackDetail.track];
+        var latLng = routePath.first;
+        if(progress != null) {
+          final geodart.LineString lineStringPath = createLineStringPath(routePath);
+          latLng = getLatlngFromDistance(lineStringPath, progress.coveredDistance);
+        }
         controller.setLocation(trackDetail.track, latLng);
         var bytes = await AppHelper.widgetToBytes(Container(
           width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
@@ -191,7 +198,6 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
   @override
   void dispose() {
-    controller.appleMapController = null;
     _isDisposed = true; // Set the flag to true to stop the loop
     super.dispose();
   }
@@ -216,7 +222,14 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         if(progress == null) {
           final routePath = controller.getAthleteRouthPath(trackDetail);
 
-          progress = controller.trackProgressMap[trackDetail.track];
+          final progressA = TrackProgress(
+            coveredDistance: (trackDetail.location ?? 0) / 100 *
+                createLineStringPath(controller.getAthleteRouthPath(trackDetail)).length.toPrecision(3),
+          );
+
+          controller.trackProgressMap[trackDetail.track] = progressA;
+
+          progress = controller.trackProgressMap[trackDetail.track]!;
 
           if (routePath.isNotEmpty) {
             print('routePath');
@@ -252,6 +265,8 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         }
 
         final routePath = controller.getAthleteRouthPath(trackDetail);
+
+
 
         print('routePath ${trackDetail.track}: $routePath');
         if (routePath.isNotEmpty) {
@@ -363,13 +378,14 @@ class _TrackingMapViewState extends State<TrackingMapView> {
             var bytes = await AppHelper.widgetToBytes(widget);
             final apple_maps.Annotation annotation = apple_maps.Annotation(
               annotationId: polygonId,
-              icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+              //icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
+              icon: apple_maps.BitmapDescriptor.defaultAnnotation,
               position: apple_maps.LatLng( marker.latLng.latitude, marker.latLng.longitude),
               onTap: () {
 
               },
             );
-            controller.annotations.value[polygonId] = annotation;
+            controller.addAnnotation(polygonId, annotation);
         } else {
           http.Response response = await http.get(Uri.parse(marker.iconUrl));
           Widget widget = Image.memory(
@@ -579,6 +595,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
   @override
   void initState() {
     super.initState();
+    final TrackingController controller = Get.find();
     setInitialRouteMarkerPath();
     setInitialDistance();
     print('animated marker init');

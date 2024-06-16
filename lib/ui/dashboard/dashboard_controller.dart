@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -219,8 +220,10 @@ class DashboardController extends GetxController {
 
   void selectMenu(BottomNavMenu menu) async {
     selMenu.value = menu;
+    print('it is ${selMenu.value!.label}');
     if (selMenu.value!.label == 'track') {
-      await Future.delayed(const Duration(seconds: 1));
+      print('it is');
+      await Future.delayed(const Duration(seconds: 0));
       final TrackingController controller = Get.find();
       controller.getAthleteTrackingInfo(firstTime: true);
       controller.updateStream.add(Random().nextInt(100));

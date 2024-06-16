@@ -64,6 +64,7 @@ class TrackingController extends GetxController
 
   late StreamController<int> updateStream = StreamController<int>.broadcast();
 
+
   static const _startedId = 'AnimatedMapController#MoveStarted';
   static const _inProgressId = 'AnimatedMapController#MoveInProgress';
   static const _finishedId = 'AnimatedMapController#MoveFinished';
@@ -263,16 +264,18 @@ class TrackingController extends GetxController
   Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
 
     if (trackingDetails == null) return;
-    if(firstTime && athleteTrackDetails.isNotEmpty) {
-      currentII++;
-      return;
-    }
+    //if(firstTime && athleteTrackDetails.isNotEmpty) {
+    //  currentII++;
+    //  return;
+    //}
 
     final entrants = await watchFollowedAthletes().first;
     final entrantsIds = <String>[];
     for (final AppAthleteDb entrant in entrants) {
       entrantsIds.add(entrant.athleteId);
     }
+    print('entrantsIds');
+    print(entrantsIds);
     final body = {
       'race_id': eventId,
       'web_tracking': true,
