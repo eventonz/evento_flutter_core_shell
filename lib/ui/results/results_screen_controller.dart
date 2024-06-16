@@ -25,8 +25,8 @@ class ResultsScreenController extends GetxController {
 
   Items? items;
 
-  int category = 0;
-  int gender = 0;
+  int category = -1;
+  int gender = -1;
 
   final ScrollController scrollController = ScrollController();
 
@@ -51,9 +51,17 @@ class ResultsScreenController extends GetxController {
 
   setCategory(int index) {
     if(index == 0) {
-      category = 0;
+      category = -1;
     } else {
       category = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories[index-1].id ?? 0;
+    }
+  }
+
+  setGender(int index) {
+    if(index == 0) {
+      gender = -1;
+    } else {
+      gender = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.genders[index-1].id ?? 0;
     }
   }
 
@@ -94,7 +102,11 @@ class ResultsScreenController extends GetxController {
   }
 
   getResults() async {
-    var result = await ApiHandler.genericGetHttp(url: 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/individuals?page=$page${search != '' ? '&search=$search' : ''}', header: {
+    var url = 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/individuals?page=$page${search != '' ? '&search=$search' : ''}';
+    if(category != -1) {
+      url += '';
+    }
+    var result = await ApiHandler.genericGetHttp(url: url, header: {
       'X-API-KEY' : 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
     });
 

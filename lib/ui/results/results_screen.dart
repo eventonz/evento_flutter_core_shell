@@ -121,6 +121,9 @@ class ResultsScreen extends StatelessWidget {
                                         Expanded(
                                           child: CupertinoPicker(
                                               itemExtent: 70,
+                                            scrollController: FixedExtentScrollController(
+                                              initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == controller.category) ?? -1)+1,
+                                            ),
                                               onSelectedItemChanged: (val) {
                                                 controller.setCategory(val);
                                               },
@@ -144,8 +147,18 @@ class ResultsScreen extends StatelessWidget {
                                           child: Expanded(
                                             child: CupertinoPicker(
                                               itemExtent: 70,
-                                              onSelectedItemChanged: (val) {},
+                                              scrollController: FixedExtentScrollController(
+                                                initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.indexWhere((element) => element.id == controller.gender) ?? -1)+1,
+                                              ),
+                                              onSelectedItemChanged: (val) {
+                                                controller.setGender(val);
+                                              },
                                               children: [
+                                                Center(
+                                                  child: Text('All', style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),),
+                                                ),
                                                 ...controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.map((e) => Container(
                                                   child: Center(
                                                     child: Text('${e.name}', style: TextStyle(
@@ -221,6 +234,21 @@ class ResultsScreen extends StatelessWidget {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 16),
+                Builder(
+                  builder: (context) {
+                    var category = controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.where((element) => element.id == controller.category).firstOrNull;
+                    var gender = controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.id == controller.gender).firstOrNull;
+                    return Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        Text('Gender ${gender?.name ?? gender?.code ?? 'All'} / Category ${category?.name ?? category?.code ?? 'All'}', style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                        )),
+                      ],
+                    );
+                  }
                 ),
                 const SizedBox(height: 16),
                 Container(
