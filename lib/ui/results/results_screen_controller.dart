@@ -102,7 +102,8 @@ class ResultsScreenController extends GetxController {
   }
 
   getResults() async {
-    var url = 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/individuals?page=$page${search != '' ? '&search=$search' : ''}';
+    var url = 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/${category == -1 && gender == -1 ? 'individuals' : (category != -1 && gender != -1 ? 'gender/$gender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$gender')))}?page=$page${search != '' ? '&search=$search' : ''}';
+    print(url);
     if(category != -1) {
       url += '';
     }

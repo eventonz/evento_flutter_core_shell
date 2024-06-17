@@ -155,7 +155,8 @@ class _EventoMapState extends State<EventoMap> {
         );
 
         double maxElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b) ?? 0;
-        double step = maxElevation / 5;
+        double adjustedMaxElevation = maxElevation < 250 ? 250 : maxElevation; // Ensure maxElevation is at least 250
+        double step = adjustedMaxElevation / 5;
 
         double top = 0;
         double bottom = 0;
@@ -179,6 +180,8 @@ class _EventoMapState extends State<EventoMap> {
         double maxX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a > b ? a : b);
         double maxY = elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b);
         double minX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a < b ? a : b);
+        double adjustedMaxY = maxY < 250 ? 250 : maxY * 1.1;
+
         return LineChartData(
           lineTouchData: LineTouchData(
               handleBuiltInTouches: true,
@@ -219,7 +222,7 @@ class _EventoMapState extends State<EventoMap> {
           gridData: FlGridData(
             show: true,
             drawVerticalLine: false,
-            horizontalInterval: (maxY*1.1) / 1,
+            horizontalInterval: ((adjustedMaxY)*1.1) / 1,
             verticalInterval: maxX / 2,
             getDrawingHorizontalLine: (value) {
               return const FlLine(
@@ -250,7 +253,7 @@ class _EventoMapState extends State<EventoMap> {
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
-                interval: maxY / 5,
+                interval: adjustedMaxY / 5,
                 getTitlesWidget: leftTitleWidgets,
                 reservedSize: 45,
               ),
@@ -263,7 +266,7 @@ class _EventoMapState extends State<EventoMap> {
           minX: minX,
           maxX: maxX,
           minY: 0,
-          maxY: maxY*1.1,
+          maxY: adjustedMaxY*1.1,
           lineBarsData: [
             LineChartBarData(
               spots: [
