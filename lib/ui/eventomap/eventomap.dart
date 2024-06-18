@@ -154,8 +154,10 @@ class _EventoMapState extends State<EventoMap> {
           fontSize: 12,
         );
 
+        double minElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a < b ? a : b) ?? 0;
         double maxElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b) ?? 0;
-        double adjustedMaxElevation = maxElevation < 250 ? 250 : maxElevation; // Ensure maxElevation is at least 250
+        double adjustedMaxElevation = maxElevation < (minElevation+250) ? (minElevation+250) : maxElevation; // Ensure maxElevation is at least 250
+        print('elevation $adjustedMaxElevation $maxElevation $minElevation');
         double step = adjustedMaxElevation / 5;
 
         double top = 0;
@@ -180,7 +182,9 @@ class _EventoMapState extends State<EventoMap> {
         double maxX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a > b ? a : b);
         double maxY = elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b);
         double minX = elevationData.map((e) => e[0].toDouble()).reduce((a, b) => a < b ? a : b);
-        double adjustedMaxY = maxY < 250 ? 250 : maxY * 1.1;
+        double minY = elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a < b ? a : b);
+        double adjustedMaxY = maxY < (minY+250) ? (minY+250) : maxY;
+
 
         return LineChartData(
           lineTouchData: LineTouchData(
@@ -227,13 +231,13 @@ class _EventoMapState extends State<EventoMap> {
             getDrawingHorizontalLine: (value) {
               return const FlLine(
                 color: AppColors.black,
-                strokeWidth: 1,
+                strokeWidth: 0,
               );
             },
             getDrawingVerticalLine: (value) {
               return const FlLine(
                 color: AppColors.black,
-                strokeWidth: 1,
+                strokeWidth: 0,
               );
             },
           ),
@@ -265,7 +269,7 @@ class _EventoMapState extends State<EventoMap> {
           ),
           minX: minX,
           maxX: maxX,
-          minY: 0,
+          minY: maxY < 250 ? -20 : 0,
           maxY: adjustedMaxY*1.1,
           lineBarsData: [
             LineChartBarData(

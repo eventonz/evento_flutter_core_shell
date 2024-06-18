@@ -99,6 +99,8 @@ class MoreScreen extends StatelessWidget {
                         icon: 'terrain',
                       );
 
+                      return SizedBox();
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
