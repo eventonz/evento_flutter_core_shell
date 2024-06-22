@@ -26,7 +26,7 @@ void main() {
     oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
     appName: 'Multi Event App',
     multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
-    multiEventListId: '2',
+    multiEventListId: '13',
     splashImage: 'assets/images/splash_image.png',
   );
 

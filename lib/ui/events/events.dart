@@ -22,7 +22,7 @@ class EventsScreen extends StatelessWidget {
         SliverAppBar(
           surfaceTintColor: Colors.black,
           shadowColor: Colors.black,
-          expandedHeight: true || controller.searchBar ? 16.h : 10.h,
+          expandedHeight: false || controller.searchBar ? 16.h : 10.h,
           floating: true,
           pinned: true,
           snap: true,
