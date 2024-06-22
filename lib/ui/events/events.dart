@@ -80,9 +80,9 @@ class EventsScreen extends StatelessWidget {
                             width: 60.w,
                             fit: BoxFit.cover,
                           ),
-                          //if(controller.searchBar)
+                          if(controller.searchBar)
                           const SizedBox(height: 8),
-                          //if(controller.searchBar)
+                          if(controller.searchBar)
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 2  ),
                               child: TextField(controller: controller.searchController,
