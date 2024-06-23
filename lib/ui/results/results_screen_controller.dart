@@ -72,7 +72,7 @@ class ResultsScreenController extends GetxController {
       categoryScrollController?.jumpTo(0);
       attached = true;
     } else {
-      gender = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.genders[index-1].id ?? 0;
+      gender = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList()[index-1].id ?? 0;
     }
   }
 

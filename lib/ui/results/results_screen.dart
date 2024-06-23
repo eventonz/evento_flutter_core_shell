@@ -123,7 +123,7 @@ class ResultsScreen extends StatelessWidget {
                                             child: CupertinoPicker(
                                               itemExtent: 70,
                                               scrollController: FixedExtentScrollController(
-                                                initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.indexWhere((element) => element.id == controller.gender) ?? -1)+1,
+                                                initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList().where((element) => element.enabled).toList().indexWhere((element) => element.id == controller.gender) ?? -1)+1,
                                               )..addListener(() {
                                                 print('scrolled');
                                               }),
@@ -136,7 +136,7 @@ class ResultsScreen extends StatelessWidget {
                                                     color: Colors.black,
                                                   ),),
                                                 ),
-                                                ...controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.map((e) => Container(
+                                                ...controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList().map((e) => Container(
                                                   child: Center(
                                                     child: Text('${e.name}', style: TextStyle(
                                                       color: Colors.black,
@@ -239,7 +239,7 @@ class ResultsScreen extends StatelessWidget {
                 Builder(
                   builder: (context) {
                     var category = controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.where((element) => element.id == controller.category).firstOrNull;
-                    var gender = controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.id == controller.gender).firstOrNull;
+                    var gender = controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList().where((element) => element.id == controller.gender).firstOrNull;
                     return Row(
                       children: [
                         const SizedBox(width: 16),

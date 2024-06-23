@@ -100,7 +100,7 @@ class MoreScreen extends StatelessWidget {
                       );
 
 
-                      return SizedBox();
+                      //return SizedBox();
 
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
