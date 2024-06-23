@@ -119,37 +119,14 @@ class ResultsScreen extends StatelessWidget {
                                     child: Row(
                                       children: [
                                         Expanded(
-                                          child: CupertinoPicker(
-                                              itemExtent: 70,
-                                            scrollController: FixedExtentScrollController(
-                                              initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == controller.category) ?? -1)+1,
-                                            ),
-                                              onSelectedItemChanged: (val) {
-                                                controller.setCategory(val);
-                                              },
-                                              children: [
-                                                Center(
-                                                  child: Text('All', style: TextStyle(
-                                                    color: Colors.black,
-                                                  ),),
-                                                ),
-                                                ...controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.map((e) => Container(
-                                                  child: Center(
-                                                    child: Text('${e.name ?? e.code}', style: TextStyle(
-                                                      color: Colors.black,
-                                                    ),),
-                                                  ),
-                                                )).toList() ?? [],
-                                              ],
-                                          ),
-                                        ),
-                                        Expanded(
                                           child: Expanded(
                                             child: CupertinoPicker(
                                               itemExtent: 70,
                                               scrollController: FixedExtentScrollController(
                                                 initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.indexWhere((element) => element.id == controller.gender) ?? -1)+1,
-                                              ),
+                                              )..addListener(() {
+                                                print('scrolled');
+                                              }),
                                               onSelectedItemChanged: (val) {
                                                 controller.setGender(val);
                                               },
@@ -168,6 +145,29 @@ class ResultsScreen extends StatelessWidget {
                                                 )).toList() ?? [],
                                               ],
                                             ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: CupertinoPicker(
+                                              itemExtent: 70,
+                                            scrollController: controller.categoryScrollController,
+                                              onSelectedItemChanged: (val) {
+                                                controller.setCategory(val);
+                                              },
+                                              children: [
+                                                Center(
+                                                  child: Text('All', style: TextStyle(
+                                                    color: Colors.black,
+                                                  ),),
+                                                ),
+                                                ...controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.categories.map((e) => Container(
+                                                  child: Center(
+                                                    child: Text('${e.name ?? e.code}', style: TextStyle(
+                                                      color: Colors.black,
+                                                    ),),
+                                                  ),
+                                                )).toList() ?? [],
+                                              ],
                                           ),
                                         ),
                                       ],
@@ -192,12 +192,12 @@ class ResultsScreen extends StatelessWidget {
                                               children: [
                                                 Expanded(child: Container(
                                                     padding: const EdgeInsets.all(16),
-                                                    child: Text('Category', style: TextStyle(
+                                                    child: Text('Gender', style: TextStyle(
                                                       fontSize: 16,
                                                     )))),
                                                 Expanded(child: Container(
                                                     padding: const EdgeInsets.all(16),
-                                                    child: Text('Gender', style: TextStyle(
+                                                    child: Text('Category', style: TextStyle(
                                                       fontSize: 16,
                                                     )))),
                                               ],
@@ -332,7 +332,7 @@ class ResultsScreen extends StatelessWidget {
                           Container(
                             width: 60,
                             padding: const EdgeInsets.symmetric(horizontal: 8),
-                            child: Text('${athlete.netOverallPos ?? athlete.overallPos}'),
+                            child: Text((index+1).toString()/*'${athlete.netOverallPos ?? athlete.overallPos}'*/),
                           ),
                           Expanded(child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),

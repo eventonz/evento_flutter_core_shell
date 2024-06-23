@@ -1,8 +1,11 @@
 import 'package:evento_core/core/models/ss_event_response.dart';
 import 'package:evento_core/core/models/ss_event_result.dart';
+import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 
@@ -16,6 +19,8 @@ class ResultsScreenController extends GetxController {
   SSEventResult? eventResult;
   RxInt selectedEvent = 0.obs;
 
+  FixedExtentScrollController? categoryScrollController;
+
   RxBool loading = true.obs;
   RxBool loadingResults = true.obs;
   RxBool loadingMore = false.obs;
@@ -27,6 +32,8 @@ class ResultsScreenController extends GetxController {
 
   int category = -1;
   int gender = -1;
+
+  bool attached = true;
 
   final ScrollController scrollController = ScrollController();
 
@@ -60,8 +67,20 @@ class ResultsScreenController extends GetxController {
   setGender(int index) {
     if(index == 0) {
       gender = -1;
+      category = -1;
+      attached = false;
+      categoryScrollController?.jumpTo(0);
+      attached = true;
     } else {
       gender = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.genders[index-1].id ?? 0;
+    }
+  }
+
+  categoryListener() {
+    if(gender == -1 && attached) {
+      categoryScrollController?.jumpTo(0);
+      ToastUtils.show('Select Gender First');
+      return;
     }
   }
 
@@ -81,6 +100,10 @@ class ResultsScreenController extends GetxController {
     eventResponse = SSEventResponse.fromJson(result.data);
     selectedEvent.value = eventResponse?.data?.firstOrNull?.eventId ?? 0;
     loading.value = false;
+
+    categoryScrollController = FixedExtentScrollController(
+      initialItem: (eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == category) ?? -1)+1,
+    )..addListener(categoryListener);
 
     getResults();
 
