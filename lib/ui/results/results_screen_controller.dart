@@ -84,6 +84,20 @@ class ResultsScreenController extends GetxController {
     }
   }
 
+  changeEvent(int id) async {
+    selectedEvent.value = id;
+    loading.value = true;
+    loadingResults.value = true;
+    update();
+    getEvent(false);
+  }
+
+  updateScrollController() {
+    categoryScrollController = FixedExtentScrollController(
+      initialItem: (eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == category) ?? -1)+1,
+    )..addListener(categoryListener);
+  }
+
   searchResults(String search) async {
     this.search = search;
     page = 1;
@@ -92,13 +106,15 @@ class ResultsScreenController extends GetxController {
     getResults();
   }
   
-  getEvent() async {
+  getEvent([bool first = true]) async {
     var result = await ApiHandler.genericGetHttp(url: 'https://api.sportsplits.com/v2/races/$raceId/events/', header: {
       'X-API-KEY' : 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
     });
 
     eventResponse = SSEventResponse.fromJson(result.data);
-    selectedEvent.value = eventResponse?.data?.firstOrNull?.eventId ?? 0;
+    if(first) {
+      selectedEvent.value = eventResponse?.data?.firstOrNull?.eventId ?? 0;
+    }
     loading.value = false;
 
     categoryScrollController = FixedExtentScrollController(
@@ -126,6 +142,10 @@ class ResultsScreenController extends GetxController {
 
   getResults() async {
     var url = 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/${category == -1 && gender == -1 ? 'individuals' : (category != -1 && gender != -1 ? 'gender/$gender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$gender')))}?page=$page${search != '' ? '&search=$search' : ''}';
+
+    if(search != '') {
+      url = 'https://api.sportsplits.com/v2/races/$raceId/search?search=$search';
+    }
     print(url);
     if(category != -1) {
       url += '';

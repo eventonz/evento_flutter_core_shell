@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
+import 'package:screenshot/screenshot.dart';
 
 import '../../core/models/app_config.dart';
 import '../../core/res/app_colors.dart';
@@ -57,7 +58,7 @@ class ResultsScreen extends StatelessWidget {
                   child: DropdownButton<int>(items: [
                     ...controller.eventResponse?.data?.map((e) => DropdownMenuItem(value: e.eventId, child: Text(e.name))).toList() ?? [],
                   ], onChanged: (val) {
-
+                    controller.changeEvent(val!);
                   }, icon: Icon(CupertinoIcons.chevron_down, color: Colors.grey), padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0), value: controller.selectedEvent.value, isExpanded: true, borderRadius: BorderRadius.circular(5), underline: Container()),
                 ),
                 const SizedBox(height: 12),
@@ -99,6 +100,7 @@ class ResultsScreen extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () async {
+                        controller.updateScrollController();
                         await showModalBottomSheet(context: context, elevation: 0, backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor, builder: (_) => BottomSheet(onClosing: () {
                           print('closing');
                         }, builder: (_) {
@@ -207,6 +209,37 @@ class ResultsScreen extends StatelessWidget {
                                       ),
                                     ),
                                   ),
+                                  Positioned(
+                                      left: 0,
+                                      right: 0,
+                                      top: 0,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: CupertinoButton(
+                                                  color: AppColors.primary,
+                                                  onPressed: () {
+                                                Navigator.of(context).pop();
+                                              }, child: Text('APPLY', style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                              ),)),
+                                            ),
+                                            const SizedBox(width: 16),
+                                            CupertinoButton(
+                                                padding: const EdgeInsets.symmetric(horizontal: 16),
+                                                color: Colors.grey[400],
+                                                onPressed: () {
+                                                  controller.setCategory(0);
+                                                  controller.setGender(0);
+                                                  Navigator.of(context).pop();
+                                                }, child: Text('CLEAR', style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                            ))),
+                                          ],
+                                                                          ),
+                                      ))
                                 ],
                               ),
                             ),

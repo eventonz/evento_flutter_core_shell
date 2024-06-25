@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class SSEventResult {
   int? currentPage;
   int? from;
@@ -537,8 +539,8 @@ class Wave {
       order: json['order'],
       description: json['description'],
       fromSplit: json['from_split'],
-      gunTime: json['gun_time'],
-      approxTime: json['approx_time'],
+      gunTime: json['gun_time'] is Map ? jsonEncode(json['gun_time']) : json['gun_time'],
+      approxTime: json['approx_time'] is Map ? jsonEncode(json['approx_time']) : json['approx_time'],
     );
   }
 
