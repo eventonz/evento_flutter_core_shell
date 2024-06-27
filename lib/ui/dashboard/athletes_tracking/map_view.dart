@@ -135,7 +135,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
         }
         controller.setLocation(trackDetail.track, latLng);
         var bytes = await AppHelper.widgetToBytes(Container(
-          width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+          width: trackDetail.marker_text.length > 3 ? (trackDetail.marker_text.length)*13 : 36,
           height: 36,
           decoration: BoxDecoration(
               color: AppColors.accentLight,
@@ -236,7 +236,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
             final latLng = routePath.first;
             controller.setLocation(trackDetail.track, latLng);
             var bytes = await AppHelper.widgetToBytes(Container(
-              width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+              width: trackDetail.marker_text.length > 3 ? (trackDetail.marker_text.length)*13 : 36,
               height: 36,
               decoration: BoxDecoration(
                   color: AppColors.accentLight,
@@ -647,7 +647,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       }
       if (annotation == null) {
         var widget = Container(
-          width: trackDetail.track.length > 3 ? (trackDetail.track.length)*13 : 36,
+          width: trackDetail.marker_text.length > 3 ? (trackDetail.marker_text.length)*13 : 36,
           height: 36,
           decoration: BoxDecoration(
               color: AppColors.accentLight,
