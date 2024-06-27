@@ -292,6 +292,7 @@ class ResultsScreen extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
+                      if(controller.search == '')
                       SizedBox(
                         width: 60,
                         child: Center(child: Text('Pos.', style: TextStyle(
@@ -363,7 +364,8 @@ class ResultsScreen extends StatelessWidget {
                       child: Row(
                         
                         children: [
-                          Container(
+                          if(controller.search == '')
+                            Container(
                             width: 60,
                             padding: const EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
                             child: Text((index+1).toString()/*'${athlete.netOverallPos ?? athlete.overallPos}'*/),
