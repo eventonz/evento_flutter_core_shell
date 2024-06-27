@@ -142,7 +142,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
               borderRadius: BorderRadius.circular(40)),
           child: Center(
             child: AppText(
-                trackDetail.track,
+                trackDetail.marker_text,
                 fontSize: 16,
                 color: AppColors.white
             ),
@@ -243,7 +243,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                   borderRadius: BorderRadius.circular(40)),
               child: Center(
                 child: AppText(
-                    trackDetail.track,
+                    trackDetail.marker_text,
                     fontSize: 16,
                     color: AppColors.white
                 ),
@@ -654,7 +654,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
               borderRadius: BorderRadius.circular(40)),
           child: Center(
             child: AppText(
-                trackDetail.track,
+                trackDetail.marker_text,
                 fontSize: 16,
                 color: AppColors.white
             ),
