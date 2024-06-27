@@ -435,13 +435,12 @@ class _TrackingMapViewState extends State<TrackingMapView> {
 
         if(Platform.isIOS) {
 
-          print('aa ${controller.athleteTrackDetails.value.length}');
-
           return Stack(
             children: [
-
               Obx(
                 () => apple_maps.AppleMap(
+                  myLocationEnabled: true,
+
                   mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
                   onMapCreated: (appleMapController) async {
                     controller.appleMapController = appleMapController;

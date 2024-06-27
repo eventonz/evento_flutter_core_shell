@@ -356,10 +356,14 @@ class TrackingController extends GetxController
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     var position = await geolocator.Geolocator.getCurrentPosition();
-    mapboxMap!.setCamera(CameraOptions(
-      center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
-      zoom: 15,
-    ));
+    if(Platform.isAndroid) {
+      mapboxMap!.setCamera(CameraOptions(
+        center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
+        zoom: 15,
+      ));
+    } else {
+      appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(position.latitude, position.longitude), zoom: 15)));
+    }
   }
 
   AthleteTrackDetail? findTrackDetail(AppAthleteDb entrant) {
