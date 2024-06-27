@@ -359,12 +359,13 @@ class ResultsScreen extends StatelessWidget {
                       Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: athleteDb, 'can_follow': false});
                     },
                     child: Container(
-                      height: 50,
+                      height: 60,
                       child: Row(
+                        
                         children: [
                           Container(
                             width: 60,
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            padding: const EdgeInsets.fromLTRB(15.0, 0.0, 0.0, 0.0),
                             child: Text((index+1).toString()/*'${athlete.netOverallPos ?? athlete.overallPos}'*/),
                           ),
                           Expanded(child: Container(
@@ -375,18 +376,18 @@ class ResultsScreen extends StatelessWidget {
                               children: [
                                 Text('${athlete.name}', style: TextStyle(
                                   fontWeight: FontWeight.w500,
-                                  fontSize: 15,
+                                  fontSize: 14,
                                 ), maxLines: 1, overflow: TextOverflow.ellipsis),
                                 Text('${athlete.gender?.name} ${athlete.category?.name}', style: TextStyle(
                                   fontWeight: FontWeight.w300,
-                                  fontSize: 13,
+                                  fontSize: 12,
                                 ),),
                               ],
                             ),
                           )),
                           Container(
-                            width: 80,
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            width: 100,
+                            padding: const EdgeInsets.fromLTRB(0.0, 0.0, 10.0, 0.0),
                             child: Text('${athlete.netTime ?? athlete.finishTime ?? athlete.finishStatus?.code}', textAlign: TextAlign.end,),
                           ),
                         ],
