@@ -36,7 +36,7 @@ class AppHelper {
 
   static final Dio _dio = Dio();
 
-  static String createUrl(String endPoint, String id) => '$endPoint/$id.json';
+  static String createUrl(String endPoint, String id) => '$endPoint/$id';
 
   static Color hexToColor(String? color) {
     if (color == null) {
