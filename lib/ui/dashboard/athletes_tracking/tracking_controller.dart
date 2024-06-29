@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
@@ -322,16 +323,22 @@ class TrackingController extends GetxController
   }
 
   Future<void> showUserLocation() async {
+
     bool serviceEnabled;
     geolocator.LocationPermission permission;
 
-    // Test if location services are enabled.
-    serviceEnabled = await geolocator.Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
+    try {
+      // Test if location services are enabled.
+      serviceEnabled = await geolocator.Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are not enabled don't continue
+        // accessing the position and request users of the
+        // App to enable the location services.
+        return Future.error('Location services are disabled.');
+      }
+    } catch(e) {
+      ToastUtils.show('Location service is disabled');
+      return;
     }
 
     permission = await geolocator.Geolocator.checkPermission();
@@ -357,7 +364,7 @@ class TrackingController extends GetxController
     // continue accessing the position of the device.
     var position = await geolocator.Geolocator.getCurrentPosition();
     if(Platform.isAndroid) {
-      mapboxMap!.setCamera(CameraOptions(
+      mapboxMap?.setCamera(CameraOptions(
         center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
         zoom: 15,
       ));
