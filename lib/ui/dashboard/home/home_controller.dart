@@ -11,6 +11,6 @@ class HomeController extends GetxController {
   }
 
   void loadImageLink() {
-    imagelink.value = AppGlobals.appConfig!.home!.image!;
+    imagelink.value = AppGlobals.appConfig?.home?.image ?? '';
   }
 }

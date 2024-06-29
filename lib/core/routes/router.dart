@@ -2,6 +2,7 @@ import 'package:evento_core/ui/assistant/assistant.dart';
 import 'package:evento_core/ui/dashboard/athletes/athlete_details/athlete_details.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:evento_core/ui/carousel/carousel.dart';
+import 'package:evento_core/ui/dashboard/webview_event_page.dart';
 import 'package:evento_core/ui/eventomap/eventomap.dart';
 import 'package:evento_core/ui/list_page/list_page.dart';
 import 'package:evento_core/ui/events/events.dart';
@@ -30,6 +31,10 @@ class PageRouter {
     GetPage(
       name: Routes.dashboard,
       page: () => const DashboardScreen(),
+    ),
+    GetPage(
+      name: Routes.webviewEvent,
+      page: () => const WebViewEventPage(),
     ),
     GetPage(
       name: Routes.miniplayer,

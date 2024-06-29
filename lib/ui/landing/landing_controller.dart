@@ -13,6 +13,7 @@ import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
+import 'package:evento_core/ui/dashboard/webview_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -64,6 +65,7 @@ class LandingController extends GetxController {
         Get.offNamed(Routes.events);
       } else {
         final webUrl = Preferences.getString(AppKeys.eventLink, '');
+        print(webUrl);
         if(webUrl == '') {
           await getConfigDetails(url);
           await getAthletes();
@@ -78,14 +80,14 @@ class LandingController extends GetxController {
                 done = true;
                 if (isPrev) {
                   Get.off(
-                        () => const DashboardScreen(),
-                    routeName: Routes.dashboard,
+                        () => const WebViewEventPage(),
+                    routeName: Routes.webviewEvent,
                     transition: Transition.fadeIn,
                     duration: const Duration(milliseconds: 1000),
                     arguments: webViewController
                   );
                 } else {
-                  Get.offNamed(Routes.dashboard, arguments: webViewController);
+                  Get.offNamed(Routes.webviewEvent, arguments: webViewController);
                 }
               }
             }
