@@ -11,6 +11,7 @@ import 'package:evento_core/ui/landing/landing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
+import 'package:get_storage/get_storage.dart';
 import '../../core/utils/app_global.dart';
 import '../../core/utils/helpers.dart';
 import 'subevent_sheet.dart';
@@ -27,9 +28,13 @@ class EventsController extends GetxController {
   RxBool loading = false.obs;
   int page = 1;
 
+  final PageStorageBucket bucket = PageStorageBucket();
+
   TextEditingController searchController = TextEditingController();
 
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
+
+  final storage = GetStorage();
 
   @override
   void onInit() {
@@ -40,14 +45,30 @@ class EventsController extends GetxController {
     searchBar = eventM.searchBar!;
     allEvents = eventM.events!;
 
-    events = eventM.events!.obs.sublist(0, 20).obs;
+    double? savedPosition = storage.read<double>('scroll_position');
+
+    if (savedPosition != null) {
+      scrollController = ScrollController(
+        initialScrollOffset: savedPosition,
+      );
+
+    } else {
+      scrollController = ScrollController();
+    }
+
+
+    events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+
+
 
     scrollController.addListener(() {
+      print(scrollController.position.pixels);
+      storage.write('scroll_position', scrollController.position.pixels);
       if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
         loading.value = true;
         page +=1;
         update();
-        Future.delayed(const Duration(milliseconds: 100), () {
+        Future.delayed(const Duration(milliseconds: 300), () {
           loading.value = false;
           events.addAll(allEvents.sublist((page-1)*20, (((page-1)*20)+20) > allEvents.length ? allEvents.length : (((page-1)*20)+20)));
           update();
@@ -67,6 +88,11 @@ class EventsController extends GetxController {
     update();
     events.refresh();
 
+  }
+
+  @override
+  void onClose() {
+    super.onClose();
   }
 
   void toLanding() async {

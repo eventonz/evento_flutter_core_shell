@@ -75,22 +75,25 @@ class LandingController extends GetxController {
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
           print('loaded');
+          await Future.delayed(const Duration(seconds: 2));
+          if (isPrev) {
+            Get.off(
+                    () => const WebViewEventPage(),
+                routeName: Routes.webviewEvent,
+                transition: Transition.fadeIn,
+                duration: const Duration(milliseconds: 1000),
+                arguments: webViewController
+            );
+          } else {
+            Get.offNamed(Routes.webviewEvent, arguments: webViewController);
+          }
+          return;
           webViewController!.setNavigationDelegate(NavigationDelegate(
             onPageFinished: (val) {
               print('finished');
               if(!done) {
                 done = true;
-                if (isPrev) {
-                  Get.off(
-                        () => const WebViewEventPage(),
-                    routeName: Routes.webviewEvent,
-                    transition: Transition.fadeIn,
-                    duration: const Duration(milliseconds: 1000),
-                    arguments: webViewController
-                  );
-                } else {
-                  Get.offNamed(Routes.webviewEvent, arguments: webViewController);
-                }
+
               }
             }
           ));

@@ -20,194 +20,198 @@ class EventsScreen extends StatelessWidget {
     print(controller.allEvents.length);
     print(controller.events.length);
     return Scaffold(
-      body: CustomScrollView(
-          controller: controller.scrollController,
-          physics: const BouncingScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              backgroundColor: Colors.black,
-              surfaceTintColor: Colors.black,
-              shadowColor: Colors.black,
-              expandedHeight: controller.searchBar ? 20.h : 10.h,
-              floating: false,
-              pinned: true,
-              snap: false,
-              stretch: true,
-              flexibleSpace: LayoutBuilder(
-                  builder: (BuildContext context, BoxConstraints constraints) {
-                var top = constraints.biggest.height;
-                return FlexibleSpaceBar(
-                  centerTitle: false,
-                  titlePadding: EdgeInsets.zero,
-                  collapseMode: CollapseMode.parallax,
-                  stretchModes: const [StretchMode.zoomBackground],
-                  title: AnimatedOpacity(
-                    opacity: top > 120 ? 0 : 1,
-                    duration: const Duration(milliseconds: 400),
-                    curve: Curves.easeInOut,
-                    child: top > 120 ? SizedBox() : Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.black,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                            left: 12.0, right: 12.0, bottom: 10),
-                        child: SafeArea(
-                          bottom: false,
-                          child: TextField(
-                            controller: controller.searchController,
-                            onChanged: (val) {
-                              controller.onSearch(val);
-                            },
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                            ),
-                            decoration: InputDecoration(
-                              hintText: 'Search...',
-                              hintStyle: const TextStyle(
+      body: PageStorage(
+        bucket: controller.bucket,
+        child: CustomScrollView(
+            key: const PageStorageKey('eventsScrollPosition'),
+            controller: controller.scrollController,
+            physics: const BouncingScrollPhysics(),
+            slivers: [
+              SliverAppBar(
+                backgroundColor: Colors.black,
+                surfaceTintColor: Colors.black,
+                shadowColor: Colors.black,
+                expandedHeight: controller.searchBar ? 20.h : 10.h,
+                floating: false,
+                pinned: true,
+                snap: false,
+                stretch: true,
+                flexibleSpace: LayoutBuilder(
+                    builder: (BuildContext context, BoxConstraints constraints) {
+                  var top = constraints.biggest.height;
+                  return FlexibleSpaceBar(
+                    centerTitle: false,
+                    titlePadding: EdgeInsets.zero,
+                    collapseMode: CollapseMode.parallax,
+                    stretchModes: const [StretchMode.zoomBackground],
+                    title: AnimatedOpacity(
+                      opacity: top > 120 ? 0 : 1,
+                      duration: const Duration(milliseconds: 400),
+                      curve: Curves.easeInOut,
+                      child: top > 120 ? SizedBox() : Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.black,
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 12.0, right: 12.0, bottom: 10),
+                          child: SafeArea(
+                            bottom: false,
+                            child: TextField(
+                              controller: controller.searchController,
+                              onChanged: (val) {
+                                controller.onSearch(val);
+                              },
+                              style: const TextStyle(
                                 color: Colors.white,
-                                fontWeight: FontWeight.w300,
+                                fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
-                              prefixIcon: const Icon(CupertinoIcons.search,
-                                  color: Colors.white, size: 18),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.white,
-                                width: .5,
-                              )),
-                              enabledBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.white,
-                                width: .5,
-                              )),
-                              focusedBorder: const OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                color: Colors.white,
-                                width: .5,
-                              )),
+                              decoration: InputDecoration(
+                                hintText: 'Search...',
+                                hintStyle: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w300,
+                                  fontSize: 13,
+                                ),
+                                prefixIcon: const Icon(CupertinoIcons.search,
+                                    color: Colors.white, size: 18),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 6),
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: .5,
+                                )),
+                                enabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: .5,
+                                )),
+                                focusedBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                  color: Colors.white,
+                                  width: .5,
+                                )),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  background: Stack(
-                    children: [
-                      Positioned.fill(
-                          child: ColoredBox(
-                        color: AppHelper.hexToColor(controller.headerColor),
-                      )),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              CachedNetworkImage(
-                                imageUrl: controller.headerLogo,
-                                placeholder: (_, val) => const Center(
-                                    child:
-                                        CircularProgressIndicator.adaptive()),
-                                errorWidget: (_, val, val2) => const Center(
-                                    child: NoDataFoundLayout(
-                                  errorMessage: 'No Image Found',
-                                )),
-                                width: 60.w,
-                                fit: BoxFit.cover,
-                              ),
-                              if (controller.searchBar)
-                                const SizedBox(height: 8),
-                              if (controller.searchBar)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8.0, vertical: 2),
-                                  child: TextField(
-                                    controller: controller.searchController,
-                                    onChanged: (val) {
-                                      controller.onSearch(val);
-                                    },
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 13,
-                                    ),
-                                    decoration: InputDecoration(
-                                      hintText: 'Search...',
-                                      hintStyle: const TextStyle(
+                    background: Stack(
+                      children: [
+                        Positioned.fill(
+                            child: ColoredBox(
+                          color: AppHelper.hexToColor(controller.headerColor),
+                        )),
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: controller.headerLogo,
+                                  placeholder: (_, val) => const Center(
+                                      child:
+                                          CircularProgressIndicator.adaptive()),
+                                  errorWidget: (_, val, val2) => const Center(
+                                      child: NoDataFoundLayout(
+                                    errorMessage: 'No Image Found',
+                                  )),
+                                  width: 60.w,
+                                  fit: BoxFit.cover,
+                                ),
+                                if (controller.searchBar)
+                                  const SizedBox(height: 8),
+                                if (controller.searchBar)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8.0, vertical: 2),
+                                    child: TextField(
+                                      controller: controller.searchController,
+                                      onChanged: (val) {
+                                        controller.onSearch(val);
+                                      },
+                                      style: const TextStyle(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.w300,
+                                        fontWeight: FontWeight.w500,
                                         fontSize: 13,
                                       ),
-                                      prefixIcon: const Icon(
-                                          CupertinoIcons.search,
+                                      decoration: InputDecoration(
+                                        hintText: 'Search...',
+                                        hintStyle: const TextStyle(
                                           color: Colors.white,
-                                          size: 18),
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: 12, vertical: 6),
-                                      border: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                        color: Colors.white,
-                                        width: .5,
-                                      )),
-                                      enabledBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                        color: Colors.white,
-                                        width: .5,
-                                      )),
-                                      focusedBorder: const OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                        color: Colors.white,
-                                        width: .5,
-                                      )),
+                                          fontWeight: FontWeight.w300,
+                                          fontSize: 13,
+                                        ),
+                                        prefixIcon: const Icon(
+                                            CupertinoIcons.search,
+                                            color: Colors.white,
+                                            size: 18),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 6),
+                                        border: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: .5,
+                                        )),
+                                        enabledBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: .5,
+                                        )),
+                                        focusedBorder: const OutlineInputBorder(
+                                            borderSide: BorderSide(
+                                          color: Colors.white,
+                                          width: .5,
+                                        )),
+                                      ),
                                     ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                [
-                  Column(
-                    children: [
-                      Obx(
-                        () => ListView.separated(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                          itemCount: controller.events.length,
-                          separatorBuilder: (_, i) {
-                            return const SizedBox(
-                              height: 16,
-                            );
-                          },
-                          itemBuilder: (_, i) {
-                            final event = controller.events[i];
-                            return EventTile(
-                                onTap: () => controller.selectEvent(event),
-                                event: event);
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  );
+                }),
               ),
-            )
-          ]),
+              SliverList(
+                delegate: SliverChildListDelegate(
+                  [
+                    Column(
+                      children: [
+                        Obx(
+                          () => ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                            itemCount: controller.events.length,
+                            separatorBuilder: (_, i) {
+                              return const SizedBox(
+                                height: 16,
+                              );
+                            },
+                            itemBuilder: (_, i) {
+                              final event = controller.events[i];
+                              return EventTile(
+                                  onTap: () => controller.selectEvent(event),
+                                  event: event);
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ]),
+      ),
     );
   }
 }
