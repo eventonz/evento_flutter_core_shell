@@ -74,8 +74,10 @@ class LandingController extends GetxController {
         if(webUrl != '') {
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
+          print('loaded');
           webViewController!.setNavigationDelegate(NavigationDelegate(
             onPageFinished: (val) {
+              print('finished');
               if(!done) {
                 done = true;
                 if (isPrev) {

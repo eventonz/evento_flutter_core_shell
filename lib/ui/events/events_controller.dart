@@ -10,6 +10,7 @@ import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/landing/landing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
 import '../../core/utils/app_global.dart';
 import '../../core/utils/helpers.dart';
 import 'subevent_sheet.dart';
@@ -23,7 +24,12 @@ class EventsController extends GetxController {
   late String headerLogo;
   late bool searchBar;
   late Event selEvent;
+  RxBool loading = false.obs;
+  int page = 1;
+
   TextEditingController searchController = TextEditingController();
+
+  final ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -32,12 +38,32 @@ class EventsController extends GetxController {
     headerLogo = eventM.header!.logo ?? '';
     headerColor = eventM.header!.color ?? '';
     searchBar = eventM.searchBar!;
-    events = eventM.events!.obs;
     allEvents = eventM.events!;
+
+    events = eventM.events!.obs.sublist(0, 20).obs;
+
+    scrollController.addListener(() {
+      if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
+        loading.value = true;
+        page +=1;
+        update();
+        Future.delayed(const Duration(milliseconds: 100), () {
+          loading.value = false;
+          events.addAll(allEvents.sublist((page-1)*20, (((page-1)*20)+20) > allEvents.length ? allEvents.length : (((page-1)*20)+20)));
+          update();
+        });
+      }
+    });
   }
 
   onSearch(String val) {
-    events.value = allEvents.where((element) => element.title.toLowerCase().contains(val.toLowerCase())).toList();
+    page = 1;
+    if(val != '') {
+      events.value = allEvents.where((element) => element.title.toLowerCase().contains(val.toLowerCase())).toList();
+    } else {
+      events.value = allEvents.sublist(0, 20).toList();
+
+    }
     update();
     events.refresh();
 
