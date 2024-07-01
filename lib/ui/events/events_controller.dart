@@ -80,7 +80,7 @@ class EventsController extends GetxController {
     if(val != '') {
       events.value = allEvents.where((element) => element.title.toLowerCase().contains(val.toLowerCase())).toList();
     } else {
-      events.value = allEvents.sublist(0, 20).toList();
+      // events.value = allEvents.sublist(0, 20).toList();
 
     }
     update();
