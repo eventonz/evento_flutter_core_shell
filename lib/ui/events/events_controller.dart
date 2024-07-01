@@ -51,19 +51,18 @@ class EventsController extends GetxController {
       scrollController = ScrollController(
         initialScrollOffset: savedPosition,
       );
-
+      Future.delayed(const Duration(seconds: 2), () {
+        scrollController.addListener(scrollListener);
+      });
     } else {
       scrollController = ScrollController();
+      scrollController.addListener(scrollListener);
     }
-
-
     events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+  }
 
-
-
-    scrollController.addListener(() {
+  scrollListener() {
       print(scrollController.position.pixels);
-      storage.write('scroll_position', scrollController.position.pixels);
       if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
         loading.value = true;
         page +=1;
@@ -74,7 +73,6 @@ class EventsController extends GetxController {
           update();
         });
       }
-    });
   }
 
   onSearch(String val) {
@@ -104,6 +102,7 @@ class EventsController extends GetxController {
   }
 
   void selectEvent(dynamic event) {
+    storage.write('scroll_position', scrollController.position.pixels);
     if (event is Event) {
       if (event.subEvents == null) {
         getConfigDetails(event);
