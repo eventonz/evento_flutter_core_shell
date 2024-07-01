@@ -58,7 +58,15 @@ class EventsController extends GetxController {
       scrollController = ScrollController();
       scrollController.addListener(scrollListener);
     }
-    events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+   // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+   events = eventM.events!.obs.sublist(
+  0, 
+  (savedPosition ?? 0.0) == 0.0 
+    ? (eventM.events!.length < 20 ? eventM.events!.length : 20) 
+    : (((savedPosition!/100).toInt()+6) >= eventM.events!.length 
+        ? eventM.events!.length 
+        : ((savedPosition!/100).toInt()+6))
+).obs;
   }
 
   scrollListener() {
