@@ -70,4 +70,4 @@ void main() {
   runApp(EventoApp(
     appEventConfig: eventConfig,
   ));
-}
+ }

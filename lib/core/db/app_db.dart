@@ -150,7 +150,7 @@ class DatabaseHandler {
 
     var query = _db.athleteDb.select()
       ..where((tbl) => tbl.eventId.equals(eventId))
-      ..orderBy([(athlete) => OrderingTerm(expression: athlete.raceno)]);
+      ..orderBy([(athlete) => OrderingTerm(expression: athlete.id)]);
 
     if (searchValue.isNotEmpty) {
       if (isFollowed) {
