@@ -150,12 +150,12 @@ class AthletesController extends GetxController {
   }
 
   List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
-    athletes.sort((x, y) => x.raceno.compareTo(y.raceno));
+    athletes.sort((x, y) => int.parse(x.athleteId).compareTo(int.parse(y.athleteId)));
     List<AppAthleteDb> assignedRaceNoAthletes = [];
     List<AppAthleteDb> unAssignedRaceNoAthletes = [];
-
+    // put unassigned racenu,ber athletes to the end of list 
     for (AppAthleteDb athlete in athletes) {
-      if (athlete.raceno == -1) {
+      if (athlete.athleteId == '9999999' ) {
         unAssignedRaceNoAthletes.add(athlete);
       } else {
         assignedRaceNoAthletes.add(athlete);
