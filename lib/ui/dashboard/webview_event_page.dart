@@ -1,4 +1,5 @@
 import 'package:evento_core/ui/dashboard/webview_event_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,7 +17,13 @@ class WebViewEventPage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          WebViewWidget(controller: controller.webViewController!),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(height: MediaQuery.of(context).padding.top+4, color: Colors.black,),
+              Expanded(child: WebViewWidget(controller: controller.webViewController!)),
+            ],
+          ),
           Visibility(
             visible: true,
             child: SafeArea(
