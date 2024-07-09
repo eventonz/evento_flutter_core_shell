@@ -36,8 +36,8 @@ class EventTile extends StatelessWidget {
                       child: NoDataFoundLayout(
                     errorMessage: 'No Image Found',
                   )),
-                  width: 40.w,
-                  height: 10.h,
+                  width: 36.w,
+                  height: 8.h,
                   fit: BoxFit.cover,
                 ),
               )
@@ -57,7 +57,7 @@ class EventTile extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
               const SizedBox(
-                height: 4,
+                height: 1,
               ),
               AppText(
                 event.subtitle,

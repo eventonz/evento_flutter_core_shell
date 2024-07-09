@@ -75,7 +75,7 @@ class LandingController extends GetxController {
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
           print('loaded');
-          await Future.delayed(const Duration(seconds: 2));
+          await Future.delayed(const Duration(seconds: 1));
           if (isPrev) {
             Get.off(
                     () => const WebViewEventPage(),
