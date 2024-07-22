@@ -149,19 +149,33 @@ class AthletesController extends GetxController {
     Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant});
   }
 
-  List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
-    athletes.sort((x, y) => int.parse(x.raceno).compareTo(int.parse(y.raceno)));
-    List<AppAthleteDb> assignedRaceNoAthletes = [];
-    List<AppAthleteDb> unAssignedRaceNoAthletes = [];
-    // put unassigned racenu,ber athletes to the end of list 
-    for (AppAthleteDb athlete in athletes) {
-      if (athlete.athleteId == '9999999' ) {
-        unAssignedRaceNoAthletes.add(athlete);
-      } else {
-        assignedRaceNoAthletes.add(athlete);
-      }
-    }
+List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
+  athletes.sort((x, y) {
+    int xValue = _parseRaceno(x.raceno);
+    int yValue = _parseRaceno(y.raceno);
+    return xValue.compareTo(yValue);
+  });
 
+  List<AppAthleteDb> assignedRaceNoAthletes = [];
+  List<AppAthleteDb> unAssignedRaceNoAthletes = [];
+  
+  // Put unassigned racenumber athletes to the end of list 
+  for (AppAthleteDb athlete in athletes) {
+    if (athlete.athleteId == '9999999') {
+      unAssignedRaceNoAthletes.add(athlete);
+    } else {
+      assignedRaceNoAthletes.add(athlete);
+    }
+  }
+  
     return [...assignedRaceNoAthletes, ...unAssignedRaceNoAthletes];
   }
+  int _parseRaceno(String raceno) {
+  try {
+    return int.parse(raceno);
+  } catch (e) {
+    return double.maxFinite.toInt(); // Assign a large value to non-integer raceno
+  }
+}
+
 }
