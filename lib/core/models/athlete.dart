@@ -30,6 +30,7 @@ class Entrants {
   late String name;
   late String profileImage;
   late String id;
+  late String disRaceNo;
   late int contest;
   late String extra;
   late bool canFollow;
@@ -40,6 +41,7 @@ class Entrants {
       this.number = '',
       this.name = '',
       this.profileImage = '',
+      this.disRaceNo = '',
       this.id = '-1',
       this.contest = -1,
       this.extra = '',
@@ -54,6 +56,7 @@ class Entrants {
     id = json['id'] ?? '-1';
     contest = json['contest'] ?? -1;
     extra = json['extra'] ?? '';
+    disRaceNo = json['disRaceNo'] ?? '';
     canFollow = json['can_follow'] ?? true;
     if (json['athlete_details'] != null) {
       athleteDetails = <AthleteDetails>[];
@@ -71,6 +74,7 @@ class Entrants {
     data['profile_image'] = profileImage;
     data['id'] = id;
     data['contest'] = contest;
+    data['disRaceNo'] = disRaceNo;
     data['extra'] = extra;
     if (athleteDetails != null) {
       data['athlete_details'] = athleteDetails!.map((v) => v.toJson()).toList();

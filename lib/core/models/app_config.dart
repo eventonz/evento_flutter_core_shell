@@ -10,6 +10,7 @@ class AppConfig {
   Athletes? athletes;
   Settings? settings;
   Tracking? tracking;
+  Results? results;
   AppTheme? theme;
   MiniPlayerConfig? miniPlayerConfig;
   List<Advert>? adverts;
@@ -18,6 +19,7 @@ class AppConfig {
       {this.athleteDetails,
       this.home,
       this.menu,
+      this.results,
       this.athletes,
       this.settings,
       this.tracking,
@@ -25,11 +27,15 @@ class AppConfig {
       this.theme});
 
   AppConfig.fromJson(Map<String, dynamic> json) {
+    print('config');
+    print(json);
+    print(json['results']);
     athleteDetails = json['athlete_details'] != null
         ? AthleteDetails.fromJson(json['athlete_details'])
         : null;
     home = json['home'] != null ? Home.fromJson(json['home']) : null;
     menu = json['menu'] != null ? Menu.fromJson(json['menu']) : null;
+    results = json['results'] != null ? Results.fromJson(json['results']) : null;
     tracking =
         json['tracking'] != null ? Tracking.fromJson(json['tracking']) : null;
     athletes =
@@ -54,6 +60,9 @@ class AppConfig {
     }
     if (menu != null) {
       data['menu'] = menu!.toJson();
+    }
+    if (results != null) {
+      data['results'] = results!.toJson();
     }
     if (athletes != null) {
       data['athletes'] = athletes!.toJson();
@@ -391,6 +400,40 @@ class Paths {
 
   @override
   int get hashCode => url.hashCode ^ name.hashCode;
+}
+
+class Results {
+  bool? showResults;
+  Items? config;
+
+  Results({this.showResults, this.config});
+
+  Results.fromJson(Map<String, dynamic> json) {
+    showResults = json['show_results'];
+    config = Items.fromJson(json['config']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'show_results' : showResults,
+      'config' : config?.toJson(),
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Results &&
+        showResults == other.showResults &&
+        config == other.config; // Compare paths list
+  }
+
+  @override
+  int get hashCode =>
+      showResults.hashCode ^
+      config.hashCode;
+
 }
 
 class Athletes {

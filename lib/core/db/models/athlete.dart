@@ -1,3 +1,5 @@
+// @dart=3.0
+
 import 'package:drift/drift.dart';
 
 @DataClassName('AppAthleteDb')
@@ -7,6 +9,7 @@ class AthleteDb extends Table {
   BoolColumn get canFollow => boolean()();
   BoolColumn get isFollowed => boolean()();
   TextColumn get name => text()();
+  TextColumn get disRaceNo => text().nullable()();
   TextColumn get extra => text()();
   TextColumn get profileImage => text()();
   TextColumn get raceno => text()();

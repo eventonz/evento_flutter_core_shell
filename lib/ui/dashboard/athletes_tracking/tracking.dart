@@ -183,7 +183,7 @@ class SliderAthleteTile extends StatelessWidget {
                   ),
                 ),
                 AthleteRaceNo(
-                  number: athelete.raceno,
+                  number: athelete.disRaceNo ?? '',
                   width: 18.w,
                 )
               ],

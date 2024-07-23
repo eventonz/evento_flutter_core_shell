@@ -12,7 +12,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_map/flutter_map.dart' as flutter_map;
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
@@ -312,6 +312,8 @@ class _EventoMapState extends State<EventoMap> {
           children: [
             if(Platform.isIOS)
               apple_maps.AppleMap(
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
                 mapType: controller.mapType.value,
                 onCameraMove: (cameraPosition) {
                   final zoom = cameraPosition.zoom;
@@ -322,7 +324,7 @@ class _EventoMapState extends State<EventoMap> {
                 initialCameraPosition: apple_maps.CameraPosition(
                 target: controller.initialPathCenterPoint().lat.toDouble() == 0.0 ? apple_maps.LatLng(-42.0178775,174.3417791) : apple_maps.LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble()),
                 zoom: bounds.isEmpty ? 5 : TrackingMapView.dgetBoundsZoomLevel(
-                    LatLngBounds.fromPoints(bounds), {
+                    flutter_map.LatLngBounds.fromPoints(bounds), {
 
                   'height': MediaQuery
                       .of(context)
@@ -332,240 +334,263 @@ class _EventoMapState extends State<EventoMap> {
                       .of(context)
                       .size
                       .width})*1.05,
-              ), polylines: Set.of([apple_maps.Polyline(width: 3, color: AppHelper.hexToColor(controller.color), polylineId: apple_maps.PolylineId('route'), points: controller.routePathsCordinates.map((e) => apple_maps.LatLng(e.lat.toDouble(), e.lng.toDouble())).toList())]),
+              ), polylines: Set.of([
+                apple_maps.Polyline(width: 6, color: Colors.black, polylineId: apple_maps.PolylineId('route_outline'), points: controller.routePathsCordinates.map((e) => apple_maps.LatLng(e.lat.toDouble(), e.lng.toDouble())).toList()),
+                apple_maps.Polyline(width: 3, color: AppHelper.hexToColor(controller.color), polylineId: apple_maps.PolylineId('route'), points: controller.routePathsCordinates.map((e) => apple_maps.LatLng(e.lat.toDouble(), e.lng.toDouble())).toList()),
+              ]),
                 annotations: Set.of([...controller.annotations.values, ...pointAnnotations, if(controller.elevationAnnotationApple.value != null)controller.elevationAnnotationApple.value!, ...controller.points.values]),
                 onMapCreated: (appleMapsController) {
                   controller.appleMapsController = appleMapsController;
                 },
               )
             else
-              MapWidget(
-                styleUri: controller.mapStyle.value,
-                cameraOptions: CameraOptions(
-                    center: Point(coordinates:
-                    controller.initialPathCenterPoint()
+              Stack(
+                children: [
+                  MapWidget(
+                    styleUri: controller.mapStyle.value,
+                    cameraOptions: CameraOptions(
+                        center: Point(coordinates:
+                        controller.initialPathCenterPoint()
 
-                    ).toJson(),
-                    zoom: TrackingMapView.dgetBoundsZoomLevel(
-                        LatLngBounds.fromPoints(bounds), {
-                      'height': MediaQuery
-                          .of(context)
-                          .size
-                          .height,
-                      'width': MediaQuery
-                          .of(context)
-                          .size
-                          .width})
-                ),
-                onCameraChangeListener: (data) async {
-                  final state = await controller.mapboxMap?.getCameraState();
-                  var zoom = state?.zoom ?? 0;
-                  onZoom(zoom);
-                },
-                onMapCreated: (mapboxMap) {
-                  controller.mapboxMap = mapboxMap;
-                  mapboxMap.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
-                  // add the DEM source as a terrain layer with exaggerated height
-                  //mapboxMap.style.til();
-                  mapboxMap.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
+                        ).toJson(),
+                        zoom: TrackingMapView.dgetBoundsZoomLevel(
+                            flutter_map.LatLngBounds.fromPoints(bounds), {
+                          'height': MediaQuery
+                              .of(context)
+                              .size
+                              .height,
+                          'width': MediaQuery
+                              .of(context)
+                              .size
+                              .width})
+                    ),
+                    onCameraChangeListener: (data) async {
+                      final state = await controller.mapboxMap?.getCameraState();
+                      var zoom = state?.zoom ?? 0;
+                      onZoom(zoom);
+                    },
+                    onMapCreated: (mapboxMap) {
+                      controller.mapboxMap = mapboxMap;
+                      mapboxMap.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
+                      // add the DEM source as a terrain layer with exaggerated height
+                      //mapboxMap.style.til();
+                      mapboxMap.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
 
-                  mapboxMap.location.updateSettings(LocationComponentSettings(
-                      enabled: true,
-                      pulsingEnabled: true
-                  ));
+                      mapboxMap.location.updateSettings(LocationComponentSettings(
+                          enabled: true,
+                          pulsingEnabled: true
+                      ));
 
-                  mapboxMap.compass.updateSettings(CompassSettings(
-                    marginTop: 60,
-                    marginRight: 16,
-                  ));
 
-                  mapboxMap.annotations.createPolylineAnnotationManager().then((
-                      value) async {
-                    final polylineAnnotationManager = value;
-                    polylineAnnotationManager.create(PolylineAnnotationOptions(
-                        geometry: LineString(
-                            coordinates: controller.routePathsCordinates).toJson(),
-                        lineColor: AppHelper.hexToColor(controller.color).value, lineWidth: 3));
-                  });
-                  mapboxMap.annotations.createPointAnnotationManager().then((value) async {
-                    final pointAnnotationManager = value;
-                    controller.pointAnnotationManager = pointAnnotationManager;
+                      mapboxMap.compass.updateSettings(CompassSettings(
+                        marginTop: 60,
+                        marginRight: 16,
+                      ));
 
-                    if(controller.showStartIcon) {
-                      Widget widget = SvgPicture.asset(
-                          AppHelper.getSvg('startingpoint'), width: 27, height: 27);
-                      controller.screenshotController.captureFromWidget(widget)
-                          .then((value) {
-                        pointAnnotationManager.create(PointAnnotationOptions(
-                          geometry: Point(
-                              coordinates: controller.routePathsCordinates.first)
-                              .toJson(),
-                          image: value,
-                        ));
+                      mapboxMap.annotations.createPolylineAnnotationManager().then((
+                          value) async {
+                        final polylineAnnotationManager = value;
+                        polylineAnnotationManager.create(PolylineAnnotationOptions(
+                            geometry: LineString(
+                                coordinates: controller.routePathsCordinates).toJson(),
+                            lineColor: Colors.black.value, lineWidth: 6));
+                        polylineAnnotationManager.create(PolylineAnnotationOptions(
+                            geometry: LineString(
+                                coordinates: controller.routePathsCordinates).toJson(),
+                            lineColor: AppHelper.hexToColor(controller.color).value, lineWidth: 3));
                       });
-                    }
+                      mapboxMap.annotations.createPointAnnotationManager().then((value) async {
+                        final pointAnnotationManager = value;
+                        controller.pointAnnotationManager = pointAnnotationManager;
 
-                    Widget widget = Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white,
-                      ),
-                      child: SvgPicture.asset(
-                          AppHelper.getSvg('startingpoint'), color: Colors.black, width: 16, height: 16),
-                    );
-                    controller.screenshotController.captureFromWidget(widget)
-                        .then((value) {
-                      pointAnnotationManager.create(PointAnnotationOptions(
-                        geometry: Point(
-                            coordinates: controller.routePathsCordinates.first)
-                            .toJson(),
-                        image: value,
-                      )).then((val) {
-                        controller.elevationAnnotation = val;
-                        controller.elevationImage = value;
-                      });
-                    });
+                        if(controller.showStartIcon) {
+                          Widget widget = SvgPicture.asset(
+                              AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+                          controller.screenshotController.captureFromWidget(widget)
+                              .then((value) {
+                            pointAnnotationManager.create(PointAnnotationOptions(
+                              geometry: Point(
+                                  coordinates: controller.routePathsCordinates.first)
+                                  .toJson(),
+                              image: value,
+                            ));
+                          });
+                        }
 
-                    if(controller.showFinishIcon) {
-                      Widget widget = SvgPicture.asset(
-                          AppHelper.getSvg('finishpoint'), width: 27, height: 27);
-                      controller.screenshotController.captureFromWidget(widget)
-                          .then((value) {
-                        pointAnnotationManager.create(PointAnnotationOptions(
-                          geometry: Point(
-                              coordinates: controller.routePathsCordinates.last)
-                              .toJson(),
-                          image: value,
-                        ));
-                      });
-                    }
-
-                    final points = controller.geoJson.features;
-                    for (int index = 0; index < points.length; index++) {
-                      var element = points[index];
-                      if(element.type == GeoJsonFeatureType.point) {
-                        Widget widget = Image.asset(AppHelper.getImage('${element
-                            .properties?['type']}.png'), width: 30, height: 30);
+                        Widget widget = Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: SvgPicture.asset(
+                              AppHelper.getSvg('startingpoint'), color: Colors.black, width: 16, height: 16),
+                        );
                         controller.screenshotController.captureFromWidget(widget)
-                            .then((value) async {
-                          PointAnnotation pointAnnotation = await pointAnnotationManager
-                              .create(PointAnnotationOptions(
-                            geometry: Point(coordinates: Position(
-                                (element.geometry as GeoJsonPoint).geoPoint
-                                    .longitude,
-                                (element.geometry as GeoJsonPoint).geoPoint
-                                    .latitude)).toJson(),
+                            .then((value) {
+                          pointAnnotationManager.create(PointAnnotationOptions(
+                            geometry: Point(
+                                coordinates: controller.routePathsCordinates.first)
+                                .toJson(),
                             image: value,
-                          ));
-                          if (controller.interestAnnotations[element
-                              .properties?['type']] == null) {
-                            controller.interestAnnotations[element
-                                .properties?['type']] = [];
-                            controller.interestImages[element
-                                .properties?['type']] = value;
-                          }
-                          controller.interestAnnotations[element
-                              .properties?['type']]!.add(pointAnnotation);
-                          controller.geoJson.features[index]
-                              .properties?['annotation'] = pointAnnotation.id;
+                          )).then((val) {
+                            controller.elevationAnnotation = val;
+                            controller.elevationImage = value;
+                          });
                         });
-                      }
-                      print(controller.geoJson.features.length);
-                    }
-                    pointAnnotationManager.addOnPointAnnotationClickListener(AnnotationClickListener((annotation) {
-                      var point = controller.geoJson.features.where((element) => element.properties?['annotation'] == annotation.id).firstOrNull;
-                      if(point == null) {
-                        return;
-                      }
-                      showModalBottomSheet(context: context, builder: (_) => BottomSheet(
-                          elevation: 0,
-                          onClosing: () {}, builder: (_) => Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
-                              child: Row(
-                                children: [
-                                  Image.asset(AppHelper.getImage('${point
-                                      .properties?['type']}.png'), width: 30, height: 30),
-                                  const SizedBox(width: 8),
-                                  Text('${point.properties?['title']}', style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.w700,
-                                  )),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                              child: Text('${point.properties?['description']}', style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              )),
-                            ),
-                            if(point.properties?['direction'] == true)
-                              ...[
-                                const SizedBox(height: 16),
+
+                        if(controller.showFinishIcon) {
+                          Widget widget = SvgPicture.asset(
+                              AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+                          controller.screenshotController.captureFromWidget(widget)
+                              .then((value) {
+                            pointAnnotationManager.create(PointAnnotationOptions(
+                              geometry: Point(
+                                  coordinates: controller.routePathsCordinates.last)
+                                  .toJson(),
+                              image: value,
+                            ));
+                          });
+                        }
+
+                        final points = controller.geoJson.features;
+                        for (int index = 0; index < points.length; index++) {
+                          var element = points[index];
+                          if(element.type == GeoJsonFeatureType.point) {
+                            Widget widget = Image.asset(AppHelper.getImage('${element
+                                .properties?['type']}.png'), width: 30, height: 30);
+                            controller.screenshotController.captureFromWidget(widget)
+                                .then((value) async {
+                              PointAnnotation pointAnnotation = await pointAnnotationManager
+                                  .create(PointAnnotationOptions(
+                                geometry: Point(coordinates: Position(
+                                    (element.geometry as GeoJsonPoint).geoPoint
+                                        .longitude,
+                                    (element.geometry as GeoJsonPoint).geoPoint
+                                        .latitude)).toJson(),
+                                image: value,
+                              ));
+                              if (controller.interestAnnotations[element
+                                  .properties?['type']] == null) {
+                                controller.interestAnnotations[element
+                                    .properties?['type']] = [];
+                                controller.interestImages[element
+                                    .properties?['type']] = value;
+                              }
+                              controller.interestAnnotations[element
+                                  .properties?['type']]!.add(pointAnnotation);
+                              controller.geoJson.features[index]
+                                  .properties?['annotation'] = pointAnnotation.id;
+                            });
+                          }
+                          print(controller.geoJson.features.length);
+                        }
+                        pointAnnotationManager.addOnPointAnnotationClickListener(AnnotationClickListener((annotation) {
+                          var point = controller.geoJson.features.where((element) => element.properties?['annotation'] == annotation.id).firstOrNull;
+                          if(point == null) {
+                            return;
+                          }
+                          showModalBottomSheet(context: context, builder: (_) => BottomSheet(
+                              elevation: 0,
+                              onClosing: () {}, builder: (_) => Container(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(AppHelper.getImage('${point
+                                          .properties?['type']}.png'), width: 30, height: 30),
+                                      const SizedBox(width: 8),
+                                      Text('${point.properties?['title']}', style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.w700,
+                                      )),
+                                    ],
+                                  ),
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                                  child: ElevatedButton(onPressed: () {
-                                    AppHelper.showDirectionsOnMap(apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
-                                  }, style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
-                                    shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                                  ), child: Text('Get Directions', style: TextStyle(
-                                    color: Theme.of(context).cardColor,
-                                  ),),),
+                                  child: Text('${point.properties?['description']}', style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  )),
                                 ),
+                                if(point.properties?['direction'] == true)
+                                  ...[
+                                    const SizedBox(height: 16),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                                      child: ElevatedButton(onPressed: () {
+                                        AppHelper.showDirectionsOnMap(apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude));
+                                      }, style: ButtonStyle(
+                                        backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
+                                        shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
+                                      ), child: Text('Get Directions', style: TextStyle(
+                                        color: Theme.of(context).cardColor,
+                                      ),),),
+                                    ),
+                                  ],
+                                SizedBox(height: MediaQuery.of(context).padding.bottom+8),
                               ],
-                            SizedBox(height: MediaQuery.of(context).padding.bottom+8),
-                          ],
-                        ),
-                      )));
-                    }));
+                            ),
+                          )));
+                        }));
 
-                    //if(controller.showDistanceMarkers.value) {
-                    final lineString = controller.getLineStringForPath();
-                    final totalDistance = controller.calculateTotalDistance();
+                        //if(controller.showDistanceMarkers.value) {
+                        final lineString = controller.getLineStringForPath();
+                        final totalDistance = controller.calculateTotalDistance();
 
-                    for(int i = 1; i < totalDistance; i++) {
-                      Widget widget = Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.black,
-                              width: 1,
-                            )
-                        ),
-                        child: Center(
-                          child: Text('$i', style: const TextStyle(
-                            fontSize: 8,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),),
-                        ),
-                      );
+                        for(int i = 1; i < totalDistance; i++) {
+                          Widget widget = Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.black,
+                                  width: 1,
+                                )
+                            ),
+                            child: Center(
+                              child: Text('$i', style: const TextStyle(
+                                fontSize: 8,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),),
+                            ),
+                          );
 
-                      controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100)).then((bytes) {
-                        controller.images[i] = bytes;
+                          controller.screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100)).then((bytes) {
+                            controller.images[i] = bytes;
 
-                        pointAnnotationManager.create(PointAnnotationOptions(
-                          geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)).toJson(),
-                          image: i % 5 == 0 ? controller.images[i] : null,
-                        )).then((pointAnnotation) {
-                          controller.points[i] = pointAnnotation;
-                        });
+                            pointAnnotationManager.create(PointAnnotationOptions(
+                              geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)).toJson(),
+                              image: i % 5 == 0 ? controller.images[i] : null,
+                            )).then((pointAnnotation) {
+                              controller.points[i] = pointAnnotation;
+                            });
+                          });
+                          //}
+                        }
                       });
-                      //}
-                    }
-                  });
-                },
+                    },
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: 16,
+                    child: SafeArea(
+                      child: CupertinoButton(
+                          padding: const EdgeInsets.all(0),
+                          color: AppColors.white,
+                          onPressed: controller.showUserLocation,
+                          child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
+                    ),
+                  ),
+                ],
               ),
             if(controller.showElevation.value)
             Positioned(

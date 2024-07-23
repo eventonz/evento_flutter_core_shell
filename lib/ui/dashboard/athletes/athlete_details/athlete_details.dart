@@ -53,7 +53,7 @@ class AthleteDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             child: AthleteRaceNo(
-              number: controller.selEntrant.raceno,
+              number: controller.selEntrant.disRaceNo ?? '',
               width: 20.w,
             ),
           )

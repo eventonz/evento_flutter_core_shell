@@ -2,6 +2,7 @@ import 'package:evento_core/core/models/ss_event_response.dart';
 import 'package:evento_core/core/models/ss_event_result.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
+import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,9 @@ class ResultsScreenController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    items = (Get.arguments[AppKeys.moreItem] as Items);
+
+    items = (Get.arguments?[AppKeys.moreItem] as Items?);
+    items ??= AppGlobals.appConfig?.results?.config;
     raceId = items!.sportSplitsRaceId ?? 0;
     getEvent();
     scrollController.addListener(() {

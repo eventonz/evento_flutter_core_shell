@@ -9,6 +9,7 @@ void main() {
     multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
     multiEventListId: '23',
     splashImage: 'assets/images/splash_image.png',
+    isTimer: true,
   );
     
   
@@ -19,6 +20,7 @@ void main() {
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
     singleEventId: '91',
     splashImage: 'assets/images/splash_image.png',
+    isTimer: true,
   );
 
 

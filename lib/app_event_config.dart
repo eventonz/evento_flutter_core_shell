@@ -7,6 +7,7 @@ class AppEventConfig {
     this.singleEventId,
     this.multiEventListUrl,
     this.multiEventListId,
+    this.isTimer,
   });
 
   final String appName;
@@ -16,4 +17,5 @@ class AppEventConfig {
   final String? singleEventId;
   final String? multiEventListUrl;
   final String? multiEventListId;
+  final bool? isTimer;
 }

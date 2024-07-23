@@ -44,7 +44,7 @@ class AppBottomNav extends StatelessWidget {
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Icon(menu.iconData,
+                                menu.image == null ? Icon(menu.iconData,
                                     color: controller.selMenu.value == menu
                                         ? (Theme.of(context).brightness ==
                                                 Brightness.light
@@ -53,7 +53,17 @@ class AppBottomNav extends StatelessWidget {
                                         : Theme.of(context).brightness ==
                                                 Brightness.light
                                             ? AppColors.greyLight.withOpacity(0.4)
-                                            : AppColors.grey.withOpacity(0.8)),
+                                            : AppColors.grey.withOpacity(0.8))
+                                : Image.asset(menu.image!,
+                                    color: controller.selMenu.value == menu
+                                        ? (Theme.of(context).brightness ==
+                                        Brightness.light
+                                        ? AppColors.accentDark
+                                        : AppColors.accentLight)
+                                        : Theme.of(context).brightness ==
+                                        Brightness.light
+                                        ? AppColors.greyLight.withOpacity(0.4)
+                                        : AppColors.grey.withOpacity(0.8)),
                                 const SizedBox(
                                   height: 4,
                                 ),

@@ -33,6 +33,7 @@ class MoreController extends GetxController {
   }
 
   storeCache() async {
+    
     int i = 0;
     moreDetails.items?.forEach((item) {
       i++;
@@ -43,13 +44,27 @@ class MoreController extends GetxController {
             return slider;
           }).toList();
           if(sliders!.isNotEmpty) {
-            DefaultCacheManager().getSingleFile(sliders!.first.video ?? sliders!.first.image!).then((value) {
-              print(value.path);
-              print(value.path);
-              sliders![0].videoPlayerController = VideoPlayerController.file(value)..initialize().then((value) {
+            for(int x = 0; x < sliders!.length; x++) {
+              if((sliders![x].video ?? sliders![x].image) == null) {
+                continue;
+              }
+              try {
+                DefaultCacheManager().getSingleFile(
+                    sliders![x].video ?? sliders![x].image!).then((value) {
+                  print(value.path);
+                  print(value.path);
+                  sliders![0].videoPlayerController =
+                  VideoPlayerController.file(value)
+                    ..initialize().then((value) {
 
-              });
-            });
+                    });
+                });
+              } catch (e) {
+
+              }
+            }
+
+
           }
 
         });

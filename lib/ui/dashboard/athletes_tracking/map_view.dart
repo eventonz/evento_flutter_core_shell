@@ -440,7 +440,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
               Obx(
                 () => apple_maps.AppleMap(
                   myLocationEnabled: true,
-
+                  myLocationButtonEnabled: true,
                   mapType: controller.currentStyle.value == 0 ? apple_maps.MapType.standard : (controller.currentStyle.value == 1 ? apple_maps.MapType.hybrid : apple_maps.MapType.satellite),
                   onMapCreated: (appleMapController) async {
                     controller.appleMapController = appleMapController;
@@ -479,12 +479,6 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                             color: AppColors.white,
                             onPressed: controller.changeMapStyle,
                             child: SvgPicture.asset(AppHelper.getSvg('layers'), width: 28,)),
-                        const SizedBox(height: 16),
-                        CupertinoButton(
-                            padding: const EdgeInsets.all(0),
-                            color: AppColors.white,
-                            onPressed: controller.showUserLocation,
-                            child: SvgPicture.asset(AppHelper.getSvg('near_me'), width: 28,)),
                       ],
                     ),
                   )),

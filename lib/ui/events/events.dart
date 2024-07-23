@@ -67,28 +67,28 @@ class EventsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
-                              decoration: InputDecoration(
+                              decoration: const InputDecoration(
                                 hintText: 'Search...',
-                                hintStyle: const TextStyle(
+                                hintStyle: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w300,
                                   fontSize: 13,
                                 ),
-                                prefixIcon: const Icon(CupertinoIcons.search,
+                                prefixIcon: Icon(CupertinoIcons.search,
                                     color: Colors.white, size: 18),
-                                contentPadding: const EdgeInsets.symmetric(
+                                contentPadding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
-                                border: const OutlineInputBorder(
+                                border: OutlineInputBorder(
                                     borderSide: BorderSide(
                                   color: Colors.white,
                                   width: .5,
                                 )),
-                                enabledBorder: const OutlineInputBorder(
+                                enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                   color: Colors.white,
                                   width: .5,
                                 )),
-                                focusedBorder: const OutlineInputBorder(
+                                focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
                                   color: Colors.white,
                                   width: .5,
@@ -140,31 +140,31 @@ class EventsScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         fontSize: 13,
                                       ),
-                                      decoration: InputDecoration(
+                                      decoration: const InputDecoration(
                                         hintText: 'Search...',
-                                        hintStyle: const TextStyle(
+                                        hintStyle: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w300,
                                           fontSize: 13,
                                         ),
-                                        prefixIcon: const Icon(
+                                        prefixIcon: Icon(
                                             CupertinoIcons.search,
                                             color: Colors.white,
                                             size: 18),
                                         contentPadding:
-                                            const EdgeInsets.symmetric(
+                                            EdgeInsets.symmetric(
                                                 horizontal: 12, vertical: 6),
-                                        border: const OutlineInputBorder(
+                                        border: OutlineInputBorder(
                                             borderSide: BorderSide(
                                           color: Colors.white,
                                           width: .5,
                                         )),
-                                        enabledBorder: const OutlineInputBorder(
+                                        enabledBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                           color: Colors.white,
                                           width: .5,
                                         )),
-                                        focusedBorder: const OutlineInputBorder(
+                                        focusedBorder: OutlineInputBorder(
                                             borderSide: BorderSide(
                                           color: Colors.white,
                                           width: .5,

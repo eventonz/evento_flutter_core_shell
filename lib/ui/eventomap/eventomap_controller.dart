@@ -12,6 +12,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geodart/geometries.dart' as geodart;
 import 'package:geojson/geojson.dart';
+import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:get/get.dart';
 import 'package:get/get_rx/get_rx.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -117,6 +118,59 @@ class EventoMapController extends GetxController {
     showElevation.value = show;
     update();
   }
+
+  Future<void> showUserLocation() async {
+
+    bool serviceEnabled;
+    geolocator.LocationPermission permission;
+
+    try {
+      // Test if location services are enabled.
+      serviceEnabled = await geolocator.Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        // Location services are not enabled don't continue
+        // accessing the position and request users of the
+        // App to enable the location services.
+        return Future.error('Location services are disabled.');
+      }
+    } catch(e) {
+      ToastUtils.show('Location service is disabled');
+      return;
+    }
+
+    permission = await geolocator.Geolocator.checkPermission();
+    if (permission == geolocator.LocationPermission.denied) {
+      permission = await geolocator.Geolocator.requestPermission();
+      if (permission == geolocator.LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        //return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == geolocator.LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      /*return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');*/
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    var position = await geolocator.Geolocator.getCurrentPosition();
+    if(Platform.isAndroid) {
+      mapboxMap?.setCamera(CameraOptions(
+        center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
+        zoom: 15,
+      ));
+    } else {
+
+      //appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(position.latitude, position.longitude), zoom: 15)));
+    }
+  }
+
 
   void changeDistanceMarkers(bool show) async {
     showDistanceMarkers.value = show;

@@ -115,11 +115,15 @@ class AthletesController extends GetxController {
       yield* controller.stream;
       return;
     }
+    print('list.length 2');
+
     await for (final list in DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value)) {
       // Accumulate items into a list
       Future.delayed(const Duration(milliseconds: 100), () {
         lastOffset = offset.value;
       });
+      print(list.length);
+      print('list.length');
       for (final item in list) {
         int index = accumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
         if(index == -1) {

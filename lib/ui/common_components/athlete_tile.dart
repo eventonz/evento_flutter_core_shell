@@ -14,10 +14,10 @@ class AthleteTile extends StatelessWidget {
   final VoidCallback onTap;
 
   String raceNo() {
-    if (entrant.raceno == '') {
+    if (entrant.disRaceNo == '') {
       return 'TBC';
     }
-    return entrant.raceno.toString();
+    return entrant.disRaceNo.toString();
   }
 
   @override

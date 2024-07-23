@@ -92,6 +92,7 @@ class AssistantController extends GetxController {
   Future<void> callServer(String message) async {
     String url = 'assistant';
 
+    print('ONESIGNAL ID: ${AppGlobals.oneSignalUserId}');
     final res = await ApiHandler.postHttp(
         endPoint: url, body: {
         'request' : message,

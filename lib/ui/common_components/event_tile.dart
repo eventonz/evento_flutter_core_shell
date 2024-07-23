@@ -9,6 +9,8 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../core/utils/app_global.dart';
+
 class EventTile extends StatelessWidget {
   const EventTile({Key? key, required this.onTap, required this.event})
       : super(key: key);
@@ -36,8 +38,8 @@ class EventTile extends StatelessWidget {
                       child: NoDataFoundLayout(
                     errorMessage: 'No Image Found',
                   )),
-                  width: 36.w,
-                  height: 8.h,
+                  width: AppGlobals.appEventConfig.isTimer == true ? (36.w*0.75) : 36.w,
+                  height: AppGlobals.appEventConfig.isTimer == true ? (8.h*0.75) : 8.h,
                   fit: BoxFit.cover,
                 ),
               )

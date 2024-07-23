@@ -356,7 +356,7 @@ class ResultsScreen extends StatelessWidget {
                       if(!(controller.items?.linkToDetail ?? false)) {
                         return;
                       }
-                      AppAthleteDb athleteDb = AppAthleteDb(id: athlete.raceNo!, athleteId: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', raceno: athlete.raceNo!.toString(), eventId: athlete.eventId!, info: '', contestNo: athlete.overallPos!, searchTag: '');
+                      AppAthleteDb athleteDb = AppAthleteDb(id: athlete.raceNo!, athleteId: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', raceno: athlete.raceNo!.toString(), eventId: athlete.eventId!, info: '', contestNo: athlete.overallPos!, searchTag: '', disRaceNo: athlete.raceNo?.toString() ?? '');
                       Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: athleteDb, 'can_follow': false});
                     },
                     child: Container(

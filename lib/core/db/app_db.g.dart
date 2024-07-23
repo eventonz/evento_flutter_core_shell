@@ -47,6 +47,12 @@ class $AthleteDbTable extends AthleteDb
   late final GeneratedColumn<String> name = GeneratedColumn<String>(
       'name', aliasedName, false,
       type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _disRaceNoMeta =
+      const VerificationMeta('disRaceNo');
+  @override
+  late final GeneratedColumn<String> disRaceNo = GeneratedColumn<String>(
+      'dis_race_no', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _extraMeta = const VerificationMeta('extra');
   @override
   late final GeneratedColumn<String> extra = GeneratedColumn<String>(
@@ -93,6 +99,7 @@ class $AthleteDbTable extends AthleteDb
         canFollow,
         isFollowed,
         name,
+        disRaceNo,
         extra,
         profileImage,
         raceno,
@@ -139,6 +146,12 @@ class $AthleteDbTable extends AthleteDb
           _nameMeta, name.isAcceptableOrUnknown(data['name']!, _nameMeta));
     } else if (isInserting) {
       context.missing(_nameMeta);
+    }
+    if (data.containsKey('dis_race_no')) {
+      context.handle(
+          _disRaceNoMeta,
+          disRaceNo.isAcceptableOrUnknown(
+              data['dis_race_no']!, _disRaceNoMeta));
     }
     if (data.containsKey('extra')) {
       context.handle(
@@ -203,6 +216,8 @@ class $AthleteDbTable extends AthleteDb
           .read(DriftSqlType.bool, data['${effectivePrefix}is_followed'])!,
       name: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}name'])!,
+      disRaceNo: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}dis_race_no']),
       extra: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}extra'])!,
       profileImage: attachedDatabase.typeMapping
@@ -232,6 +247,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
   final bool canFollow;
   final bool isFollowed;
   final String name;
+  final String? disRaceNo;
   final String extra;
   final String profileImage;
   final String raceno;
@@ -245,6 +261,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       required this.canFollow,
       required this.isFollowed,
       required this.name,
+      this.disRaceNo,
       required this.extra,
       required this.profileImage,
       required this.raceno,
@@ -260,6 +277,9 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
     map['can_follow'] = Variable<bool>(canFollow);
     map['is_followed'] = Variable<bool>(isFollowed);
     map['name'] = Variable<String>(name);
+    if (!nullToAbsent || disRaceNo != null) {
+      map['dis_race_no'] = Variable<String>(disRaceNo);
+    }
     map['extra'] = Variable<String>(extra);
     map['profile_image'] = Variable<String>(profileImage);
     map['raceno'] = Variable<String>(raceno);
@@ -277,6 +297,9 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       canFollow: Value(canFollow),
       isFollowed: Value(isFollowed),
       name: Value(name),
+      disRaceNo: disRaceNo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(disRaceNo),
       extra: Value(extra),
       profileImage: Value(profileImage),
       raceno: Value(raceno),
@@ -296,6 +319,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       canFollow: serializer.fromJson<bool>(json['canFollow']),
       isFollowed: serializer.fromJson<bool>(json['isFollowed']),
       name: serializer.fromJson<String>(json['name']),
+      disRaceNo: serializer.fromJson<String?>(json['disRaceNo']),
       extra: serializer.fromJson<String>(json['extra']),
       profileImage: serializer.fromJson<String>(json['profileImage']),
       raceno: serializer.fromJson<String>(json['raceno']),
@@ -314,6 +338,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       'canFollow': serializer.toJson<bool>(canFollow),
       'isFollowed': serializer.toJson<bool>(isFollowed),
       'name': serializer.toJson<String>(name),
+      'disRaceNo': serializer.toJson<String?>(disRaceNo),
       'extra': serializer.toJson<String>(extra),
       'profileImage': serializer.toJson<String>(profileImage),
       'raceno': serializer.toJson<String>(raceno),
@@ -330,6 +355,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           bool? canFollow,
           bool? isFollowed,
           String? name,
+          Value<String?> disRaceNo = const Value.absent(),
           String? extra,
           String? profileImage,
           String? raceno,
@@ -343,6 +369,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
         canFollow: canFollow ?? this.canFollow,
         isFollowed: isFollowed ?? this.isFollowed,
         name: name ?? this.name,
+        disRaceNo: disRaceNo.present ? disRaceNo.value : this.disRaceNo,
         extra: extra ?? this.extra,
         profileImage: profileImage ?? this.profileImage,
         raceno: raceno ?? this.raceno,
@@ -351,6 +378,27 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
         contestNo: contestNo ?? this.contestNo,
         searchTag: searchTag ?? this.searchTag,
       );
+  AppAthleteDb copyWithCompanion(AthleteDbCompanion data) {
+    return AppAthleteDb(
+      id: data.id.present ? data.id.value : this.id,
+      athleteId: data.athleteId.present ? data.athleteId.value : this.athleteId,
+      canFollow: data.canFollow.present ? data.canFollow.value : this.canFollow,
+      isFollowed:
+          data.isFollowed.present ? data.isFollowed.value : this.isFollowed,
+      name: data.name.present ? data.name.value : this.name,
+      disRaceNo: data.disRaceNo.present ? data.disRaceNo.value : this.disRaceNo,
+      extra: data.extra.present ? data.extra.value : this.extra,
+      profileImage: data.profileImage.present
+          ? data.profileImage.value
+          : this.profileImage,
+      raceno: data.raceno.present ? data.raceno.value : this.raceno,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      info: data.info.present ? data.info.value : this.info,
+      contestNo: data.contestNo.present ? data.contestNo.value : this.contestNo,
+      searchTag: data.searchTag.present ? data.searchTag.value : this.searchTag,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('AppAthleteDb(')
@@ -359,6 +407,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           ..write('canFollow: $canFollow, ')
           ..write('isFollowed: $isFollowed, ')
           ..write('name: $name, ')
+          ..write('disRaceNo: $disRaceNo, ')
           ..write('extra: $extra, ')
           ..write('profileImage: $profileImage, ')
           ..write('raceno: $raceno, ')
@@ -371,8 +420,20 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
   }
 
   @override
-  int get hashCode => Object.hash(id, athleteId, canFollow, isFollowed, name,
-      extra, profileImage, raceno, eventId, info, contestNo, searchTag);
+  int get hashCode => Object.hash(
+      id,
+      athleteId,
+      canFollow,
+      isFollowed,
+      name,
+      disRaceNo,
+      extra,
+      profileImage,
+      raceno,
+      eventId,
+      info,
+      contestNo,
+      searchTag);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -382,6 +443,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           other.canFollow == this.canFollow &&
           other.isFollowed == this.isFollowed &&
           other.name == this.name &&
+          other.disRaceNo == this.disRaceNo &&
           other.extra == this.extra &&
           other.profileImage == this.profileImage &&
           other.raceno == this.raceno &&
@@ -397,6 +459,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
   final Value<bool> canFollow;
   final Value<bool> isFollowed;
   final Value<String> name;
+  final Value<String?> disRaceNo;
   final Value<String> extra;
   final Value<String> profileImage;
   final Value<String> raceno;
@@ -410,6 +473,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     this.canFollow = const Value.absent(),
     this.isFollowed = const Value.absent(),
     this.name = const Value.absent(),
+    this.disRaceNo = const Value.absent(),
     this.extra = const Value.absent(),
     this.profileImage = const Value.absent(),
     this.raceno = const Value.absent(),
@@ -424,6 +488,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     required bool canFollow,
     required bool isFollowed,
     required String name,
+    this.disRaceNo = const Value.absent(),
     required String extra,
     required String profileImage,
     required String raceno,
@@ -448,6 +513,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     Expression<bool>? canFollow,
     Expression<bool>? isFollowed,
     Expression<String>? name,
+    Expression<String>? disRaceNo,
     Expression<String>? extra,
     Expression<String>? profileImage,
     Expression<String>? raceno,
@@ -462,6 +528,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       if (canFollow != null) 'can_follow': canFollow,
       if (isFollowed != null) 'is_followed': isFollowed,
       if (name != null) 'name': name,
+      if (disRaceNo != null) 'dis_race_no': disRaceNo,
       if (extra != null) 'extra': extra,
       if (profileImage != null) 'profile_image': profileImage,
       if (raceno != null) 'raceno': raceno,
@@ -478,6 +545,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       Value<bool>? canFollow,
       Value<bool>? isFollowed,
       Value<String>? name,
+      Value<String?>? disRaceNo,
       Value<String>? extra,
       Value<String>? profileImage,
       Value<String>? raceno,
@@ -491,6 +559,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       canFollow: canFollow ?? this.canFollow,
       isFollowed: isFollowed ?? this.isFollowed,
       name: name ?? this.name,
+      disRaceNo: disRaceNo ?? this.disRaceNo,
       extra: extra ?? this.extra,
       profileImage: profileImage ?? this.profileImage,
       raceno: raceno ?? this.raceno,
@@ -518,6 +587,9 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     }
     if (name.present) {
       map['name'] = Variable<String>(name.value);
+    }
+    if (disRaceNo.present) {
+      map['dis_race_no'] = Variable<String>(disRaceNo.value);
     }
     if (extra.present) {
       map['extra'] = Variable<String>(extra.value);
@@ -551,6 +623,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
           ..write('canFollow: $canFollow, ')
           ..write('isFollowed: $isFollowed, ')
           ..write('name: $name, ')
+          ..write('disRaceNo: $disRaceNo, ')
           ..write('extra: $extra, ')
           ..write('profileImage: $profileImage, ')
           ..write('raceno: $raceno, ')
@@ -765,6 +838,20 @@ class AppAthleteExtraDetailsDb extends DataClass
         country: country ?? this.country,
         athleteNumber: athleteNumber ?? this.athleteNumber,
       );
+  AppAthleteExtraDetailsDb copyWithCompanion(
+      AthleteExtraDetailsDbCompanion data) {
+    return AppAthleteExtraDetailsDb(
+      id: data.id.present ? data.id.value : this.id,
+      athleteId: data.athleteId.present ? data.athleteId.value : this.athleteId,
+      name: data.name.present ? data.name.value : this.name,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      country: data.country.present ? data.country.value : this.country,
+      athleteNumber: data.athleteNumber.present
+          ? data.athleteNumber.value
+          : this.athleteNumber,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('AppAthleteExtraDetailsDb(')
@@ -1049,6 +1136,15 @@ class AppChatMessageDb extends DataClass
         eventId: eventId.present ? eventId.value : this.eventId,
         content: content ?? this.content,
       );
+  AppChatMessageDb copyWithCompanion(ChatMessageDbCompanion data) {
+    return AppChatMessageDb(
+      id: data.id.present ? data.id.value : this.id,
+      role: data.role.present ? data.role.value : this.role,
+      eventId: data.eventId.present ? data.eventId.value : this.eventId,
+      content: data.content.present ? data.content.value : this.content,
+    );
+  }
+
   @override
   String toString() {
     return (StringBuffer('AppChatMessageDb(')
@@ -1149,6 +1245,7 @@ class ChatMessageDbCompanion extends UpdateCompanion<AppChatMessageDb> {
 
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
+  $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $AthleteDbTable athleteDb = $AthleteDbTable(this);
   late final $AthleteExtraDetailsDbTable athleteExtraDetailsDb =
       $AthleteExtraDetailsDbTable(this);
@@ -1159,4 +1256,508 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
       [athleteDb, athleteExtraDetailsDb, chatMessageDb];
+}
+
+typedef $$AthleteDbTableCreateCompanionBuilder = AthleteDbCompanion Function({
+  Value<int> id,
+  required String athleteId,
+  required bool canFollow,
+  required bool isFollowed,
+  required String name,
+  Value<String?> disRaceNo,
+  required String extra,
+  required String profileImage,
+  required String raceno,
+  required int eventId,
+  required String info,
+  required int contestNo,
+  required String searchTag,
+});
+typedef $$AthleteDbTableUpdateCompanionBuilder = AthleteDbCompanion Function({
+  Value<int> id,
+  Value<String> athleteId,
+  Value<bool> canFollow,
+  Value<bool> isFollowed,
+  Value<String> name,
+  Value<String?> disRaceNo,
+  Value<String> extra,
+  Value<String> profileImage,
+  Value<String> raceno,
+  Value<int> eventId,
+  Value<String> info,
+  Value<int> contestNo,
+  Value<String> searchTag,
+});
+
+class $$AthleteDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AthleteDbTable,
+    AppAthleteDb,
+    $$AthleteDbTableFilterComposer,
+    $$AthleteDbTableOrderingComposer,
+    $$AthleteDbTableCreateCompanionBuilder,
+    $$AthleteDbTableUpdateCompanionBuilder> {
+  $$AthleteDbTableTableManager(_$AppDatabase db, $AthleteDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AthleteDbTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AthleteDbTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> athleteId = const Value.absent(),
+            Value<bool> canFollow = const Value.absent(),
+            Value<bool> isFollowed = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> disRaceNo = const Value.absent(),
+            Value<String> extra = const Value.absent(),
+            Value<String> profileImage = const Value.absent(),
+            Value<String> raceno = const Value.absent(),
+            Value<int> eventId = const Value.absent(),
+            Value<String> info = const Value.absent(),
+            Value<int> contestNo = const Value.absent(),
+            Value<String> searchTag = const Value.absent(),
+          }) =>
+              AthleteDbCompanion(
+            id: id,
+            athleteId: athleteId,
+            canFollow: canFollow,
+            isFollowed: isFollowed,
+            name: name,
+            disRaceNo: disRaceNo,
+            extra: extra,
+            profileImage: profileImage,
+            raceno: raceno,
+            eventId: eventId,
+            info: info,
+            contestNo: contestNo,
+            searchTag: searchTag,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String athleteId,
+            required bool canFollow,
+            required bool isFollowed,
+            required String name,
+            Value<String?> disRaceNo = const Value.absent(),
+            required String extra,
+            required String profileImage,
+            required String raceno,
+            required int eventId,
+            required String info,
+            required int contestNo,
+            required String searchTag,
+          }) =>
+              AthleteDbCompanion.insert(
+            id: id,
+            athleteId: athleteId,
+            canFollow: canFollow,
+            isFollowed: isFollowed,
+            name: name,
+            disRaceNo: disRaceNo,
+            extra: extra,
+            profileImage: profileImage,
+            raceno: raceno,
+            eventId: eventId,
+            info: info,
+            contestNo: contestNo,
+            searchTag: searchTag,
+          ),
+        ));
+}
+
+class $$AthleteDbTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AthleteDbTable> {
+  $$AthleteDbTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get athleteId => $state.composableBuilder(
+      column: $state.table.athleteId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get canFollow => $state.composableBuilder(
+      column: $state.table.canFollow,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<bool> get isFollowed => $state.composableBuilder(
+      column: $state.table.isFollowed,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get disRaceNo => $state.composableBuilder(
+      column: $state.table.disRaceNo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get extra => $state.composableBuilder(
+      column: $state.table.extra,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get profileImage => $state.composableBuilder(
+      column: $state.table.profileImage,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get raceno => $state.composableBuilder(
+      column: $state.table.raceno,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get contestNo => $state.composableBuilder(
+      column: $state.table.contestNo,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get searchTag => $state.composableBuilder(
+      column: $state.table.searchTag,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$AthleteDbTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AthleteDbTable> {
+  $$AthleteDbTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get athleteId => $state.composableBuilder(
+      column: $state.table.athleteId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get canFollow => $state.composableBuilder(
+      column: $state.table.canFollow,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<bool> get isFollowed => $state.composableBuilder(
+      column: $state.table.isFollowed,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get disRaceNo => $state.composableBuilder(
+      column: $state.table.disRaceNo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get extra => $state.composableBuilder(
+      column: $state.table.extra,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get profileImage => $state.composableBuilder(
+      column: $state.table.profileImage,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get raceno => $state.composableBuilder(
+      column: $state.table.raceno,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get info => $state.composableBuilder(
+      column: $state.table.info,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get contestNo => $state.composableBuilder(
+      column: $state.table.contestNo,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get searchTag => $state.composableBuilder(
+      column: $state.table.searchTag,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$AthleteExtraDetailsDbTableCreateCompanionBuilder
+    = AthleteExtraDetailsDbCompanion Function({
+  Value<int> id,
+  required String athleteId,
+  required String name,
+  required int eventId,
+  required String country,
+  required String athleteNumber,
+});
+typedef $$AthleteExtraDetailsDbTableUpdateCompanionBuilder
+    = AthleteExtraDetailsDbCompanion Function({
+  Value<int> id,
+  Value<String> athleteId,
+  Value<String> name,
+  Value<int> eventId,
+  Value<String> country,
+  Value<String> athleteNumber,
+});
+
+class $$AthleteExtraDetailsDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AthleteExtraDetailsDbTable,
+    AppAthleteExtraDetailsDb,
+    $$AthleteExtraDetailsDbTableFilterComposer,
+    $$AthleteExtraDetailsDbTableOrderingComposer,
+    $$AthleteExtraDetailsDbTableCreateCompanionBuilder,
+    $$AthleteExtraDetailsDbTableUpdateCompanionBuilder> {
+  $$AthleteExtraDetailsDbTableTableManager(
+      _$AppDatabase db, $AthleteExtraDetailsDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$AthleteExtraDetailsDbTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$AthleteExtraDetailsDbTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> athleteId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<int> eventId = const Value.absent(),
+            Value<String> country = const Value.absent(),
+            Value<String> athleteNumber = const Value.absent(),
+          }) =>
+              AthleteExtraDetailsDbCompanion(
+            id: id,
+            athleteId: athleteId,
+            name: name,
+            eventId: eventId,
+            country: country,
+            athleteNumber: athleteNumber,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String athleteId,
+            required String name,
+            required int eventId,
+            required String country,
+            required String athleteNumber,
+          }) =>
+              AthleteExtraDetailsDbCompanion.insert(
+            id: id,
+            athleteId: athleteId,
+            name: name,
+            eventId: eventId,
+            country: country,
+            athleteNumber: athleteNumber,
+          ),
+        ));
+}
+
+class $$AthleteExtraDetailsDbTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $AthleteExtraDetailsDbTable> {
+  $$AthleteExtraDetailsDbTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get athleteId => $state.composableBuilder(
+      column: $state.table.athleteId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<int> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get athleteNumber => $state.composableBuilder(
+      column: $state.table.athleteNumber,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$AthleteExtraDetailsDbTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $AthleteExtraDetailsDbTable> {
+  $$AthleteExtraDetailsDbTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get athleteId => $state.composableBuilder(
+      column: $state.table.athleteId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get name => $state.composableBuilder(
+      column: $state.table.name,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<int> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get country => $state.composableBuilder(
+      column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get athleteNumber => $state.composableBuilder(
+      column: $state.table.athleteNumber,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+typedef $$ChatMessageDbTableCreateCompanionBuilder = ChatMessageDbCompanion
+    Function({
+  Value<int> id,
+  required String role,
+  Value<String?> eventId,
+  required String content,
+});
+typedef $$ChatMessageDbTableUpdateCompanionBuilder = ChatMessageDbCompanion
+    Function({
+  Value<int> id,
+  Value<String> role,
+  Value<String?> eventId,
+  Value<String> content,
+});
+
+class $$ChatMessageDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ChatMessageDbTable,
+    AppChatMessageDb,
+    $$ChatMessageDbTableFilterComposer,
+    $$ChatMessageDbTableOrderingComposer,
+    $$ChatMessageDbTableCreateCompanionBuilder,
+    $$ChatMessageDbTableUpdateCompanionBuilder> {
+  $$ChatMessageDbTableTableManager(_$AppDatabase db, $ChatMessageDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ChatMessageDbTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ChatMessageDbTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String?> eventId = const Value.absent(),
+            Value<String> content = const Value.absent(),
+          }) =>
+              ChatMessageDbCompanion(
+            id: id,
+            role: role,
+            eventId: eventId,
+            content: content,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String role,
+            Value<String?> eventId = const Value.absent(),
+            required String content,
+          }) =>
+              ChatMessageDbCompanion.insert(
+            id: id,
+            role: role,
+            eventId: eventId,
+            content: content,
+          ),
+        ));
+}
+
+class $$ChatMessageDbTableFilterComposer
+    extends FilterComposer<_$AppDatabase, $ChatMessageDbTable> {
+  $$ChatMessageDbTableFilterComposer(super.$state);
+  ColumnFilters<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get content => $state.composableBuilder(
+      column: $state.table.content,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+}
+
+class $$ChatMessageDbTableOrderingComposer
+    extends OrderingComposer<_$AppDatabase, $ChatMessageDbTable> {
+  $$ChatMessageDbTableOrderingComposer(super.$state);
+  ColumnOrderings<int> get id => $state.composableBuilder(
+      column: $state.table.id,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get role => $state.composableBuilder(
+      column: $state.table.role,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get eventId => $state.composableBuilder(
+      column: $state.table.eventId,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get content => $state.composableBuilder(
+      column: $state.table.content,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
+}
+
+class $AppDatabaseManager {
+  final _$AppDatabase _db;
+  $AppDatabaseManager(this._db);
+  $$AthleteDbTableTableManager get athleteDb =>
+      $$AthleteDbTableTableManager(_db, _db.athleteDb);
+  $$AthleteExtraDetailsDbTableTableManager get athleteExtraDetailsDb =>
+      $$AthleteExtraDetailsDbTableTableManager(_db, _db.athleteExtraDetailsDb);
+  $$ChatMessageDbTableTableManager get chatMessageDb =>
+      $$ChatMessageDbTableTableManager(_db, _db.chatMessageDb);
 }

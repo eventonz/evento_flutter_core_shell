@@ -21,11 +21,13 @@ import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.d
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/events/events.dart';
+import 'package:evento_core/ui/results/results_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:get/get.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/models/advert.dart';
 import 'home/home.dart';
@@ -40,6 +42,7 @@ class DashboardController extends GetxController {
   late Athletes entrantsList;
   late Rx<MiniPlayerConfig?> miniPlayerConfig = Rx<MiniPlayerConfig?>(null);
   late Tracking? trackingData;
+  late Results? resultsData;
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
   WebViewController? webViewController;
@@ -60,6 +63,7 @@ class DashboardController extends GetxController {
     Get.put(MoreController());
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
+    resultsData = AppGlobals.appConfig!.results;
     miniPlayerConfig.value = AppGlobals.appConfig!.miniPlayerConfig;
     final showAthletes = entrantsList.showAthletes ?? false;
     if (showAthletes) {
@@ -78,6 +82,15 @@ class DashboardController extends GetxController {
             view: const TrackingScreen(),
             iconData: FeatherIcons.navigation,
             label: 'track'),
+      );
+    }
+    if (resultsData != null && resultsData?.showResults == true) {
+      menus.insert(
+        showAthletes && trackingData != null ? 3 : ((showAthletes || trackingData != null) ? 2 : 1) ,
+        BottomNavMenu(
+            view: const ResultsScreen(),
+            image: AppHelper.getImage('trophy.png'),
+            label: 'results'),
       );
     }
     selMenu.value = menus.first;
@@ -110,6 +123,10 @@ class DashboardController extends GetxController {
       webViewController = Get.arguments;
     }
 
+    Future.delayed(Duration(seconds: 1), () {
+      NewVersionPlus().showAlertIfNecessary(context: Get.context!);
+
+    });
   }
 
   void reloadMenu() {
@@ -288,8 +305,9 @@ class DashboardController extends GetxController {
 
 class BottomNavMenu {
   BottomNavMenu(
-      {required this.view, required this.iconData, required this.label});
+      {required this.view, this.iconData, required this.label, this.image});
   final Widget view;
-  final IconData iconData;
+  final IconData? iconData;
+  final String? image;
   final String label;
 }

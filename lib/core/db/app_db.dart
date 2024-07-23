@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -52,6 +52,10 @@ class AppDatabase extends _$AppDatabase {
             // Rename the new column to match the original column name
             await customStatement('ALTER TABLE ${athleteDb.actualTableName} RENAME COLUMN raceno_temp TO raceno');
           }
+
+        if(from < 5) {
+          // Add a temporary column with the new type
+          await customStatement('ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN disRaceNo TEXT');}
       },
     );
   }
@@ -93,6 +97,7 @@ class DatabaseHandler {
           info: entrant.info,
           eventId: eventId,
           extra: entrant.extra,
+          disRaceNo: Value(entrant.disRaceNo),
           canFollow: entrant.canFollow,
           searchTag:
           '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
