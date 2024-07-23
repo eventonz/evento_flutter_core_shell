@@ -102,11 +102,14 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> followAthlete(AppAthleteDb athelete) async {
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
-      'number': athelete.athleteId
+      'number': athelete.athleteId,
+      'contest': athelete.contestNo
     };
+
     final res = await ApiHandler.postHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);
     if (res.statusCode == 201) {
@@ -120,7 +123,8 @@ class AthleteDetailsController extends GetxController
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
-      'number': athelete.athleteId
+      'number': athelete.athleteId,
+      'contest': athelete.contestNo
     };
     final res = await ApiHandler.deleteHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);
