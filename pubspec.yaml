@@ -28,7 +28,7 @@ dependencies:
   flutter_feather_icons: ^2.0.0+1
   path: ^1.9.0
   connectivity_plus: ^6.0.4
-  syncfusion_flutter_pdfviewer: ^25.1.39
+  syncfusion_flutter_pdfviewer: ^24.2.8
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
