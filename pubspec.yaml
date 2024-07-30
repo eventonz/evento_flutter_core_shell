@@ -28,7 +28,7 @@ dependencies:
   flutter_feather_icons: ^2.0.0+1
   path: ^1.9.0
   connectivity_plus: ^6.0.4
-  syncfusion_flutter_pdfviewer: ^26.2.7
+  syncfusion_flutter_pdfviewer: ^25.1.39
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
@@ -80,7 +80,7 @@ dev_dependencies:
   flutter_lints: ^2.0.3
   build_runner: ^2.4.9
   drift_dev: ^2.19.1
-  mocktail: ^0.3.0
+  mocktail: ^1.0.0
 
 flavorizr:
   app:
