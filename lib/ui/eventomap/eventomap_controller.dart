@@ -162,7 +162,7 @@ class EventoMapController extends GetxController {
     var position = await geolocator.Geolocator.getCurrentPosition();
     if(Platform.isAndroid) {
       mapboxMap?.setCamera(CameraOptions(
-        center: Point(coordinates: Position(position.longitude, position.latitude)).toJson(),
+        center: Point(coordinates: Position(position.longitude, position.latitude)),
         zoom: 15,
       ));
     } else {

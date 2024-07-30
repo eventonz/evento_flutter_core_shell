@@ -97,7 +97,7 @@ class EventMapSheet extends StatelessWidget {
                             ) : MapWidget(
                               cameraOptions: CameraOptions(
                                 zoom: 16,
-                                center: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                                center: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)),
                               ),
                                 gestureRecognizers: Set.of([]),
                               onMapCreated: (map) async {
@@ -111,7 +111,7 @@ class EventMapSheet extends StatelessWidget {
                                 ));
                                 map.annotations.createPointAnnotationManager().then((value) {
                                   value.create(PointAnnotationOptions(
-                                    geometry: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)).toJson(),
+                                    geometry: Point(coordinates: Position(controller.latLng!.longitude, controller.latLng!.latitude)),
                                     image: image,
                                   ));
                                 });

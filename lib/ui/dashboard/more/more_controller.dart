@@ -39,6 +39,8 @@ class MoreController extends GetxController {
       i++;
       if(item.type == 'storyslider') {
         final res = ApiHandler.genericGetHttp(url: item.storySlider!.url!).then((value) {
+          print('ss');
+          print(value.data);
           sliders = (value.data['items'] as List).map((e) {
             var slider = StorySlider.fromJson(e);
             return slider;

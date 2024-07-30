@@ -45,6 +45,44 @@ class AppHelper {
     return Color(int.parse(color.replaceAll('#', '0xFF')));
   }
 
+  static double dgetBoundsZoomLevel(LatLngBounds bounds, {
+    required double height,
+    required double width,
+  }) {
+    var mapDim = {
+      'height': height,
+      'width': width,
+    };
+
+    var WORLD_DIM = {
+      'height': height,
+      'width': width,
+    };
+
+    double latRad(lat) {
+      var sin2 = sin(lat * pi / 180);
+      var radX2 = log((1 + sin2) / (1 - sin2)) / 2;
+      return max(min(radX2, pi), - pi) / 2;
+    }
+
+    double zoom(mapPx, worldPx, fraction) {
+      return (log(mapPx / worldPx / fraction) / ln2).floorToDouble();
+    }
+
+    var ne = bounds.northeast;
+    var sw = bounds.southwest;
+
+    var latFraction = (latRad(ne.latitude) - latRad(sw.latitude)) / pi;
+
+    var lngDiff = ne.longitude - sw.longitude;
+    var lngFraction = ((lngDiff < 0) ? (lngDiff + 360) : lngDiff) / 360;
+
+    double latZoom = zoom(mapDim['height'], WORLD_DIM['height'], latFraction);
+    double lngZoom = zoom(mapDim['width'], WORLD_DIM['width'], lngFraction);
+
+    return min(latZoom, lngZoom);
+  }
+
   static Future<Uint8List> widgetToBytes(Widget widget) async {
     ScreenshotController screenshotController = ScreenshotController();
     var value = await screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100));

@@ -215,7 +215,7 @@ class _EventoMapState extends State<EventoMap> {
                 } else {
                   if(controller.elevationAnnotation != null) {
                     controller.elevationAnnotation!.image = controller.elevationImage;
-                    controller.elevationAnnotation!.geometry = Point(coordinates: Position(controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lng, controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lat)).toJson();
+                    controller.elevationAnnotation!.geometry = Point(coordinates: Position(controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lng, controller.getLineStringForPath().along((response.lineBarSpots?.first.x ?? 1)*1000).lat));
                     controller.pointAnnotationManager?.update(
                         controller.elevationAnnotation!);
                   }
@@ -352,7 +352,7 @@ class _EventoMapState extends State<EventoMap> {
                         center: Point(coordinates:
                         controller.initialPathCenterPoint()
 
-                        ).toJson(),
+                        ),
                         zoom: TrackingMapView.dgetBoundsZoomLevel(
                             flutter_map.LatLngBounds.fromPoints(bounds), {
                           'height': MediaQuery
@@ -392,11 +392,11 @@ class _EventoMapState extends State<EventoMap> {
                         final polylineAnnotationManager = value;
                         polylineAnnotationManager.create(PolylineAnnotationOptions(
                             geometry: LineString(
-                                coordinates: controller.routePathsCordinates).toJson(),
+                                coordinates: controller.routePathsCordinates),
                             lineColor: Colors.black.value, lineWidth: 6));
                         polylineAnnotationManager.create(PolylineAnnotationOptions(
                             geometry: LineString(
-                                coordinates: controller.routePathsCordinates).toJson(),
+                                coordinates: controller.routePathsCordinates),
                             lineColor: AppHelper.hexToColor(controller.color).value, lineWidth: 3));
                       });
                       mapboxMap.annotations.createPointAnnotationManager().then((value) async {
@@ -410,8 +410,7 @@ class _EventoMapState extends State<EventoMap> {
                               .then((value) {
                             pointAnnotationManager.create(PointAnnotationOptions(
                               geometry: Point(
-                                  coordinates: controller.routePathsCordinates.first)
-                                  .toJson(),
+                                  coordinates: controller.routePathsCordinates.first),
                               image: value,
                             ));
                           });
@@ -430,8 +429,7 @@ class _EventoMapState extends State<EventoMap> {
                             .then((value) {
                           pointAnnotationManager.create(PointAnnotationOptions(
                             geometry: Point(
-                                coordinates: controller.routePathsCordinates.first)
-                                .toJson(),
+                                coordinates: controller.routePathsCordinates.first),
                             image: value,
                           )).then((val) {
                             controller.elevationAnnotation = val;
@@ -446,8 +444,7 @@ class _EventoMapState extends State<EventoMap> {
                               .then((value) {
                             pointAnnotationManager.create(PointAnnotationOptions(
                               geometry: Point(
-                                  coordinates: controller.routePathsCordinates.last)
-                                  .toJson(),
+                                  coordinates: controller.routePathsCordinates.last),
                               image: value,
                             ));
                           });
@@ -467,7 +464,7 @@ class _EventoMapState extends State<EventoMap> {
                                     (element.geometry as GeoJsonPoint).geoPoint
                                         .longitude,
                                     (element.geometry as GeoJsonPoint).geoPoint
-                                        .latitude)).toJson(),
+                                        .latitude)),
                                 image: value,
                               ));
                               if (controller.interestAnnotations[element
@@ -568,7 +565,7 @@ class _EventoMapState extends State<EventoMap> {
                             controller.images[i] = bytes;
 
                             pointAnnotationManager.create(PointAnnotationOptions(
-                              geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)).toJson(),
+                              geometry: Point(coordinates: Position(lineString.along(i.toDouble()*1000).lng, lineString.along(i.toDouble()*1000).lat)),
                               image: i % 5 == 0 ? controller.images[i] : null,
                             )).then((pointAnnotation) {
                               controller.points[i] = pointAnnotation;

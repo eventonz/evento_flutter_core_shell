@@ -360,7 +360,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
       }
 
       controller.polylineAnnotationManager?.createMulti(List.generate(positions.length, (index) => PolylineAnnotationOptions(
-          geometry: LineString(coordinates: positions[index]).toJson(),
+          geometry: LineString(coordinates: positions[index]),
 
           lineColor: controller.routePathsColors.values.toList()[index] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[index]).value : AppColors.accentDark.value, lineWidth: 3))
           .toList());
@@ -399,7 +399,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                 geometry: Point(
                     coordinates: Position(
                         marker.latLng.longitude, marker.latLng.latitude)
-                ).toJson(), image: value));
+                ), image: value));
           });
         }
       }
@@ -514,7 +514,7 @@ class _TrackingMapViewState extends State<TrackingMapView> {
                   });
                 },
                 cameraOptions: CameraOptions(
-                    center: Point(coordinates: centerPoint).toJson(),
+                    center: Point(coordinates: centerPoint),
                     zoom: TrackingMapView.dgetBoundsZoomLevel(flutter_map.LatLngBounds.fromPoints(bounds), {
                       'height' : MediaQuery.of(context).size.height,
                       'width' : MediaQuery.of(context).size.width})*1.02
@@ -664,7 +664,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
             image: value,
             geometry: Point(
                 coordinates: Position(latLng.longitude, latLng.latitude)
-            ).toJson(),
+            ),
           ));
           print('annotation created ${trackDetail.track}');
         });
@@ -715,7 +715,7 @@ class _AnimatedMarkerViewState extends State<AnimatedMarkerView> {
       await controller.setLocation(trackDetail.track, latLng, wait: true);
       annotation?.geometry = Point(
           coordinates: Position(latLng.longitude, latLng.latitude)
-      ).toJson();
+      );
       if(annotation != null) {
         annotationManager.update(annotation!);
       } else {

@@ -11,6 +11,7 @@ import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/apple_map_view.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -33,7 +34,10 @@ class TrackingScreen extends StatelessWidget {
       color: AppColors.greyLight,
       child: Stack(
         children: [
-          const TrackingMapView(),
+          if(Platform.isIOS)
+            const AppleMapView()
+          else
+            const TrackingMapView(),
           StreamBuilder<List<AppAthleteDb>>(
               stream: controller.watchFollowedAthletes(),
               builder: (_, snap) {
@@ -44,6 +48,7 @@ class TrackingScreen extends StatelessWidget {
                   }
                   entrants.sort((x, y) => x.raceno.compareTo(y.raceno));
                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                    print('athletes updating 1');
                     controller.getAthleteTrackingInfo(firstTime: true);
                   });
                   List<LatLng> bounds2 = [];
@@ -99,7 +104,7 @@ class TrackingScreen extends StatelessWidget {
                                     } else {
                                       controller.mapboxMap!.flyTo(CameraOptions(
                                         zoom: zoom,
-                                        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)).toJson(),
+                                        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)),
                                       ), MapAnimationOptions(
                                         duration: 500,
                                         startDelay: 0,
@@ -114,10 +119,12 @@ class TrackingScreen extends StatelessWidget {
                           items: entrants.map((x) {
                             return Builder(
                               builder: (BuildContext context) {
+                                print('builder updating');
                                 return Obx(() => SliderAthleteTile(
                                       onTap: () =>
                                           controller.toAthleteDetails(x),
                                       athelete: x,
+
                                       trackDetail:
                                           controller.findTrackDetail(x),
                                     ));
