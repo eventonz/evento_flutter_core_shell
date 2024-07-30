@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:get/get.dart';
-import 'package:new_version_plus/new_version_plus.dart';
+//import 'package:new_version_plus/new_version_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/models/advert.dart';
 import 'home/home.dart';
@@ -124,7 +124,7 @@ class DashboardController extends GetxController {
     }
 
     Future.delayed(Duration(seconds: 1), () {
-      NewVersionPlus().showAlertIfNecessary(context: Get.context!);
+      //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
 
     });
   }
