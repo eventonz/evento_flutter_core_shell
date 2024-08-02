@@ -28,9 +28,9 @@ class EventsScreen extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             slivers: [
               SliverAppBar(
-                backgroundColor: Colors.black,
-                surfaceTintColor: Colors.black,
-                shadowColor: Colors.black,
+                backgroundColor: AppHelper.hexToColor(controller.headerColor),
+                surfaceTintColor: AppHelper.hexToColor(controller.headerColor),
+                shadowColor: AppHelper.hexToColor(controller.headerColor),
                 expandedHeight: controller.searchBar ? 20.h : 10.h,
                 floating: false,
                 pinned: true,
@@ -49,8 +49,8 @@ class EventsScreen extends StatelessWidget {
                       duration: const Duration(milliseconds: 400),
                       curve: Curves.easeInOut,
                       child: top > 120 ? SizedBox() : Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.black,
+                        decoration:  BoxDecoration(
+                          color: AppHelper.hexToColor(controller.headerColor),
                         ),
                         child: Padding(
                           padding: const EdgeInsets.only(
