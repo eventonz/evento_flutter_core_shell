@@ -48,7 +48,7 @@ class EventsScreen extends StatelessWidget {
                       opacity: top > 120 ? 0 : 1,
                       duration: const Duration(milliseconds: 400),
                       curve: Curves.easeInOut,
-                      child: top > 120 ? SizedBox() : Container(
+                      child: top > 120 ? SizedBox() : !controller.searchBar ? SizedBox() : Container(
                         decoration: const BoxDecoration(
                           color: Colors.black,
                         ),

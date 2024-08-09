@@ -44,6 +44,9 @@ class ResultsScreenController extends GetxController {
 
     items = (Get.arguments?[AppKeys.moreItem] as Items?);
     items ??= AppGlobals.appConfig?.results?.config;
+
+    print(items?.toJson());
+
     raceId = items!.sportSplitsRaceId ?? 0;
     getEvent();
     scrollController.addListener(() {
@@ -89,6 +92,8 @@ class ResultsScreenController extends GetxController {
 
   changeEvent(int id) async {
     selectedEvent.value = id;
+    gender = -1;
+    category = -1;
     loading.value = true;
     loadingResults.value = true;
     update();

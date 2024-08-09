@@ -24,6 +24,7 @@ class ResultsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
+        scrolledUnderElevation: 0,
         title: AppText(
             controller.items!.title ?? '',
         ),

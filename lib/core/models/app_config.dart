@@ -230,7 +230,7 @@ class Items {
     sportSplitsRaceId = json['sportsplits_raceid'];
     icon = json['icon'];
     openExternal = json['open_external'];
-    linkToDetail = json['linktodetail'] ?? false;
+    linkToDetail = json['opens_athlete_detail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
@@ -252,6 +252,7 @@ class Items {
     data['supplier'] = supplier;
     data['sportsplits_raceid'] = sportSplitsRaceId;
     data['title'] = title;
+    data['opens_athlete_detail'] = linkToDetail;
     data['icon'] = icon;
     data['open_external'] = openExternal;
     data['linktodetail'] = linkToDetail;
