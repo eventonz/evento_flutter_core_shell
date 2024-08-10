@@ -19,7 +19,7 @@ final eventConfig = AppEventConfig(
     oneSignalId: '3138d661-ae18-4673-9218-de94842ab543',
     appName: 'The Race',
     multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
-    multiEventListId: '23',
+    multiEventListId: '28',
     splashImage: 'assets/images/splash_image.png',
   );
 

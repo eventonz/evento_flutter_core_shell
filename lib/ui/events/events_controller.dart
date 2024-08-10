@@ -83,17 +83,23 @@ class EventsController extends GetxController {
       }
   }
 
-  onSearch(String val) {
-    page = 1;
-    if(val != '') {
-      events.value = allEvents.where((element) => element.title.toLowerCase().contains(val.toLowerCase())).toList();
-    } else {
-       events.value = allEvents.sublist(0, 20).toList();
-    }
-    update();
-    events.refresh();
-
+void onSearch(String val) {
+  page = 1;
+  // Trim the search value to remove any leading or trailing whitespace
+  String trimmedVal = val.trim();
+  
+  if (trimmedVal.isNotEmpty) {
+    // Filter events based on the trimmed search value
+    events.value = allEvents.where((element) => element.title.toLowerCase().contains(trimmedVal.toLowerCase())).toList();
+  } else {
+    // Ensure the range for sublist is within bounds
+    int endIndex = allEvents.length < 20 ? allEvents.length : 20;
+    events.value = allEvents.sublist(0, endIndex).toList();
   }
+  
+  update();
+  events.refresh();
+}
 
   @override
   void onClose() {
