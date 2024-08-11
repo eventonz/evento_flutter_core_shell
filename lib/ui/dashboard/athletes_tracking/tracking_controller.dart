@@ -8,6 +8,7 @@ import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
@@ -228,7 +229,66 @@ class TrackingController extends GetxController
               geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
           //routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
         }
+
+        final markerPoints = geoJson.features;
+        print(markerPoints.map((e) => e.properties));
+        if (markerPoints.isNotEmpty) {
+          for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
+            if (markerPoint.type == GeoJsonFeatureType.point) {
+              print('markers ${markerPoint.properties}');
+
+              final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
+              mapPathMarkers.add(MapPathMarkers(
+                  latLng: LatLng(geoPoint.latitude, geoPoint.longitude),
+                  name: markerPoint.properties?['title'] ?? '',
+                  type: markerPoint.properties?['type'] ?? '',
+                  direction: markerPoint.properties?['direction'],
+                  description: markerPoint.properties?['description'] ?? '',
+                  iconUrl: markerPoint.properties?['urlicon'] ?? ''));
+            }
+          }
+        }
+
+
+        bool showStartIcon = geoJson.features
+            .where((element) => element.properties?['start_icon'] == true)
+            .isNotEmpty;
+        bool showFinishIcon = geoJson.features
+            .where((element) => element.properties?['finish_icon'] == true)
+            .isNotEmpty;
+
+        if (Platform.isIOS) {
+          if (showStartIcon) {
+            Widget widget = SvgPicture.asset(
+                AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+            annotations.value[apple_maps.AnnotationId('start_icon')] =
+                apple_maps.Annotation(
+                    annotationId: apple_maps.AnnotationId('start_icon'),
+                    position: apple_maps.LatLng(
+                        routePathsCordinates.values.first.first.latitude.toDouble(),
+                        routePathsCordinates.values.first.first.longitude.toDouble()),
+                    icon: apple_maps.BitmapDescriptor.fromBytes(
+                        await AppHelper.widgetToBytes(widget)));
+          }
+
+          if (showFinishIcon) {
+            Widget widget = SvgPicture.asset(
+                AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+
+            annotations.value[apple_maps.AnnotationId('finish_icon')] =
+                apple_maps.Annotation(
+                    annotationId: apple_maps.AnnotationId('finish_icon'),
+                    position: apple_maps.LatLng(
+                        routePathsCordinates.values.first.last.latitude.toDouble(),
+                        routePathsCordinates.values.first.last.longitude.toDouble()),
+                    icon: apple_maps.BitmapDescriptor.fromBytes(
+                        await AppHelper.widgetToBytes(widget)));
+          }
+        }
       }
+
+
+
       if (trackingDetails!.mapMarkers != null) {
         final res = await ApiHandler.downloadFile(
             baseUrl: trackingDetails!.mapMarkers!);
@@ -240,6 +300,7 @@ class TrackingController extends GetxController
         print(markerPoints.map((e) => e.properties));
         if (markerPoints.isNotEmpty) {
           for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
+            print('markers ${markerPoint.geometry}');
             final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
             mapPathMarkers.add(MapPathMarkers(
                 latLng: LatLng(geoPoint.latitude, geoPoint.longitude),
@@ -248,6 +309,7 @@ class TrackingController extends GetxController
                 iconUrl: markerPoint.properties?['urlicon'] ?? ''));
           }
         }
+
       }
       mapDataSnap.value = DataSnapShot.loaded;
       await getAthleteTrackingInfo();
@@ -258,6 +320,7 @@ class TrackingController extends GetxController
         setupStaticMarkers();
       }
     } catch (e) {
+      rethrow;
       debugPrint(e.toString());
       mapDataSnap.value = DataSnapShot.error;
     }
@@ -266,9 +329,7 @@ class TrackingController extends GetxController
   setupStaticMarkers() async {
     clearAnnotations();
     for(final marker in mapPathMarkers) {
-      http.Response response = await http.get(Uri.parse(marker.iconUrl));
-      Widget widget = Image.memory(
-          response.bodyBytes, width: 30, height: 30);
+      Widget widget = Image.asset(AppHelper.getImage('${marker.type}.png'), width: 30, height: 30);
       final String annotationIdVal = 'annotation_id_${annotations.value
           .length}';
       final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(
@@ -651,10 +712,13 @@ class MapPathMarkers {
   final String name;
   final String description;
   final String iconUrl;
+  final String type;
+  final String featureColor;
+  final bool direction;
 
   MapPathMarkers(
       {required this.latLng,
       required this.name,
-      required this.description,
+      required this.description, this.type = '', this.featureColor = '', this.direction = false,
       required this.iconUrl});
 }
