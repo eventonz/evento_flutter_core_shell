@@ -65,7 +65,7 @@ class _AppleMapViewState extends State<AppleMapView> {
               polylineId: polylineId,
               consumeTapEvents: true,
               zIndex: i+1,
-              color: i == 0 ? Colors.red : controller.routePathsColors.values.toList()[i] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[i]) : AppColors.accentDark,
+              color: controller.routePathsColors.values.toList()[i] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[i]) : AppColors.accentDark,
               width: 3,
               points: routePath.map((element) => LatLng(element.latitude, element.longitude)).toList(),
               onTap: () {
@@ -172,6 +172,7 @@ class _AppleMapViewState extends State<AppleMapView> {
                 },
                 annotations: Set.of([
                   ...controller.annotations.value.values,
+                  ...controller.extraAnnotations.value.values,
                   ...pointAnnotations,
                   if(controller.showDistanceMarkers.value)
                   ...controller.points.values,

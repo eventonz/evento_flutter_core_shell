@@ -60,6 +60,7 @@ class TrackingController extends GetxController
   apple_maps.AppleMapController? appleMapController;
   Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines = Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
   Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> extraAnnotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
 
   Map<String, TrackProgress> trackProgressMap = {};
   bool isFirstTime = true;
@@ -310,6 +311,12 @@ class TrackingController extends GetxController
     update();
   }
 
+  void addExtraAnnotation(annotationId, annotation) {
+    extraAnnotations.value[annotationId] = annotation;
+    extraAnnotations.refresh();
+    update();
+  }
+
   void addStaticAnnotation(annotationId, annotation) {
     interestAnnotations.value[annotationId] = annotation;
     interestAnnotations.refresh();
@@ -442,7 +449,7 @@ class TrackingController extends GetxController
       mapPathMarkers.clear();
       for (Paths path in routePathLinks) {
         print(path.toJson());
-        routePathsColors[path.name ?? 'path'] = path.color;
+        //routePathsColors[path.name ?? 'path'] = path.color;
         final res = await ApiHandler.downloadFile(baseUrl: path.url!);
         final geoJsonFile = File(res.data['file_path']);
         var text = await geoJsonFile.readAsString();
@@ -629,33 +636,55 @@ class TrackingController extends GetxController
             .where((element) => element.properties?['distance_markers'] == true)
             .isNotEmpty;
 
+        routePathsColors[path.name ?? 'path'] = geoJson.features
+            .firstWhereOrNull((element) => element.properties?['color'].isNotEmpty)
+        ?.properties!['color'];
+
+        showStartIcon = true;
+        showFinishIcon = true;
+
 
         if (Platform.isIOS) {
+          var lineString = getLineStringForPath(path.name ?? 'path');
           if (showStartIcon) {
+            print('showStartIcon');
             Widget widget = SvgPicture.asset(
                 AppHelper.getSvg('startingpoint'), width: 27, height: 27);
-            annotations.value[apple_maps.AnnotationId('start_icon')] =
-                apple_maps.Annotation(
-                    annotationId: apple_maps.AnnotationId('start_icon_${path.name}'),
-                    position: apple_maps.LatLng(
-                        routePathsCordinates[path.name ?? 'path']!.first.latitude.toDouble(),
-                        routePathsCordinates[path.name ?? 'path']!.first.longitude.toDouble()),
-                    icon: apple_maps.BitmapDescriptor.fromBytes(
-                        await AppHelper.widgetToBytes(widget)));
+
+            AppHelper.widgetToBytes(widget).then((value) {
+
+            var annotationId = apple_maps.AnnotationId('start_icon_${path.name}');
+
+            var annotation = apple_maps.Annotation(
+                annotationId: annotationId,
+                zIndex: 4,
+                position: apple_maps.LatLng(
+                    lineString!.coordinates.first.latitude.toDouble(),
+                    lineString.coordinates.first.longitude.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    value));
+
+            addExtraAnnotation(annotationId, annotation);
+
+            });
+
           }
 
           if (showFinishIcon) {
             Widget widget = SvgPicture.asset(
                 AppHelper.getSvg('finishpoint'), width: 27, height: 27);
 
-            annotations.value[apple_maps.AnnotationId('finish_icon')] =
-                apple_maps.Annotation(
-                    annotationId: apple_maps.AnnotationId('finish_icon_${path.name}'),
+            var annotationId = apple_maps.AnnotationId('finish_icon_${path.name}');
+
+                var annotation = apple_maps.Annotation(
+                    annotationId: annotationId,
                     position: apple_maps.LatLng(
-                        routePathsCordinates[path.name ?? 'path']!.last.latitude.toDouble(),
-                        routePathsCordinates[path.name ?? 'path']!.last.longitude.toDouble()),
+                        lineString!.coordinates.last.latitude.toDouble(),
+                        lineString.coordinates.last.longitude.toDouble()),
                     icon: apple_maps.BitmapDescriptor.fromBytes(
                         await AppHelper.widgetToBytes(widget)));
+
+                addExtraAnnotation(annotationId, annotation);
           }
 
           //if (showDistanceMarkers.value) {
@@ -965,7 +994,8 @@ class TrackingController extends GetxController
                 .length) * 13 : 36,
             height: 36,
             decoration: BoxDecoration(
-                color: AppColors.accentLight,
+                color: AppHelper.hexToColor(routePathsColors[trackDetail.path ?? 'path']),
+                //color: AppColors.accentLight
                 borderRadius: BorderRadius.circular(40)),
             child: Center(
               child: AppText(
