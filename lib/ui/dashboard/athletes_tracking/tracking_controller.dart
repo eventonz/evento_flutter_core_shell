@@ -83,7 +83,7 @@ class TrackingController extends GetxController
   bool zoomedIn = false;
   RxBool showDistanceMarkers = false.obs;
 
-  RxMap<int, dynamic> points = <int, dynamic>{}.obs;
+  RxMap<String, dynamic> points = <String, dynamic>{}.obs;
 
   Map<String, double> totalDistance = {};
 
@@ -146,10 +146,11 @@ class TrackingController extends GetxController
 
     final state = await mapboxMap?.getCameraState();
     print(state?.zoom);
-    for(int x = 0; x < totalDistance.values.length; x++) {
+    for(int x = 0; x < routePathsCordinates.values.length; x++) {
       var distance = totalDistance.values.toList()[x];
       for (int i = 1; i < distance; i++) {
-        final annotation = points[i];
+
+        final annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'];
         if (annotation != null) {
           if (!Platform.isIOS) {
             if (showDistanceMarkers.value == false) {
@@ -162,7 +163,7 @@ class TrackingController extends GetxController
             pointAnnotationManager?.update(annotation);
           } else {
             var zoom = await appleMapController?.getZoomLevel() ?? 0;
-            var annotation = points[i] as apple_maps.Annotation;
+            var annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'] as apple_maps.Annotation;
             if (!showDistanceMarkers.value) {
               annotation = annotation.copyWith(
                   iconParam: apple_maps.BitmapDescriptor.fromBytes(
@@ -176,7 +177,7 @@ class TrackingController extends GetxController
                       images[i]!) : apple_maps.BitmapDescriptor.fromBytes(
                       AppHelper.emptyImage));
             }
-            points[i] = annotation;
+            points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
             points.refresh();
           }
         }
@@ -458,6 +459,9 @@ class TrackingController extends GetxController
           }
           i++;
         }
+
+        geoJson = GeoJson();
+
         await geoJson.parse(jsonEncode(data));
         final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
         if (geoPoints.isNotEmpty) {
@@ -625,16 +629,17 @@ class TrackingController extends GetxController
             .where((element) => element.properties?['distance_markers'] == true)
             .isNotEmpty;
 
+
         if (Platform.isIOS) {
           if (showStartIcon) {
             Widget widget = SvgPicture.asset(
                 AppHelper.getSvg('startingpoint'), width: 27, height: 27);
             annotations.value[apple_maps.AnnotationId('start_icon')] =
                 apple_maps.Annotation(
-                    annotationId: apple_maps.AnnotationId('start_icon'),
+                    annotationId: apple_maps.AnnotationId('start_icon_${path.name}'),
                     position: apple_maps.LatLng(
-                        routePathsCordinates.values.first.first.latitude.toDouble(),
-                        routePathsCordinates.values.first.first.longitude.toDouble()),
+                        routePathsCordinates[path.name ?? 'path']!.first.latitude.toDouble(),
+                        routePathsCordinates[path.name ?? 'path']!.first.longitude.toDouble()),
                     icon: apple_maps.BitmapDescriptor.fromBytes(
                         await AppHelper.widgetToBytes(widget)));
           }
@@ -645,61 +650,62 @@ class TrackingController extends GetxController
 
             annotations.value[apple_maps.AnnotationId('finish_icon')] =
                 apple_maps.Annotation(
-                    annotationId: apple_maps.AnnotationId('finish_icon'),
+                    annotationId: apple_maps.AnnotationId('finish_icon_${path.name}'),
                     position: apple_maps.LatLng(
-                        routePathsCordinates.values.first.last.latitude.toDouble(),
-                        routePathsCordinates.values.first.last.longitude.toDouble()),
+                        routePathsCordinates[path.name ?? 'path']!.last.latitude.toDouble(),
+                        routePathsCordinates[path.name ?? 'path']!.last.longitude.toDouble()),
                     icon: apple_maps.BitmapDescriptor.fromBytes(
                         await AppHelper.widgetToBytes(widget)));
           }
 
           //if (showDistanceMarkers.value) {
-            for (int i = 0; i < routePathsCordinates.length; i++) {
-              print('${routePathsCordinates.length} abcda ${this.totalDistance}');
-              final lineString = getLineStringForPath(routePathsCordinates.keys.toList()[i]);
-              final totalDistance = this.totalDistance[routePathsCordinates.keys.toList()[i]];
-
-              for (int i = 1; i < totalDistance!; i++) {
-                Widget widget = Container(
-                  width: Platform.isIOS ? 24 : 16,
-                  height: Platform.isIOS ? 24 : 16,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1,
-                      )
-                  ),
-                  child: Center(
-                    child: Text('$i', style: const TextStyle(
-                      fontSize: 8,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),),
-                  ),
-                );
-
-                AppHelper.widgetToBytes(widget).then((bytes) {
-                  images[i] = bytes;
-
-                  apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
-                      annotationId: apple_maps.AnnotationId('distance_$i'),
-                      position: apple_maps.LatLng(lineString!
-                          .along(i.toDouble() * 1000)
-                          .lat, lineString
-                          .along(i.toDouble() * 1000)
-                          .lng),
-                      icon: apple_maps.BitmapDescriptor.fromBytes(
-                          i % 5 == 0 ? images[i]! : Uint8List(0)));
-                  this.points[i] = pointAnnotation;
-                  this.points.refresh();
-                });
-                //}
-              }
-            //}
-          }
         }
+      }
+
+      for (int x = 0; x < routePathsCordinates.length; x++) {
+        print('${routePathsCordinates.length} abcda ${this.totalDistance}');
+        final lineString = getLineStringForPath(routePathsCordinates.keys.toList()[x]);
+        final totalDistance = this.totalDistance[routePathsCordinates.keys.toList()[x]];
+
+        for (int i = 1; i < totalDistance!; i++) {
+          Widget widget = Container(
+            width: Platform.isIOS ? 24 : 16,
+            height: Platform.isIOS ? 24 : 16,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                )
+            ),
+            child: Center(
+              child: Text('$i', style: const TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),),
+            ),
+          );
+
+          AppHelper.widgetToBytes(widget).then((bytes) {
+            images[i] = bytes;
+
+            apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('distance_$i $x'),
+                position: apple_maps.LatLng(lineString!
+                    .along(i.toDouble() * 1000)
+                    .lat, lineString
+                    .along(i.toDouble() * 1000)
+                    .lng),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    i % 5 == 0 ? images[i]! : Uint8List(0)));
+            this.points['${routePathsCordinates.keys.toList()[x]}_$i'] = pointAnnotation;
+            this.points.refresh();
+          });
+          //}
+        }
+        //}
       }
 
 

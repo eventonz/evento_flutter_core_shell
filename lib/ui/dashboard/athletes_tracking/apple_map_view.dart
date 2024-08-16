@@ -58,13 +58,14 @@ class _AppleMapViewState extends State<AppleMapView> {
             routePath.forEach((latLng) {
               positions.add(LatLng(latLng.latitude, latLng.longitude));
             });
-            final String polylineIdVal = 'polyline_id_${controller.polylines.value.length}';
+            final String polylineIdVal = 'polyline_id_${polyLines.length}';
             final PolylineId polylineId = PolylineId(polylineIdVal);
 
             final Polyline polyline = Polyline(
               polylineId: polylineId,
               consumeTapEvents: true,
-              color: controller.routePathsColors.values.toList()[i] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[i]) : AppColors.accentDark,
+              zIndex: i+1,
+              color: i == 0 ? Colors.red : controller.routePathsColors.values.toList()[i] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[i]) : AppColors.accentDark,
               width: 3,
               points: routePath.map((element) => LatLng(element.latitude, element.longitude)).toList(),
               onTap: () {
@@ -115,23 +116,31 @@ class _AppleMapViewState extends State<AppleMapView> {
               }
               controller.zoomedIn = false;
             }
-            for(int i = 1; i < controller.totalDistance.values.first; i++) {
-              var annotation = controller.points[i];
-              if(annotation != null) {
-                if(Platform.isIOS) {
-                  var annotation = controller.points[i] as Annotation;
-                  if(!controller.showDistanceMarkers.value) {
-                    annotation = annotation.copyWith(iconParam: BitmapDescriptor.fromBytes(Uint8List(0)));
-
-                  } else if((zoom) >= 14) {
-                    annotation = annotation.copyWith(iconParam: BitmapDescriptor.fromBytes(controller.images[i]!));
-                  } else {
-                    annotation = annotation.copyWith(iconParam: i % 5 == 0 ? BitmapDescriptor.fromBytes(controller.images[i]!) : BitmapDescriptor.fromBytes(AppHelper.emptyImage));
+            for(int x = 0; x < controller.routePathsCordinates.keys.length; x++) {
+              for (int i = 1; i < controller.totalDistance.values.first; i++) {
+                var annotation = controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'];
+                if (annotation != null) {
+                  if (Platform.isIOS) {
+                    var annotation = controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'] as Annotation;
+                    if (!controller.showDistanceMarkers.value) {
+                      annotation = annotation.copyWith(
+                          iconParam: BitmapDescriptor.fromBytes(Uint8List(0)));
+                    } else if ((zoom) >= 14) {
+                      annotation = annotation.copyWith(
+                          iconParam: BitmapDescriptor.fromBytes(controller
+                              .images[i]!));
+                    } else {
+                      annotation = annotation.copyWith(
+                          iconParam: i % 5 == 0 ? BitmapDescriptor.fromBytes(
+                              controller.images[i]!) : BitmapDescriptor
+                              .fromBytes(AppHelper.emptyImage));
+                    }
+                    controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
                   }
-                  controller.points[i] = annotation;
                 }
               }
             }
+
             controller.points.refresh();
           }
 
