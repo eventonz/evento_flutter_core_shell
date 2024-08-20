@@ -377,7 +377,8 @@ class Paths {
   Paths({this.url, this.name, this.color});
 
   Paths.fromJson(Map<String, dynamic> json) {
-    url = json['geojson'];
+    print(json);
+    url = json['geojson'] ?? json['url'];
     name = json['name'];
     color = json['path_color'];
   }

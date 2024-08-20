@@ -319,7 +319,10 @@ class TrackingController extends GetxController
   }
 
   void addStaticAnnotation(annotationId, annotation) {
-    interestAnnotations.value[annotationId] = annotation;
+    if(interestAnnotations['static'] == null) {
+      interestAnnotations['static'] = [];
+    }
+    interestAnnotations['static']?.add(annotation);
     interestAnnotations.refresh();
     update();
   }
@@ -343,7 +346,10 @@ class TrackingController extends GetxController
   }
 
   void updateStaticAnnotation(annotationId, annotation) {
-    interestAnnotations.value[annotationId] = annotation;
+    if(interestAnnotations['static'] == null) {
+      interestAnnotations['static'] = [];
+    }
+    interestAnnotations['static']?.add(annotation);
     interestAnnotations.refresh();
     update();
   }
@@ -638,7 +644,7 @@ class TrackingController extends GetxController
             .isNotEmpty;
 
         routePathsColors[path.name ?? 'path'] = geoJson.features
-            .firstWhereOrNull((element) => element.properties?['color'].isNotEmpty)
+            .firstWhereOrNull((element) => element.properties?['color']?.isNotEmpty ?? false)
         ?.properties!['color'];
 
         showStartIcon = true;
@@ -852,7 +858,11 @@ class TrackingController extends GetxController
     clearAnnotations();
     for(final marker in mapPathMarkers) {
       print('marker ${marker.type}');
-      Widget widget = Image.asset(AppHelper.getImage('${marker.type}.png'), width: 30, height: 30);
+
+      final response = await http.get(Uri.parse(marker.iconUrl));
+      
+
+      Widget widget = Image.memory(response.bodyBytes, width: 30, height: 30);
       final String annotationIdVal = 'static_annotation_id_${interestAnnotations.value
           .length}';
       final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(
@@ -1073,7 +1083,7 @@ class TrackingController extends GetxController
               child: AppText(
                   trackDetail.marker_text,
                   fontSize: 16,
-                  color: AppColors.white
+                  color: routePathsColors[trackDetail.path ?? 'path'] == null ? Colors.black : AppColors.white
               ),
             ),
           ));
