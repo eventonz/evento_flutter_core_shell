@@ -34,6 +34,7 @@ import 'package:screenshot/screenshot.dart';
 import '../../../core/res/app_colors.dart';
 import '../../../core/utils/helpers.dart';
 import '../../common_components/text.dart';
+import 'dart:ui' as ui;
 
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -696,6 +697,8 @@ class TrackingController extends GetxController
         final lineString = getLineStringForPath(routePathsCordinates.keys.toList()[x]);
         final totalDistance = this.totalDistance[routePathsCordinates.keys.toList()[x]];
 
+        var color = routePathsColors[routePathsCordinates.keys.toList()[x]];
+
         for (int i = 1; i < totalDistance!; i++) {
           Widget widget = Container(
             width: Platform.isIOS ? 24 : 16,
@@ -709,12 +712,81 @@ class TrackingController extends GetxController
                 )
             ),
             child: Center(
-              child: Text('$i', style: const TextStyle(
+              child: Text('$i', style: TextStyle(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
               ),),
             ),
+          );
+
+          widget = Stack(
+            alignment: Alignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // The main container with the number
+                  Container(
+                    width: 30,
+                    padding: EdgeInsets.symmetric(vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          spreadRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$i', // The number
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  //Container(height: .5, width: 16, color: Colors.black),
+                  RotatedBox(
+                    quarterTurns: 2,
+                    child: ClipPath(
+                      clipper: TriangleClipper(),
+                      child: Container(
+                        width: 16,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              spreadRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              /*Positioned(
+                right: 0,
+                top: 0,
+                child: Container(
+                  width: 4,
+                  height: 25,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                  ),
+                ),
+              ),*/
+            ],
           );
 
           AppHelper.widgetToBytes(widget).then((bytes) {
@@ -1176,4 +1248,21 @@ class MapPathMarkers {
       required this.name,
       required this.description, this.type = '', this.featureColor = '', this.direction = false,
       required this.iconUrl});
+}
+
+class TriangleClipper extends CustomClipper<ui.Path> {
+  @override
+  ui.Path getClip(ui.Size size) {
+    ui.Path path = ui.Path();
+    path.moveTo(size.width / 2, 0);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<ui.Path> oldClipper) {
+    return false;
+  }
 }

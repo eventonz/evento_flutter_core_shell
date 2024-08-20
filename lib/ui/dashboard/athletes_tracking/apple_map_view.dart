@@ -177,6 +177,7 @@ class _AppleMapViewState extends State<AppleMapView> {
                   if(controller.showDistanceMarkers.value)
                   ...controller.points.values,
                 ]),
+                padding: EdgeInsets.only(top: 68, right: 8),
               ),
               Positioned(
                 top: 16,
