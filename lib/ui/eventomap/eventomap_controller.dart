@@ -28,6 +28,8 @@ import '../../core/utils/keys.dart';
 import '../../core/utils/preferences.dart';
 import 'package:latlong2/latlong.dart' as latlong;
 
+import '../dashboard/athletes_tracking/tracking_controller.dart';
+
 class EventoMapController extends GetxController {
 
   RxBool loading = true.obs;
@@ -538,24 +540,62 @@ class EventoMapController extends GetxController {
           final totalDistance = calculateTotalDistance();
 
           for (int i = 1; i < totalDistance; i++) {
-            Widget widget = Container(
-              width: Platform.isIOS ? 24 : 16,
-              height: Platform.isIOS ? 24 : 16,
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.black,
-                    width: 1,
-                  )
-              ),
-              child: Center(
-                child: Text('$i', style: const TextStyle(
-                  fontSize: 8,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),),
-              ),
+            Widget widget = Stack(
+              alignment: Alignment.center,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // The main container with the number
+                    Container(
+                      width: 30,
+                      padding: EdgeInsets.symmetric(vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            spreadRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$i', // The number
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    //Container(height: .5, width: 16, color: Colors.black),
+                    RotatedBox(
+                      quarterTurns: 2,
+                      child: ClipPath(
+                        clipper: TriangleClipper(),
+                        child: Container(
+                          width: 16,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                spreadRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             );
 
             AppHelper.widgetToBytes(widget).then((bytes) {

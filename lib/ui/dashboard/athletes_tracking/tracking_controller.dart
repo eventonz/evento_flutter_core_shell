@@ -319,6 +319,7 @@ class TrackingController extends GetxController
   }
 
   void addStaticAnnotation(annotationId, annotation) {
+    print('hello');
     if(interestAnnotations['static'] == null) {
       interestAnnotations['static'] = [];
     }
@@ -647,8 +648,12 @@ class TrackingController extends GetxController
             .firstWhereOrNull((element) => element.properties?['color']?.isNotEmpty ?? false)
         ?.properties!['color'];
 
-        showStartIcon = true;
-        showFinishIcon = true;
+        if(routePathsColors[path.name ?? 'path'] == null) {
+          routePathsColors[path.name ?? 'path'] = path.color;
+        }
+
+        //showStartIcon = true;
+        //showFinishIcon = true;
 
 
         if (Platform.isIOS) {
@@ -781,17 +786,6 @@ class TrackingController extends GetxController
                   ),
                 ],
               ),
-              /*Positioned(
-                right: 0,
-                top: 0,
-                child: Container(
-                  width: 4,
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                  ),
-                ),
-              ),*/
             ],
           );
 
@@ -829,6 +823,7 @@ class TrackingController extends GetxController
         if (markerPoints.isNotEmpty) {
           for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
             print('markers ${markerPoint.geometry}');
+            print('markers ${markerPoint.properties}');
             final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
             mapPathMarkers.add(MapPathMarkers(
                 latLng: LatLng(geoPoint.latitude, geoPoint.longitude),
