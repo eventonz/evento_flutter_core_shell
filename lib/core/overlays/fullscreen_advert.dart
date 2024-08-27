@@ -78,6 +78,7 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
                   onTap: () {
+                    timer.cancel();
                     Navigator.of(context).pop();
                   },
                   child: AnimatedContainer(

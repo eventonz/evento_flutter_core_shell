@@ -243,7 +243,6 @@ class DashboardController extends GetxController {
       await Future.delayed(const Duration(seconds: 0));
       final TrackingController controller = Get.find();
       controller.getAthleteTrackingInfo(firstTime: true);
-      controller.updateStream.add(Random().nextInt(100));
       controller.pointAnnotationManager?.deleteAll();
       controller.polylineAnnotationManager?.deleteAll();
     }

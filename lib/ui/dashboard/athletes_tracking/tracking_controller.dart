@@ -61,6 +61,7 @@ class TrackingController extends GetxController
   apple_maps.AppleMapController? appleMapController;
   Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines = Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
   Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+  Rx<Map<String, PointAnnotation>> androidAnnotations = Rx(<String, PointAnnotation>{});
   Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> extraAnnotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
 
   Map<String, TrackProgress> trackProgressMap = {};
@@ -156,13 +157,14 @@ class TrackingController extends GetxController
         if (annotation != null) {
           if (!Platform.isIOS) {
             if (showDistanceMarkers.value == false) {
-              annotation.image = null;
+              annotation.image = Uint8List(0);
             } else if ((state?.zoom ?? 0) >= 14) {
               annotation.image = images[i];
             } else {
-              annotation.image = i % 5 == 0 ? images[i] : null;
+              annotation.image = i % 5 == 0 ? images[i] : Uint8List(0);
             }
             pointAnnotationManager?.update(annotation);
+            points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
           } else {
             var zoom = await appleMapController?.getZoomLevel() ?? 0;
             var annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'] as apple_maps.Annotation;
@@ -309,6 +311,12 @@ class TrackingController extends GetxController
   void addAnnotation(annotationId, annotation) {
     annotations.value[annotationId] = annotation;
     annotations.refresh();
+    update();
+  }
+
+  void addAndroidAnnotation(String annotationId, annotation) {
+    androidAnnotations.value[annotationId] = annotation;
+    androidAnnotations.refresh();
     update();
   }
 
@@ -836,10 +844,10 @@ class TrackingController extends GetxController
       }
       mapDataSnap.value = DataSnapShot.loaded;
       await getAthleteTrackingInfo();
-      updateAthleteMarkers();
-      startAthleteUpdateTimer();
       startTrackingTimer();
       if(Platform.isIOS) {
+        updateAthleteMarkers();
+        startAthleteUpdateTimer();
         setupStaticMarkers();
       }
     } catch (e) {
