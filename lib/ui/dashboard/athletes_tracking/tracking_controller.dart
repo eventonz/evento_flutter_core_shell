@@ -259,42 +259,51 @@ class TrackingController extends GetxController
   }
 
   void updateSelectedInterests(List<String> values) {
+    print('updateSelectedInterests');
     selectedInterests.value = values;
     update();
     if(values.contains('')) {
-      interestAnnotations.keys.forEach((value) {
+      for (var value in interestAnnotations.keys) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
           if(Platform.isIOS) {
             interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
           } else {
-            element.image = interestImages[value];
+            print('updateSelectedInterests 2');
+            (element as PointAnnotation).image = interestImages[value];
+
             pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
           }
           index++;
         });
-      });
+      }
     } else {
-      interestAnnotations.keys.forEach((value) {
+      for (var value in interestAnnotations.keys) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
           if(Platform.isIOS) {
             interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
           } else {
-            element.image = null;
+            print('updateSelectedInterests 3');
+            (element as PointAnnotation).image = interestImages['empty_image'];
+
             pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
           }
           index++;
         });
-      });
+      }
       for (var value in values) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
           if(Platform.isIOS) {
             interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
           } else {
-            element.image = interestImages[value];
+            print('updateSelectedInterests 4');
+            (element as PointAnnotation).image = interestImages[value];
             pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
           }
           index++;
         });
@@ -493,149 +502,169 @@ class TrackingController extends GetxController
           //routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
         }
 
-        final points = geoJson.features;
-        for (int index = 0; index < points.length; index++) {
-          var element = points[index];
-          if (element.type == GeoJsonFeatureType.point) {
-            print(geoJson.features[index]
-                .properties);
-            Widget widget = Image.asset(AppHelper.getImage('${element
-                .properties?['type']}.png'), width: 30, height: 30);
-            AppHelper.widgetToBytes(widget)
-                .then((value) async {
-              apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
-                annotationId: apple_maps.AnnotationId(element
-                    .properties?['id']),
-                icon: apple_maps.BitmapDescriptor.fromBytes(value),
-                position: apple_maps.LatLng(
-                    (element.geometry as GeoJsonPoint).geoPoint
-                        .latitude,
-                    (element.geometry as GeoJsonPoint).geoPoint
-                        .longitude),
-                onTap: () async {
-                  var point = element;
-                  print(point.geometry);
-                  appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng((point.geometry as GeoJsonPoint).geoPoint.latitude, (point.geometry as GeoJsonPoint).geoPoint.longitude), zoom: 18)));
-                  await showModalBottomSheet(
-                      barrierColor: Colors.black.withOpacity(0.04),
-                      context: Get.context!, builder: (_) =>
-                      BottomSheet(
-                          elevation: 0,
-                          onClosing: () {
+        if(Platform.isIOS) {
+          final points = geoJson.features;
+          for (int index = 0; index < points.length; index++) {
+            var element = points[index];
+            if (element.type == GeoJsonFeatureType.point) {
+              print(geoJson.features[index]
+                  .properties);
+              Widget widget = Image.asset(AppHelper.getImage('${element
+                  .properties?['type']}.png'), width: 30, height: 30);
+              AppHelper.widgetToBytes(widget)
+                  .then((value) async {
+                apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId(element
+                      .properties?['id']),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(value),
+                  position: apple_maps.LatLng(
+                      (element.geometry as GeoJsonPoint).geoPoint
+                          .latitude,
+                      (element.geometry as GeoJsonPoint).geoPoint
+                          .longitude),
+                  onTap: () async {
+                    var point = element;
+                    print(point.geometry);
+                    appleMapController?.animateCamera(
+                        apple_maps.CameraUpdate.newCameraPosition(
+                            apple_maps.CameraPosition(target: apple_maps.LatLng(
+                                (point.geometry as GeoJsonPoint).geoPoint
+                                    .latitude,
+                                (point.geometry as GeoJsonPoint).geoPoint
+                                    .longitude), zoom: 18)));
+                    await showModalBottomSheet(
+                        barrierColor: Colors.black.withOpacity(0.04),
+                        context: Get.context!, builder: (_) =>
+                        BottomSheet(
+                            elevation: 0,
+                            onClosing: () {
 
-                          }, builder: (_) =>
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 24.0,
-                                      right: 24.0,
-                                      top: 24.0,
-                                      bottom: 12.0),
-                                  child: Row(
-                                    children: [
-                                      Image.asset(AppHelper.getImage('${point
-                                          .properties?['type']}.png'),
-                                          width: 30, height: 30),
-                                      const SizedBox(width: 8),
-                                      Text('${point.properties?['title']}',
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w700,
-                                          )),
-                                    ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0),
-                                  child: Text(
-                                      '${point.properties?['description']}',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                      )),
-                                ),
-                                if(point.properties?['direction'] == true)
-                                  ...[
-                                    const SizedBox(height: 16),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 24.0),
-                                      child: ElevatedButton(onPressed: () {
-                                        AppHelper.showDirectionsOnMap(
-                                            apple_maps.LatLng(
-                                                (point.geometry as GeoJsonPoint)
-                                                    .geoPoint.latitude,
-                                                (point.geometry as GeoJsonPoint)
-                                                    .geoPoint.longitude));
-                                      },
-                                        style: ButtonStyle(
-                                          backgroundColor: MaterialStateProperty
-                                              .all(Theme
-                                              .of(Get.context!)
-                                              .colorScheme
-                                              .primary),
-                                          shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius
-                                                      .circular(5))),
-                                        ),
-                                        child: Text(
-                                          'Get Directions', style: TextStyle(
-                                          color: Theme
-                                              .of(Get.context!)
-                                              .colorScheme.secondary,
-                                        ),),),
+                            }, builder: (_) =>
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 24.0,
+                                        right: 24.0,
+                                        top: 24.0,
+                                        bottom: 12.0),
+                                    child: Row(
+                                      children: [
+                                        Image.asset(AppHelper.getImage('${point
+                                            .properties?['type']}.png'),
+                                            width: 30, height: 30),
+                                        const SizedBox(width: 8),
+                                        Text('${point.properties?['title']}',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                      ],
                                     ),
-                                  ],
-                                SizedBox(height: MediaQuery
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24.0),
+                                    child: Text(
+                                        '${point.properties?['description']}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        )),
+                                  ),
+                                  if(point.properties?['direction'] == true)
+                                    ...[
+                                      const SizedBox(height: 16),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 24.0),
+                                        child: ElevatedButton(onPressed: () {
+                                          AppHelper.showDirectionsOnMap(
+                                              apple_maps.LatLng(
+                                                  (point
+                                                      .geometry as GeoJsonPoint)
+                                                      .geoPoint.latitude,
+                                                  (point
+                                                      .geometry as GeoJsonPoint)
+                                                      .geoPoint.longitude));
+                                        },
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty
+                                                .all(Theme
+                                                .of(Get.context!)
+                                                .colorScheme
+                                                .primary),
+                                            shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius
+                                                        .circular(5))),
+                                          ),
+                                          child: Text(
+                                            'Get Directions', style: TextStyle(
+                                            color: Theme
+                                                .of(Get.context!)
+                                                .colorScheme
+                                                .secondary,
+                                          ),),),
+                                      ),
+                                    ],
+                                  SizedBox(height: MediaQuery
+                                      .of(Get.context!)
+                                      .padding
+                                      .bottom + 8),
+                                ],
+                              ),
+                            )));
+                    List<LatLng> bounds = [];
+
+                    routePathsCordinates.values.forEach((element) {
+                      bounds.addAll(element.map((element) =>
+                          LatLng(element.latitude.toDouble(),
+                              element.longitude.toDouble())));
+                    });
+                    appleMapController?.animateCamera(
+                        apple_maps.CameraUpdate.newCameraPosition(
+                            apple_maps.CameraPosition(
+                              target: initialPathCenterPoint().lat.toDouble() ==
+                                  0.0 ? apple_maps.LatLng(
+                                  -42.0178775, 174.3417791) : apple_maps.LatLng(
+                                  initialPathCenterPoint().lat.toDouble(),
+                                  initialPathCenterPoint().lng.toDouble()),
+                              zoom: bounds.isEmpty ? 5 : TrackingMapView
+                                  .dgetBoundsZoomLevel(
+                                  LatLngBounds.fromPoints(bounds), {
+
+                                'height': MediaQuery
                                     .of(Get.context!)
-                                    .padding
-                                    .bottom + 8),
-                              ],
-                            ),
-                          )));
-                  List<LatLng> bounds = [];
-
-                  routePathsCordinates.values.forEach((element) {
-                    bounds.addAll(element.map((element) => LatLng(element.latitude.toDouble(), element.longitude.toDouble())));
-                  });
-                  appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(
-                    target: initialPathCenterPoint().lat.toDouble() == 0.0 ? apple_maps.LatLng(-42.0178775,174.3417791) : apple_maps.LatLng(initialPathCenterPoint().lat.toDouble(), initialPathCenterPoint().lng.toDouble()),
-                    zoom: bounds.isEmpty ? 5 : TrackingMapView.dgetBoundsZoomLevel(
-                        LatLngBounds.fromPoints(bounds), {
-
-                      'height': MediaQuery
-                          .of(Get.context!)
-                          .size
-                          .height,
-                      'width': MediaQuery
-                          .of(Get.context!)
-                          .size
-                          .width})*1.05,
-                  )));
-                },
-              );
-              if (interestAnnotations[element
-                  .properties?['type']] == null) {
-                interestAnnotations[element
-                    .properties?['type']] = [];
-                interestImages[element
-                    .properties?['type']] = value;
-              }
-              interestAnnotations[element
-                  .properties?['type']]!.add(pointAnnotation);
-              geoJson.features[index]
-                  .properties?['annotation'] =
-                  pointAnnotation.annotationId.value;
-              interestAnnotations.refresh();
-              update();
-            });
+                                    .size
+                                    .height,
+                                'width': MediaQuery
+                                    .of(Get.context!)
+                                    .size
+                                    .width}) * 1.05,
+                            )));
+                  },
+                );
+                  if (interestAnnotations[element
+                      .properties?['type']] == null) {
+                    interestAnnotations[element
+                        .properties?['type']] = [];
+                    interestImages[element
+                        .properties?['type']] = value;
+                  }
+                  interestAnnotations[element
+                      .properties?['type']]!.add(pointAnnotation);
+                  geoJson.features[index]
+                      .properties?['annotation'] =
+                      pointAnnotation.annotationId.value;
+                  interestAnnotations.refresh();
+                  update();
+              });
+            }
+            print(geoJson.features.length);
           }
-          print(geoJson.features.length);
         }
 
         calculateTotalDistance();

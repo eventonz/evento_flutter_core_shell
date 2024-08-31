@@ -102,7 +102,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                 borderRadius: BorderRadius.circular(40)),
             child: Center(
               child: AppText(
-                  trackDetail.marker_text,
+                  trackDetail.marker_text == '' ? trackDetail.track : trackDetail.marker_text,
                   fontSize: 16,
                   color: controller.routePathsColors[trackDetail.path ?? 'path'] == null ? Colors.black : AppColors.white
               ),
@@ -337,10 +337,15 @@ class _AndroidMapViewState extends State<AndroidMapView> {
 
     addPoiMarkers() {
       final points = controller.geoJson.features;
+      controller.screenshotController.captureFromWidget(Image.asset(AppHelper.getImage('transparent.png'), width: 10, height: 10,)).then((value) {
+        controller.interestImages['empty_image'] = value;
+      });
       for (int index = 0; index < points.length; index++) {
         var element = points[index];
         if(element.type == GeoJsonFeatureType.point) {
           print('hello 4');
+          print(element
+              .properties?['type']);
           Widget widget = Image.asset(AppHelper.getImage('${element
               .properties?['type']}.png'), width: 30, height: 30);
           controller.screenshotController.captureFromWidget(widget)
