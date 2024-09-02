@@ -8,6 +8,7 @@ import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart' as geolocator;
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
@@ -33,6 +34,7 @@ import 'package:screenshot/screenshot.dart';
 import '../../../core/res/app_colors.dart';
 import '../../../core/utils/helpers.dart';
 import '../../common_components/text.dart';
+import 'dart:ui' as ui;
 
 class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -59,6 +61,8 @@ class TrackingController extends GetxController
   apple_maps.AppleMapController? appleMapController;
   Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines = Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
   Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+  Rx<Map<String, PointAnnotation>> androidAnnotations = Rx(<String, PointAnnotation>{});
+  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> extraAnnotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
 
   Map<String, TrackProgress> trackProgressMap = {};
   bool isFirstTime = true;
@@ -79,6 +83,53 @@ class TrackingController extends GetxController
   static const _inProgressId = 'AnimatedMapController#MoveInProgress';
   static const _finishedId = 'AnimatedMapController#MoveFinished';
 
+  bool zoomedIn = false;
+  RxBool showDistanceMarkers = false.obs;
+
+  RxMap<String, dynamic> points = <String, dynamic>{}.obs;
+
+  Map<String, double> totalDistance = {};
+
+  Map<int, Uint8List> images = {};
+
+  List<String> mapStyles = [
+    MapboxStyles.OUTDOORS,
+    MapboxStyles.SATELLITE,
+    MapboxStyles.STANDARD,
+  ];
+
+  List<apple_maps.MapType> mapTypes = <apple_maps.MapType>[
+    apple_maps.MapType.standard,
+    apple_maps.MapType.satellite,
+    apple_maps.MapType.hybrid,
+  ];
+
+  Rx<String> mapStyle = MapboxStyles.OUTDOORS.obs;
+  Rx<apple_maps.MapType> mapType = apple_maps.MapType.standard.obs;
+
+  var geoJson = GeoJson();
+
+  RxMap<String, List<dynamic>> interestAnnotations = <String, List<dynamic>>{}.obs;
+  Map<String, Uint8List> interestImages = {};
+
+  Rx<List<String>> selectedInterests = Rx(['']);
+
+  final Map<String, String> iopTypesMap = {
+    "spectators": "Spectator Zones",
+    "camera": "Camera",
+    "bagdrop": "Bag Drop",
+    "checkpoint": "Checkpoint",
+    "mechanic": "Mechanic Zones",
+    "timing": "Timing Points",
+    "aidstation": "Aid Station",
+    "info": "Information",
+    "wc": "Toilets",
+    "store": "Store",
+    "caution": "Caution",
+    "firstaid": "First Aid"
+  };
+
+
   @override
   void onInit() {
     super.onInit();
@@ -90,6 +141,175 @@ class TrackingController extends GetxController
     //if (eventId.isEmpty) {
     //  eventId = AppGlobals.appEventConfig.multiEventListId ?? '';
     //}
+  }
+
+  void changeDistanceMarkers(bool show) async {
+    showDistanceMarkers.value = show;
+    update();
+
+    final state = await mapboxMap?.getCameraState();
+    print(state?.zoom);
+    for(int x = 0; x < routePathsCordinates.values.length; x++) {
+      var distance = totalDistance.values.toList()[x];
+      for (int i = 1; i < distance; i++) {
+
+        final annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'];
+        if (annotation != null) {
+          if (!Platform.isIOS) {
+            if (showDistanceMarkers.value == false) {
+              annotation.image = Uint8List(0);
+            } else if ((state?.zoom ?? 0) >= 14) {
+              annotation.image = images[i];
+            } else {
+              annotation.image = i % 5 == 0 ? images[i] : Uint8List(0);
+            }
+            pointAnnotationManager?.update(annotation);
+            points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
+          } else {
+            var zoom = await appleMapController?.getZoomLevel() ?? 0;
+            var annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'] as apple_maps.Annotation;
+            if (!showDistanceMarkers.value) {
+              annotation = annotation.copyWith(
+                  iconParam: apple_maps.BitmapDescriptor.fromBytes(
+                      Uint8List(0)));
+            } else if ((zoom) >= 14) {
+              annotation = annotation.copyWith(
+                  iconParam: apple_maps.BitmapDescriptor.fromBytes(images[i]!));
+            } else {
+              annotation = annotation.copyWith(
+                  iconParam: i % 5 == 0 ? apple_maps.BitmapDescriptor.fromBytes(
+                      images[i]!) : apple_maps.BitmapDescriptor.fromBytes(
+                      AppHelper.emptyImage));
+            }
+            points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
+            points.refresh();
+          }
+        }
+      }
+    }
+  }
+
+  double calculateTotalDistance() {
+/*    if (routePathsCordinates.length < 2) {
+      return 0.0;
+    }*/
+
+    double totalDistance = 0.0;
+    const distanceCalculator = Distance();
+
+    for (int x = 0; x < routePathsCordinates.values.length; x++) {
+      var pathCoordinates = routePathsCordinates.values.toList()[x];
+      for (int i = 0; i < pathCoordinates.length - 1; i++) {
+        final point1 = pathCoordinates[i];
+        final point2 = pathCoordinates[i + 1];
+        final distance = distanceCalculator.as(
+          LengthUnit.Centimeter,
+          LatLng(point1.latitude.toDouble(), point1.longitude.toDouble()),
+          LatLng(point2.latitude.toDouble(), point2.longitude.toDouble()),
+        );
+        totalDistance += distance;
+      }
+
+      print(totalDistance);
+      totalDistance =
+          LengthUnit.Centimeter.to(LengthUnit.Kilometer, totalDistance);
+      print(totalDistance);
+
+      this.totalDistance[routePathsCordinates.keys.toList()[x]] = totalDistance;
+    }
+
+    return totalDistance;
+  }
+
+  void changeStyle(int index) {
+    mapStyle.value = mapStyles[index];
+    mapType.value = mapTypes[index];
+    mapboxMap?.loadStyleURI(mapStyles[index]);
+    update();
+
+
+    //mapboxMap?.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
+    // add the DEM source as a terrain layer with exaggerated height
+    //mapboxMap.style.til();
+    mapboxMap?.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
+  }
+
+  String getStyleName(String style) {
+    if(style == MapboxStyles.OUTDOORS) {
+      return 'Outdoors';
+    } else if(style == MapboxStyles.SATELLITE) {
+      return 'Satellite';
+    } else if(style == MapboxStyles.STANDARD) {
+      return Platform.isIOS ? 'Hybrid' : '3D';
+    } else {
+      return 'Default';
+    }
+  }
+
+  String getStyleImage(String style) {
+    if(style == MapboxStyles.OUTDOORS) {
+      return 'square.png';
+    } else if(style == MapboxStyles.SATELLITE) {
+      return 'square2.png';
+    } else if(style == MapboxStyles.STANDARD) {
+      return Platform.isIOS ? 'square3.png' : 'square3.png';
+    } else {
+      return 'square3.png';
+    }
+  }
+
+  void updateSelectedInterests(List<String> values) {
+    print('updateSelectedInterests');
+    selectedInterests.value = values;
+    update();
+    if(values.contains('')) {
+      for (var value in interestAnnotations.keys) {
+        int index = 0;
+        interestAnnotations[value]?.forEach((element) {
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          } else {
+            print('updateSelectedInterests 2');
+            (element as PointAnnotation).image = interestImages[value];
+
+            pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
+          }
+          index++;
+        });
+      }
+    } else {
+      for (var value in interestAnnotations.keys) {
+        int index = 0;
+        interestAnnotations[value]?.forEach((element) {
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+          } else {
+            print('updateSelectedInterests 3');
+            (element as PointAnnotation).image = interestImages['empty_image'];
+
+            pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
+          }
+          index++;
+        });
+      }
+      for (var value in values) {
+        int index = 0;
+        interestAnnotations[value]?.forEach((element) {
+          if(Platform.isIOS) {
+            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          } else {
+            print('updateSelectedInterests 4');
+            (element as PointAnnotation).image = interestImages[value];
+            pointAnnotationManager?.update(element);
+            interestAnnotations[value]![index] = element;
+          }
+          index++;
+        });
+      }
+    }
+    interestAnnotations.refresh();
   }
   
   void addPolyline(polylineId, polyline) {
@@ -103,15 +323,52 @@ class TrackingController extends GetxController
     update();
   }
 
+  void addAndroidAnnotation(String annotationId, annotation) {
+    androidAnnotations.value[annotationId] = annotation;
+    androidAnnotations.refresh();
+    update();
+  }
+
+  void addExtraAnnotation(annotationId, annotation) {
+    extraAnnotations.value[annotationId] = annotation;
+    extraAnnotations.refresh();
+    update();
+  }
+
+  void addStaticAnnotation(annotationId, annotation) {
+    print('hello');
+    if(interestAnnotations['static'] == null) {
+      interestAnnotations['static'] = [];
+    }
+    interestAnnotations['static']?.add(annotation);
+    interestAnnotations.refresh();
+    update();
+  }
+
   void clearAnnotations() {
     annotations.value.clear();
     annotations.refresh();
     update();
   }
 
+  void clearStaticAnnotations() {
+    interestAnnotations.value.clear();
+    interestAnnotations.refresh();
+    update();
+  }
+
   void updateAnnotation(annotationId, annotation) {
     annotations.value[annotationId] = annotation;
     annotations.refresh();
+    update();
+  }
+
+  void updateStaticAnnotation(annotationId, annotation) {
+    if(interestAnnotations['static'] == null) {
+      interestAnnotations['static'] = [];
+    }
+    interestAnnotations['static']?.add(annotation);
+    interestAnnotations.refresh();
     update();
   }
 
@@ -197,14 +454,27 @@ class TrackingController extends GetxController
   Future<void> getRoutePaths() async {
     if (trackingDetails == null) return;
     print('getRoutePaths');
+
+    /*trackingDetails!.paths = [
+      Paths(
+        url: "https://evento-nz.fra1.cdn.digitaloceanspaces.com/geojson/9FB682C1-6276-458D-B605-F5757D61A895.geojson",
+        name: 'p_1',
+        color: '#000000',
+      ),
+      Paths(
+        url: "https://evento-nz.fra1.cdn.digitaloceanspaces.com/geojson/06292487-C9D2-407F-9861-FD421266A1D9.geojson",
+        name: 'p_2',
+        color: '#1681CF',
+      ),
+    ];*/
+
     routePathLinks = List.from(trackingDetails!.paths);
     try {
       mapDataSnap.value = DataSnapShot.loading;
       mapPathMarkers.clear();
       for (Paths path in routePathLinks) {
         print(path.toJson());
-        var geoJson = GeoJson();
-        routePathsColors[path.name ?? 'path'] = path.color;
+        //routePathsColors[path.name ?? 'path'] = path.color;
         final res = await ApiHandler.downloadFile(baseUrl: path.url!);
         final geoJsonFile = File(res.data['file_path']);
         var text = await geoJsonFile.readAsString();
@@ -221,6 +491,9 @@ class TrackingController extends GetxController
           }
           i++;
         }
+
+        geoJson = GeoJson();
+
         await geoJson.parse(jsonEncode(data));
         final geoPoints = geoJson.lines.first.geoSerie?.geoPoints ?? [];
         if (geoPoints.isNotEmpty) {
@@ -228,7 +501,353 @@ class TrackingController extends GetxController
               geoPoints.map((e) => LatLng(e.latitude, e.longitude)).toList();
           //routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
         }
+
+        if(Platform.isIOS) {
+          final points = geoJson.features;
+          for (int index = 0; index < points.length; index++) {
+            var element = points[index];
+            if (element.type == GeoJsonFeatureType.point) {
+              print(geoJson.features[index]
+                  .properties);
+              Widget widget = Image.asset(AppHelper.getImage('${element
+                  .properties?['type']}.png'), width: 30, height: 30);
+              AppHelper.widgetToBytes(widget)
+                  .then((value) async {
+                apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                  annotationId: apple_maps.AnnotationId(element
+                      .properties?['id']),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(value),
+                  position: apple_maps.LatLng(
+                      (element.geometry as GeoJsonPoint).geoPoint
+                          .latitude,
+                      (element.geometry as GeoJsonPoint).geoPoint
+                          .longitude),
+                  onTap: () async {
+                    var point = element;
+                    print(point.geometry);
+                    appleMapController?.animateCamera(
+                        apple_maps.CameraUpdate.newCameraPosition(
+                            apple_maps.CameraPosition(target: apple_maps.LatLng(
+                                (point.geometry as GeoJsonPoint).geoPoint
+                                    .latitude,
+                                (point.geometry as GeoJsonPoint).geoPoint
+                                    .longitude), zoom: 18)));
+                    await showModalBottomSheet(
+                        barrierColor: Colors.black.withOpacity(0.04),
+                        context: Get.context!, builder: (_) =>
+                        BottomSheet(
+                            elevation: 0,
+                            onClosing: () {
+
+                            }, builder: (_) =>
+                            Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 24.0,
+                                        right: 24.0,
+                                        top: 24.0,
+                                        bottom: 12.0),
+                                    child: Row(
+                                      children: [
+                                        Image.asset(AppHelper.getImage('${point
+                                            .properties?['type']}.png'),
+                                            width: 30, height: 30),
+                                        const SizedBox(width: 8),
+                                        Text('${point.properties?['title']}',
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.w700,
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24.0),
+                                    child: Text(
+                                        '${point.properties?['description']}',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        )),
+                                  ),
+                                  if(point.properties?['direction'] == true)
+                                    ...[
+                                      const SizedBox(height: 16),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 24.0),
+                                        child: ElevatedButton(onPressed: () {
+                                          AppHelper.showDirectionsOnMap(
+                                              apple_maps.LatLng(
+                                                  (point
+                                                      .geometry as GeoJsonPoint)
+                                                      .geoPoint.latitude,
+                                                  (point
+                                                      .geometry as GeoJsonPoint)
+                                                      .geoPoint.longitude));
+                                        },
+                                          style: ButtonStyle(
+                                            backgroundColor: MaterialStateProperty
+                                                .all(Theme
+                                                .of(Get.context!)
+                                                .colorScheme
+                                                .primary),
+                                            shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius
+                                                        .circular(5))),
+                                          ),
+                                          child: Text(
+                                            'Get Directions', style: TextStyle(
+                                            color: Theme
+                                                .of(Get.context!)
+                                                .colorScheme
+                                                .secondary,
+                                          ),),),
+                                      ),
+                                    ],
+                                  SizedBox(height: MediaQuery
+                                      .of(Get.context!)
+                                      .padding
+                                      .bottom + 8),
+                                ],
+                              ),
+                            )));
+                    List<LatLng> bounds = [];
+
+                    routePathsCordinates.values.forEach((element) {
+                      bounds.addAll(element.map((element) =>
+                          LatLng(element.latitude.toDouble(),
+                              element.longitude.toDouble())));
+                    });
+                    appleMapController?.animateCamera(
+                        apple_maps.CameraUpdate.newCameraPosition(
+                            apple_maps.CameraPosition(
+                              target: initialPathCenterPoint().lat.toDouble() ==
+                                  0.0 ? apple_maps.LatLng(
+                                  -42.0178775, 174.3417791) : apple_maps.LatLng(
+                                  initialPathCenterPoint().lat.toDouble(),
+                                  initialPathCenterPoint().lng.toDouble()),
+                              zoom: bounds.isEmpty ? 5 : TrackingMapView
+                                  .dgetBoundsZoomLevel(
+                                  LatLngBounds.fromPoints(bounds), {
+
+                                'height': MediaQuery
+                                    .of(Get.context!)
+                                    .size
+                                    .height,
+                                'width': MediaQuery
+                                    .of(Get.context!)
+                                    .size
+                                    .width}) * 1.05,
+                            )));
+                  },
+                );
+                  if (interestAnnotations[element
+                      .properties?['type']] == null) {
+                    interestAnnotations[element
+                        .properties?['type']] = [];
+                    interestImages[element
+                        .properties?['type']] = value;
+                  }
+                  interestAnnotations[element
+                      .properties?['type']]!.add(pointAnnotation);
+                  geoJson.features[index]
+                      .properties?['annotation'] =
+                      pointAnnotation.annotationId.value;
+                  interestAnnotations.refresh();
+                  update();
+              });
+            }
+            print(geoJson.features.length);
+          }
+        }
+
+        calculateTotalDistance();
+
+
+        bool showStartIcon = geoJson.features
+            .where((element) => element.properties?['start_icon'] == true)
+            .isNotEmpty;
+        bool showFinishIcon = geoJson.features
+            .where((element) => element.properties?['finish_icon'] == true)
+            .isNotEmpty;
+
+        showDistanceMarkers.value = geoJson.features
+            .where((element) => element.properties?['distance_markers'] == true)
+            .isNotEmpty;
+
+        routePathsColors[path.name ?? 'path'] = geoJson.features
+            .firstWhereOrNull((element) => element.properties?['color']?.isNotEmpty ?? false)
+        ?.properties!['color'];
+
+        if(routePathsColors[path.name ?? 'path'] == null) {
+          routePathsColors[path.name ?? 'path'] = path.color;
+        }
+
+        //showStartIcon = true;
+        //showFinishIcon = true;
+
+
+        if (Platform.isIOS) {
+          var lineString = getLineStringForPath(path.name ?? 'path');
+          if (showStartIcon) {
+            print('showStartIcon');
+            Widget widget = SvgPicture.asset(
+                AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+
+            AppHelper.widgetToBytes(widget).then((value) {
+
+            var annotationId = apple_maps.AnnotationId('start_icon_${path.name}');
+
+            var annotation = apple_maps.Annotation(
+                annotationId: annotationId,
+                zIndex: 4,
+                position: apple_maps.LatLng(
+                    lineString!.coordinates.first.latitude.toDouble(),
+                    lineString.coordinates.first.longitude.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    value));
+
+            addExtraAnnotation(annotationId, annotation);
+
+            });
+
+          }
+
+          if (showFinishIcon) {
+            Widget widget = SvgPicture.asset(
+                AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+
+            var annotationId = apple_maps.AnnotationId('finish_icon_${path.name}');
+
+                var annotation = apple_maps.Annotation(
+                    annotationId: annotationId,
+                    position: apple_maps.LatLng(
+                        lineString!.coordinates.last.latitude.toDouble(),
+                        lineString.coordinates.last.longitude.toDouble()),
+                    icon: apple_maps.BitmapDescriptor.fromBytes(
+                        await AppHelper.widgetToBytes(widget)));
+
+                addExtraAnnotation(annotationId, annotation);
+          }
+
+          //if (showDistanceMarkers.value) {
+        }
       }
+
+      for (int x = 0; x < routePathsCordinates.length; x++) {
+        print('${routePathsCordinates.length} abcda ${this.totalDistance}');
+        final lineString = getLineStringForPath(routePathsCordinates.keys.toList()[x]);
+        final totalDistance = this.totalDistance[routePathsCordinates.keys.toList()[x]];
+
+        var color = routePathsColors[routePathsCordinates.keys.toList()[x]];
+
+        for (int i = 1; i < totalDistance!; i++) {
+          Widget widget = Container(
+            width: Platform.isIOS ? 24 : 16,
+            height: Platform.isIOS ? 24 : 16,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                )
+            ),
+            child: Center(
+              child: Text('$i', style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),),
+            ),
+          );
+
+          widget = Stack(
+            alignment: Alignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // The main container with the number
+                  Container(
+                    width: 30,
+                    padding: EdgeInsets.symmetric(vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(3),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          spreadRadius: 4,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$i', // The number
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+                  //Container(height: .5, width: 16, color: Colors.black),
+                  RotatedBox(
+                    quarterTurns: 2,
+                    child: ClipPath(
+                      clipper: TriangleClipper(),
+                      child: Container(
+                        width: 16,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 8,
+                              spreadRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          );
+
+          AppHelper.widgetToBytes(widget).then((bytes) {
+            images[i] = bytes;
+
+            apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
+                annotationId: apple_maps.AnnotationId('distance_$i $x'),
+                position: apple_maps.LatLng(lineString!
+                    .along(i.toDouble() * 1000)
+                    .lat, lineString
+                    .along(i.toDouble() * 1000)
+                    .lng),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    i % 5 == 0 ? images[i]! : Uint8List(0)));
+            this.points['${routePathsCordinates.keys.toList()[x]}_$i'] = pointAnnotation;
+            this.points.refresh();
+          });
+          //}
+        }
+        //}
+      }
+
+
+
       if (trackingDetails!.mapMarkers != null) {
         final res = await ApiHandler.downloadFile(
             baseUrl: trackingDetails!.mapMarkers!);
@@ -240,6 +859,8 @@ class TrackingController extends GetxController
         print(markerPoints.map((e) => e.properties));
         if (markerPoints.isNotEmpty) {
           for (GeoJsonFeature<dynamic> markerPoint in markerPoints) {
+            print('markers ${markerPoint.geometry}');
+            print('markers ${markerPoint.properties}');
             final geoPoint = (markerPoint.geometry as GeoJsonPoint).geoPoint;
             mapPathMarkers.add(MapPathMarkers(
                 latLng: LatLng(geoPoint.latitude, geoPoint.longitude),
@@ -248,16 +869,18 @@ class TrackingController extends GetxController
                 iconUrl: markerPoint.properties?['urlicon'] ?? ''));
           }
         }
+
       }
       mapDataSnap.value = DataSnapShot.loaded;
       await getAthleteTrackingInfo();
-      updateAthleteMarkers();
-      startAthleteUpdateTimer();
       startTrackingTimer();
       if(Platform.isIOS) {
+        updateAthleteMarkers();
+        startAthleteUpdateTimer();
         setupStaticMarkers();
       }
     } catch (e) {
+      rethrow;
       debugPrint(e.toString());
       mapDataSnap.value = DataSnapShot.error;
     }
@@ -266,10 +889,13 @@ class TrackingController extends GetxController
   setupStaticMarkers() async {
     clearAnnotations();
     for(final marker in mapPathMarkers) {
-      http.Response response = await http.get(Uri.parse(marker.iconUrl));
-      Widget widget = Image.memory(
-          response.bodyBytes, width: 30, height: 30);
-      final String annotationIdVal = 'annotation_id_${annotations.value
+      print('marker ${marker.type}');
+
+      final response = await http.get(Uri.parse(marker.iconUrl));
+      
+
+      Widget widget = Image.memory(response.bodyBytes, width: 30, height: 30);
+      final String annotationIdVal = 'static_annotation_id_${interestAnnotations.value
           .length}';
       final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(
           annotationIdVal);
@@ -283,10 +909,9 @@ class TrackingController extends GetxController
 
         },
       );
-      addAnnotation(polygonId, annotation);
+      addStaticAnnotation(polygonId.value, annotation);
     }
   }
-
 
   void startTrackingTimer() {
     print('freq ${ trackingDetails?.updateFreq ?? 60}');
@@ -408,7 +1033,11 @@ class TrackingController extends GetxController
     athleteTrackDetails.refresh();
     update();
 
+
     if(Platform.isIOS) {
+      annotations.value.clear();
+      annotations.refresh();
+      trackProgressMap.clear();
       updateTrackProgress();
     }
   }
@@ -479,13 +1108,14 @@ class TrackingController extends GetxController
                 .length) * 13 : 36,
             height: 36,
             decoration: BoxDecoration(
-                color: AppColors.accentLight,
+                color: AppHelper.hexToColor(routePathsColors[trackDetail.path ?? 'path']),
+                //color: AppColors.accentLight
                 borderRadius: BorderRadius.circular(40)),
             child: Center(
               child: AppText(
                   trackDetail.marker_text,
                   fontSize: 16,
-                  color: AppColors.white
+                  color: routePathsColors[trackDetail.path ?? 'path'] == null ? Colors.black : AppColors.white
               ),
             ),
           ));
@@ -651,10 +1281,30 @@ class MapPathMarkers {
   final String name;
   final String description;
   final String iconUrl;
+  final String type;
+  final String featureColor;
+  final bool direction;
 
   MapPathMarkers(
       {required this.latLng,
       required this.name,
-      required this.description,
+      required this.description, this.type = '', this.featureColor = '', this.direction = false,
       required this.iconUrl});
+}
+
+class TriangleClipper extends CustomClipper<ui.Path> {
+  @override
+  ui.Path getClip(ui.Size size) {
+    ui.Path path = ui.Path();
+    path.moveTo(size.width / 2, 0);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<ui.Path> oldClipper) {
+    return false;
+  }
 }

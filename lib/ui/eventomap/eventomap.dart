@@ -437,18 +437,20 @@ class _EventoMapState extends State<EventoMap> {
                           });
                         });
 
-                        if(controller.showFinishIcon) {
-                          Widget widget = SvgPicture.asset(
-                              AppHelper.getSvg('finishpoint'), width: 27, height: 27);
-                          controller.screenshotController.captureFromWidget(widget)
-                              .then((value) {
-                            pointAnnotationManager.create(PointAnnotationOptions(
-                              geometry: Point(
-                                  coordinates: controller.routePathsCordinates.last),
-                              image: value,
-                            ));
-                          });
-                        }
+                        if (controller.showFinishIcon) {
+                            Widget widget = SvgPicture.asset(
+                              AppHelper.getSvg('finishpoint'), 
+                              width: 27, 
+                              height: 27,
+                            );
+
+                            controller.screenshotController.captureFromWidget(widget).then((value) {
+                              pointAnnotationManager.create(PointAnnotationOptions(
+                                geometry: Point(coordinates: controller.routePathsCordinates.last),
+                                image: value,
+                              ));
+                            });
+                          }
 
                         final points = controller.geoJson.features;
                         for (int index = 0; index < points.length; index++) {

@@ -11,6 +11,7 @@ import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes_tracking/android_map_view.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/apple_map_view.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,7 @@ class TrackingScreen extends StatelessWidget {
           if(Platform.isIOS)
             const AppleMapView()
           else
-            const TrackingMapView(),
+            const AndroidMapView(),
           StreamBuilder<List<AppAthleteDb>>(
               stream: controller.watchFollowedAthletes(),
               builder: (_, snap) {
