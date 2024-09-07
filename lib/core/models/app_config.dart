@@ -229,7 +229,7 @@ class Items {
     supplier = json['supplier'];
     sportSplitsRaceId = json['sportsplits_raceid'];
     icon = json['icon'];
-    openExternal = json['open_external'];
+    openExternal = json['open_external'] ?? false;
     linkToDetail = json['opens_athlete_detail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];

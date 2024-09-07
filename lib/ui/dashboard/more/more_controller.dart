@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:evento_core/core/utils/app_global.dart';
@@ -77,7 +78,12 @@ class MoreController extends GetxController {
   void decideNextView(Items item) {
     final itemType = item.type!;
     if (itemType == 'link') {
-      AppHelper.showWebBottomSheet(item.title, item.link!.url!, item.linkType); //
+      if(item.openExternal == true) {
+        launchUrl(Uri.parse(item.link!.url!), mode: LaunchMode.platformDefault);
+      } else {
+        AppHelper.showWebBottomSheet(
+            item.title, item.link!.url!, item.linkType); //
+      }
     } else if (itemType == 'pages') {
       Get.toNamed(Routes.eventResults, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'eventomap') {
