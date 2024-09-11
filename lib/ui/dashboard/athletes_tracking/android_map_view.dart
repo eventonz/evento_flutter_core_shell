@@ -123,10 +123,10 @@ class _AndroidMapViewState extends State<AndroidMapView> {
             print('annotation created ${trackDetail.track}');
         } else {
 
-          print('routePath ${trackDetail.track} ${trackDetail.path}: $routePath');
+          //print('routePath ${trackDetail.track} ${trackDetail.path}: $routePath');
           final geodart.LineString lineStringPath = controller.createLineStringPath(routePath);
 
-          print('lineString ${trackDetail.track} ${lineStringPath}');
+          //print('lineString ${trackDetail.track} ${lineStringPath}');
 
           double coveredDistance = progress.coveredDistance;
           if (coveredDistance < Precision(lineStringPath.length).toPrecision(4)) {
@@ -531,13 +531,13 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                                   },
                                   child: Icon(Icons.menu, color: Theme.of(context).iconTheme.color,)),
                               const SizedBox(height: 16),
-                              CupertinoButton(
+                             /* CupertinoButton(
                                   padding: const EdgeInsets.all(0),
                                   color: AppColors.white,
                                   onPressed: controller.changeMapStyle,
                                   child: SvgPicture.asset(
                                     AppHelper.getSvg('layers'), width: 28,)),
-                              const SizedBox(height: 16),
+                              const SizedBox(height: 16),*/
                               CupertinoButton(
                                   padding: const EdgeInsets.all(0),
                                   color: AppColors.white,
