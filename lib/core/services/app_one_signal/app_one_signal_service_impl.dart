@@ -10,13 +10,16 @@ import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
-import 'package:uni_links/uni_links.dart';
+import 'package:app_links/app_links.dart';
 
 import '../../../evento_app.dart';
 import '../../../ui/dashboard/more/more_controller.dart';
 import '../../models/app_config.dart';
 
 class AppOneSignalImpl implements AppOneSignal {
+
+  final appLinks = AppLinks();
+
   AppOneSignalImpl() {
     init();
     initUniLinks();
@@ -26,7 +29,7 @@ class AppOneSignalImpl implements AppOneSignal {
 
   Future<void> initUniLinks() async {
     try {
-      String? initialLink = await getInitialLink();
+      Uri? initialLink = await appLinks.getInitialLink();
       if (initialLink != null) {
         // Handle the initial deep link
         print(initialLink);
@@ -36,7 +39,7 @@ class AppOneSignalImpl implements AppOneSignal {
     }
 
     // Listen for incoming deep links
-    _sub = linkStream.listen((String? link) {
+    _sub = appLinks.uriLinkStream.listen((Uri? link) {
       if (link != null) {
         // Handle the incoming deep link
         print(link);
