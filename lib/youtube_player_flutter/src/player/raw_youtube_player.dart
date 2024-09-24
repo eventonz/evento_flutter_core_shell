@@ -76,9 +76,24 @@ class _RawYoutubePlayerState extends State<RawYoutubePlayer>
         key: widget.key,
         initialData: InAppWebViewInitialData(
           data: player,
-          baseUrl: Uri.parse('https://www.youtube.com'),
+          baseUrl: WebUri('https://www.youtube.com'),
           encoding: 'utf-8',
           mimeType: 'text/html',
+        ),
+        initialSettings: InAppWebViewSettings(
+          transparentBackground: true,
+          userAgent: userAgent,
+          mediaPlaybackRequiresUserGesture: false,
+          disableContextMenu: true,
+          supportZoom: false,
+          disableHorizontalScroll: false,
+          disableVerticalScroll: false,
+          useShouldOverrideUrlLoading: true,
+          allowsInlineMediaPlayback: true,
+          allowsAirPlayForMediaPlayback: true,
+          allowsPictureInPictureMediaPlayback: true,
+          useWideViewPort: false,
+          useHybridComposition: controller!.flags.useHybridComposition,
         ),
         initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(

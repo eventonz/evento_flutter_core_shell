@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
-import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_controller.dart' as cc;
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
@@ -74,7 +74,7 @@ class TrackingController extends GetxController
   MapController mapController = MapController();
   ScreenshotController screenshotController = ScreenshotController();
 
-  CarouselController carouselController = CarouselController();
+  cc.CarouselSliderController carouselController = cc.CarouselSliderController();
 
   late StreamController<int> updateStream = StreamController<int>.broadcast();
 
