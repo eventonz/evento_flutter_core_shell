@@ -1289,85 +1289,6 @@ typedef $$AthleteDbTableUpdateCompanionBuilder = AthleteDbCompanion Function({
   Value<String> searchTag,
 });
 
-class $$AthleteDbTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AthleteDbTable,
-    AppAthleteDb,
-    $$AthleteDbTableFilterComposer,
-    $$AthleteDbTableOrderingComposer,
-    $$AthleteDbTableCreateCompanionBuilder,
-    $$AthleteDbTableUpdateCompanionBuilder> {
-  $$AthleteDbTableTableManager(_$AppDatabase db, $AthleteDbTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$AthleteDbTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$AthleteDbTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> athleteId = const Value.absent(),
-            Value<bool> canFollow = const Value.absent(),
-            Value<bool> isFollowed = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<String?> disRaceNo = const Value.absent(),
-            Value<String> extra = const Value.absent(),
-            Value<String> profileImage = const Value.absent(),
-            Value<String> raceno = const Value.absent(),
-            Value<int> eventId = const Value.absent(),
-            Value<String> info = const Value.absent(),
-            Value<int> contestNo = const Value.absent(),
-            Value<String> searchTag = const Value.absent(),
-          }) =>
-              AthleteDbCompanion(
-            id: id,
-            athleteId: athleteId,
-            canFollow: canFollow,
-            isFollowed: isFollowed,
-            name: name,
-            disRaceNo: disRaceNo,
-            extra: extra,
-            profileImage: profileImage,
-            raceno: raceno,
-            eventId: eventId,
-            info: info,
-            contestNo: contestNo,
-            searchTag: searchTag,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String athleteId,
-            required bool canFollow,
-            required bool isFollowed,
-            required String name,
-            Value<String?> disRaceNo = const Value.absent(),
-            required String extra,
-            required String profileImage,
-            required String raceno,
-            required int eventId,
-            required String info,
-            required int contestNo,
-            required String searchTag,
-          }) =>
-              AthleteDbCompanion.insert(
-            id: id,
-            athleteId: athleteId,
-            canFollow: canFollow,
-            isFollowed: isFollowed,
-            name: name,
-            disRaceNo: disRaceNo,
-            extra: extra,
-            profileImage: profileImage,
-            raceno: raceno,
-            eventId: eventId,
-            info: info,
-            contestNo: contestNo,
-            searchTag: searchTag,
-          ),
-        ));
-}
-
 class $$AthleteDbTableFilterComposer
     extends FilterComposer<_$AppDatabase, $AthleteDbTable> {
   $$AthleteDbTableFilterComposer(super.$state);
@@ -1506,6 +1427,109 @@ class $$AthleteDbTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+class $$AthleteDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AthleteDbTable,
+    AppAthleteDb,
+    $$AthleteDbTableFilterComposer,
+    $$AthleteDbTableOrderingComposer,
+    $$AthleteDbTableCreateCompanionBuilder,
+    $$AthleteDbTableUpdateCompanionBuilder,
+    (
+      AppAthleteDb,
+      BaseReferences<_$AppDatabase, $AthleteDbTable, AppAthleteDb>
+    ),
+    AppAthleteDb,
+    PrefetchHooks Function()> {
+  $$AthleteDbTableTableManager(_$AppDatabase db, $AthleteDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$AthleteDbTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$AthleteDbTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> athleteId = const Value.absent(),
+            Value<bool> canFollow = const Value.absent(),
+            Value<bool> isFollowed = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<String?> disRaceNo = const Value.absent(),
+            Value<String> extra = const Value.absent(),
+            Value<String> profileImage = const Value.absent(),
+            Value<String> raceno = const Value.absent(),
+            Value<int> eventId = const Value.absent(),
+            Value<String> info = const Value.absent(),
+            Value<int> contestNo = const Value.absent(),
+            Value<String> searchTag = const Value.absent(),
+          }) =>
+              AthleteDbCompanion(
+            id: id,
+            athleteId: athleteId,
+            canFollow: canFollow,
+            isFollowed: isFollowed,
+            name: name,
+            disRaceNo: disRaceNo,
+            extra: extra,
+            profileImage: profileImage,
+            raceno: raceno,
+            eventId: eventId,
+            info: info,
+            contestNo: contestNo,
+            searchTag: searchTag,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String athleteId,
+            required bool canFollow,
+            required bool isFollowed,
+            required String name,
+            Value<String?> disRaceNo = const Value.absent(),
+            required String extra,
+            required String profileImage,
+            required String raceno,
+            required int eventId,
+            required String info,
+            required int contestNo,
+            required String searchTag,
+          }) =>
+              AthleteDbCompanion.insert(
+            id: id,
+            athleteId: athleteId,
+            canFollow: canFollow,
+            isFollowed: isFollowed,
+            name: name,
+            disRaceNo: disRaceNo,
+            extra: extra,
+            profileImage: profileImage,
+            raceno: raceno,
+            eventId: eventId,
+            info: info,
+            contestNo: contestNo,
+            searchTag: searchTag,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$AthleteDbTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $AthleteDbTable,
+    AppAthleteDb,
+    $$AthleteDbTableFilterComposer,
+    $$AthleteDbTableOrderingComposer,
+    $$AthleteDbTableCreateCompanionBuilder,
+    $$AthleteDbTableUpdateCompanionBuilder,
+    (
+      AppAthleteDb,
+      BaseReferences<_$AppDatabase, $AthleteDbTable, AppAthleteDb>
+    ),
+    AppAthleteDb,
+    PrefetchHooks Function()>;
 typedef $$AthleteExtraDetailsDbTableCreateCompanionBuilder
     = AthleteExtraDetailsDbCompanion Function({
   Value<int> id,
@@ -1524,58 +1548,6 @@ typedef $$AthleteExtraDetailsDbTableUpdateCompanionBuilder
   Value<String> country,
   Value<String> athleteNumber,
 });
-
-class $$AthleteExtraDetailsDbTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $AthleteExtraDetailsDbTable,
-    AppAthleteExtraDetailsDb,
-    $$AthleteExtraDetailsDbTableFilterComposer,
-    $$AthleteExtraDetailsDbTableOrderingComposer,
-    $$AthleteExtraDetailsDbTableCreateCompanionBuilder,
-    $$AthleteExtraDetailsDbTableUpdateCompanionBuilder> {
-  $$AthleteExtraDetailsDbTableTableManager(
-      _$AppDatabase db, $AthleteExtraDetailsDbTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer: $$AthleteExtraDetailsDbTableFilterComposer(
-              ComposerState(db, table)),
-          orderingComposer: $$AthleteExtraDetailsDbTableOrderingComposer(
-              ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> athleteId = const Value.absent(),
-            Value<String> name = const Value.absent(),
-            Value<int> eventId = const Value.absent(),
-            Value<String> country = const Value.absent(),
-            Value<String> athleteNumber = const Value.absent(),
-          }) =>
-              AthleteExtraDetailsDbCompanion(
-            id: id,
-            athleteId: athleteId,
-            name: name,
-            eventId: eventId,
-            country: country,
-            athleteNumber: athleteNumber,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String athleteId,
-            required String name,
-            required int eventId,
-            required String country,
-            required String athleteNumber,
-          }) =>
-              AthleteExtraDetailsDbCompanion.insert(
-            id: id,
-            athleteId: athleteId,
-            name: name,
-            eventId: eventId,
-            country: country,
-            athleteNumber: athleteNumber,
-          ),
-        ));
-}
 
 class $$AthleteExtraDetailsDbTableFilterComposer
     extends FilterComposer<_$AppDatabase, $AthleteExtraDetailsDbTable> {
@@ -1645,6 +1617,85 @@ class $$AthleteExtraDetailsDbTableOrderingComposer
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
+class $$AthleteExtraDetailsDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $AthleteExtraDetailsDbTable,
+    AppAthleteExtraDetailsDb,
+    $$AthleteExtraDetailsDbTableFilterComposer,
+    $$AthleteExtraDetailsDbTableOrderingComposer,
+    $$AthleteExtraDetailsDbTableCreateCompanionBuilder,
+    $$AthleteExtraDetailsDbTableUpdateCompanionBuilder,
+    (
+      AppAthleteExtraDetailsDb,
+      BaseReferences<_$AppDatabase, $AthleteExtraDetailsDbTable,
+          AppAthleteExtraDetailsDb>
+    ),
+    AppAthleteExtraDetailsDb,
+    PrefetchHooks Function()> {
+  $$AthleteExtraDetailsDbTableTableManager(
+      _$AppDatabase db, $AthleteExtraDetailsDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer: $$AthleteExtraDetailsDbTableFilterComposer(
+              ComposerState(db, table)),
+          orderingComposer: $$AthleteExtraDetailsDbTableOrderingComposer(
+              ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> athleteId = const Value.absent(),
+            Value<String> name = const Value.absent(),
+            Value<int> eventId = const Value.absent(),
+            Value<String> country = const Value.absent(),
+            Value<String> athleteNumber = const Value.absent(),
+          }) =>
+              AthleteExtraDetailsDbCompanion(
+            id: id,
+            athleteId: athleteId,
+            name: name,
+            eventId: eventId,
+            country: country,
+            athleteNumber: athleteNumber,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String athleteId,
+            required String name,
+            required int eventId,
+            required String country,
+            required String athleteNumber,
+          }) =>
+              AthleteExtraDetailsDbCompanion.insert(
+            id: id,
+            athleteId: athleteId,
+            name: name,
+            eventId: eventId,
+            country: country,
+            athleteNumber: athleteNumber,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$AthleteExtraDetailsDbTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $AthleteExtraDetailsDbTable,
+        AppAthleteExtraDetailsDb,
+        $$AthleteExtraDetailsDbTableFilterComposer,
+        $$AthleteExtraDetailsDbTableOrderingComposer,
+        $$AthleteExtraDetailsDbTableCreateCompanionBuilder,
+        $$AthleteExtraDetailsDbTableUpdateCompanionBuilder,
+        (
+          AppAthleteExtraDetailsDb,
+          BaseReferences<_$AppDatabase, $AthleteExtraDetailsDbTable,
+              AppAthleteExtraDetailsDb>
+        ),
+        AppAthleteExtraDetailsDb,
+        PrefetchHooks Function()>;
 typedef $$ChatMessageDbTableCreateCompanionBuilder = ChatMessageDbCompanion
     Function({
   Value<int> id,
@@ -1659,49 +1710,6 @@ typedef $$ChatMessageDbTableUpdateCompanionBuilder = ChatMessageDbCompanion
   Value<String?> eventId,
   Value<String> content,
 });
-
-class $$ChatMessageDbTableTableManager extends RootTableManager<
-    _$AppDatabase,
-    $ChatMessageDbTable,
-    AppChatMessageDb,
-    $$ChatMessageDbTableFilterComposer,
-    $$ChatMessageDbTableOrderingComposer,
-    $$ChatMessageDbTableCreateCompanionBuilder,
-    $$ChatMessageDbTableUpdateCompanionBuilder> {
-  $$ChatMessageDbTableTableManager(_$AppDatabase db, $ChatMessageDbTable table)
-      : super(TableManagerState(
-          db: db,
-          table: table,
-          filteringComposer:
-              $$ChatMessageDbTableFilterComposer(ComposerState(db, table)),
-          orderingComposer:
-              $$ChatMessageDbTableOrderingComposer(ComposerState(db, table)),
-          updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            Value<String> role = const Value.absent(),
-            Value<String?> eventId = const Value.absent(),
-            Value<String> content = const Value.absent(),
-          }) =>
-              ChatMessageDbCompanion(
-            id: id,
-            role: role,
-            eventId: eventId,
-            content: content,
-          ),
-          createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
-            required String role,
-            Value<String?> eventId = const Value.absent(),
-            required String content,
-          }) =>
-              ChatMessageDbCompanion.insert(
-            id: id,
-            role: role,
-            eventId: eventId,
-            content: content,
-          ),
-        ));
-}
 
 class $$ChatMessageDbTableFilterComposer
     extends FilterComposer<_$AppDatabase, $ChatMessageDbTable> {
@@ -1750,6 +1758,74 @@ class $$ChatMessageDbTableOrderingComposer
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
 }
+
+class $$ChatMessageDbTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ChatMessageDbTable,
+    AppChatMessageDb,
+    $$ChatMessageDbTableFilterComposer,
+    $$ChatMessageDbTableOrderingComposer,
+    $$ChatMessageDbTableCreateCompanionBuilder,
+    $$ChatMessageDbTableUpdateCompanionBuilder,
+    (
+      AppChatMessageDb,
+      BaseReferences<_$AppDatabase, $ChatMessageDbTable, AppChatMessageDb>
+    ),
+    AppChatMessageDb,
+    PrefetchHooks Function()> {
+  $$ChatMessageDbTableTableManager(_$AppDatabase db, $ChatMessageDbTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          filteringComposer:
+              $$ChatMessageDbTableFilterComposer(ComposerState(db, table)),
+          orderingComposer:
+              $$ChatMessageDbTableOrderingComposer(ComposerState(db, table)),
+          updateCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            Value<String> role = const Value.absent(),
+            Value<String?> eventId = const Value.absent(),
+            Value<String> content = const Value.absent(),
+          }) =>
+              ChatMessageDbCompanion(
+            id: id,
+            role: role,
+            eventId: eventId,
+            content: content,
+          ),
+          createCompanionCallback: ({
+            Value<int> id = const Value.absent(),
+            required String role,
+            Value<String?> eventId = const Value.absent(),
+            required String content,
+          }) =>
+              ChatMessageDbCompanion.insert(
+            id: id,
+            role: role,
+            eventId: eventId,
+            content: content,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ChatMessageDbTableProcessedTableManager = ProcessedTableManager<
+    _$AppDatabase,
+    $ChatMessageDbTable,
+    AppChatMessageDb,
+    $$ChatMessageDbTableFilterComposer,
+    $$ChatMessageDbTableOrderingComposer,
+    $$ChatMessageDbTableCreateCompanionBuilder,
+    $$ChatMessageDbTableUpdateCompanionBuilder,
+    (
+      AppChatMessageDb,
+      BaseReferences<_$AppDatabase, $ChatMessageDbTable, AppChatMessageDb>
+    ),
+    AppChatMessageDb,
+    PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
