@@ -3,9 +3,9 @@ import 'package:get/get.dart';
 
 import '../../core/models/miniplayer.dart';
 import '../../core/utils/app_global.dart';
-import '../../youtube_player_flutter/src/player/youtube_player.dart';
-import '../../youtube_player_flutter/src/utils/youtube_player_controller.dart';
-import '../../youtube_player_flutter/src/utils/youtube_player_flags.dart';
+import 'package:youtube_player_flutter/src/player/youtube_player.dart';
+import 'package:youtube_player_flutter/src/utils/youtube_player_controller.dart';
+import 'package:youtube_player_flutter/src/utils/youtube_player_flags.dart';
 
 class MiniPlayerController extends GetxController {
   late MiniPlayerConfig? miniPlayerConfig;
@@ -18,6 +18,7 @@ class MiniPlayerController extends GetxController {
   void onInit() {
     super.onInit();
     miniPlayerConfig = AppGlobals.appConfig!.miniPlayerConfig;
+    print(miniPlayerConfig!.ytUrl!);
     controller = YoutubePlayerController(
         initialVideoId: YoutubePlayer.convertUrlToId(miniPlayerConfig!.ytUrl!)!,
         flags: YoutubePlayerFlags(
