@@ -26,7 +26,7 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
-    final controllerA = Get.put(AthletesController());
+    //final controllerA = Get.put(AthletesController());
 
     if(!notificationHandlerController.isClosed) {
       notificationHandlerController.add(true);

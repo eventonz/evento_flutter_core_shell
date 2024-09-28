@@ -85,6 +85,8 @@ class TrackingController extends GetxController
 
   bool zoomedIn = false;
   RxBool showDistanceMarkers = false.obs;
+  Map<String, bool> showStartIcon = {};
+  Map<String, bool> showFinishIcon = {};
 
   RxMap<String, dynamic> points = <String, dynamic>{}.obs;
 
@@ -670,10 +672,10 @@ class TrackingController extends GetxController
         calculateTotalDistance();
 
 
-        bool showStartIcon = geoJson.features
+        showStartIcon[path.name ?? 'path'] = geoJson.features
             .where((element) => element.properties?['start_icon'] == true)
             .isNotEmpty;
-        bool showFinishIcon = geoJson.features
+        showFinishIcon[path.name ?? 'path'] = geoJson.features
             .where((element) => element.properties?['finish_icon'] == true)
             .isNotEmpty;
 
@@ -695,7 +697,7 @@ class TrackingController extends GetxController
 
         if (Platform.isIOS) {
           var lineString = getLineStringForPath(path.name ?? 'path');
-          if (showStartIcon) {
+          if (showStartIcon[path.name ?? 'path'] == true) {
             print('showStartIcon');
             Widget widget = SvgPicture.asset(
                 AppHelper.getSvg('startingpoint'), width: 27, height: 27);
@@ -714,12 +716,11 @@ class TrackingController extends GetxController
                     value));
 
             addExtraAnnotation(annotationId, annotation);
-
             });
 
           }
 
-          if (showFinishIcon) {
+          if (showFinishIcon[path.name ?? 'path'] == true) {
             Widget widget = SvgPicture.asset(
                 AppHelper.getSvg('finishpoint'), width: 27, height: 27);
 

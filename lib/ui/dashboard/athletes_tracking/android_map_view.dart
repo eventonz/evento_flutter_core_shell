@@ -332,6 +332,40 @@ class _AndroidMapViewState extends State<AndroidMapView> {
           });
           //}
         }
+
+        if (controller.showStartIcon[
+        controller.routePathsCordinates.keys.toList()[x]] == true) {
+          Widget widget = SvgPicture.asset(
+              AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+
+          controller.screenshotController.captureFromWidget(widget)
+              .then((value) async {
+            controller.pointAnnotationManager!
+                .create(PointAnnotationOptions(
+              geometry: Point(coordinates: Position(
+                  lineString.coordinates.first.latitude.toDouble(),
+                  lineString.coordinates.first.longitude.toDouble())),
+              image: value,
+            ));
+          });
+        }
+
+        if (controller.showFinishIcon[
+        controller.routePathsCordinates.keys.toList()[x]] == true) {
+          Widget widget = SvgPicture.asset(
+              AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+
+          controller.screenshotController.captureFromWidget(widget)
+              .then((value) async {
+            controller.pointAnnotationManager!
+                .create(PointAnnotationOptions(
+              geometry: Point(coordinates: Position(
+                  lineString.coordinates.last.latitude.toDouble(),
+                  lineString.coordinates.last.longitude.toDouble())),
+              image: value,
+            ));
+          });
+        }
       }
     }
 
