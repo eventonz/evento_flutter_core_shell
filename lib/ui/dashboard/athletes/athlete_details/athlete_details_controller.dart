@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 
+import '../../../../core/models/detail_item.dart';
+
 class AthleteDetailsController extends GetxController
     with GetTickerProviderStateMixin {
   late AppAthleteDb selEntrant;
@@ -22,6 +24,8 @@ class AthleteDetailsController extends GetxController
   final showEnglargedImage = false.obs;
   final List<Tab> detailsTabs = [];
   final List<String> tabTitles = [];
+  List<DetailItem> items = [];
+  bool version2 = false;
   late int selectedTabIndex = 0;
 
   bool canFollow = true;
@@ -57,6 +61,17 @@ class AthleteDetailsController extends GetxController
       final res = await ApiHandler.genericGetHttp(url: mainUrl);
       if (res.statusCode == 200) {
         detailsTabs.clear();
+
+        //Version 2
+
+        if(res.data['version2'] != null) {
+          items = (res.data['version2']['items'] as List).map((e) =>
+              DetailItem.fromJson(e)).toList();
+          version2 = true;
+        }
+
+        //Version 2
+
         if (res.data['tabs'] != null) {
           athleteTabDetailM = AthleteTabDetailM.fromJson(res.data);
           tabTitles.clear();

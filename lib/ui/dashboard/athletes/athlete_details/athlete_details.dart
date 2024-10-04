@@ -14,6 +14,8 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
+import '../../../common_components/split_data_table_2.dart';
+
 class AthleteDetailsScreen extends StatelessWidget {
   const AthleteDetailsScreen({super.key});
 
@@ -289,6 +291,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                   ],
                 ),
               ),
+              if(!controller.version2)
               SliverAppBar(
                 surfaceTintColor: Colors.white,
                 automaticallyImplyLeading: false,
@@ -333,6 +336,31 @@ class AthleteDetailsScreen extends StatelessWidget {
           },
           body: Obx(() {
             if (controller.athleteSplitDataSnap.value == DataSnapShot.loaded) {
+
+              if(controller.version2) {
+                return ListView.builder(itemBuilder: (_, index) {
+                  if(controller.items[index].type == 'summary') {
+                    return SummaryDataContent2(
+                        summary: controller.items[index].data);
+                  } else if (controller.items[index].type == 'externallinks') {
+                    return ExternalLinkContent(link: controller.items[index].data);
+                  } else if (controller.items[index].type == 'title') {
+                    return SplitTitleContent(title: controller.items[index].data);
+                  } else if (controller.items[index].type == 'splits') {
+                    return SplitNewDataContent2(splitDataList: controller.items[index].splits ?? [], showSplit: false);
+                  } else if (controller.items[index].type == 'segmentedsplit') {
+                    return SegmentedSplitDataContent(
+                        data: controller.items[index].data ?? [],
+                        segments: controller.items[index].segments ?? [],
+                        columns: controller.items[index].columns ?? [],
+                    );
+                  } else if (controller.items[index].type == 'pace') {
+                    return PaceDataContent(data: controller.items[index].data ?? []);
+                  }
+                  return const SizedBox();
+                }, itemCount: controller.items.length, shrinkWrap: true);
+              }
+
               return TabBarView(
                 controller: controller.tabController,
                 children: _buildTabViews(controller),
@@ -351,6 +379,7 @@ class AthleteDetailsScreen extends StatelessWidget {
   }
 
   List<Widget> _buildTabViews(AthleteDetailsController controller) {
+    print(controller.tabTitles);
     final List<Widget> views = [];
     if (controller.athleteTabDetailM == null) {
       views.add(SingleChildScrollView(

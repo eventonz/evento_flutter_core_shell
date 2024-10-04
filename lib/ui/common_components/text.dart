@@ -4,6 +4,7 @@ class AppText extends StatelessWidget {
   final String text;
   final Color? color;
   final double? fontSize;
+  final FontStyle? fontStyle;
   final FontWeight? fontWeight;
   final String? fontFamily;
   final TextAlign? textAlign;
@@ -16,6 +17,7 @@ class AppText extends StatelessWidget {
       this.color,
       this.fontSize,
       this.fontWeight,
+      this.fontStyle,
       this.fontFamily,
       this.textAlign,
       this.style,
@@ -36,6 +38,7 @@ class AppText extends StatelessWidget {
               fontFamily: fontFamily,
               fontWeight: fontWeight,
               fontSize: fontSize,
+              fontStyle: fontStyle,
               color: color),
     );
   }
