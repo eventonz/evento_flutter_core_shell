@@ -14,7 +14,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
-import '../../../common_components/split_data_table_2.dart';
+import 'package:evento_core/ui/common_components/split_data_table_2.dart';
 
 class AthleteDetailsScreen extends StatelessWidget {
   const AthleteDetailsScreen({super.key});

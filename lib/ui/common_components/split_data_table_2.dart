@@ -605,16 +605,20 @@ class ExternalLinkContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    bool isLightMode = Theme.of(context).brightness == Brightness.light;
+
     return ListView.builder(itemBuilder: (_, index) {
       link[index].icon = 'map';
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: ListTile(
-          tileColor: const Color(0xFFF7F7F7),
+          tileColor: isLightMode ? AppColors.white.withOpacity(0.20) : Color(0xFFF7F7F7),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}')),
+          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}'),
+          color: isLightMode ? AppColors.white.withOpacity(0.50) : AppColors.darkgrey,),
           title: Text('${link[index].label}', style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 17,
@@ -631,8 +635,12 @@ class PaceDataContent extends StatelessWidget {
   final List<PaceData> data;
   const PaceDataContent({super.key, required this.data});
 
+  
+
   @override
   Widget build(BuildContext context) {
+
+     bool isLightMode = Theme.of(context).brightness == Brightness.light;
     return ListView.builder(itemBuilder: (_, index) {
       print((MediaQuery.of(context).size.width));
       print(((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36);
@@ -642,10 +650,10 @@ class PaceDataContent extends StatelessWidget {
           children: [
             Container(
               width: ((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36,
-              height: 39,
+              height: 44,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: const Color(0xFFF7F7F7),
+                color: isLightMode ? AppColors.white.withOpacity(0.20) : Color(0xFFF7F7F7),
               ),
               child: Row(
                 children: [
