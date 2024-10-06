@@ -11,6 +11,7 @@ import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'text.dart';
 
 class SplitNewDataContent2 extends StatelessWidget {
@@ -631,7 +632,8 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
 class ExternalLinkContent extends StatelessWidget {
 
   final List<ExternalLinkData> link;
-  const ExternalLinkContent({super.key, required this.link});
+  final String disRaceNo;
+  const ExternalLinkContent({super.key, required this.link, required this.disRaceNo});
 
   @override
   Widget build(BuildContext context) {
@@ -641,6 +643,9 @@ class ExternalLinkContent extends StatelessWidget {
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: ListTile(
+          onTap: () {
+            launchUrl(Uri.parse(link[index].url!.replaceAll('{{RaceNo}}', disRaceNo)));
+          },
           tileColor: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.darkgrey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
