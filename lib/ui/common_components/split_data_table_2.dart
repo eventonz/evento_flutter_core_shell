@@ -178,6 +178,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
   }
 
   Color contentColor(String style, bool isText) {
+
+    if(style.contains('*red*')) {
+      return AppColors.red;
+    }
+
     if (!isText) {
       switch (style) {
         case 'split_black':
@@ -269,7 +274,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
             height: 2,
           ),
           Container(
-            color: const Color(0xFFF7F7F7),
+            color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.splitGrey,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
             child: Row(
               children: [
@@ -288,7 +293,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 3),
                             decoration: BoxDecoration(
-                              color: _currentPage == index ? Colors.white : null,
+                              color: _currentPage == index ? Colors.white.withOpacity(0.3) : null,
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Center(
@@ -308,7 +313,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
             height: 16,
           ),
           Container(
-            color: const Color(0xFFF7F7F7),
+            color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.splitGrey,
             child: Row(
               children: [
                 Expanded(
@@ -336,15 +341,18 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                     duration: const Duration(milliseconds: 300),
                     height: 40, // Adjust the height dynamically
                     child: PageView.builder(itemBuilder: (_, i) {
+
+                            var columns = widget.segments[i].columns!;
+
                               return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8),
+                                padding: const EdgeInsets.symmetric(horizontal: 4),
                                 child: Row(
                                   children: [
-                                    for(int x = 0; x < 3; x++)
+                                    for(int x = 0; x < columns.length; x++)
                                       Expanded(
                                         child: Center(
                                           child: AppText(
-                              widget.columns.length > x+(i*3)+1 ? widget.columns[x+(i*3)+1].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
+                                            x < columns.length ? columns[x].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
                                             //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
                                             //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
                                             textAlign: TextAlign.center,
@@ -357,7 +365,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                                   ],
                                 ),
                               );
-                    }, itemCount: ((widget.columns.length-1)/3).ceil(), controller: _controllerHeader, physics: const NeverScrollableScrollPhysics(),),
+                    }, itemCount: widget.segments.length, controller: _controllerHeader, physics: const NeverScrollableScrollPhysics(),),
                   ),
                 ),
               ],
@@ -380,7 +388,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                         final entry = widget.data[i].values;
                         return Container(
                           padding: const EdgeInsets.all(14),
-                          color: i%2 == 1 ? AppColors.greyLighter : null,
+                          color: i%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
                           child: Center(
                             child: AppText(
                               widget.data[i].values!.first.replaceAll(RegExp(r'\*(\w+)\*'), ''),
@@ -409,29 +417,51 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                           shrinkWrap: true,
                           itemBuilder: (_, index) {
                             final entry = widget.data[index].values;
+                            final columns = widget.segments[i].columns!;
                             print(entry);
                             print(_currentPageHeight);
                             print(((widget.columns.length-1)/3).ceil());
+
+                            int startIndex = 1;
+
+                            for(int y = 0; y < i; y++) {
+                              startIndex+=widget.segments[y].columns!.length;
+                            }
+
+                            //final startIndex2 = startIndex;
+
+                            var widgets = [];
+
+                            for (int x = startIndex; x < startIndex+columns.length; x++) {
+                              //if(entry!.length > (x+(i*3)+1))
+                              widgets.add(Expanded(
+                                child: Center(
+                                  child: AppText(
+                                    entry!.length > x
+                                        ? entry[x].replaceAll(
+                                        RegExp(r'\*(\w+)\*'), '')
+                                        : '',
+                                    color: contentColor(entry[x], true),
+                                    fontWeight: contentWeight(entry[x], true),
+                                    textAlign: TextAlign.center,
+                                    fontSize: 15,
+                                    fontStyle: (entry.length > (x + (i * 3) + 1)
+                                        ? entry[(x + (i * 3)) + 1]
+                                        : '').contains('*italics*') ? FontStyle
+                                        .italic : null,
+                                    maxLines: 1,
+                                  ),
+                                ),
+                              ));
+                              //startIndex++;
+                            }
+
                             return Container(
-                              color: index%2 == 1 ? AppColors.greyLighter : null,
+                              color: index%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
                               padding: const EdgeInsets.all(14),
                               child: Row(
                                 children: [
-                                  for (int x = 0; x < 3; x++)
-                                    //if(entry!.length > (x+(i*3)+1))
-                                    Expanded(
-                                      child: Center(
-                                        child: AppText(
-                                          entry!.length > (x+(i*3)+1) ? entry[(x+(i*3))+1].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
-                                          color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                          fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                          textAlign: TextAlign.center,
-                                          fontSize: 15,
-                                          fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    ),
+                                  ...widgets,
                                 ],
                               ),
                             );
@@ -605,20 +635,17 @@ class ExternalLinkContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    bool isLightMode = Theme.of(context).brightness == Brightness.light;
-
     return ListView.builder(itemBuilder: (_, index) {
       link[index].icon = 'map';
+      print( Theme.of(Get.context!).brightness);
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
         child: ListTile(
-          tileColor: isLightMode ? AppColors.white.withOpacity(0.20) : Color(0xFFF7F7F7),
+          tileColor: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.darkgrey,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}'),
-          color: isLightMode ? AppColors.white.withOpacity(0.50) : AppColors.darkgrey,),
+          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}')),
           title: Text('${link[index].label}', style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 17,
@@ -635,12 +662,8 @@ class PaceDataContent extends StatelessWidget {
   final List<PaceData> data;
   const PaceDataContent({super.key, required this.data});
 
-  
-
   @override
   Widget build(BuildContext context) {
-
-     bool isLightMode = Theme.of(context).brightness == Brightness.light;
     return ListView.builder(itemBuilder: (_, index) {
       print((MediaQuery.of(context).size.width));
       print(((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36);
@@ -650,10 +673,10 @@ class PaceDataContent extends StatelessWidget {
           children: [
             Container(
               width: ((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36,
-              height: 44,
+              height: 39,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: isLightMode ? AppColors.white.withOpacity(0.20) : Color(0xFFF7F7F7),
+                color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.darkgrey,
               ),
               child: Row(
                 children: [
