@@ -343,7 +343,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                     return SummaryDataContent2(
                         summary: controller.items[index].data);
                   } else if (controller.items[index].type == 'externallinks') {
-                    return ExternalLinkContent(link: controller.items[index].data);
+                    return ExternalLinkContent(link: controller.items[index].data, disRaceNo: controller.selEntrant.disRaceNo ?? '');
                   } else if (controller.items[index].type == 'title') {
                     return SplitTitleContent(title: controller.items[index].data);
                   } else if (controller.items[index].type == 'splits') {
