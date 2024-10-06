@@ -712,15 +712,9 @@ class PaceDataContent extends StatelessWidget {
                           BlendMode.srcIn,
                         ),
                       ),
-                      const SizedBox(width: 5), // Move this outside the SvgPicture widget
+                      const SizedBox(width: 12), // Move this outside the SvgPicture widget
                     ],
-                  Text(data[index].range!.split('-')[0], style: TextStyle(
-                    fontSize: 18,
-                  ),),
-                  const SizedBox(width: 5),
-                  Icon(CupertinoIcons.arrow_right, size: 20),
-                  const SizedBox(width: 5),
-                  Text(data[index].range!.split('-')[1], style: TextStyle(
+                  Text(data[index].range!, style: TextStyle(
                     fontSize: 18,
                   ),),
                   const SizedBox(width: 12),
