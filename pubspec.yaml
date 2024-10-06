@@ -140,6 +140,9 @@ flutter:
     - packages/evento_core/assets/svgs/web.svg
     - packages/evento_core/assets/svgs/startingpoint.svg
     - packages/evento_core/assets/svgs/finishpoint.svg
+    - packages/evento_core/assets/svgs/swim.svg
+    - packages/evento_core/assets/svgs/bike.svg
+    - packages/evento_core/assets/svgs/run.svg
 
     - packages/evento_core/assets/images/splash_image.png
     - packages/evento_core/assets/images/instagram.png
