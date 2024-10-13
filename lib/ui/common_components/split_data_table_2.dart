@@ -696,7 +696,7 @@ class PaceDataContent extends StatelessWidget {
                   const SizedBox(width: 5),
                   Icon(CupertinoIcons.arrow_right, size: 20),
                   const SizedBox(width: 5),
-                  Text(data[index].range!.split('-')[1], style: TextStyle(
+                  Text(data[index].range!.contains('-') ? data[index].range!.split('-')[1] : data[index].range!, style: TextStyle(
                     fontSize: 18,
                   ),),
                   const SizedBox(width: 12),

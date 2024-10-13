@@ -83,9 +83,9 @@ class AppHelper {
     return min(latZoom, lngZoom);
   }
 
-  static Future<Uint8List> widgetToBytes(Widget widget) async {
+  static Future<Uint8List> widgetToBytes(Widget widget, {int milliseconds = 100}) async {
     ScreenshotController screenshotController = ScreenshotController();
-    var value = await screenshotController.captureFromWidget(widget, delay: const Duration(milliseconds: 100));
+    var value = await screenshotController.captureFromWidget(widget, delay: Duration(milliseconds: milliseconds));
     return value;
     Codec codec = await instantiateImageCodec(value);
     FrameInfo fi = await codec.getNextFrame();

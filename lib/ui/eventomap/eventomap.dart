@@ -456,9 +456,11 @@ class _EventoMapState extends State<EventoMap> {
                         for (int index = 0; index < points.length; index++) {
                           var element = points[index];
                           if(element.type == GeoJsonFeatureType.point) {
-                            Widget widget = Image.asset(AppHelper.getImage('${element
+                            Widget widget = element
+                                .properties?['type'] == 'custom' ? Image.network('${element
+                                .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
                                 .properties?['type']}.png'), width: 30, height: 30);
-                            controller.screenshotController.captureFromWidget(widget)
+                            controller.screenshotController.captureFromWidget(widget, delay: Duration(seconds: 2))
                                 .then((value) async {
                               PointAnnotation pointAnnotation = await pointAnnotationManager
                                   .create(PointAnnotationOptions(
@@ -510,6 +512,11 @@ class _EventoMapState extends State<EventoMap> {
                                     ],
                                   ),
                                 ),
+                                if((point.properties?['image'] ?? '') != '')
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Image.network(point.properties?['image']),
+                                  ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
                                   child: Text('${point.properties?['description']}', style: TextStyle(

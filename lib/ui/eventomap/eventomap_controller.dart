@@ -396,9 +396,12 @@ class EventoMapController extends GetxController {
           if (element.type == GeoJsonFeatureType.point) {
             print(geoJson.features[index]
                 .properties);
-            Widget widget = Image.asset(AppHelper.getImage('${element
+            Widget widget = element
+                .properties?['type'] == 'custom' ? Image.network('${element
+                .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
                 .properties?['type']}.png'), width: 30, height: 30);
-            AppHelper.widgetToBytes(widget)
+            AppHelper.widgetToBytes(widget, milliseconds: element
+                .properties?['type'] == 'custom' ? 2000 : 100)
                 .then((value) async {
               apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
                 annotationId: apple_maps.AnnotationId(element
@@ -433,7 +436,9 @@ class EventoMapController extends GetxController {
                                       bottom: 12.0),
                                   child: Row(
                                     children: [
-                                      Image.asset(AppHelper.getImage('${point
+                                      point
+                                          .properties?['type'] == 'custom' ? Image.network('${element
+                                          .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${point
                                           .properties?['type']}.png'),
                                           width: 30, height: 30),
                                       const SizedBox(width: 8),
@@ -445,6 +450,11 @@ class EventoMapController extends GetxController {
                                     ],
                                   ),
                                 ),
+                                if((point.properties?['image'] ?? '') != '')
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 8.0),
+                                    child: Image.network(point.properties?['image']),
+                                  ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 24.0),
