@@ -276,7 +276,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
           ),
           Container(
             color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.splitGrey,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(
               children: [
                 ...
@@ -296,6 +296,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                             decoration: BoxDecoration(
                               color: _currentPage == index ? Colors.white.withOpacity(0.3) : null,
                               borderRadius: BorderRadius.circular(10),
+                               boxShadow: _currentPage == index
+                                  ? [BoxShadow(
+                                      color: Colors.black.withOpacity(0.1), // Light shadow color
+                                      spreadRadius: 1,
+                                      blurRadius: 4, // Soft shadow blur
+                                      offset: Offset(0, 2), // Slightly below the button
+                                    )]
+                                  : [],
                             ),
                             child: Center(
                               child: Text(widget.segments[index].name ?? '', style: TextStyle(
@@ -638,7 +646,7 @@ class ExternalLinkContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(itemBuilder: (_, index) {
-      link[index].icon = 'map';
+      link[index].icon = 'swim';
       print( Theme.of(Get.context!).brightness);
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -650,7 +658,15 @@ class ExternalLinkContent extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}')),
+          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}'),
+                   height: 23,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).brightness == Brightness.light
+                            ? Colors.white.withOpacity(0.7): Colors.black, // Color for light mode
+                           // Color for dark mode
+                          BlendMode.srcIn,
+                        ),
+                        ),
           title: Text('${link[index].label}', style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 17,
@@ -681,22 +697,24 @@ class PaceDataContent extends StatelessWidget {
               height: 39,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.darkgrey,
+                color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : Colors.white.withOpacity(0.14),
               ),
               child: Row(
                 children: [
-                  if(data[index].icon != null)
-                    ...[
-                      SvgPicture.asset(AppHelper.getSvg(data[index].icon!), height: 23,),
-                      const SizedBox(width: 5),
+                 if (data[index].icon != null) ...[
+                      SvgPicture.asset(
+                        AppHelper.getSvg(data[index].icon!),
+                        height: 23,
+                        colorFilter: ColorFilter.mode(
+                          Theme.of(context).brightness == Brightness.light
+                            ? Colors.white.withOpacity(0.7): Colors.black, // Color for light mode
+                           // Color for dark mode
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                      const SizedBox(width: 12), // Move this outside the SvgPicture widget
                     ],
-                  Text(data[index].range!.split('-')[0], style: TextStyle(
-                    fontSize: 18,
-                  ),),
-                  const SizedBox(width: 5),
-                  Icon(CupertinoIcons.arrow_right, size: 20),
-                  const SizedBox(width: 5),
-                  Text(data[index].range!.contains('-') ? data[index].range!.split('-')[1] : data[index].range!, style: TextStyle(
+                  Text(data[index].range!, style: TextStyle(
                     fontSize: 18,
                   ),),
                   const SizedBox(width: 12),
