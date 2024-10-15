@@ -515,7 +515,7 @@ class _EventoMapState extends State<EventoMap> {
                                 if((point.properties?['image'] ?? '') != '')
                                   Padding(
                                     padding: const EdgeInsets.only(bottom: 8.0),
-                                    child: Image.network(point.properties?['image'], height: 150),
+                                    child: Image.network(point.properties?['image'], height: 150, fit: BoxFit.cover),
                                   ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
