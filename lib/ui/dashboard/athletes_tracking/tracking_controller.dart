@@ -511,7 +511,9 @@ class TrackingController extends GetxController
             if (element.type == GeoJsonFeatureType.point) {
               print(geoJson.features[index]
                   .properties);
-              Widget widget = Image.asset(AppHelper.getImage('${element
+              Widget widget = element
+                  .properties?['type'] == 'custom' ? Image.network('${element
+                  .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
                   .properties?['type']}.png'), width: 30, height: 30);
               AppHelper.widgetToBytes(widget)
                   .then((value) async {
@@ -554,7 +556,9 @@ class TrackingController extends GetxController
                                         bottom: 12.0),
                                     child: Row(
                                       children: [
-                                        Image.asset(AppHelper.getImage('${point
+                                        point
+                                            .properties?['type'] == 'custom' ? Image.network('${point
+                                            .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${point
                                             .properties?['type']}.png'),
                                             width: 30, height: 30),
                                         const SizedBox(width: 8),
@@ -566,6 +570,11 @@ class TrackingController extends GetxController
                                       ],
                                     ),
                                   ),
+                                  if((point.properties?['image'] ?? '') != '')
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 8.0),
+                                      child: Image.network(point.properties?['image'], height: 150, fit: BoxFit.cover),
+                                    ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 24.0),

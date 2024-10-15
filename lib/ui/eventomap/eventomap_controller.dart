@@ -437,7 +437,7 @@ class EventoMapController extends GetxController {
                                   child: Row(
                                     children: [
                                       point
-                                          .properties?['type'] == 'custom' ? Image.network('${element
+                                          .properties?['type'] == 'custom' ? Image.network('${point
                                           .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${point
                                           .properties?['type']}.png'),
                                           width: 30, height: 30),
