@@ -206,7 +206,9 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                 padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 24.0, bottom: 12.0),
                 child: Row(
                   children: [
-                    Image.asset(AppHelper.getImage('${point
+                    point
+                        .properties?['type'] == 'custom' ? Image.network('${point
+                        .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${point
                         .properties?['type']}.png'), width: 30, height: 30),
                     const SizedBox(width: 8),
                     Text('${point.properties?['title']}', style: TextStyle(
@@ -216,6 +218,11 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                   ],
                 ),
               ),
+              if((point.properties?['image'] ?? '') != '')
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Image.network(point.properties?['image'], height: 150, fit: BoxFit.cover),
+                ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Text('${point.properties?['description']}', style: TextStyle(
@@ -223,6 +230,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                   fontWeight: FontWeight.w500,
                 )),
               ),
+
               if(point.properties?['direction'] == true)
                 ...[
                   const SizedBox(height: 16),
@@ -380,7 +388,9 @@ class _AndroidMapViewState extends State<AndroidMapView> {
           print('hello 4');
           print(element
               .properties?['type']);
-          Widget widget = Image.asset(AppHelper.getImage('${element
+          Widget widget = element
+              .properties?['type'] == 'custom' ? Image.network('${element
+              .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
               .properties?['type']}.png'), width: 30, height: 30);
           controller.screenshotController.captureFromWidget(widget)
               .then((value) async {
