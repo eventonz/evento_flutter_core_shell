@@ -392,7 +392,10 @@ class _AndroidMapViewState extends State<AndroidMapView> {
               .properties?['type'] == 'custom' ? Image.network('${element
               .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
               .properties?['type']}.png'), width: 30, height: 30);
-          controller.screenshotController.captureFromWidget(widget)
+          controller.screenshotController.captureFromWidget(widget, delay: Duration(
+            seconds: element
+              .properties?['type'] == 'custom' ? 2 : 1
+          ))
               .then((value) async {
             PointAnnotation pointAnnotation = await controller.pointAnnotationManager!
                 .create(PointAnnotationOptions(

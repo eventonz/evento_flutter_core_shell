@@ -515,7 +515,8 @@ class TrackingController extends GetxController
                   .properties?['type'] == 'custom' ? Image.network('${element
                   .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
                   .properties?['type']}.png'), width: 30, height: 30);
-              AppHelper.widgetToBytes(widget)
+              AppHelper.widgetToBytes(widget, milliseconds: element
+                  .properties?['type'] == 'custom' ? 2000 : 100)
                   .then((value) async {
                 apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
                   annotationId: apple_maps.AnnotationId(element
@@ -1015,7 +1016,7 @@ class TrackingController extends GetxController
       });
 
     }
-//  if(false && routePathsCordinates.isNotEmpty)
+
     if(true) {
       athleteTrackDetails.addAll([
         AthleteTrackDetail(
@@ -1026,7 +1027,7 @@ class TrackingController extends GetxController
           prevLocation: 6,
           path: routePathsCordinates.keys.first,
           status: '1',
-          marker_text: 'TG',
+          marker_text: '1',
         ),
         AthleteTrackDetail(
           track: '2',
@@ -1036,7 +1037,7 @@ class TrackingController extends GetxController
           prevLocation: 8,
           path: routePathsCordinates.keys.first,
           status: '2',
-          marker_text: '1006',
+          marker_text: '2',
         ),
       ]);
     }
