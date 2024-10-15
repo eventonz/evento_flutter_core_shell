@@ -515,7 +515,8 @@ class TrackingController extends GetxController
                   .properties?['type'] == 'custom' ? Image.network('${element
                   .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
                   .properties?['type']}.png'), width: 30, height: 30);
-              AppHelper.widgetToBytes(widget)
+              AppHelper.widgetToBytes(widget, milliseconds: element
+                  .properties?['type'] == 'custom' ? 2000 : 100)
                   .then((value) async {
                 apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
                   annotationId: apple_maps.AnnotationId(element
@@ -1016,7 +1017,7 @@ class TrackingController extends GetxController
 
     }
 
-    if(false && routePathsCordinates.isNotEmpty) {
+    if(true) {
       athleteTrackDetails.addAll([
         AthleteTrackDetail(
           track: '1',
