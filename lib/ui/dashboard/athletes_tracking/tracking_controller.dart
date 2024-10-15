@@ -1026,7 +1026,7 @@ class TrackingController extends GetxController
           prevLocation: 6,
           path: routePathsCordinates.keys.first,
           status: '1',
-          marker_text: '1',
+          marker_text: 'TG',
         ),
         AthleteTrackDetail(
           track: '2',
@@ -1036,7 +1036,7 @@ class TrackingController extends GetxController
           prevLocation: 8,
           path: routePathsCordinates.keys.first,
           status: '2',
-          marker_text: '2',
+          marker_text: '1006',
         ),
       ]);
     }
