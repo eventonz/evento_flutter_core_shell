@@ -264,7 +264,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
         var color = controller.routePathsColors[controller.routePathsCordinates.keys.toList()[x]];
 
         for (int i = 1; i < totalDistance!; i++) {
-          var widget = Stack(
+          Widget widget = Stack(
             alignment: Alignment.center,
             children: [
               Column(
@@ -320,6 +320,26 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                 ],
               ),
             ],
+          );
+
+          widget = Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1,
+                )
+            ),
+            child: Center(
+              child: Text('$i', style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),),
+            ),
           );
 
 

@@ -760,8 +760,8 @@ class TrackingController extends GetxController
 
         for (int i = 1; i < totalDistance!; i++) {
           Widget widget = Container(
-            width: Platform.isIOS ? 24 : 16,
-            height: Platform.isIOS ? 24 : 16,
+            width: 20,
+            height: 20,
             decoration: BoxDecoration(
                 color: Colors.white,
                 shape: BoxShape.circle,
@@ -779,6 +779,7 @@ class TrackingController extends GetxController
             ),
           );
 
+          if(false)
           widget = Stack(
             alignment: Alignment.center,
             children: [
