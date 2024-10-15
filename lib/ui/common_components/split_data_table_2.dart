@@ -294,7 +294,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                           child: Container(
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 3),
                             decoration: BoxDecoration(
-                              color: _currentPage == index ? Colors.white.withOpacity(0.3) : null,
+                              color: _currentPage == index ? Theme.of(Get.context!).brightness != Brightness.light ? Colors.white.withOpacity(1) : Colors.white.withOpacity(0.3) : null,
                               borderRadius: BorderRadius.circular(10),
                                boxShadow: _currentPage == index
                                   ? [BoxShadow(
