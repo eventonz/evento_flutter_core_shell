@@ -204,8 +204,9 @@ class PointsOfInterestSection extends StatelessWidget {
             .where((element) => element.type == GeoJsonFeatureType.point);
 
         list.forEach((element) {
-          if (!types.contains(element.properties?['type'])) {
-            types.add(element.properties?['type']);
+          if (!types.contains(element.properties?['type'] == 'custom' ? element.properties!['icon'] : element.properties?['type'])) {
+            print(element.properties);
+            types.add(element.properties?['type'] == 'custom' ? element.properties!['icon'] : element.properties?['type']);
             points.add(element);
           }
         });
@@ -237,7 +238,7 @@ class PointsOfInterestSection extends StatelessWidget {
                   },
                 ),
                 ...points.map((e) => InterestButton(
-                  label: controller.iopTypesMap[e.properties?['type']] ?? '',
+                  label: e.properties?['type'] == 'custom' ? e.properties!['icon'] : controller.iopTypesMap[e.properties?['type']] ?? '',
                   isSelected: selectedInterests.contains(e.properties?['type']),
                   onTap: () {
                     if (controller.selectedInterests.value.contains('')) {
@@ -290,7 +291,7 @@ class InterestButton extends StatelessWidget {
           border: Border.all(color: Colors.black),
           borderRadius: BorderRadius.circular(5),
         ),
-        child: Text(label),
+        child: label.contains('http') ? Image.network(label, height: 28,) : Text(label),
       ),
     );
   }
