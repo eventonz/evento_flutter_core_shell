@@ -1006,8 +1006,8 @@ class TrackingController extends GetxController
       });
 
     }
-
-    if(false && routePathsCordinates.isNotEmpty) {
+//  if(false && routePathsCordinates.isNotEmpty)
+    if(true) {
       athleteTrackDetails.addAll([
         AthleteTrackDetail(
           track: '1',

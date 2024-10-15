@@ -184,6 +184,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
       return AppColors.red;
     }
 
+    if(style.contains('*green*')) {
+      return AppColors.splitGreen;
+    }
+
+    if(style.contains('*black*')) {
+      return AppColors.black;
+    }
+
     if (!isText) {
       switch (style) {
         case 'split_black':
@@ -334,7 +342,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                             child: Center(
                               child: AppText(
                                 widget.columns.first,
-                                fontSize: 17,
+                                fontSize: 14,
                                 //color: contentColor(widget.data[i].values!.first, true),
                                 //fontWeight: contentWeight(widget.data[i].values!.first, true),
                                 textAlign: TextAlign.center,
@@ -365,7 +373,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                                             //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
                                             //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
                                             textAlign: TextAlign.center,
-                                            fontSize: 17,
+                                            fontSize: 14,
                                             //fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
                                             maxLines: 1,
                                           ),
@@ -646,7 +654,7 @@ class ExternalLinkContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(itemBuilder: (_, index) {
-      link[index].icon = 'swim';
+   
       print( Theme.of(Get.context!).brightness);
       return Padding(
         padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -658,15 +666,18 @@ class ExternalLinkContent extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          leading: SvgPicture.asset(AppHelper.getSvg('${link[index].icon}'),
-                   height: 23,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).brightness == Brightness.light
-                            ? Colors.white.withOpacity(0.7): Colors.black, // Color for light mode
-                           // Color for dark mode
-                          BlendMode.srcIn,
-                        ),
-                        ),
+          leading: link[index].icon != null 
+              ? SvgPicture.asset(
+                  AppHelper.getSvg('${link[index].icon}'),
+                  height: 23,
+                  colorFilter: ColorFilter.mode(
+                    Theme.of(context).brightness == Brightness.light
+                        ? Colors.white.withOpacity(0.7)
+                        : Colors.black, // Color for light mode
+                    BlendMode.srcIn,
+                  ),
+                )
+              : null,
           title: Text('${link[index].label}', style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 17,
