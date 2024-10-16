@@ -1018,7 +1018,7 @@ class TrackingController extends GetxController
 
     }
 
-    if(true) {
+    if(false && routePathsCordinates.isNotEmpty) {
       athleteTrackDetails.addAll([
         AthleteTrackDetail(
           track: '1',
@@ -1036,7 +1036,7 @@ class TrackingController extends GetxController
           speed: 10,
           location: 8,
           prevLocation: 8,
-          path: routePathsCordinates.keys.first,
+          path: 'p_2',
           status: '2',
           marker_text: '2',
         ),
