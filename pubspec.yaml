@@ -41,8 +41,8 @@ dependencies:
   firebase_crashlytics: ^4.1.3
   firebase_analytics: ^11.3.3
   sqlite3_flutter_libs: ^0.5.24
-  drift_sqflite: ^2.0.1
-  drift: ^2.20.2
+  drift_sqflite: 2.0.1
+  drift: 2.20.2
   collection: ^1.18.0
   webview_flutter: ^4.8.0
   flutter_svg: ^2.0.10+1
@@ -73,6 +73,7 @@ dependency_overrides:
   latlong2: ^0.9.0
   win32: ^5.5.4
   win32_registry: ^1.1.5
+  flutter_inappwebview_ios: 1.1.1
   geopoint:
     git:
       url: git@github.com:coding-master15/geopoint.git
@@ -83,7 +84,7 @@ dev_dependencies:
 
   flutter_lints: ^2.0.3
   build_runner: ^2.4.12
-  drift_dev: ^2.20.3
+  drift_dev: 2.20.3
   mocktail: ^1.0.4
 
 flavorizr:
