@@ -13,11 +13,8 @@ import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 
-import '../../../ui/dashboard/athletes/athletes.dart';
-import '../../../ui/dashboard/athletes_tracking/tracking.dart';
 import '../../utils/app_global.dart';
 
 class ConfigReload extends GetxController with WidgetsBindingObserver {
@@ -84,35 +81,55 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;
     final oldConfigLastUpdated =
-        Preferences.getInt(AppKeys.configLastUpdated, 0);
+    Preferences.getInt(AppKeys.configLastUpdated, 0);
 
     if(AppGlobals.oldAppConfig?.home?.image != AppGlobals.appConfig?.home?.image) {
-      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
-      final HomeController homeController = Get.find();
-      homeController.loadImageLink();
+      try {
+        BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
+        final HomeController homeController = Get.find();
+        homeController.loadImageLink();
+      } catch (e) {
+        print(e.toString());
+        BlurLoadingOverlay.dismiss();
+      }
     }
 
     if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
-      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
-      final TrackingController trackingController = Get.find();
-      trackingController.onInit();
-      await trackingController.getRoutePaths();
+      try {
+        BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
+        final TrackingController trackingController = Get.find();
+        trackingController.onInit();
+        await trackingController.getRoutePaths();
+      } catch (e) {
+        print(e.toString());
+        BlurLoadingOverlay.dismiss();
+      }
     }
 
     reloaded = true;
 
     if(!AppHelper.listsAreEqual(AppGlobals.oldAppConfig?.menu?.items ?? [], AppGlobals.appConfig?.menu?.items ?? [])) {
-      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
-      final MoreController moreController = Get.find();
-      moreController.doRrefresh();
+      try {
+        BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
+        final MoreController moreController = Get.find();
+        moreController.doRrefresh();
+      } catch (e) {
+        print(e.toString());
+        BlurLoadingOverlay.dismiss();
+      }
     }
 
     //testing new branch
 
     if(AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes || AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
-      BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
-      final DashboardController dashboardController = Get.find();
-      dashboardController.reloadMenu();
+      try {
+        BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
+        final DashboardController dashboardController = Get.find();
+        dashboardController.reloadMenu();
+      } catch (e) {
+        print(e.toString());
+        BlurLoadingOverlay.dismiss();
+      }
     }
 
 
