@@ -13,35 +13,156 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(LandingController());
-    return Scaffold(
-      body: Stack(
-        children: [
-          Image.asset(
-            AppGlobals.appEventConfig.splashImage ??
-                AppHelper.getImage('splash_image.png'),
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
+    final controller = Get.put(LandingController());
+    return Obx(
+      () => Scaffold(
+        body: controller.noConnection.value ? Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon representing no internet connection
+              Icon(
+                Icons.wifi_off,
+                size: 80,
+                color: AppColors.primary,
+              ),
+              SizedBox(height: 20),
+
+              // "Whoops!" text
+              Text(
+                'Whoops!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
+              SizedBox(height: 10),
+
+              // No internet connection message
+              Text(
+                'No Internet connection found.\nPlease check your internet settings.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 30),
+
+              // Reload button
+              ElevatedButton(
+                onPressed: () {
+                  // Add your reload functionality here
+                  controller.noConnection.value = false;
+                  controller.noConnection.refresh();
+                  controller.checkConnection();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: Text(
+                  'Reload',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(bottom: Platform.isAndroid ? 24 : 12),
-                child: CircleAvatar(
-                    backgroundColor: AppColors.white.withOpacity(0.8),
-                    radius: 5.w,
-                    child: SizedBox(
-                        width: 5.w,
-                        height: 5.w,
-                        child: const CircularProgressIndicator.adaptive(
-                          strokeWidth: 3,
-                        ))),
+        ) : controller.exception.value ?  Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon representing no internet connection
+              Icon(
+                Icons.error,
+                size: 80,
+                color: Colors.redAccent,
+              ),
+              SizedBox(height: 20),
+
+              // "Whoops!" text
+              Text(
+                'Oops!',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.redAccent,
+                ),
+              ),
+              SizedBox(height: 10),
+
+              // No internet connection message
+              Text(
+                'Something went wrong.\nPlease try again later.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              SizedBox(height: 30),
+
+              // Reload button
+              ElevatedButton(
+                onPressed: () async {
+                  // Add your reload functionality here
+                  controller.exception.value = false;
+                  controller.exception.refresh();
+                  await Future.delayed(const Duration(milliseconds: 300));
+                  controller.navigate();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                ),
+                child: Text(
+                  'Reload',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ) : Stack(
+          children: [
+            Image.asset(
+              AppGlobals.appEventConfig.splashImage ??
+                  AppHelper.getImage('splash_image.png'),
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SafeArea(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: Platform.isAndroid ? 24 : 12),
+                  child: CircleAvatar(
+                      backgroundColor: AppColors.white.withOpacity(0.8),
+                      radius: 5.w,
+                      child: SizedBox(
+                          width: 5.w,
+                          height: 5.w,
+                          child: const CircularProgressIndicator.adaptive(
+                            strokeWidth: 3,
+                          ))),
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

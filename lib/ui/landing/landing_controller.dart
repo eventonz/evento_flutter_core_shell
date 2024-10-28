@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
@@ -23,8 +24,11 @@ import '../events/events.dart';
 
 class LandingController extends GetxController {
   bool isPrev = false;
-  
+
   WebViewController? webViewController;
+
+  RxBool noConnection = false.obs;
+  RxBool exception = false.obs;
 
   @override
   void onInit() {
@@ -33,12 +37,29 @@ class LandingController extends GetxController {
     if (res != null) {
       isPrev = true;
     }
+
   }
 
   @override
   void onReady() {
     super.onReady();
-    navigate();
+    checkConnection();
+  }
+
+  checkConnection() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    Connectivity connectivity = Connectivity();
+    var result = await connectivity.checkConnectivity();
+      print(result.map((e) => e.toString()));
+
+      if((!result.contains(ConnectivityResult.wifi) && !result.contains(ConnectivityResult.mobile) && !result.contains(ConnectivityResult.ethernet))) {
+        print('NO CONNECTION');
+        noConnection.value = true;
+        update();
+      } else {
+        navigate();
+        print('CONNECTION');
+      }
   }
 
   void navigate() async {
@@ -46,6 +67,7 @@ class LandingController extends GetxController {
       if (!isPrev) {
         await AppGlobals.init();
       }
+      isPrev = true;
       await checkLaunchState();
       late String url;
       final config = AppGlobals.appEventConfig;
@@ -119,6 +141,10 @@ class LandingController extends GetxController {
           routeName: Routes.events,
           transition: Transition.leftToRightWithFade,
         );
+      } else {
+        print('EXCEPTION');
+        exception.value = true;
+        update();
       }
     }
   }
