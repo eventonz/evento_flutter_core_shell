@@ -30,6 +30,8 @@ class LandingController extends GetxController {
   RxBool noConnection = false.obs;
   RxBool exception = false.obs;
 
+  Connectivity connectivity = Connectivity();
+
   @override
   void onInit() {
     super.onInit();
@@ -48,7 +50,6 @@ class LandingController extends GetxController {
 
   checkConnection() async {
     await Future.delayed(const Duration(milliseconds: 300));
-    Connectivity connectivity = Connectivity();
     var result = await connectivity.checkConnectivity();
       print(result.map((e) => e.toString()));
 

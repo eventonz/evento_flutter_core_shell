@@ -426,6 +426,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                   duration: const Duration(milliseconds: 300),
                   height: _currentPageHeight, // Adjust the height dynamically
                   child: PageView.builder(itemBuilder: (_, i) {
+                    print('COLUMNS ${((widget.columns.length-1)/3).ceil()} ${widget.columns.length}');
                     return Container(
                       child: ListView.builder(
                           padding: const EdgeInsets.symmetric(vertical: 0),
@@ -435,9 +436,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                           itemBuilder: (_, index) {
                             final entry = widget.data[index].values;
                             final columns = widget.segments[i].columns!;
-                            print(entry);
-                            print(_currentPageHeight);
-                            print(((widget.columns.length-1)/3).ceil());
 
                             int startIndex = 1;
 
@@ -484,7 +482,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                             );
                           }),
                     );
-                  }, itemCount: ((widget.columns.length-1)/3).ceil(), controller: _controller, physics: const NeverScrollableScrollPhysics()),
+                  },
+                      //itemCount: ((widget.columns.length-1)/3).ceil(),
+                      itemCount: widget.segments.length,
+                      controller: _controller,
+                      physics: const NeverScrollableScrollPhysics()
+                  ),
                 ),
               ),
             ],
