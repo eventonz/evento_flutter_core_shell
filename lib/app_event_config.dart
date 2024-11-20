@@ -2,6 +2,7 @@ class AppEventConfig {
   AppEventConfig({
     required this.oneSignalId,
     this.splashImage,
+    this.configUrl,
     required this.appName,
     this.singleEventUrl,
     this.singleEventId,
@@ -11,6 +12,7 @@ class AppEventConfig {
   });
 
   final String appName;
+  final String? configUrl;
   final String? splashImage;
   final String oneSignalId;
   final String? singleEventUrl;

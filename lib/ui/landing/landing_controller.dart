@@ -90,7 +90,7 @@ class LandingController extends GetxController {
         final webUrl = Preferences.getString(AppKeys.eventLink, '');
         print(webUrl);
         if(webUrl == '') {
-          await getConfigDetails(url);
+          await getConfigDetails(url, config.configUrl);
           await getAthletes();
         }
         webViewController = WebViewController();
@@ -176,8 +176,8 @@ class LandingController extends GetxController {
     AppGlobals.eventM = EventM.fromJson(res.data);
   }
 
-  Future<void> getConfigDetails(String url) async {
-    final res = await ApiHandler.genericGetHttp(url: url);
+  Future<void> getConfigDetails(String url, String? configUrl) async {
+    final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
     Preferences.setInt(AppKeys.configLastUpdated,
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
