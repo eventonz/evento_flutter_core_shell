@@ -36,6 +36,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
 
   late Timer timer;
   Timer? athleteUpdateTimer;
+  bool disposed = false;
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -160,7 +161,9 @@ class _AndroidMapViewState extends State<AndroidMapView> {
               );
               print('time checking');
               print(DateTime.now().millisecondsSinceEpoch);
-              controller.pointAnnotationManager?.update(annotation);
+              if(!disposed) {
+                controller.pointAnnotationManager?.update(annotation);
+              }
               print(DateTime.now().millisecondsSinceEpoch);
             }
 
@@ -180,6 +183,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
     super.dispose();
     timer.cancel();
     athleteUpdateTimer?.cancel();
+    disposed = true;
   }
 
   @override
@@ -468,7 +472,9 @@ class _AndroidMapViewState extends State<AndroidMapView> {
               } else {
                 annotation.image = i % 5 == 0 ? controller.images[i] : Uint8List(0);
               }
-              controller.pointAnnotationManager?.update(annotation);
+              if(!disposed) {
+                controller.pointAnnotationManager?.update(annotation);
+              }
             }
         }
       }

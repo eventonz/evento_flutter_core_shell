@@ -70,7 +70,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
     // tries to check for updates for 5 sec then returns false
     final res = await ApiHandler.genericGetHttp(
-        url: url, apiTimeout: const Duration(seconds: 5));
+        url: config.configUrl ?? url, apiTimeout: const Duration(seconds: 5));
     if (res.statusMessage == 'Error') {
       return false;
     }
