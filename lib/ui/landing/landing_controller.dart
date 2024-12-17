@@ -73,6 +73,7 @@ class LandingController extends GetxController {
       late String url;
       final config = AppGlobals.appEventConfig;
       if (config.multiEventListId != null) {
+        print('config.multiEventListId ${config.multiEventListId}');
         url = Preferences.getString(AppKeys.eventUrl, '');
         await getEvents(config);
       } else {
@@ -91,10 +92,14 @@ class LandingController extends GetxController {
         print(webUrl);
         if(webUrl == '') {
           await getConfigDetails(url, config.configUrl);
-          await getAthletes();
+          //await getAthletes();
         }
         webViewController = WebViewController();
         if(webUrl != '') {
+          webViewController!.setJavaScriptMode(JavaScriptMode.unrestricted);
+          webViewController!.setOnConsoleMessage((msg) {
+            print('msg: $msg');
+          });
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
           print('loaded');
@@ -174,6 +179,7 @@ class LandingController extends GetxController {
         url: AppHelper.createUrl(
             config.multiEventListUrl!, config.multiEventListId!));
     AppGlobals.eventM = EventM.fromJson(res.data);
+    print(res.data);
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {
@@ -192,25 +198,25 @@ class LandingController extends GetxController {
         : AppColors.accentDark;
   }
 
-  Future<void> getAthletes() async {
-    final entrantsList = AppGlobals.appConfig!.athletes!;
-    final showAthletes = entrantsList.showAthletes ?? false;
-    if (!showAthletes) {
-      return;
-    }
-    try {
-      final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
-      late Map<String, dynamic> resJsonData;
-      if (res.data.runtimeType == String) {
-        resJsonData = jsonDecode(res.data);
-      } else {
-        resJsonData = res.data;
-      }
-      final athletesM = AthletesM.fromJson(resJsonData);
-      await DatabaseHandler.insertAthletes(athletesM.entrants!);
-      await Future.delayed(const Duration(milliseconds: 500));
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-  }
+  // Future<void> getAthletes() async {
+  //   final entrantsList = AppGlobals.appConfig!.athletes!;
+  //   final showAthletes = entrantsList.showAthletes ?? false;
+  //   if (!showAthletes) {
+  //     return;
+  //   }
+  //   try {
+  //     final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
+  //     late Map<String, dynamic> resJsonData;
+  //     if (res.data.runtimeType == String) {
+  //       resJsonData = jsonDecode(res.data);
+  //     } else {
+  //       resJsonData = res.data;
+  //     }
+  //     final athletesM = AthletesM.fromJson(resJsonData);
+  //     await DatabaseHandler.insertAthletes(athletesM.entrants!);
+  //     await Future.delayed(const Duration(milliseconds: 500));
+  //   } catch (e) {
+  //     debugPrint(e.toString());
+  //   }
+  // }
 }

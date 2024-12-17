@@ -40,10 +40,10 @@ class EventsController extends GetxController {
   void onInit() {
     super.onInit();
     eventM = AppGlobals.eventM!;
-    headerLogo = eventM.header!.logo ?? '';
-    headerColor = eventM.header!.color ?? '';
+    headerLogo = eventM.header?.logo ?? '';
+    headerColor = eventM.header?.color ?? '';
     searchBar = eventM.searchBar!;
-    allEvents = eventM.events!;
+    allEvents = eventM.events ?? [];
 
     double? savedPosition = storage.read<double>('scroll_position');
 
