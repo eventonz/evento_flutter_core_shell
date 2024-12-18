@@ -34,13 +34,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                   final isFollowed = snap.data!.isFollowed;
                   if (isFollowed) {
                     return IconButton(
-                      onPressed: () {
-                        controller.updateAthlete(snap.data!, isFollowed);
-                        if(Get.arguments['on_follow'] != null) {
-                          print('kk');
-                          Get.arguments['on_follow']!();
-                        }
-                      },
+                      onPressed: () =>
+                          controller.updateAthlete(snap.data!, isFollowed),
                       icon: Icon(
                         Icons.star,
                         color: Theme.of(context).brightness == Brightness.light
@@ -260,15 +255,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      onPressed: !snap.data!.canFollow ? null : () {
-                                        print('akk2');
-                                        controller.updateAthlete(
-                                          snap.data!, isFollowed);
-                                        if(Get.arguments['on_follow'] != null) {
-                                          print('akk');
-                                          Get.arguments['on_follow']!();
-                                        }
-                                      }),
+                                      onPressed: !snap.data!.canFollow ? null : () => controller.updateAthlete(
+                                          snap.data!, isFollowed)),
                                 ),
                                 if(!snap.data!.canFollow)
                                 Padding(

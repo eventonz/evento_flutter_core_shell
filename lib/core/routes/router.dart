@@ -42,7 +42,7 @@ class PageRouter {
     ),
     GetPage(
       name: Routes.athleteDetails,
-      page: () => AthleteDetailsScreen(),
+      page: () => const AthleteDetailsScreen(),
     ),
     GetPage(
       name: Routes.webview,

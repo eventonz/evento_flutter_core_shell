@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
-import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
@@ -21,29 +19,18 @@ class AthletesController extends GetxController {
   late String athletelabel;
   final TextEditingController searchTextEditController =
       TextEditingController();
-
-  final tooltipController = SuperTooltipController();
-
   final searchText = ''.obs;
   late Athletes entrantsList;
   late List<Advert> advertList;
-  final showFollowed = true.obs;
-  final loading = true.obs;
-  final loadingMore = false.obs;
+  final showFollowed = false.obs;
   final showAdvert = false.obs;
   final offset = 0.obs;
   int lastOffset = -1;
-  int page = 1;
-  int lastPage = 1;
   final limit = 200;
   final DashboardController dashboardController = Get.find();
   final ScrollController scrollController = ScrollController();
-  final ScrollController searchScrollController = ScrollController();
 
   List<AppAthleteDb> accumulatedList = [];
-  List<Entrants> searchAccumulatedList = [];
-
-  Map pagination = {};
 
 
   @override
@@ -53,7 +40,6 @@ class AthletesController extends GetxController {
     athleteText = AppHelper.setAthleteMenuText(entrantsList.text);
     checkAdvert(true);
     scrollController.addListener(onScroll);
-    searchScrollController.addListener(onSearchScroll);
   }
 
   void onScroll() {
@@ -62,19 +48,6 @@ class AthletesController extends GetxController {
       if(lastOffset == offset.value) {
         offset.value = offset.value + limit;
         update();
-      }
-    }
-  }
-
-  void onSearchScroll() {
-
-    if((searchScrollController.position.maxScrollExtent-searchScrollController.offset) < 400) {
-      if(lastPage == page) {
-        page = page + 1;
-        update();
-        if(page <= (pagination['totalPages'] ?? 1)) {
-          getAthletes(searchText.value);
-        }
       }
     }
   }
@@ -128,140 +101,57 @@ class AthletesController extends GetxController {
   Future<void> searchAthletes(String val) async {
     searchText.value = val;
     offset.value = 0;
-    loading.value = true;
-    page = 1;
-    lastPage = 1;
     lastOffset = -1;
     accumulatedList = [];
-    searchAccumulatedList = [];
-    getAthletes(val);
     update();
-  }
-
-  Future<void> insertAthlete(Entrants athlete, bool isFollowed) async {
-    if(isFollowed) {
-      await DatabaseHandler.insertAthlete(athlete);
-    } else {
-      await DatabaseHandler.removeAthlete(athlete.id);
-    }
   }
 
   Stream<List<AppAthleteDb>> watchAthletes(String val) async* {
-    val = '';
 
-    yield* DatabaseHandler.getAthletes(val, true);
-    //
-    //
-    // // if(lastOffset == offset.value) {
-    // //   controller.add(accumulatedList);
-    // //   yield* controller.stream;
-    // //   return;
-    // // }
-    // print('list.length 2');
-    //
-    // await for (final list in DatabaseHandler.getAthletes(val, true)) {
-    //
-    //   // Accumulate items into a list
-    //   // Future.delayed(const Duration(milliseconds: 100), () {
-    //   //   lastOffset = offset.value;
-    //   // });
-    //   print(list.length);
-    //   print('list.length');
-    //   for (final item in list) {
-    //     int index = accumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
-    //     if(index == -1) {
-    //       accumulatedList.add(item);
-    //     } else {
-    //       accumulatedList.removeAt(index);
-    //       accumulatedList.insert(index, item);
-    //     }
-    //     // Yield a copy of the accumulated list
-    //   }
-    //   yield List.from(accumulatedList);
-    // }
-    //yield* DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value);
-  }
+    StreamController<List<AppAthleteDb>> controller = StreamController<List<AppAthleteDb>>();
 
-  Future<List<Entrants>> getAthletes(String val, {bool init = false}) async {
-
-    if(init) {
-      loading.value = true;
-      searchAccumulatedList.clear();
-      page = 1;
-      lastPage = 1;
-      searchText.value = '';
-      searchTextEditController.clear();
+    if(lastOffset == offset.value) {
+      controller.add(accumulatedList);
+      yield* controller.stream;
+      return;
     }
-    loadingMore.value = true;
-    update();
-
-    List<AppAthleteDb> list = [];
     print('list.length 2');
 
-    final entrantsList = AppGlobals.appConfig!.athletes!;
-
-    var raceId = AppGlobals.selEventId;
-
-    var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
-      'searchstring' : searchText.value,
-      'pagenumber' : page,
-    });
-    //var data = await ApiHandler.genericGetHttp(url: entrantsList.url!);
-
-    print(data.data);
-    print(entrantsList.url!);
-    print(entrantsList.url!);
-    pagination = {
-      "totalPages": data.data['pagination']['totalPages'],
-      "currentPage": data.data['pagination']['currentPage'],
-      "totalRecords": data.data['pagination']['totalRecords'],
-    };
-
-    for (final item in data.data['athletes']) {
-
-
-        //int index = searchAccumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
-        //if(index == -1) {
-      var entrant = Entrants.fromJson(item);
-      // var followedAthletes = await DatabaseHandler.getSingleAthleteOnce(entrant.id);
-      // if(followedAthletes != null) {
-      //   entrant.isFollowed = followedAthletes.isFollowed;
-      // }
-      searchAccumulatedList.add(entrant);
-
-      //} else {
-
-        //  searchAccumulatedList.removeAt(index);
-        //  searchAccumulatedList.insert(index, item);
-        //}
+    await for (final list in DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value)) {
+      // Accumulate items into a list
+      Future.delayed(const Duration(milliseconds: 100), () {
+        lastOffset = offset.value;
+      });
+      print(list.length);
+      print('list.length');
+      for (final item in list) {
+        int index = accumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
+        if(index == -1) {
+          accumulatedList.add(item);
+        } else {
+          accumulatedList.removeAt(index);
+          accumulatedList.insert(index, item);
+        }
         // Yield a copy of the accumulated list
+      }
+      yield List.from(accumulatedList);
     }
-    lastPage = page;
-
-    loading.value = false;
-    loadingMore.value = false;
-    update();
-    return List.from(searchAccumulatedList);
+    //yield* DatabaseHandler.getAthletes(val, showFollowed.value, limit: limit, offset: offset.value);
   }
 
   void clearSearchField() {
     searchText.value = '';
     searchTextEditController.clear();
     offset.value = 0;
-    page = 1;
-    lastPage = 1;
     lastOffset = -1;
     accumulatedList = [];
-    searchAccumulatedList = [];
     update();
-    getAthletes('', init: true);
   }
 
-  void toAthleteDetails(AppAthleteDb entrant, {VoidCallback? onFollow}) async {
+  void toAthleteDetails(AppAthleteDb entrant) async {
     Get.focusScope?.unfocus();
-    Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant, 'on_follow': onFollow});
+    Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant});
   }
-
 
 List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
   athletes.sort((x, y) {
@@ -282,28 +172,6 @@ List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
     }
   }
   
-    return [...assignedRaceNoAthletes, ...unAssignedRaceNoAthletes];
-  }
-
-  List<Entrants> sortFilterAthletesSearch(List<Entrants> athletes) {
-    athletes.sort((x, y) {
-      int xValue = _parseRaceno(x.disRaceNo);
-      int yValue = _parseRaceno(y.disRaceNo);
-      return xValue.compareTo(yValue);
-    });
-
-    List<Entrants> assignedRaceNoAthletes = [];
-    List<Entrants> unAssignedRaceNoAthletes = [];
-
-    // Put unassigned racenumber athletes to the end of list
-    for (Entrants athlete in athletes) {
-      if (athlete.id == '9999999') {
-        unAssignedRaceNoAthletes.add(athlete);
-      } else {
-        assignedRaceNoAthletes.add(athlete);
-      }
-    }
-
     return [...assignedRaceNoAthletes, ...unAssignedRaceNoAthletes];
   }
   int _parseRaceno(String raceno) {

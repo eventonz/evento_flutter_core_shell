@@ -9,7 +9,6 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 
@@ -29,10 +28,6 @@ class EventoApp extends StatelessWidget {
     GetStorage().write('scroll_position', 0.0);
 
     print('HHHEELL');
-
-    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
-
-    print('okko');
 
     notificationHandlerController.stream.listen((value) {
       if (value) {
