@@ -155,7 +155,7 @@ class ApiHandler {
       String? params,
       Map<String, dynamic>? header}) async {
     params = params == null ? '' : '/$params';
-    debugPrint(_baseUrl + midpathApi + endPoint + params);
+    print(_baseUrl + midpathApi + endPoint + params);
     try {
       final response = await _dio.get(
         _baseUrl + midpathApi + endPoint + params,

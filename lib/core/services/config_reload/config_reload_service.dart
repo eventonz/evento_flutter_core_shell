@@ -42,7 +42,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       if (recentlyUpdated && AppGlobals.oldAppConfig != AppGlobals.appConfig) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
-        await getAthletes();
+        //await getAthletes();
         Get.put(AthletesController());
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
       }
