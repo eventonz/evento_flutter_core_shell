@@ -310,6 +310,24 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
     );
   }
 
+  factory AppAthleteDb.fromEntrant(Entrants entrant, int eventId) {
+    return AppAthleteDb(
+        id: int.parse(entrant.id),
+        athleteId: entrant.id,
+        name: entrant.name,
+        profileImage: entrant.profileImage,
+        raceno: (entrant.number),
+        isFollowed: false,
+        contestNo: entrant.contest,
+        info: entrant.info,
+        eventId: eventId,
+        extra: entrant.extra,
+        disRaceNo: (entrant.disRaceNo),
+        canFollow: entrant.canFollow,
+        searchTag:
+        '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}');
+  }
+
   factory AppAthleteDb.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
