@@ -210,6 +210,36 @@ class DatabaseHandler {
     yield* query.watch();
   }
 
+  static Future<List<AppAthleteDb>> getAthletesOnce(
+      String searchValue, bool isFollowed, {int? offset, int? limit}) async {
+    searchValue = searchValue.toLowerCase();
+    Stopwatch stopWatch = Stopwatch();
+    stopWatch.start();
+    final eventId = Preferences.getInt(AppKeys.eventId, 0);
+
+    var query = _db.athleteDb.select()
+      ..where((tbl) => tbl.eventId.equals(eventId))
+      ..orderBy([(athlete) => OrderingTerm(expression: athlete.id)]);
+
+    if (searchValue.isNotEmpty) {
+      if (isFollowed) {
+        query.where((tbl) => tbl.searchTag.equals(searchValue));
+      } else {
+        query.where((tbl) => tbl.searchTag.contains(searchValue));
+      }
+    }
+
+    if (isFollowed) {
+      query.where((tbl) => tbl.isFollowed.equals(isFollowed));
+    }
+
+    if(limit != null) {
+      query.limit(limit, offset: offset);
+    }
+
+    return await query.get();
+  }
+
   static Stream<AppAthleteDb> getSingleAthlete(String athleteId) async* {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     Stream<AppAthleteDb> stream = (_db.athleteDb.select()
