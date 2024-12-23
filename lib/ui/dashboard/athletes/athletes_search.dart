@@ -54,6 +54,7 @@ class AthletesSearchScreen extends StatelessWidget {
           Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: TextField(
+                      focusNode: controller.focusNode,
                       controller: controller.searchTextEditController,
                       onSubmitted: (val) => controller.searchAthletes(val),
                       cursorColor: AppColors.grey,
@@ -223,6 +224,11 @@ class AthletesSearchScreen extends StatelessWidget {
                                           onFollow() async {
                                             print('isFOLLOWED ${!entrant.isFollowed}');
                                             await controller.insertAthlete(entrant, !entrant.isFollowed);
+                                            if (!entrant.isFollowed) {
+                                              controller.followAthlete(entrant);
+                                            } else {
+                                              controller.unfollowAthlete(entrant);
+                                            }
                                             //controller.update();
                                           }
 
@@ -231,10 +237,7 @@ class AthletesSearchScreen extends StatelessWidget {
                                               onFollow: onFollow,
                                               onTap: () =>
                                                   controller.toAthleteDetails(
-                                                      AppAthleteDb.fromEntrant(
-                                                          entrant,
-                                                          AppGlobals
-                                                              .selEventId),
+                                                      entrant,
                                                       onFollow: onFollow));
                                         });
                                   } else if (controller.loading.value) {

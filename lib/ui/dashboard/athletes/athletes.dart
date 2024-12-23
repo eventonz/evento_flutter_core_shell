@@ -119,6 +119,9 @@ class AthletesScreen extends StatelessWidget {
                   controller.getAthletes('', init: true);
 
                   Get.to(const AthletesSearchScreen());
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    controller.focusNode.requestFocus();
+                  });
                 },
                 child: TextField(
                   controller: controller.searchTextEditController,
@@ -300,7 +303,19 @@ class AthletesScreen extends StatelessWidget {
                                         return AthleteTile(
                                             entrant: entrant,
                                             onTap: () => controller
-                                                .toAthleteDetails(entrant));
+                                                .toAthleteDetails(entrant, onFollow: () {
+                                              onFollow() async {
+                                                print('isFOLLOWED ${!entrant.isFollowed}');
+                                                await controller.insertAthleteA(entrant, !entrant.isFollowed);
+                                                if (!entrant.isFollowed) {
+                                                  controller.followAthleteA(entrant);
+                                                } else {
+                                                  controller.unfollowAthleteA(entrant);
+                                                }
+                                                //controller.update();
+                                              }
+                                              onFollow();
+                                            }));
                                       });
                                 } else if (snap.hasError) {
                                   return Center(

@@ -24,6 +24,7 @@ class AthletesController extends GetxController {
 
   final tooltipController = SuperTooltipController();
 
+  final FocusNode focusNode = FocusNode();
   final searchText = ''.obs;
   late Athletes entrantsList;
   late List<Advert> advertList;
@@ -138,11 +139,101 @@ class AthletesController extends GetxController {
     update();
   }
 
+  Future<void> followAthlete(Entrants athelete) async {
+
+    final data = {
+      'event_id': AppGlobals.selEventId,
+      'player_id': AppGlobals.oneSignalUserId,
+      'number': athelete.id,
+      'contest': athelete.contest
+    };
+
+    final res = await ApiHandler.postHttp(
+        endPoint: '', baseUrl: entrantsList.follow!, body: data);
+    if (res.statusCode == 201) {
+      debugPrint('$data---- Followed');
+    } else {
+      debugPrint(res.data.toString());
+    }
+  }
+
+  Future<void> unfollowAthlete(Entrants athelete) async {
+    final data = {
+      'event_id': AppGlobals.selEventId,
+      'player_id': AppGlobals.oneSignalUserId,
+      'number': athelete.id,
+      'contest': athelete.contest
+    };
+    final res = await ApiHandler.deleteHttp(
+        endPoint: '', baseUrl: entrantsList.follow!, body: data);
+    if (res.statusCode == 200) {
+      debugPrint('$data---- Unfollowed');
+    } else {
+      debugPrint(res.data.toString());
+    }
+  }
+
+  Future<void> followAthleteA(AppAthleteDb athelete) async {
+
+    final data = {
+      'event_id': AppGlobals.selEventId,
+      'player_id': AppGlobals.oneSignalUserId,
+      'number': athelete.athleteId,
+      'contest': athelete.contestNo
+    };
+
+    final res = await ApiHandler.postHttp(
+        endPoint: '', baseUrl: entrantsList.follow!, body: data);
+    if (res.statusCode == 201) {
+      debugPrint('$data---- Followed');
+    } else {
+      debugPrint(res.data.toString());
+    }
+  }
+
+  Future<void> unfollowAthleteA(AppAthleteDb athelete) async {
+    final data = {
+      'event_id': AppGlobals.selEventId,
+      'player_id': AppGlobals.oneSignalUserId,
+      'number': athelete.athleteId,
+      'contest': athelete.contestNo
+    };
+    final res = await ApiHandler.deleteHttp(
+        endPoint: '', baseUrl: entrantsList.follow!, body: data);
+    if (res.statusCode == 200) {
+      debugPrint('$data---- Unfollowed');
+    } else {
+      debugPrint(res.data.toString());
+    }
+  }
+
   Future<void> insertAthlete(Entrants athlete, bool isFollowed) async {
     if(isFollowed) {
       await DatabaseHandler.insertAthlete(athlete);
     } else {
       await DatabaseHandler.removeAthlete(athlete.id);
+    }
+  }
+
+  Future<void> insertAthleteA(AppAthleteDb athlete, bool isFollowed) async {
+    var a = await DatabaseHandler.getSingleAthleteOnce(athlete.athleteId);
+    if(a == null) {
+      print('here');
+      await DatabaseHandler.insertAthlete(Entrants(
+        id: athlete.athleteId,
+        disRaceNo: athlete.disRaceNo ?? '',
+        number: athlete.athleteId,
+        info: athlete.info,
+        profileImage: athlete.profileImage,
+        name: athlete.name,
+        contest: athlete.contestNo,
+        extra: athlete.extra,
+        canFollow: athlete.canFollow,
+        isFollowed: true,
+      ));
+    } else {
+      print('here 2');
+      await DatabaseHandler.removeAthlete(athlete.athleteId);
     }
   }
 
@@ -257,7 +348,7 @@ class AthletesController extends GetxController {
     getAthletes('', init: true);
   }
 
-  void toAthleteDetails(AppAthleteDb entrant, {VoidCallback? onFollow}) async {
+  void toAthleteDetails(dynamic entrant, {VoidCallback? onFollow}) async {
     Get.focusScope?.unfocus();
     Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant, 'on_follow': onFollow});
   }
