@@ -147,6 +147,7 @@ flutter:
     - packages/evento_core/assets/svgs/run.svg
 
     - packages/evento_core/assets/images/splash_image.png
+    - packages/evento_core/assets/images/empty_search.png
     - packages/evento_core/assets/images/instagram.png
     - packages/evento_core/assets/images/general.png
     - packages/evento_core/assets/images/share.png

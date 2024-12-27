@@ -4,6 +4,7 @@ import 'package:evento_core/core/models/advert.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -249,16 +250,19 @@ class AthletesSearchScreen extends StatelessWidget {
                                               strokeWidth: 2)),
                                     );
                                   } else {
-                                    return Center(
-                                        child: NoDataFoundLayout(
-                                      title: controller.showFollowed.value
-                                          ? 'No ${controller.athleteText} being followed'
-                                          : null,
-                                      errorMessage: controller
-                                              .showFollowed.value
-                                          ? 'When you follow ${controller.athleteText}, you\'ll see them here.'
-                                          : 'No ${controller.athleteText} Found At Present',
-                                    ));
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 30.h),
+                                      child: Center(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Image.asset(AppHelper.getImage('empty_search.png'), width: 65),
+                                              SizedBox(height: 10),
+                                              Text('No ${controller.athleteText} Found'),
+                                            ],
+                                          ),
+                                      ),
+                                    );
                                   }
                                 });
                           },
