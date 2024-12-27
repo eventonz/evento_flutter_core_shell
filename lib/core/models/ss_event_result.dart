@@ -128,6 +128,7 @@ class AthleteData {
   });
 
   factory AthleteData.fromJson(Map<String, dynamic> json) {
+    print(json);
     return AthleteData(
       athleteId: json['athlete_id'],
       address: json['address'] != null ? Address.fromJson(json['address']) : null,

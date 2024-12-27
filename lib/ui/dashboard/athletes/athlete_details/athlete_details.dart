@@ -145,7 +145,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: AppText(
-                              controller.selEntrant?.info ?? controller.selEntrantA?.info ?? '',
+                              (controller.selEntrant?.info ?? controller.selEntrantA?.info ?? '').replaceAll('null', '').trim(),
                               fontWeight: FontWeight.w500,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 6,
@@ -162,6 +162,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                               controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
                           builder: (_, snap) {
                             if (snap.hasData || snap.hasError) {
+                              print('controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
                               final details = snap.data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
                                 return AppAthleteExtraDetailsDb(id: 0, athleteId: details.athleteNumber, name: details.name, eventId: AppGlobals.selEventId, country: details.country, athleteNumber: details.athleteNumber);
                               }).toList();
@@ -201,6 +202,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                           final isFollowed = snap.data?.isFollowed ?? false;
                           return Column(
                             children: [
+                              if((Get.arguments['can_follow']) != false)
                               AnimatedContainer(
                                 width: double.infinity,
                                 curve: Curves.easeInOut,
@@ -279,7 +281,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                                       }
                                     }),
                               ),
-                              if(!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
+                              if((Get.arguments['can_follow']) != false)
+                                if(!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
                                 Padding(
                                   padding: const EdgeInsets.only(
                                       left: 4.0, right: 4.0, top: 4.0),

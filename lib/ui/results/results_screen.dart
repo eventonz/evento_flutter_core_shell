@@ -1,4 +1,5 @@
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
@@ -357,8 +358,9 @@ class ResultsScreen extends StatelessWidget {
                       if(!(controller.items?.linkToDetail ?? false)) {
                         return;
                       }
-                      AppAthleteDb athleteDb = AppAthleteDb(id: athlete.raceNo!, athleteId: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', raceno: athlete.raceNo!.toString(), eventId: athlete.eventId!, info: '', contestNo: athlete.overallPos!, searchTag: '', disRaceNo: athlete.raceNo?.toString() ?? '');
-                      Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: athleteDb, 'can_follow': false});
+                      Entrants entrant = Entrants(id: athlete.athleteId?.toString() ?? '', number: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', info: '${athlete.event?.name ?? ''}\n${athlete.gender?.name ?? ''} ${athlete.category?.name ?? ''}\n${athlete.countryRepresenting?.name ?? ''}', contest: athlete.overallPos!, disRaceNo: athlete.raceNo?.toString() ?? '');
+
+                      Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant, 'can_follow': false});
                     },
                     child: Container(
                       height: 60,
