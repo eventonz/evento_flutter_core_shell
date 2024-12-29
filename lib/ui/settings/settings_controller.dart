@@ -8,6 +8,7 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/bottom_sheet.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
@@ -79,8 +80,8 @@ class SettingsController extends GetxController {
                     Get.back();
                     showThemeModePrompt();
                   },
-                  child: const AppText(
-                    'Select App Theme',
+                  child: AppText(
+                    AppLocalizations.of(Get.context!)!.selectAppTheme,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   )),
@@ -91,8 +92,8 @@ class SettingsController extends GetxController {
           ListTile(
             onTap: () => updateAppTheme(ThemeMode.system),
             minVerticalPadding: 0,
-            leading: const AppText(
-              'System',
+            leading: AppText(
+              AppLocalizations.of(Get.context!)!.system,
               fontSize: 16,
             ),
             trailing: Icon(
@@ -103,8 +104,8 @@ class SettingsController extends GetxController {
           ListTile(
             onTap: () => updateAppTheme(ThemeMode.light),
             minVerticalPadding: 0,
-            leading: const AppText(
-              'Light',
+            leading: AppText(
+              AppLocalizations.of(Get.context!)!.light,
               fontSize: 16,
             ),
             trailing: Icon(
@@ -115,8 +116,8 @@ class SettingsController extends GetxController {
           ListTile(
             onTap: () => updateAppTheme(ThemeMode.dark),
             minVerticalPadding: 0,
-            leading: const AppText(
-              'Dark',
+            leading: AppText(
+              AppLocalizations.of(Get.context!)!.dark,
               fontSize: 16,
             ),
             trailing: Icon(

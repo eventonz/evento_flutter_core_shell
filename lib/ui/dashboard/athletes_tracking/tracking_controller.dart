@@ -6,6 +6,7 @@ import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:carousel_slider/carousel_controller.dart' as cc;
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/overlays/toast.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:flutter_svg/svg.dart';
@@ -614,7 +615,7 @@ class TrackingController extends GetxController
                                                         .circular(5))),
                                           ),
                                           child: Text(
-                                            'Get Directions', style: TextStyle(
+                                            AppLocalizations.of(Get.context!)!.getDirections, style: TextStyle(
                                             color: Theme
                                                 .of(Get.context!)
                                                 .colorScheme

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/event_info.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
@@ -25,9 +26,9 @@ class SubEventTile extends StatelessWidget {
             imageUrl: subEvent.image!,
             placeholder: (_, val) =>
                 const Center(child: CircularProgressIndicator.adaptive()),
-            errorWidget: (_, val, val2) => const Center(
+            errorWidget: (_, val, val2) => Center(
                 child: NoDataFoundLayout(
-              errorMessage: 'No Image Found',
+              errorMessage: AppLocalizations.of(context)!.noImageFound,
             )),
             width: 10.h,
           ),

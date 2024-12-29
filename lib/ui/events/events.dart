@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/event_tile.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -140,21 +141,21 @@ class EventsScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w500,
                                         fontSize: 13,
                                       ),
-                                      decoration: const InputDecoration(
-                                        hintText: 'Search...',
+                                      decoration: InputDecoration(
+                                        hintText: '${AppLocalizations.of(context)!.search}...',
                                         hintStyle: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w300,
                                           fontSize: 13,
                                         ),
-                                        prefixIcon: Icon(
+                                        prefixIcon: const Icon(
                                             CupertinoIcons.search,
                                             color: Colors.white,
                                             size: 18),
                                         contentPadding:
-                                            EdgeInsets.symmetric(
+                                            const EdgeInsets.symmetric(
                                                 horizontal: 12, vertical: 6),
-                                        border: OutlineInputBorder(
+                                        border: const OutlineInputBorder(
                                             borderSide: BorderSide(
                                           color: Colors.white,
                                           width: .5,

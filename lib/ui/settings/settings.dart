@@ -2,9 +2,11 @@ import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/checkbox_switch.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/common_components/title_divider.dart';
+import 'package:evento_core/ui/settings/language_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -20,18 +22,18 @@ class SettingsScreen extends StatelessWidget {
         appBar: AppBar(
           surfaceTintColor: Colors.white,
           shadowColor: Colors.white,
-          title: const AppText(
-            'Settings',
+          title: AppText(
+            AppLocalizations.of(context)!.settings,
             style: AppStyles.appBarTitle,
           ),
         ),
         body: Column(
           children: [
-            const TitleDivider(title: 'General Settings'),
+            TitleDivider(title: '${AppLocalizations.of(context)!.general} ${AppLocalizations.of(context)!.settings}'),
             ListTile(
               onTap: controller.showThemeModePrompt,
-              title: const AppText(
-                'App Theme',
+              title: AppText(
+                AppLocalizations.of(context)!.appTheme,
               ),
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 12),
@@ -50,8 +52,8 @@ class SettingsScreen extends StatelessWidget {
             ),
             ListTile(
               onTap: controller.getAthletes,
-              title: const AppText(
-                'Reload Athletes',
+              title: AppText(
+                AppLocalizations.of(context)!.reloadAthletes,
               ),
               trailing: Padding(
                 padding: const EdgeInsets.only(right: 12),
@@ -76,6 +78,28 @@ class SettingsScreen extends StatelessWidget {
                           )),
               ),
             ),
+            Divider(
+                height: 1,
+                thickness: .5,
+                color: Theme.of(context).brightness == Brightness.light
+                    ?  AppColors.darkgrey :AppColors.greyLight
+            ),
+            ListTile(
+              onTap: () {
+                Get.to(LanguageScreen());
+              },
+              title: AppText(
+                AppLocalizations.of(context)!.language,
+              ),
+              trailing: Padding(
+                padding: const EdgeInsets.only(right: 12),
+                child: Icon(
+                  Icons.language,
+                  size: 6.w,
+                  color: AppColors.grey,
+                ),
+              ),
+            ),
             /*
             const Divider(
               height: 0,
@@ -95,11 +119,11 @@ class SettingsScreen extends StatelessWidget {
                 color: Theme.of(context).brightness == Brightness.light
                                 ?  AppColors.darkgrey :AppColors.greyLight
             ),
-            const TitleDivider(title: 'Notification Settings'),
+            TitleDivider(title: AppLocalizations.of(context)!.notificationSettings),
             ListTile(
               onTap: controller.toggleNotificationStatus,
-              title: const AppText(
-                'Event Updates',
+              title: AppText(
+                AppLocalizations.of(context)!.eventUpdates,
               ),
               trailing: Obx(() => AppCheckBox(
                   isChecked: controller.eventNotificationstatus.value)),
@@ -112,7 +136,7 @@ class SettingsScreen extends StatelessWidget {
             ),
             ListTile(
               title: AppText(
-                'Version ${AppGlobals.appVersion}',
+                '${AppLocalizations.of(context)!.version} ${AppGlobals.appVersion}',
                 fontSize: 12,
               ),
             ),

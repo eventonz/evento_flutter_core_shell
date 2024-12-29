@@ -4,6 +4,7 @@ import 'package:evento_core/core/models/detail_item.dart';
 import 'package:evento_core/core/models/split_data.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,7 @@ class SplitNewDataContent2 extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: AppText(
-                'Splits',
+                AppLocalizations.of(context)!.splits,
                 fontWeight: FontWeight.bold,
                 fontSize: 16.sp,
               ),

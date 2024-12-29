@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+
   cupertino_icons: ^1.0.2
   onesignal_flutter: ^5.2.5
   get: ^4.6.6
@@ -67,6 +68,8 @@ dependencies:
   get_storage:
   super_tooltip: ^2.0.9
   win32: ^5.5.4
+  flutter_localizations:
+    sdk: flutter
   #new_version_plus: ^0.0.11
 
 
@@ -87,6 +90,7 @@ dev_dependencies:
   build_runner: ^2.4.12
   drift_dev: 2.20.3
   mocktail: ^1.0.4
+  flutter_gen: ^5.8.0
 
 flavorizr:
   app:
@@ -95,6 +99,7 @@ flavorizr:
 
 flutter:
   uses-material-design: true
+  generate: true
 
   assets:
     - packages/evento_core/assets/svgs/article.svg
@@ -147,6 +152,8 @@ flutter:
     - packages/evento_core/assets/svgs/run.svg
 
     - packages/evento_core/assets/images/splash_image.png
+    - packages/evento_core/assets/images/empty_search.png
+    - packages/evento_core/assets/images/us.png
     - packages/evento_core/assets/images/instagram.png
     - packages/evento_core/assets/images/general.png
     - packages/evento_core/assets/images/share.png

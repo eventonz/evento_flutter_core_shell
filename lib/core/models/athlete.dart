@@ -46,6 +46,7 @@ class Entrants {
       this.id = '-1',
       this.contest = -1,
       this.extra = '',
+      this.athleteDetails,
       this.canFollow = true,
       this.isFollowed = false});
 

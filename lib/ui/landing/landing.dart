@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/landing/landing_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,7 +42,7 @@ class LandingScreen extends StatelessWidget {
 
               // No internet connection message
               Text(
-                'No Internet connection found.\nPlease check your internet settings.',
+                AppLocalizations.of(context)!.noInternetConnectionFoundMsg,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -66,7 +67,7 @@ class LandingScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 child: Text(
-                  'Reload',
+                  AppLocalizations.of(context)!.reload,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -89,7 +90,7 @@ class LandingScreen extends StatelessWidget {
 
               // "Whoops!" text
               Text(
-                'Oops!',
+                AppLocalizations.of(context)!.oops,
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -100,7 +101,7 @@ class LandingScreen extends StatelessWidget {
 
               // No internet connection message
               Text(
-                'Something went wrong.\nPlease try again later.',
+                '${AppLocalizations.of(context)!.somethingWentWrong}.\n${AppLocalizations.of(context)!.pleaseTryAgainLater}.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -126,7 +127,7 @@ class LandingScreen extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
                 child: Text(
-                  'Reload',
+                  AppLocalizations.of(context)!.reload,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16,
