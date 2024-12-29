@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/advert.dart';
 import 'package:evento_core/core/models/athlete.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
@@ -108,7 +109,7 @@ class AthletesScreen extends StatelessWidget {
                   decoration: ShapeDecoration(shape: TooltipShapeBorder(
                     radius: 5,
                   ), color: AppColors.black),
-                  child: Text('Search here for Athletes,\nusing Name or Race\nNumber ', style: TextStyle(
+                  child: Text(AppLocalizations.of(context)!.searchForAthletesUsingNameOrRaceNo, style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
                   ),),
@@ -132,7 +133,7 @@ class AthletesScreen extends StatelessWidget {
                     enabled: false,
 
                     isDense: true,
-                    hintText: 'Search ${controller.athleteText}',
+                    hintText: '${AppLocalizations.of(context)!.search} ${controller.athleteText}',
                     hintStyle: TextStyle(
                       fontSize: 14,
                       color: Theme.of(context).brightness == Brightness.light
@@ -265,12 +266,12 @@ class AthletesScreen extends StatelessWidget {
                                       child: Center(
                                           child: NoDataFoundLayout(
                                         title: controller.showFollowed.value
-                                            ? 'No ${controller.athleteText} being followed'
+                                            ? AppLocalizations.of(context)!.noAthletesBeingFollowed(controller.athleteText)
                                             : null,
                                         errorMessage: controller
                                                 .showFollowed.value
-                                            ? 'When you follow ${controller.athleteText}, you\'ll see them here.'
-                                            : 'No ${controller.athleteText} Found At Present',
+                                            ? AppLocalizations.of(context)!.whenYouFollowAthleteYouWillSeeThemHere(controller.athleteText)
+                                            : AppLocalizations.of(context)!.noAthletesFoundAtPresent(controller.athleteText),
                                       )),
                                     );
                                   }

@@ -4,6 +4,7 @@ import 'package:evento_core/core/db/models/athlete_extra_details.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/split_data_table.dart';
@@ -254,7 +255,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                                           width: 10,
                                         ),
                                         AppText(
-                                          isFollowed ? 'Following' : 'Follow',
+                                          isFollowed ? AppLocalizations.of(context)!.following : AppLocalizations.of(context)!.follow,
                                           fontSize: 14,
                                           color: isFollowed
                                               ? Theme
@@ -287,7 +288,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                                   padding: const EdgeInsets.only(
                                       left: 4.0, right: 4.0, top: 4.0),
                                   child: Text(
-                                    'Follow not available until Race Number has been assigned',
+                                    AppLocalizations.of(context)!.followNotAvailableUntilRaceNumberIsAssigned,
                                     style: TextStyle(
                                       fontSize: 10,
                                     ),),

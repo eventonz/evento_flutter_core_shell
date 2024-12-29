@@ -6,6 +6,7 @@ import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/keys.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -48,7 +49,7 @@ class AssistantController extends GetxController {
       final defaultMessage = ChatMessageM(
           role: 'assistant',
           content:
-              'Ask me any questions about the Athlete Guide - I\'ll try my best to answer.');
+              AppLocalizations.of(Get.context!)!.defaultAssistantMessage);
       chatMessages.add(defaultMessage);
       DatabaseHandler.insertChatMessage(defaultMessage);
     }
@@ -58,21 +59,21 @@ class AssistantController extends GetxController {
     showCupertinoDialog(
       context: Get.context!,
       builder: (context) => CupertinoAlertDialog(
-        title: const AppText(
-          'Would you like to remove all the messages?',
+        title: AppText(
+          AppLocalizations.of(Get.context!)!.wouldYouLikeToRemoveAllMessages,
           textAlign: TextAlign.center,
         ),
         actions: [
           CupertinoDialogAction(
-            child: const AppText(
-              'Yes',
+            child: AppText(
+              AppLocalizations.of(Get.context!)!.yes,
               color: AppColors.grey,
             ),
             onPressed: () => removeAllMessages(),
           ),
           CupertinoDialogAction(
             child: AppText(
-              'Cancel',
+              AppLocalizations.of(Get.context!)!.cancel,
               color: AppColors.primary,
             ),
             onPressed: () => Get.back(),

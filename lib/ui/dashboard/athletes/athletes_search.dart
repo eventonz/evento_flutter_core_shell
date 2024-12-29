@@ -5,6 +5,7 @@ import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -136,7 +137,7 @@ class AthletesSearchScreen extends StatelessWidget {
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
                         child: Text(
-                            'Last Updated: ${controller.entrantsList.label ?? ''}',
+                            '${AppLocalizations.of(context)!.lastUpdated}: ${controller.entrantsList.label ?? ''}',
                             style: TextStyle(
                                 fontSize: 12,
                                 color: Theme.of(context).brightness ==
@@ -258,7 +259,7 @@ class AthletesSearchScreen extends StatelessWidget {
                                             children: [
                                               Image.asset(AppHelper.getImage('empty_search.png'), width: 65),
                                               SizedBox(height: 10),
-                                              Text('No ${controller.athleteText} Found'),
+                                              Text(AppLocalizations.of(context)!.noAthleteFound(controller.athleteText)),
                                             ],
                                           ),
                                       ),

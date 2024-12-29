@@ -3,6 +3,7 @@
 import 'package:evento_core/core/models/schedule.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -36,9 +37,9 @@ class ScheduleScreen extends StatelessWidget {
                   final scheduleItems = controller.scheduleItemsFiltered.value;
                   final tags = controller.tags;
                   if (scheduleItems.isEmpty && tags.isEmpty) {
-                    return const Center(
+                    return Center(
                         child: NoDataFoundLayout(
-                      errorMessage: 'No Data Found',
+                      errorMessage: AppLocalizations.of(context)!.noDataFound,
                     ));
                   }
 
@@ -92,9 +93,9 @@ class ScheduleScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: scheduleItems.isEmpty
-                            ? const Center(
+                            ? Center(
                                 child: NoDataFoundLayout(
-                                  errorMessage: 'No Schedule found',
+                                  errorMessage: AppLocalizations.of(context)!.noScheduleFound,
                                 ),
                               )
                             : ListView.builder(

@@ -4,6 +4,7 @@ import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -38,9 +39,9 @@ class ChallengeScreen extends StatelessWidget {
                         imageUrl: controller.challengeInfo.media!.image!.url!,
                         placeholder: (_, val) => const Center(
                             child: CircularProgressIndicator.adaptive()),
-                        errorWidget: (_, val, val2) => const Center(
+                        errorWidget: (_, val, val2) => Center(
                             child: NoDataFoundLayout(
-                          errorMessage: 'No Image Found',
+                          errorMessage: AppLocalizations.of(context)!.noImageFound,
                         )),
                         width: double.infinity,
                       ),

@@ -7,6 +7,7 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:get/get.dart';
@@ -105,7 +106,7 @@ class MoreController extends GetxController {
     } else if (itemType == 'results') {
       Get.toNamed(Routes.results, arguments: {AppKeys.moreItem: item});
     } else {
-      ToastUtils.show('Something went wrong...');
+      ToastUtils.show('${AppLocalizations.of(Get.context!)!.somethingWentWrong}...');
     }
   }
 

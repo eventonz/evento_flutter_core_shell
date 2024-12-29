@@ -4,6 +4,7 @@ import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -85,7 +86,7 @@ class ResultsScreenController extends GetxController {
   categoryListener() {
     if(gender == -1 && attached) {
       categoryScrollController?.jumpTo(0);
-      ToastUtils.show('Select Gender First');
+      ToastUtils.show(AppLocalizations.of(Get.context!)!.selectGenderFirst);
       return;
     }
   }

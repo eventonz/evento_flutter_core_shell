@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/event_info.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
@@ -17,14 +18,14 @@ class EventTile extends StatelessWidget {
   final VoidCallback onTap;
   final Event event;
 
-  Widget _buildTile() {
+  Widget _buildTile(BuildContext context) {
     if (event.size == "small") {
-      return _buildSmallTile();
+      return _buildSmallTile(context);
     }
-    return _buildLargeTile();
+    return _buildLargeTile(context);
   }
 
-  Widget _buildSmallTile() {
+  Widget _buildSmallTile(BuildContext context) {
     return Row(
       children: [
         event.smallImage != null && event.smallImage!.isNotEmpty
@@ -34,9 +35,9 @@ class EventTile extends StatelessWidget {
                   imageUrl: event.smallImage!,
                   placeholder: (_, val) =>
                       const Center(child: CircularProgressIndicator.adaptive()),
-                  errorWidget: (_, val, val2) => const Center(
+                  errorWidget: (_, val, val2) => Center(
                       child: NoDataFoundLayout(
-                    errorMessage: 'No Image Found',
+                    errorMessage: AppLocalizations.of(context)!.noImageFound,
                   )),
                   width: AppGlobals.appEventConfig.isTimer == true ? (36.w*0.75) : 36.w,
                   height: AppGlobals.appEventConfig.isTimer == true ? (8.h*0.75) : 8.h,
@@ -75,7 +76,7 @@ class EventTile extends StatelessWidget {
     );
   }
 
-  Widget _buildLargeTile() {
+  Widget _buildLargeTile(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -90,9 +91,9 @@ class EventTile extends StatelessWidget {
                         imageUrl: event.largeImage!,
                         placeholder: (_, val) => const Center(
                             child: CircularProgressIndicator.adaptive()),
-                        errorWidget: (_, val, val2) => const Center(
+                        errorWidget: (_, val, val2) => Center(
                             child: NoDataFoundLayout(
-                          errorMessage: 'No Image Found',
+                          errorMessage: AppLocalizations.of(context)!.noImageFound,
                         )),
                         width: double.infinity,
                         height: double.infinity,
@@ -162,7 +163,7 @@ class EventTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        behavior: HitTestBehavior.opaque, onTap: onTap, child: _buildTile());
+        behavior: HitTestBehavior.opaque, onTap: onTap, child: _buildTile(context));
   }
 }
 

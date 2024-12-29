@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/subevent_tile.dart.dart';
 import 'package:evento_core/ui/events/events_controller.dart';
@@ -50,9 +51,9 @@ class SubEventSheet extends StatelessWidget {
                         imageUrl: controller.selEvent.header!,
                         placeholder: (_, val) => const Center(
                             child: CircularProgressIndicator.adaptive()),
-                        errorWidget: (_, val, val2) => const Center(
+                        errorWidget: (_, val, val2) => Center(
                             child: NoDataFoundLayout(
-                          errorMessage: 'No Image Found',
+                          errorMessage: AppLocalizations.of(context)!.noImageFound,
                         )),
                         fit: BoxFit.cover,
                         width: double.infinity,

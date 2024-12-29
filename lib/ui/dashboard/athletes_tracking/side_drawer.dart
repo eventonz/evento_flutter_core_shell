@@ -1,4 +1,5 @@
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:geojson/geojson.dart';
@@ -29,7 +30,7 @@ class CustomDrawer extends StatelessWidget {
               MapStyleSection(),
               const SizedBox(height: 20),
               ToggleSwitchList(
-                title: 'Distance Markers',
+                title: AppLocalizations.of(context)!.distanceMarkers,
                 value: controller.showDistanceMarkers,
                 onChanged: controller.changeDistanceMarkers,
               ),
@@ -96,7 +97,7 @@ class MapStyleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Map Style',
+          AppLocalizations.of(context)!.mapStyle,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -209,8 +210,8 @@ class PointsOfInterestSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Points of Interest',
+            Text(
+              AppLocalizations.of(context)!.pointsOfInterest,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,
@@ -220,7 +221,7 @@ class PointsOfInterestSection extends StatelessWidget {
             Wrap(
               children: [
                 InterestButton(
-                  label: 'All',
+                  label: AppLocalizations.of(context)!.all,
                   isSelected: selectedInterests.contains(''),
                   onTap: () {
                     if (selectedInterests.contains('')) {

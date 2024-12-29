@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 import 'dart:typed_data';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/side_drawer.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -245,7 +246,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                     }, style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                    ), child: Text('Get Directions', style: TextStyle(
+                    ), child: Text(AppLocalizations.of(context)!.getDirections, style: TextStyle(
                       color: Theme.of(context).cardColor,
                     ),),),
                   ),

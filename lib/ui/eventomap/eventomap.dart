@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
 import 'package:collection/collection.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/eventomap/eventomap_controller.dart';
 import 'package:evento_core/ui/eventomap/side_drawer.dart';
@@ -534,7 +535,7 @@ class _EventoMapState extends State<EventoMap> {
                                       }, style: ButtonStyle(
                                         backgroundColor: MaterialStateProperty.all(Theme.of(context).colorScheme.primary),
                                         shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
-                                      ), child: Text('Get Directions', style: TextStyle(
+                                      ), child: Text(AppLocalizations.of(context)!.getDirections, style: TextStyle(
                                         color: Theme.of(context).cardColor,
                                       ),),),
                                     ),
@@ -620,7 +621,7 @@ class _EventoMapState extends State<EventoMap> {
                         children: [
                           Image.asset(AppHelper.getImage('aidstation.png'), width: 30, height: 30),
                           const SizedBox(width: 10),
-                          const Text('Elevation Profile', style: TextStyle(
+                          Text(AppLocalizations.of(context)!.elevationProfile, style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
                           )),

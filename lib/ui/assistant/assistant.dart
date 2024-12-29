@@ -3,6 +3,7 @@
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -80,7 +81,7 @@ class AssistantScreen extends StatelessWidget {
                         onChanged: (value) =>
                             controller.messageText.value = value,
                         decoration: InputDecoration(
-                        hintText: "Ask a Question...",
+                        hintText: '${AppLocalizations.of(context)!.askAQuestion}...',
                         hintStyle: TextStyle(color:Theme.of(context).brightness == Brightness.light
                                 ? AppColors.white
                                 : AppColors.darkBlack),

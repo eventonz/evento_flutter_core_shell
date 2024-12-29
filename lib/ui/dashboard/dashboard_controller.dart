@@ -16,6 +16,7 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
@@ -199,14 +200,14 @@ class DashboardController extends GetxController {
     showCupertinoDialog(
       context: Get.context!,
       builder: (context) => CupertinoAlertDialog(
-        title: const AppText(
-          'Would you like to receive event related push notification for this event',
+        title: AppText(
+          AppLocalizations.of(context)!.wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
           textAlign: TextAlign.center,
         ),
         actions: [
           CupertinoDialogAction(
             child:  AppText(
-              'No thanks',
+              AppLocalizations.of(context)!.noThanks,
                 color: Theme.of(context).brightness == Brightness.light
                                 ? AppColors.darkgrey
                                 : AppColors.white,
