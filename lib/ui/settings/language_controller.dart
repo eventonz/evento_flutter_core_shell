@@ -11,6 +11,16 @@ class LanguageController extends GetxController {
       'flag' : 'us.png',
     },
     {
+      'name' : 'French',
+      'code' : 'fr',
+      'flag' : 'us.png',
+    },
+    {
+      'name' : 'German',
+      'code' : 'de',
+      'flag' : 'us.png',
+    },
+    {
       'name' : 'Spanish',
       'code' : 'es',
       'flag' : 'us.png',
