@@ -34,7 +34,7 @@ class AthletesSearchScreen extends StatelessWidget {
             shadowColor: Colors.white,
             automaticallyImplyLeading: true,
             title: AppText(
-              'Search',
+              AppLocalizations.of(context)!.search,
               fontSize: 26,
               fontWeight: FontWeight.bold,
             ),

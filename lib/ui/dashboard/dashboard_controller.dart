@@ -50,9 +50,9 @@ class DashboardController extends GetxController {
 
   RxList<BottomNavMenu> menus = RxList([
     BottomNavMenu(
-        view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home'),
+        view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home', text: AppLocalizations.of(Get.context!)!.homebutton),
     BottomNavMenu(
-        view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu'),
+        view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu', text: AppLocalizations.of(Get.context!)!.menubutton),
   ]);
 
   @override
@@ -82,7 +82,7 @@ class DashboardController extends GetxController {
         BottomNavMenu(
             view: const TrackingScreen(),
             iconData: FeatherIcons.navigation,
-            label: 'track'),
+            label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
       );
     }
     if (resultsData != null && resultsData?.showResults == true) {
@@ -91,7 +91,7 @@ class DashboardController extends GetxController {
         BottomNavMenu(
             view: const ResultsScreen(),
             image: AppHelper.getImage('trophy.png'),
-            label: 'results'),
+            label: 'results', text: AppLocalizations.of(Get.context!)!.resultsbutton),
       );
     }
     selMenu.value = menus.first;
@@ -165,7 +165,7 @@ class DashboardController extends GetxController {
             BottomNavMenu(
                 view: const TrackingScreen(),
                 iconData: FeatherIcons.navigation,
-                label: 'track'),
+                label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
           );
         }
       } else {
@@ -305,9 +305,10 @@ class DashboardController extends GetxController {
 
 class BottomNavMenu {
   BottomNavMenu(
-      {required this.view, this.iconData, required this.label, this.image});
+      {required this.view, this.iconData, required this.label, this.image, this.text});
   final Widget view;
   final IconData? iconData;
   final String? image;
   final String label;
+  final String? text;
 }

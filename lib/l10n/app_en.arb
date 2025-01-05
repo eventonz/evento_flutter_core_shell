@@ -16,10 +16,10 @@
   "following": "Following",
   "searchForAthletesUsingNameOrRaceNo": "Search here for Athletes,\nusing Name or Race\nNumber",
   "search": "Search",
-  "noAthletesBeingFollowed": "No ${athleteText} being followed",
-  "whenYouFollowAthleteYouWillSeeThemHere": "When you follow ${athleteText}, you'll see them here.",
-  "noAthletesFoundAtPresent": "No ${athleteText} Found At Present",
-  "noAthleteFound": "No ${athleteText} Found",
+  "noAthletesBeingFollowed": "No {athleteText} being followed",
+  "whenYouFollowAthleteYouWillSeeThemHere": "When you follow {athleteText}, you'll see them here.",
+  "noAthletesFoundAtPresent": "No {athleteText} Found At Present",
+  "noAthleteFound": "No {athleteText} Found",
   "lastUpdated": "Last Updated",
   "getDirections": "Get Directions",
   "distanceMarkers": "Distance Markers",
@@ -58,5 +58,12 @@
   "selectAppTheme": "Select App Theme",
   "system" : "System",
   "dark" : "Dark",
-  "light" : "Light"
+  "light" : "Light",
+  "homebutton":"Home",
+  "athletesbutton":"Athletes",
+  "riderbutton":"Riders",
+  "participantsbutton":"Participants",
+  "trackingbutton":"Tracking",
+  "resultsbutton":"Results",
+  "menubutton":"Menu"
 }

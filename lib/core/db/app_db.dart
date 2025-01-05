@@ -99,7 +99,7 @@ class DatabaseHandler {
           name: entrant.name,
           profileImage: entrant.profileImage,
           raceno: (entrant.number),
-          isFollowed: false,
+          isFollowed: true,
           contestNo: entrant.contest,
           info: entrant.info,
           eventId: eventId,

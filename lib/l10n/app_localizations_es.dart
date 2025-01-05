@@ -13,184 +13,205 @@ class AppLocalizationsEs extends AppLocalizations {
   String get language => 'Idioma';
 
   @override
-  String get askAQuestion => 'Ask a Question';
+  String get askAQuestion => 'Hacer una pregunta';
 
   @override
-  String get defaultAssistantMessage => 'Ask me any questions about the Athlete Guide - I\\\'ll try my best to answer.';
+  String get defaultAssistantMessage => 'Hazme cualquier pregunta sobre la guía del atleta - haré lo mejor para responder.';
 
   @override
-  String get wouldYouLikeToRemoveAllMessages => 'Would you like to remove all the messages?';
+  String get wouldYouLikeToRemoveAllMessages => '¿Te gustaría eliminar todos los mensajes?';
 
   @override
-  String get yes => 'Yes';
+  String get yes => 'Sí';
 
   @override
-  String get cancel => 'Cancel';
+  String get cancel => 'Cancelar';
 
   @override
-  String get noResultFound => 'No Result Found';
+  String get noResultFound => 'No se encontraron resultados';
 
   @override
-  String get noImageFound => 'No Image Found';
+  String get noImageFound => 'No se encontraron imágenes';
 
   @override
-  String get somethingWentWrong => 'Something went wrong';
+  String get somethingWentWrong => 'Algo salió mal';
 
   @override
-  String get retry => 'Retry';
+  String get retry => 'Reintentar';
 
   @override
-  String get splits => 'Splits';
+  String get splits => 'Divisiones';
 
   @override
-  String get followNotAvailableUntilRaceNumberIsAssigned => 'Follow not available until Race Number has been assigned';
+  String get followNotAvailableUntilRaceNumberIsAssigned => 'Seguir no está disponible hasta que se asigne un número de carrera';
 
   @override
-  String get follow => 'Follow';
+  String get follow => 'Seguir';
 
   @override
-  String get following => 'Following';
+  String get following => 'Siguiendo';
 
   @override
-  String get searchForAthletesUsingNameOrRaceNo => 'Search here for Athletes,\nusing Name or Race\nNumber';
+  String get searchForAthletesUsingNameOrRaceNo => 'Busca aquí a atletas,\nusando nombre o número de carrera';
 
   @override
-  String get search => 'Search';
+  String get search => 'Buscar';
 
   @override
   String noAthletesBeingFollowed(Object athleteText) {
-    return 'No \$$athleteText being followed';
+    return 'No se está siguiendo a \$$athleteText';
   }
 
   @override
   String whenYouFollowAthleteYouWillSeeThemHere(Object athleteText) {
-    return 'When you follow \$$athleteText, you\'ll see them here.';
+    return 'Cuando sigas a \$$athleteText, los verás aquí.';
   }
 
   @override
   String noAthletesFoundAtPresent(Object athleteText) {
-    return 'No \$$athleteText Found At Present';
+    return 'No se encontró \$$athleteText actualmente';
   }
 
   @override
   String noAthleteFound(Object athleteText) {
-    return 'No \$$athleteText Found';
+    return 'No se encontró \$$athleteText';
   }
 
   @override
-  String get lastUpdated => 'Last Updated';
+  String get lastUpdated => 'Última actualización';
 
   @override
-  String get getDirections => 'Get Directions';
+  String get getDirections => 'Obtener direcciones';
 
   @override
-  String get distanceMarkers => 'Distance Markers';
+  String get distanceMarkers => 'Marcadores de distancia';
 
   @override
-  String get mapStyle => 'Map Style';
+  String get mapStyle => 'Estilo de mapa';
 
   @override
-  String get pointsOfInterest => 'Points of Interest';
+  String get pointsOfInterest => 'Puntos de interés';
 
   @override
-  String get trackingNotAvailable => 'Tracking Not Available';
+  String get trackingNotAvailable => 'Seguimiento no disponible';
 
   @override
-  String get loadFailedClickRetry => 'Load Failed!Click retry!';
+  String get loadFailedClickRetry => '¡Carga fallida! Haz clic en reintentar.';
 
   @override
-  String get releaseToLoadMore => 'release to load more';
+  String get releaseToLoadMore => 'suelta para cargar más';
 
   @override
-  String get noMoreData => 'No more Data';
+  String get noMoreData => 'No hay más datos';
 
   @override
-  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => 'Would you like to receive event related push notification for this event';
+  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => '¿Te gustaría recibir notificaciones relacionadas con este evento?';
 
   @override
-  String get noThanks => 'No thanks';
+  String get noThanks => 'No gracias';
 
   @override
-  String get elevationProfile => 'Elevation Profile';
+  String get elevationProfile => 'Perfil de elevación';
 
   @override
-  String get all => 'All';
+  String get all => 'Todos';
 
   @override
-  String get noInternetConnectionFoundMsg => 'No Internet connection found.\nPlease check your internet settings.';
+  String get noInternetConnectionFoundMsg => 'No se encontró conexión a Internet.\nPor favor, revisa tu configuración.';
 
   @override
-  String get reload => 'Reload';
+  String get reload => 'Recargar';
 
   @override
-  String get oops => 'Oops!';
+  String get oops => '¡Ups!';
 
   @override
-  String get pleaseTryAgainLater => 'Please try again later';
+  String get pleaseTryAgainLater => 'Por favor, inténtalo más tarde';
 
   @override
-  String get gender => 'Gender';
+  String get gender => 'Género';
 
   @override
-  String get category => 'Category';
+  String get category => 'Categoría';
 
   @override
-  String get selectGenderFirst => 'Select Gender First';
+  String get selectGenderFirst => 'Selecciona género primero';
 
   @override
-  String get apply => 'Apply';
+  String get apply => 'Aplicar';
 
   @override
-  String get clear => 'Clear';
+  String get clear => 'Limpiar';
 
   @override
-  String get filter => 'Filter';
+  String get filter => 'Filtro';
 
   @override
-  String get pos => 'Pos';
+  String get pos => 'Posición';
 
   @override
-  String get name => 'Name';
+  String get name => 'Nombre';
 
   @override
-  String get result => 'Result';
+  String get result => 'Resultado';
 
   @override
-  String get noDataFound => 'No Data found';
+  String get noDataFound => 'No se encontraron datos';
 
   @override
-  String get noScheduleFound => 'No Schedule found';
+  String get noScheduleFound => 'No se encontró horario';
 
   @override
-  String get settings => 'Settings';
+  String get settings => 'Configuraciones';
 
   @override
   String get general => 'General';
 
   @override
-  String get appTheme => 'App Themeo';
+  String get appTheme => 'Tema de la aplicación';
 
   @override
-  String get reloadAthletes => 'Reload Athletes';
+  String get reloadAthletes => 'Recargar atletas';
 
   @override
-  String get notificationSettings => 'Notification Settings';
+  String get notificationSettings => 'Configuración de notificaciones';
 
   @override
-  String get eventUpdates => 'Event Updates';
+  String get eventUpdates => 'Actualizaciones del evento';
 
   @override
-  String get version => 'Version';
+  String get version => 'Versión';
 
   @override
-  String get selectAppTheme => 'Select App Theme';
+  String get selectAppTheme => 'Selecciona tema de la aplicación';
 
   @override
-  String get system => 'System';
+  String get system => 'Sistema';
 
   @override
-  String get dark => 'Dark';
+  String get dark => 'Oscuro';
 
   @override
-  String get light => 'Light';
+  String get light => 'Claro';
+
+  @override
+  String get homebutton => 'Home';
+
+  @override
+  String get athletesbutton => 'Athletes';
+
+  @override
+  String get riderbutton => 'Riders';
+
+  @override
+  String get participantsbutton => 'Participants';
+
+  @override
+  String get trackingbutton => 'Tracking';
+
+  @override
+  String get resultsbutton => 'Results';
+
+  @override
+  String get menubutton => 'Menu';
 }
