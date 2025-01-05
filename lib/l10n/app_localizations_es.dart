@@ -59,22 +59,22 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String noAthletesBeingFollowed(Object athleteText) {
-    return 'No $athleteText being followed';
+    return 'No \$$athleteText being followed';
   }
 
   @override
   String whenYouFollowAthleteYouWillSeeThemHere(Object athleteText) {
-    return 'When you follow $athleteText, you\'ll see them here.';
+    return 'When you follow \$$athleteText, you\'ll see them here.';
   }
 
   @override
   String noAthletesFoundAtPresent(Object athleteText) {
-    return 'No $athleteText Found At Present';
+    return 'No \$$athleteText Found At Present';
   }
 
   @override
   String noAthleteFound(Object athleteText) {
-    return 'No $athleteText Found';
+    return 'No \$$athleteText Found';
   }
 
   @override
@@ -168,7 +168,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get general => 'General';
 
   @override
-  String get appTheme => 'App Theme';
+  String get appTheme => 'App Themeo';
 
   @override
   String get reloadAthletes => 'Reload Athletes';

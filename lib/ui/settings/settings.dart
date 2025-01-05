@@ -50,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
                 color: Theme.of(context).brightness == Brightness.light
                                 ?  AppColors.darkgrey :AppColors.greyLight
             ),
-            ListTile(
+           /* ListTile(
               onTap: controller.getAthletes,
               title: AppText(
                 AppLocalizations.of(context)!.reloadAthletes,
@@ -77,7 +77,7 @@ class SettingsScreen extends StatelessWidget {
                             color: AppColors.grey,
                           )),
               ),
-            ),
+            ),*/
             Divider(
                 height: 1,
                 thickness: .5,

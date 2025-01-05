@@ -31,9 +31,9 @@ class LanguageScreen extends StatelessWidget {
           onTap: () {
             controller.setLocale(controller.languages[index]['code']);
           },
-          leading: ClipRRect(
+          /*leading: ClipRRect(
               borderRadius: BorderRadius.circular(25),
-              child: Image.asset(AppHelper.getImage(controller.languages[index]['flag']), width: 36,)),
+              child: Image.asset(AppHelper.getImage(controller.languages[index]['flag']), width: 36,)),*/
           title: Text(controller.languages[index]['name'], style: TextStyle(
             fontSize: 16.sp,
           ),),

@@ -200,25 +200,25 @@ abstract class AppLocalizations {
   /// No description provided for @noAthletesBeingFollowed.
   ///
   /// In en, this message translates to:
-  /// **'No {athleteText} being followed'**
+  /// **'No \${athleteText} being followed'**
   String noAthletesBeingFollowed(Object athleteText);
 
   /// No description provided for @whenYouFollowAthleteYouWillSeeThemHere.
   ///
   /// In en, this message translates to:
-  /// **'When you follow {athleteText}, you\'ll see them here.'**
+  /// **'When you follow \${athleteText}, you\'ll see them here.'**
   String whenYouFollowAthleteYouWillSeeThemHere(Object athleteText);
 
   /// No description provided for @noAthletesFoundAtPresent.
   ///
   /// In en, this message translates to:
-  /// **'No {athleteText} Found At Present'**
+  /// **'No \${athleteText} Found At Present'**
   String noAthletesFoundAtPresent(Object athleteText);
 
   /// No description provided for @noAthleteFound.
   ///
   /// In en, this message translates to:
-  /// **'No {athleteText} Found'**
+  /// **'No \${athleteText} Found'**
   String noAthleteFound(Object athleteText);
 
   /// No description provided for @lastUpdated.

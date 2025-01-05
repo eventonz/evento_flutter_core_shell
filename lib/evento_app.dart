@@ -69,7 +69,9 @@ class EventoApp extends StatelessWidget {
                 ],
                 supportedLocales: [
                   Locale('en'), // English
-                  Locale('es'), // Spanish
+                  Locale('es'), // spanish
+                  Locale('fr'), //French
+                  Locale('de'),// Spanish
                 ],
                 locale: controller.locale?.value,
                 builder: (_, child) {
