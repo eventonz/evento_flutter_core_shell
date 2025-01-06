@@ -193,4 +193,25 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get light => 'Hell';
+
+  @override
+  String get homebutton => 'Home';
+
+  @override
+  String get athletesbutton => 'Athletes';
+
+  @override
+  String get riderbutton => 'Riders';
+
+  @override
+  String get participantsbutton => 'Participants';
+
+  @override
+  String get trackingbutton => 'Tracking';
+
+  @override
+  String get resultsbutton => 'Results';
+
+  @override
+  String get menubutton => 'Menu';
 }

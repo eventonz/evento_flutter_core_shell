@@ -163,8 +163,12 @@ class AthleteDetailsScreen extends StatelessWidget {
                               controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
                           builder: (_, snap) {
                             if (snap.hasData || snap.hasError) {
+                              var data = snap.data;
+                              if((data ?? []).isEmpty) {
+                                data = null;
+                              }
                               print('controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
-                              final details = snap.data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
+                              final details = data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
                                 return AppAthleteExtraDetailsDb(id: 0, athleteId: details.athleteNumber, name: details.name, eventId: AppGlobals.selEventId, country: details.country, athleteNumber: details.athleteNumber);
                               }).toList();
                               if (details.isEmpty) {

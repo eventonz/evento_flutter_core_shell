@@ -25,6 +25,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
   @override
   void onInit() {
     super.onInit();
+    checkAthletesUpdate();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -39,7 +40,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
   void checkAthletesUpdate() async {
     try {
       final recentlyUpdated = await checkConfigUpdatedDate();
-      if ((recentlyUpdated && AppGlobals.oldAppConfig != AppGlobals.appConfig)) {
+      if (true || (recentlyUpdated)) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
         //await getAthletes();
@@ -62,10 +63,13 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
 
         var list = (data.data['patchedathletes'] as List).map((e) => Entrants.fromJson(e)).toList();
-        
-        DatabaseHandler.removeAllAthletes();
 
-        DatabaseHandler.insertAthletes(list);
+        print('oklist');
+        print(list.map((e) => e.toJson()));
+        
+        await DatabaseHandler.removeAllAthletes();
+
+        await DatabaseHandler.insertAthletes(list);
 
 
       }

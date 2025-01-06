@@ -204,25 +204,25 @@ abstract class AppLocalizations {
   /// No description provided for @noAthletesBeingFollowed.
   ///
   /// In en, this message translates to:
-  /// **'No \${athleteText} being followed'**
+  /// **'No {athleteText} being followed'**
   String noAthletesBeingFollowed(Object athleteText);
 
   /// No description provided for @whenYouFollowAthleteYouWillSeeThemHere.
   ///
   /// In en, this message translates to:
-  /// **'When you follow \${athleteText}, you\'ll see them here.'**
+  /// **'When you follow {athleteText}, you\'ll see them here.'**
   String whenYouFollowAthleteYouWillSeeThemHere(Object athleteText);
 
   /// No description provided for @noAthletesFoundAtPresent.
   ///
   /// In en, this message translates to:
-  /// **'No \${athleteText} Found At Present'**
+  /// **'No {athleteText} Found At Present'**
   String noAthletesFoundAtPresent(Object athleteText);
 
   /// No description provided for @noAthleteFound.
   ///
   /// In en, this message translates to:
-  /// **'No \${athleteText} Found'**
+  /// **'No {athleteText} Found'**
   String noAthleteFound(Object athleteText);
 
   /// No description provided for @lastUpdated.
@@ -458,6 +458,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Light'**
   String get light;
+
+  /// No description provided for @homebutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homebutton;
+
+  /// No description provided for @athletesbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Athletes'**
+  String get athletesbutton;
+
+  /// No description provided for @riderbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Riders'**
+  String get riderbutton;
+
+  /// No description provided for @participantsbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsbutton;
+
+  /// No description provided for @trackingbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking'**
+  String get trackingbutton;
+
+  /// No description provided for @resultsbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get resultsbutton;
+
+  /// No description provided for @menubutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menubutton;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
