@@ -33,7 +33,7 @@ class AthleteTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.all(8),
-      leading: entrant.profileImage == '' ? null : Padding(
+      /*leading: entrant.profileImage == '' ? null : Padding(
         padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -44,7 +44,7 @@ class AthleteTile extends StatelessWidget {
             ),
           ],
         ),
-      ),
+      ),*/
       title: Row(
         children: [
           Expanded(

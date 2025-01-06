@@ -92,7 +92,7 @@ class AthletesScreen extends StatelessWidget {
               hasShadow: false,
               arrowBaseWidth: 0,
               arrowLength: 0,
-    arrowTipDistance: 0,
+              arrowTipDistance: 0,
               arrowTipRadius: 0,
               verticalOffset: 20,
               backgroundColor: Colors.transparent,
@@ -128,14 +128,14 @@ class AthletesScreen extends StatelessWidget {
                   controller: controller.searchTextEditController,
                   onChanged: (val) => controller.searchAthletes(val),
                   cursorColor: AppColors.grey,
-                  style: const TextStyle(fontSize: 12),
+                  style: const TextStyle(fontSize: 16),
                   decoration: InputDecoration(
                     enabled: false,
 
                     isDense: true,
                     hintText: '${AppLocalizations.of(context)!.search} ${controller.athleteText}',
                     hintStyle: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       color: Theme.of(context).brightness == Brightness.light
                           ? AppColors.greyLight
                           : AppColors.grey,

@@ -30,7 +30,9 @@ class LanguageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    locale = Locale('en').obs;
+
+     locale = Locale('en').obs;
+     print('Locale: ${locale!.value}');
   }
 
   setLocale(String locale) {

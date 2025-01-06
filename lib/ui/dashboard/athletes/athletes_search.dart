@@ -60,7 +60,7 @@ class AthletesSearchScreen extends StatelessWidget {
                       controller: controller.searchTextEditController,
                       onSubmitted: (val) => controller.searchAthletes(val),
                       cursorColor: AppColors.grey,
-                      style: const TextStyle(fontSize: 12),
+                      style: const TextStyle(fontSize: 16),
                       decoration: InputDecoration(
                         isDense: true,
                         hintText: 'Search ${controller.athleteText}',
@@ -212,11 +212,11 @@ class AthletesSearchScreen extends StatelessWidget {
 
 
                                           if(snap.hasData && snap.data!.firstWhereOrNull((a) => a.athleteId == controller.searchAccumulatedList[i-1].id) != null) {
-                                            print('hello3');
+                                          
                                             controller.searchAccumulatedList[i-1].isFollowed = true;
                                             entrants[i - 1].isFollowed = true;
                                           } else {
-                                            print('hello4');
+                                           
                                             controller.searchAccumulatedList[i-1].isFollowed = false;
                                             entrants[i - 1].isFollowed = false;
                                           }
@@ -224,7 +224,7 @@ class AthletesSearchScreen extends StatelessWidget {
                                           final entrant = entrants[i - 1];
 
                                           onFollow() async {
-                                            print('isFOLLOWED ${!entrant.isFollowed}');
+                                            
                                             await controller.insertAthlete(entrant, !entrant.isFollowed);
                                             if (!entrant.isFollowed) {
                                               controller.followAthlete(entrant);
