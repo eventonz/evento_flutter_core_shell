@@ -2,7 +2,7 @@
   "helloWorld": "Hallo Welt!",
   "language": "Sprache",
   "askAQuestion": "Stellen Sie eine Frage",
-  "defaultAssistantMessage": "Stellen Sie mir Fragen zum Athletenführer - ich werde mein Bestes tun, um zu antworten.",
+  "defaultAssistantMessage": "Stellen Sie mir Fragen zum Athletenhandbuch - ich werde mein Bestes tun, um zu antworten.",
   "wouldYouLikeToRemoveAllMessages": "Möchten Sie alle Nachrichten entfernen?",
   "yes": "Ja",
   "cancel": "Abbrechen",

@@ -73,7 +73,21 @@ class EventoApp extends StatelessWidget {
                   Locale('fr'), //French
                   Locale('de'),// Spanish
                 ],
-                locale: controller.locale?.value,
+
+                 localeResolutionCallback: (deviceLocale, supportedLocales) {
+                      if (deviceLocale != null) {
+                        for (var locale in supportedLocales) {
+                          if (locale.languageCode == deviceLocale.languageCode) {
+                            return locale; // Match base language
+                          }
+                        }
+                      }
+                      // Fallback to default locale if no match
+                      return supportedLocales.first;
+                    },
+
+                
+                //locale: controller.locale?.value,
                 builder: (_, child) {
                   return ResponsiveSizer(
                       builder: (context, orientation, screenSize) =>

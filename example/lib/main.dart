@@ -10,7 +10,7 @@ void main() {
    //multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
    //configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/172.json',
    //multiEventListId: '30',
-   singleEventId: '60',
+   singleEventId: '91',
    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
    splashImage: 'assets/images/splash_image.png',
  );
