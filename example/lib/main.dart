@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 void main() {
 
  final eventConfig = AppEventConfig(
-   oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
+   oneSignalId: '805fa94a-d7da-47a0-9885-5f7de965e1bd',
    appName: 'Single Event App',
-   //multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
+   multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
    //configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/172.json',
-   //multiEventListId: '30',
-   singleEventId: '91',
-   singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
+   multiEventListId: '34',
+   //singleEventId: '91',
+   //singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
    splashImage: 'assets/images/splash_image.png',
  );
 
