@@ -165,7 +165,7 @@ class EventOffersScreen extends StatelessWidget {
                                       child: Column(
                                         children: [
                                           AppText(
-                                            offer.content! + offer.content!,
+                                            offer.content!,
                                             textAlign: TextAlign.justify,
                                           )
                                         ],
