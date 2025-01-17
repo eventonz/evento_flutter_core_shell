@@ -67,7 +67,7 @@ class EventoApp extends StatelessWidget {
                   GlobalWidgetsLocalizations.delegate,
                   GlobalCupertinoLocalizations.delegate,
                 ],
-                supportedLocales: [
+                supportedLocales: const [
                   Locale('en'), // English
                   Locale('es'), // spanish
                   Locale('fr'), //French

@@ -28,8 +28,8 @@ class MoreScreen extends StatelessWidget {
           surfaceTintColor: Colors.white,
           shadowColor: Colors.white,
           automaticallyImplyLeading: false,
-          title: const AppText(
-            'Menu',
+          title: AppText(
+            AppLocalizations.of(context)!.menubutton,
             style: AppStyles.appBarTitle,
           ),
           actions: [
