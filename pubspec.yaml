@@ -179,4 +179,5 @@ flutter:
     - packages/evento_core/assets/images/square3.png
     - packages/evento_core/assets/images/trophy.png
     - packages/evento_core/assets/images/transparent.png
-
+# Localisation update command
+# flutter gen-l10n
