@@ -33,7 +33,7 @@ dependencies:
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
-      ref: 92a14cd631d537a24a40a84b677a38c314beb723
+      ref: 
 
   
   carousel_slider: ^5.0.0
@@ -100,6 +100,7 @@ flavorizr:
 flutter:
   uses-material-design: true
   generate: true
+
 
   assets:
     - packages/evento_core/assets/svgs/article.svg
