@@ -726,7 +726,7 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "92a14cd631d537a24a40a84b677a38c314beb723"
+      ref: HEAD
       resolved-ref: "92a14cd631d537a24a40a84b677a38c314beb723"
       url: "git@github.com:coding-master15/geojson.git"
     source: git

@@ -1,5 +1,12 @@
 {
   "helloWorld": "Hello World!",
+  "homebutton": "Home",
+  "athletesbutton": "Athletes",
+  "riderbutton": "Riders",
+  "participantsbutton": "Participants",
+  "trackingbutton": "Tracking",
+  "resultsbutton": "Results",
+  "menubutton": "Menu",
   "language": "Language",
   "askAQuestion": "Ask a Question",
   "defaultAssistantMessage": "Ask me any questions about the Athlete Guide - I\\'ll try my best to answer.",

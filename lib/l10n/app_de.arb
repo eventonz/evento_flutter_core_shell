@@ -1,5 +1,12 @@
 {
   "helloWorld": "Hallo Welt!",
+  "homebutton": "Startseite",
+  "athletesbutton": "Athleten",
+  "riderbutton": "Reiter",
+  "participantsbutton": "Teilnehmer",
+  "trackingbutton": "Verfolgung",
+  "resultsbutton": "Ergebnisse",
+  "menubutton": "Menü",
   "language": "Sprache",
   "askAQuestion": "Stellen Sie eine Frage",
   "defaultAssistantMessage": "Stellen Sie mir Fragen zum Athletenhandbuch - ich werde mein Bestes tun, um zu antworten.",

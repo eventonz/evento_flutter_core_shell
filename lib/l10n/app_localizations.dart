@@ -105,6 +105,48 @@ abstract class AppLocalizations {
   /// **'Hello World!'**
   String get helloWorld;
 
+  /// No description provided for @homebutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homebutton;
+
+  /// No description provided for @athletesbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Athletes'**
+  String get athletesbutton;
+
+  /// No description provided for @riderbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Riders'**
+  String get riderbutton;
+
+  /// No description provided for @participantsbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsbutton;
+
+  /// No description provided for @trackingbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracking'**
+  String get trackingbutton;
+
+  /// No description provided for @resultsbutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Results'**
+  String get resultsbutton;
+
+  /// No description provided for @menubutton.
+  ///
+  /// In en, this message translates to:
+  /// **'Menu'**
+  String get menubutton;
+
   /// No description provided for @language.
   ///
   /// In en, this message translates to:
@@ -458,48 +500,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Light'**
   String get light;
-
-  /// No description provided for @homebutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Home'**
-  String get homebutton;
-
-  /// No description provided for @athletesbutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Athletes'**
-  String get athletesbutton;
-
-  /// No description provided for @riderbutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Riders'**
-  String get riderbutton;
-
-  /// No description provided for @participantsbutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Participants'**
-  String get participantsbutton;
-
-  /// No description provided for @trackingbutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Tracking'**
-  String get trackingbutton;
-
-  /// No description provided for @resultsbutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Results'**
-  String get resultsbutton;
-
-  /// No description provided for @menubutton.
-  ///
-  /// In en, this message translates to:
-  /// **'Menu'**
-  String get menubutton;
 
   /// No description provided for @menu.
   ///

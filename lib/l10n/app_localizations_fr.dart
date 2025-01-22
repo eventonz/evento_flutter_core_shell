@@ -10,6 +10,27 @@ class AppLocalizationsFr extends AppLocalizations {
   String get helloWorld => 'Bonjour le Monde!';
 
   @override
+  String get homebutton => 'Accueil';
+
+  @override
+  String get athletesbutton => 'Athlètes';
+
+  @override
+  String get riderbutton => 'Cavaliers';
+
+  @override
+  String get participantsbutton => 'Participants';
+
+  @override
+  String get trackingbutton => 'Suivi';
+
+  @override
+  String get resultsbutton => 'Résultats';
+
+  @override
+  String get menubutton => 'Menu';
+
+  @override
   String get language => 'Langue';
 
   @override
@@ -193,27 +214,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get light => 'Clair';
-
-  @override
-  String get homebutton => 'Accueil';
-
-  @override
-  String get athletesbutton => 'Athlètes';
-
-  @override
-  String get riderbutton => 'Cavaliers';
-
-  @override
-  String get participantsbutton => 'Participants';
-
-  @override
-  String get trackingbutton => 'Suivi';
-
-  @override
-  String get resultsbutton => 'Résultats';
-
-  @override
-  String get menubutton => 'Menu';
 
   @override
   String get menu => 'Menu';
