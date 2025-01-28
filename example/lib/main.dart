@@ -8,8 +8,8 @@ void main() {
    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
    appName: 'Single Event App',
    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-   configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/172.json',
-   singleEventId: '98',
+   //configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/91.json',
+   singleEventId: '91',
    splashImage: 'assets/images/splash_image.png',
  );
 
