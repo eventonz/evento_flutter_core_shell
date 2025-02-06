@@ -10,15 +10,21 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'events_controller.dart';
+import 'package:evento_core/core/utils/app_global.dart';
 
 class EventsScreen extends StatelessWidget {
+  
   const EventsScreen({Key? key}) : super(key: key);
+
+
+
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(EventsController());
-    print(controller.allEvents.length);
-    print(controller.events.length);
+
+    final appEventConfig = AppGlobals.appEventConfig;
+
     return Scaffold(
       body: PageStorage(
         bucket: controller.bucket,
@@ -31,7 +37,7 @@ class EventsScreen extends StatelessWidget {
                 backgroundColor: AppHelper.hexToColor(controller.headerColor),
                 surfaceTintColor: AppHelper.hexToColor(controller.headerColor),
                 shadowColor: AppHelper.hexToColor(controller.headerColor),
-                expandedHeight: controller.searchBar ? 20.h : 10.h,
+                expandedHeight: controller.searchBar ? 20.h : 13.h,
                 floating: false,
                 pinned: true,
                 snap: false,
@@ -67,30 +73,30 @@ class EventsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.w500,
                                 fontSize: 13,
                               ),
-                              decoration: const InputDecoration(
+                              decoration: InputDecoration(
                                 hintText: 'Search...',
                                 hintStyle: TextStyle(
-                                  color: Colors.white,
+                                  color: appEventConfig.searchbarcolor ?? Colors.white,
                                   fontWeight: FontWeight.w300,
                                   fontSize: 13,
                                 ),
                                 prefixIcon: Icon(CupertinoIcons.search,
-                                    color: Colors.white, size: 18),
+                                    color: appEventConfig.searchbarcolor ?? Colors.white, size: 18),
                                 contentPadding: EdgeInsets.symmetric(
                                     horizontal: 12, vertical: 6),
                                 border: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                  color: Colors.white,
+                                  color: appEventConfig.searchbarcolor ?? Colors.white,
                                   width: .5,
                                 )),
                                 enabledBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                  color: Colors.white,
+                                  color: appEventConfig.searchbarcolor ?? Colors.white,
                                   width: .5,
                                 )),
                                 focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                  color: Colors.white,
+                                  color: appEventConfig.searchbarcolor ?? Colors.white,
                                   width: .5,
                                 )),
                               ),
@@ -99,85 +105,81 @@ class EventsScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    background: Stack(
-                      children: [
-                        Positioned.fill(
-                            child: ColoredBox(
-                          color: AppHelper.hexToColor(controller.headerColor),
-                        )),
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                CachedNetworkImage(
-                                  imageUrl: controller.headerLogo,
-                                  placeholder: (_, val) => const Center(
-                                      child:
-                                          CircularProgressIndicator.adaptive()),
-                                  errorWidget: (_, val, val2) => const Center(
-                                      child: NoDataFoundLayout(
-                                    errorMessage: 'No Image Found',
-                                  )),
-                                  width: 60.w,
-                                  fit: BoxFit.cover,
+                 background: Stack(
+                            children: [
+                              Positioned.fill(
+                                child: ColoredBox(
+                                  color: AppHelper.hexToColor(controller.headerColor),
                                 ),
-                                if (controller.searchBar)
-                                  const SizedBox(height: 8),
-                                if (controller.searchBar)
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8.0, vertical: 2),
-                                    child: TextField(
-                                      controller: controller.searchController,
-                                      onChanged: (val) {
-                                        controller.onSearch(val);
-                                      },
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 13,
+                              ),
+                              SafeArea(
+                                bottom: false, // Prevents unwanted bottom padding
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width, // Full width
+                                    height: MediaQuery.of(context).size.width / 4,
+                                    child: CachedNetworkImage(
+                                      imageUrl: controller.headerLogo,
+                                      placeholder: (_, val) => const Center(
+                                        child: CircularProgressIndicator.adaptive(),
                                       ),
-                                      decoration: const InputDecoration(
-                                        hintText: 'Search...',
-                                        hintStyle: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w300,
-                                          fontSize: 13,
-                                        ),
-                                        prefixIcon: Icon(
-                                            CupertinoIcons.search,
-                                            color: Colors.white,
-                                            size: 18),
-                                        contentPadding:
-                                            EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 6),
-                                        border: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                          color: Colors.white,
-                                          width: .5,
-                                        )),
-                                        enabledBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                          color: Colors.white,
-                                          width: .5,
-                                        )),
-                                        focusedBorder: OutlineInputBorder(
-                                            borderSide: BorderSide(
-                                          color: Colors.white,
-                                          width: .5,
-                                        )),
+                                      errorWidget: (_, val, val2) => const Center(
+                                        child: NoDataFoundLayout(errorMessage: 'No Image Found'),
                                       ),
+                                      fit: BoxFit.cover, // Ensures full width with no empty spaces
                                     ),
                                   ),
-                              ],
-                            ),
+                                    if (controller.searchBar)
+                                    const SizedBox(height: 12),
+                                    if (controller.searchBar)
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 0.0, bottom: 8.0),
+                                        child: TextField(
+                                          controller: controller.searchController,
+                                          onChanged: (val) {
+                                            controller.onSearch(val);
+                                          },
+                                          style:  TextStyle(
+                                            color: appEventConfig.searchbarcolor ?? Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                          decoration:  InputDecoration(
+                                            hintText: 'Search...',
+                                            hintStyle: TextStyle(
+                                              color: appEventConfig.searchbarcolor ?? Colors.white,
+                                              fontWeight: FontWeight.w300,
+                                              fontSize: 13,
+                                            ),
+                                            prefixIcon: Icon(CupertinoIcons.search,
+                                                color: appEventConfig.searchbarcolor ?? Colors.white, size: 18),
+                                            contentPadding:
+                                                EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                            border: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                              color: appEventConfig.searchbarcolor ?? Colors.white,
+                                              width: 1,
+                                            )),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                              color: appEventConfig.searchbarcolor ?? Colors.white,
+                                              width: 1,
+                                            )),
+                                            focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                              color: appEventConfig.searchbarcolor ?? Colors.white,
+                                              width: 1,
+                                            )),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
                   );
                 }),
               ),

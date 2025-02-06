@@ -27,8 +27,6 @@ class EventoApp extends StatelessWidget {
     GetStorage.init();
     GetStorage().write('scroll_position', 0.0);
 
-    print('HHHEELL');
-
     notificationHandlerController.stream.listen((value) {
       if (value) {
         notificationHandlerController.close();

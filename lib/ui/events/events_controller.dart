@@ -10,7 +10,6 @@ import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/landing/landing.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/get_rx.dart';
 import 'package:get_storage/get_storage.dart';
 import '../../core/utils/app_global.dart';
 import '../../core/utils/helpers.dart';

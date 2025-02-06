@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 class AppEventConfig {
   AppEventConfig({
     required this.oneSignalId,
@@ -9,6 +11,7 @@ class AppEventConfig {
     this.multiEventListUrl,
     this.multiEventListId,
     this.isTimer,
+    this.searchbarcolor,
   });
 
   final String appName;
@@ -20,4 +23,5 @@ class AppEventConfig {
   final String? multiEventListUrl;
   final String? multiEventListId;
   final bool? isTimer;
+  final Color? searchbarcolor;
 }
