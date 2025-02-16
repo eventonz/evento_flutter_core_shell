@@ -1,5 +1,6 @@
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
+import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/models/athlete_tab_details.dart';
 import 'package:evento_core/core/models/split_data.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
@@ -14,7 +15,8 @@ import '../../../../core/models/detail_item.dart';
 
 class AthleteDetailsController extends GetxController
     with GetTickerProviderStateMixin {
-  late AppAthleteDb selEntrant;
+  AppAthleteDb? selEntrant;
+  Entrants? selEntrantA;
   late String athleteSplitUrl = '';
   final athleteSplitDataSnap = DataSnapShot.loading.obs;
   AthleteTabDetailM? athleteTabDetailM;
@@ -36,7 +38,11 @@ class AthleteDetailsController extends GetxController
     super.onInit();
     final res = Get.arguments;
     entrantsList = AppGlobals.appConfig!.athletes!;
-    selEntrant = res[AppKeys.athlete];
+    if(res[AppKeys.athlete] is AppAthleteDb) {
+      selEntrant = res[AppKeys.athlete];
+    } else {
+      selEntrantA = res[AppKeys.athlete];
+    }
     canFollow = res['can_follow'] ?? true;
   }
 
@@ -52,8 +58,13 @@ class AthleteDetailsController extends GetxController
     }
     String mainUrl = athleteSplitUrl.split('?').first;
     print(mainUrl);
-    mainUrl =
-        '$mainUrl?bib=${selEntrant.raceno}&id=${selEntrant.athleteId}&contest=${selEntrant.contestNo}';
+    if(selEntrant == null) {
+      mainUrl =
+      '$mainUrl?bib=${selEntrantA!.number}&id=${selEntrantA!.id}&contest=${selEntrantA!.contest}';
+    } else {
+      mainUrl =
+      '$mainUrl?bib=${selEntrant!.raceno}&id=${selEntrant!.athleteId}&contest=${selEntrant!.contestNo}';
+    }
 
     athleteSplitDataSnap.value = DataSnapShot.loading;
     try {

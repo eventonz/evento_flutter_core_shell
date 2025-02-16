@@ -51,7 +51,7 @@ class AppOneSignalImpl implements AppOneSignal {
 
   Future<void> init() async {
     await Future.delayed(const Duration(seconds: 1));
-    OneSignal.Debug.setLogLevel(OSLogLevel.debug);
+    OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(AppGlobals.appEventConfig.oneSignalId);
     OneSignal.Notifications.requestPermission(true);
 

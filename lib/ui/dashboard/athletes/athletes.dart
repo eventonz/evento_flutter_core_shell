@@ -2,16 +2,20 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/advert.dart';
 import 'package:evento_core/core/models/athlete.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
+import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes/athletes_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../core/utils/preferences.dart';
 import '../../common_components/athlete_tile.dart';
 import 'athletes_controller.dart';
 
@@ -21,6 +25,15 @@ class AthletesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AthletesController());
+
+    Future.delayed(const Duration(seconds: 1), () {
+      if(!Preferences.getBool('is_tooltip', false)) {
+        print('YES');
+        controller.tooltipController.showTooltip();
+        Preferences.setBool('is_tooltip', true);
+      }
+    });
+
     controller.checkAdvert(false);
     return Column(
       children: [
@@ -30,13 +43,18 @@ class AthletesScreen extends StatelessWidget {
           automaticallyImplyLeading: false,
           title: AppText(
             controller.athleteText,
-            fontSize: 20,
+            fontSize: 26,
             fontWeight: FontWeight.bold,
           ),
+          centerTitle: false,
           actions: [
+            if(false)
             IconButton(
                 padding: const EdgeInsets.all(0),
-                onPressed: controller.toggleFollowed,
+                //onPressed: controller.toggleFollowed,
+                onPressed: () {
+
+                },
                 icon: Obx(() => CircleAvatar(
                       backgroundColor: controller.showFollowed.value
                           ? AppColors.primary.withOpacity(0.6)
@@ -67,69 +85,119 @@ class AthletesScreen extends StatelessWidget {
         SizedBox(
           height: 1.h,
         ),
-        Obx(
-          () => controller.showFollowed.value ? const SizedBox() : Padding(
+        Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: TextField(
-              controller: controller.searchTextEditController,
-              onChanged: (val) => controller.searchAthletes(val),
-              cursorColor: AppColors.grey,
-              style: const TextStyle(fontSize: 12),
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: 'Search ${controller.athleteText}',
-                filled: true,
-                fillColor: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.white.withOpacity(0.045)
-                    : AppColors.black.withOpacity(0.045),
-                prefixIcon: Icon(
-                  FeatherIcons.search,
-                  size: 4.w,
-                  color: Theme.of(context).brightness == Brightness.light
-                      ? AppColors.white
-                      : AppColors.black,
+            child: SuperTooltip(
+              showBarrier: false,
+              hasShadow: false,
+              arrowBaseWidth: 0,
+              arrowLength: 0,
+              arrowTipDistance: 0,
+              arrowTipRadius: 0,
+              verticalOffset: 20,
+              backgroundColor: Colors.transparent,
+              borderWidth: 0,
+              borderColor: Colors.transparent,
+              minimumOutsideMargin: 0,
+              hideTooltipOnBarrierTap: true,
+              hideTooltipOnTap: true,
+              controller: controller.tooltipController,
+              content: Padding(
+                padding: const EdgeInsets.only(top: 20.0),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: ShapeDecoration(shape: TooltipShapeBorder(
+                    radius: 5,
+                  ), color: AppColors.black),
+                  child: Text(AppLocalizations.of(context)!.searchForAthletesUsingNameOrRaceNo, style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                  ),),
                 ),
-                suffixIcon: Obx(() => controller.searchText.value.isEmpty
-                    ? const SizedBox()
-                    : GestureDetector(
-                        onTap: controller.clearSearchField,
-                        child: Icon(
-                          FeatherIcons.x,
-                          size: 4.w,
-                          color: Theme.of(context).brightness == Brightness.light
-                              ? AppColors.white
-                              : AppColors.black,
-                        ))),
-                contentPadding: const EdgeInsets.all(12),
-                focusedBorder: OutlineInputBorder(
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  controller.getAthletes('', init: true);
+
+                  Get.to(const AthletesSearchScreen());
+                  Future.delayed(const Duration(milliseconds: 200), () {
+                    controller.focusNode.requestFocus();
+                  });
+                },
+                child: TextField(
+                  controller: controller.searchTextEditController,
+                  onChanged: (val) => controller.searchAthletes(val),
+                  cursorColor: AppColors.grey,
+                  style: const TextStyle(fontSize: 16),
+                  decoration: InputDecoration(
+                    enabled: false,
+
+                    isDense: true,
+                    hintText: '${AppLocalizations.of(context)!.search} ${controller.athleteText}',
+                    hintStyle: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? AppColors.greyLight
+                          : AppColors.grey,
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context).brightness == Brightness.light
+                        ? AppColors.white.withOpacity(0.045)
+                        : AppColors.black.withOpacity(0.045),
+                    prefixIcon: Icon(
+                      FeatherIcons.search,
+                      size: 5.w,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? AppColors.white
+                          : AppColors.black,
+                    ),
+                    suffixIcon: Obx(() => controller.searchText.value.isEmpty
+                        ? const SizedBox()
+                        : GestureDetector(
+                            onTap: controller.clearSearchField,
+                            child: Icon(
+                              FeatherIcons.x,
+                              size: 4.w,
+                              color: Theme.of(context).brightness == Brightness.light
+                                  ? AppColors.white
+                                  : AppColors.black,
+                            ))),
+                    contentPadding: const EdgeInsets.all(12),
+                    focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: AppColors.black, width: 0.8),
+                        borderRadius: BorderRadius.circular(10),
+                        gapPadding: 0),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: AppColors.transparent, width: 0),
+                        borderRadius: BorderRadius.circular(10),
+                        gapPadding: 0),
+                    disabledBorder: OutlineInputBorder(
                     borderSide:
-                        const BorderSide(color: AppColors.black, width: 0.8),
-                    borderRadius: BorderRadius.circular(8),
-                    gapPadding: 0),
-                enabledBorder: OutlineInputBorder(
-                    borderSide:
-                        const BorderSide(color: AppColors.transparent, width: 0),
-                    borderRadius: BorderRadius.circular(8),
-                    gapPadding: 0),
+                    const BorderSide(color: AppColors.transparent, width: 0),
+                    borderRadius: BorderRadius.circular(10),
+                    gapPadding: 0)
+                  ),
+                ),
               ),
             ),
-          ),
         ),
-        SizedBox(
-          height: 1.h,
-        ),
-        Container(
-          width: 16.w,
-          height: 1.w,
-          decoration: BoxDecoration(
-              color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.darkBlack
-                  : AppColors.greyLighter,
-              borderRadius: BorderRadius.circular(10)),
-        ),
+        // SizedBox(
+        //   height: 1.h,
+        // ),
+        // Container(
+        //   width: 16.w,
+        //   height: 1.w,
+        //   decoration: BoxDecoration(
+        //       color: Theme.of(context).brightness == Brightness.light
+        //           ? AppColors.darkBlack
+        //           : AppColors.greyLighter,
+        //       borderRadius: BorderRadius.circular(10)),
+        // ),
 
         SizedBox(
-          height: 1.h,
+          height: 1.5.h,
         ),
         Expanded(
           child: SingleChildScrollView(
@@ -156,7 +224,8 @@ class AthletesScreen extends StatelessWidget {
                           width: double.maxFinite),
                     ),
                   ),
-                  // This is the last updated value for athletes 
+                  // This is the last updated value for athletes
+                if(false)
                   Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(child: Text('Last Updated: ${controller.entrantsList.label ?? ''}',
@@ -192,16 +261,19 @@ class AthletesScreen extends StatelessWidget {
                                 if (snap.hasData) {
                                   List<AppAthleteDb> entrants = snap.data!;
                                   if (entrants.isEmpty) {
-                                    return Center(
-                                        child: NoDataFoundLayout(
-                                      title: controller.showFollowed.value
-                                          ? 'No ${controller.athleteText} being followed'
-                                          : null,
-                                      errorMessage: controller
-                                              .showFollowed.value
-                                          ? 'When you follow ${controller.athleteText}, you\'ll see them here.'
-                                          : 'No ${controller.athleteText} Found At Present',
-                                    ));
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 30.h),
+                                      child: Center(
+                                          child: NoDataFoundLayout(
+                                        title: controller.showFollowed.value
+                                            ? AppLocalizations.of(context)!.noAthletesBeingFollowed(controller.athleteText)
+                                            : null,
+                                        errorMessage: controller
+                                                .showFollowed.value
+                                            ? AppLocalizations.of(context)!.whenYouFollowAthleteYouWillSeeThemHere(controller.athleteText)
+                                            : AppLocalizations.of(context)!.noAthletesFoundAtPresent(controller.athleteText),
+                                      )),
+                                    );
                                   }
                                   entrants =
                                       controller.sortFilterAthletes(entrants);
@@ -232,7 +304,19 @@ class AthletesScreen extends StatelessWidget {
                                         return AthleteTile(
                                             entrant: entrant,
                                             onTap: () => controller
-                                                .toAthleteDetails(entrant));
+                                                .toAthleteDetails(entrant, onFollow: () {
+                                              onFollow() async {
+                                                print('isFOLLOWED ${!entrant.isFollowed}');
+                                                await controller.insertAthleteA(entrant, !entrant.isFollowed);
+                                                if (!entrant.isFollowed) {
+                                                  controller.followAthleteA(entrant);
+                                                } else {
+                                                  controller.unfollowAthleteA(entrant);
+                                                }
+                                                //controller.update();
+                                              }
+                                              onFollow();
+                                            }));
                                       });
                                 } else if (snap.hasError) {
                                   return Center(
@@ -246,6 +330,7 @@ class AthletesScreen extends StatelessWidget {
                               });
                         },
                       )),
+                const SizedBox(height: 40),
               ],
             ),
           ),
@@ -253,4 +338,45 @@ class AthletesScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+class TooltipShapeBorder extends ShapeBorder {
+  final double arrowWidth;
+  final double arrowHeight;
+  final double arrowArc;
+  final double radius;
+
+  TooltipShapeBorder({
+    this.radius = 0,
+    this.arrowWidth = 16.0,
+    this.arrowHeight = 8.0,
+    this.arrowArc = 0.0,
+  }) : assert(arrowArc <= 1.0 && arrowArc >= 0.0);
+
+  @override
+  EdgeInsetsGeometry get dimensions => EdgeInsets.only(bottom: arrowHeight);
+
+  @override
+  Path getInnerPath(Rect rect, {TextDirection? textDirection}) =>
+      null ?? Path();
+
+  @override
+  Path getOuterPath(Rect rect, {TextDirection? textDirection}) {
+    rect = Rect.fromPoints(
+        rect.topLeft, rect.bottomRight - Offset(0, arrowHeight));
+    double x = arrowWidth, y = arrowHeight, r = 1 - arrowArc;
+    return Path()
+      ..addRRect(RRect.fromRectAndRadius(rect, Radius.circular(radius)))
+      ..moveTo(rect.topRight.dx - 30, rect.topRight.dy)
+      ..relativeLineTo(-x / 2 * r, -y * r)
+      ..relativeQuadraticBezierTo(
+          -x / 2 * (1 - r), -y * (1 - r), -x * (1 - r), 0)
+      ..relativeLineTo(-x / 2 * r, y * r);
+  }
+
+  @override
+  void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {}
+
+  @override
+  ShapeBorder scale(double t) => this;
 }

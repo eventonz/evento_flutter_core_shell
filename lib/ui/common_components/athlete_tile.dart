@@ -1,17 +1,22 @@
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 
 class AthleteTile extends StatelessWidget {
   const AthleteTile({
     Key? key,
     required this.entrant,
+    this.onFollow,
     required this.onTap,
   }) : super(key: key);
-  final AppAthleteDb entrant;
+  final dynamic entrant;
   final VoidCallback onTap;
+  final VoidCallback? onFollow;
 
   String raceNo() {
     if (entrant.disRaceNo == '') {
@@ -22,83 +27,102 @@ class AthleteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final controller = Get.put(AthletesController());
+
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.all(8),
-      leading: Padding(
+      /*leading: entrant.profileImage == '' ? null : Padding(
         padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SizedBox(
               width: 16.w,
-              child: AppText(
-                raceNo(),
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight : AppColors.darkgrey,
-                textAlign: TextAlign.center,
-              ),
+              child: Image.network(entrant.profileImage),
             ),
           ],
         ),
-      ),
-      title: Padding(
-        padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText(
-              entrant.name,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
-            SizedBox(
-              height: 0.5.h,
-            ),
-            AppText(
-              entrant.info,
-              maxLines: 2,
-              color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight : AppColors.darkgrey,
-                    
-              fontSize: 12,
-            ),
-          ],
-        ),
-      ),
-      trailing: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 0, 6, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 16.w,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+      ),*/
+      title: Row(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(8, 0, 0, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Visibility(
-                    visible: entrant.isFollowed,
-                    child: Icon(
-                      Icons.star,
-                      color: AppColors.primary,
-                      size: 4.w,
-                    ),
+                  AppText(
+                    entrant.name,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 2,
                   ),
                   SizedBox(
-                    width: 1.w,
+                    height: 1.5,
                   ),
-                  Icon(
-                    Icons.keyboard_arrow_right_rounded,
-                    color: AppColors.primary,
-                    size: 4.5.w,
+                  AppText(
+                    entrant.info,
+                    maxLines: 2,
+                    color: Theme.of(context).brightness == Brightness.light
+                          ? AppColors.greyLight : AppColors.grey,
+
+                    fontSize: 14,
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          Container(
+            padding: const EdgeInsets.fromLTRB(0, 0, 6, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                    width: 48,
+                    padding: EdgeInsets.symmetric(
+                      vertical: .5.w,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                        color: (Theme.of(context).brightness == Brightness.light
+                            ? AppColors.greyLight : AppColors.greyLight).withOpacity(0.3)
+                    ),
+                    child: Text(raceNo(), style: const TextStyle(
+                      fontSize: 12,
+                    ), textAlign: TextAlign.center)
+                ),
+                SizedBox(
+                  width: 48,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          if(onFollow != null) {
+                            onFollow!();
+                          } else {
+                            onTap();
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.h),
+                          child: Icon(
+                            onFollow == null ? CupertinoIcons.arrow_right_circle : (entrant.isFollowed ? CupertinoIcons.checkmark_alt_circle_fill : CupertinoIcons.add_circled),
+                              //color: AppColors.primary,
+                              size: 6.5.w,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -16,6 +16,7 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
@@ -35,6 +36,7 @@ import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
 import 'more/more.dart';
 
+
 class DashboardController extends GetxController {
   final selMenu = Rx<BottomNavMenu?>(null);
   final AppOneSignal oneSignalService = Get.find();
@@ -49,9 +51,9 @@ class DashboardController extends GetxController {
 
   RxList<BottomNavMenu> menus = RxList([
     BottomNavMenu(
-        view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home'),
+        view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home', text: AppLocalizations.of(Get.context!)!.homebutton),
     BottomNavMenu(
-        view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu'),
+        view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu', text: AppLocalizations.of(Get.context!)!.menubutton),
   ]);
 
   @override
@@ -81,7 +83,7 @@ class DashboardController extends GetxController {
         BottomNavMenu(
             view: const TrackingScreen(),
             iconData: FeatherIcons.navigation,
-            label: 'track'),
+            label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
       );
     }
     if (resultsData != null && resultsData?.showResults == true) {
@@ -90,7 +92,7 @@ class DashboardController extends GetxController {
         BottomNavMenu(
             view: const ResultsScreen(),
             image: AppHelper.getImage('trophy.png'),
-            label: 'results'),
+            label: 'results', text: AppLocalizations.of(Get.context!)!.resultsbutton),
       );
     }
     selMenu.value = menus.first;
@@ -164,7 +166,7 @@ class DashboardController extends GetxController {
             BottomNavMenu(
                 view: const TrackingScreen(),
                 iconData: FeatherIcons.navigation,
-                label: 'track'),
+                label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
           );
         }
       } else {
@@ -199,14 +201,14 @@ class DashboardController extends GetxController {
     showCupertinoDialog(
       context: Get.context!,
       builder: (context) => CupertinoAlertDialog(
-        title: const AppText(
-          'Would you like to receive event related push notification for this event',
+        title: AppText(
+          AppLocalizations.of(context)!.wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
           textAlign: TextAlign.center,
         ),
         actions: [
           CupertinoDialogAction(
             child:  AppText(
-              'No thanks',
+              AppLocalizations.of(context)!.noThanks,
                 color: Theme.of(context).brightness == Brightness.light
                                 ? AppColors.darkgrey
                                 : AppColors.white,
@@ -304,9 +306,10 @@ class DashboardController extends GetxController {
 
 class BottomNavMenu {
   BottomNavMenu(
-      {required this.view, this.iconData, required this.label, this.image});
+      {required this.view, this.iconData, required this.label, this.image, this.text});
   final Widget view;
   final IconData? iconData;
   final String? image;
   final String label;
+  final String? text;
 }

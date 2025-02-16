@@ -4,6 +4,7 @@ import 'package:apple_maps_flutter/apple_maps_flutter.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/utils/date_extensions.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -147,8 +148,8 @@ class EventMapSheet extends StatelessWidget {
                       AppHelper.showDirectionsOnMap(latLng);
                     },
                     padding: const EdgeInsets.all(8),
-                    child: const AppText(
-                      'Get Directions',
+                    child: AppText(
+                      AppLocalizations.of(context)!.getDirections,
                       color: AppColors.white,
                       fontWeight: FontWeight.w600,
                     ),

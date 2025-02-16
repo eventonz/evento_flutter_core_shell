@@ -51,6 +51,41 @@ class ApiHandler {
     }
   }
 
+  static Future<ApiData> patchHttp(
+      {String endPoint = '',
+        required dynamic body,
+        Map<String, dynamic>? header,
+        String? baseUrl}) async {
+    try {
+      debugPrint(baseUrl ?? (_baseUrl + midpathApi + endPoint));
+
+      final response = await _dio.patch(
+        baseUrl ?? (_baseUrl + midpathApi + endPoint),
+        options: Options(
+          headers: header ?? {'content-Type': 'application/json'},
+        ),
+        data: body,
+      ).timeout(const Duration(seconds: 5));
+      return ApiData(
+          data: response.data,
+          statusCode: response.statusCode,
+          statusMessage: response.statusMessage);
+    } on DioException catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, e.stackTrace, reason: {
+        'url': baseUrl ?? (_baseUrl + midpathApi + endPoint),
+        'data': body,
+        'error': e.response?.data ?? e.response?.statusMessage ?? ''
+      });
+      FirebaseCrashlytics.instance
+          .recordError(e, e.stackTrace, reason: e.message);
+      debugPrint(e.toString());
+      return ApiData(
+          data: e.response?.data ?? {},
+          statusCode: e.response?.statusCode ?? 500,
+          statusMessage: e.response?.statusMessage ?? 'Error');
+    }
+  }
+
   static Future<ApiData> downloadImageFile({required String baseUrl}) async {
     try {
       debugPrint(baseUrl);
@@ -155,7 +190,7 @@ class ApiHandler {
       String? params,
       Map<String, dynamic>? header}) async {
     params = params == null ? '' : '/$params';
-    debugPrint(_baseUrl + midpathApi + endPoint + params);
+    print(_baseUrl + midpathApi + endPoint + params);
     try {
       final response = await _dio.get(
         _baseUrl + midpathApi + endPoint + params,

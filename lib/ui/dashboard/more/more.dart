@@ -1,6 +1,7 @@
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/more_menu_tile.dart';
 import 'package:evento_core/ui/common_components/more_menu_title.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -27,8 +28,8 @@ class MoreScreen extends StatelessWidget {
           surfaceTintColor: Colors.white,
           shadowColor: Colors.white,
           automaticallyImplyLeading: false,
-          title: const AppText(
-            'Menu',
+          title: AppText(
+            AppLocalizations.of(context)!.menubutton,
             style: AppStyles.appBarTitle,
           ),
           actions: [
@@ -55,11 +56,11 @@ class MoreScreen extends StatelessWidget {
                   } else if (mode == LoadStatus.loading) {
                     body = const CupertinoActivityIndicator();
                   } else if (mode == LoadStatus.failed) {
-                    body = const Text("Load Failed!Click retry!");
+                    body = Text(AppLocalizations.of(context)!.loadFailedClickRetry);
                   } else if (mode == LoadStatus.canLoading) {
-                    body = const Text("release to load more");
+                    body = Text(AppLocalizations.of(context)!.releaseToLoadMore);
                   } else {
-                    body = const Text("No more Data");
+                    body = Text(AppLocalizations.of(context)!.noMoreData);
                   }
                   return SizedBox(
                     height: 55.0,

@@ -1,4 +1,5 @@
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:geojson/geojson.dart';
 import 'package:get/get.dart';
@@ -30,12 +31,12 @@ class CustomDrawer extends StatelessWidget {
               MapStyleSection(),
               const SizedBox(height: 20),
               ToggleSwitchList(
-                title: 'Elevation Profile',
+                title: AppLocalizations.of(context)!.elevationProfile,
                 value: controller.showElevation,
                 onChanged: controller.changeElevation,
               ),
               ToggleSwitchList(
-                title: 'Distance Markers',
+                title: AppLocalizations.of(context)!.distanceMarkers,
                 value: controller.showDistanceMarkers,
                 onChanged: controller.changeDistanceMarkers,
               ),
@@ -102,7 +103,7 @@ class MapStyleSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Map Style',
+          AppLocalizations.of(context)!.mapStyle,
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
@@ -216,8 +217,8 @@ class PointsOfInterestSection extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Points of Interest',
+            Text(
+              AppLocalizations.of(context)!.mapStyle,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
                 fontSize: 16,

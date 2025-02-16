@@ -67,7 +67,7 @@ class AppBottomNav extends StatelessWidget {
                                 const SizedBox(
                                   height: 4,
                                 ),
-                                AppText(menu.label.capitalize!,
+                                AppText(menu.text ?? menu.label.capitalize!,
                                     fontSize: 10,
                                     color: controller.selMenu.value == menu
                                         ? (Theme.of(context).brightness ==

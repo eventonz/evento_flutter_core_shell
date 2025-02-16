@@ -25,6 +25,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
   @override
   void onInit() {
     super.onInit();
+    checkAthletesUpdate();
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -39,12 +40,38 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
   void checkAthletesUpdate() async {
     try {
       final recentlyUpdated = await checkConfigUpdatedDate();
-      if (recentlyUpdated && AppGlobals.oldAppConfig != AppGlobals.appConfig) {
+      if (true || (recentlyUpdated)) {
         DashboardController dashboardController = Get.find();
         dashboardController.athleteSnapData.value = DataSnapShot.loading;
-        await getAthletes();
+        //await getAthletes();
         Get.put(AthletesController());
         dashboardController.athleteSnapData.value = DataSnapShot.loaded;
+
+        var edition = AppGlobals.appConfig?.athletes?.edition ?? '';
+
+        var raceId = AppGlobals.selEventId;
+
+        List<String> athletes = (await DatabaseHandler.getAthletesOnce('', true)).map((e) => e.raceno ?? '').toList();
+
+
+        var data = await ApiHandler.patchHttp(endPoint: 'athletes/$raceId', body: {
+          'edition' : edition,
+          'athletes' : athletes,
+        });
+
+        print('athletesData ${data.data}');
+
+
+        var list = (data.data['patchedathletes'] as List).map((e) => Entrants.fromJson(e)).toList();
+
+        print('oklist');
+        print(list.map((e) => e.toJson()));
+        
+        await DatabaseHandler.removeAllAthletes();
+
+        await DatabaseHandler.insertAthletes(list);
+
+
       }
       AppGlobals.oldAppConfig = AppGlobals.appConfig;
       BlurLoadingOverlay.dismiss();

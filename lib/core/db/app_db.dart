@@ -99,7 +99,7 @@ class DatabaseHandler {
           name: entrant.name,
           profileImage: entrant.profileImage,
           raceno: (entrant.number),
-          isFollowed: false,
+          isFollowed: true,
           contestNo: entrant.contest,
           info: entrant.info,
           eventId: eventId,
@@ -127,6 +127,33 @@ class DatabaseHandler {
         updateAthlete(athlete, true);
       }
     }
+    return 1;
+  }
+
+  static Future<int> insertAthlete(Entrants entrant) async {
+    final eventId = Preferences.getInt(AppKeys.eventId, 0);
+    print(' mytest');
+
+    List<AthleteDbCompanion> list = [];
+    List<AthleteExtraDetailsDbCompanion> detailsList = [];
+    final stopwatch = Stopwatch()..start();
+    //print(1);
+    _db.athleteDb.insert().insert(AthleteDbCompanion.insert(
+        athleteId: entrant.id,
+        name: entrant.name,
+        profileImage: entrant.profileImage,
+        raceno: (entrant.number),
+        isFollowed: true,
+        contestNo: entrant.contest,
+        info: entrant.info,
+        eventId: eventId,
+        extra: entrant.extra,
+        disRaceNo: Value(entrant.disRaceNo),
+        canFollow: entrant.canFollow,
+        searchTag:
+        '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+    _db.athleteExtraDetailsDb.insertAll((await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id)));
+    stopwatch.stop();
     return 1;
   }
 
@@ -183,6 +210,36 @@ class DatabaseHandler {
     yield* query.watch();
   }
 
+  static Future<List<AppAthleteDb>> getAthletesOnce(
+      String searchValue, bool isFollowed, {int? offset, int? limit}) async {
+    searchValue = searchValue.toLowerCase();
+    Stopwatch stopWatch = Stopwatch();
+    stopWatch.start();
+    final eventId = Preferences.getInt(AppKeys.eventId, 0);
+
+    var query = _db.athleteDb.select()
+      ..where((tbl) => tbl.eventId.equals(eventId))
+      ..orderBy([(athlete) => OrderingTerm(expression: athlete.id)]);
+
+    if (searchValue.isNotEmpty) {
+      if (isFollowed) {
+        query.where((tbl) => tbl.searchTag.equals(searchValue));
+      } else {
+        query.where((tbl) => tbl.searchTag.contains(searchValue));
+      }
+    }
+
+    if (isFollowed) {
+      query.where((tbl) => tbl.isFollowed.equals(isFollowed));
+    }
+
+    if(limit != null) {
+      query.limit(limit, offset: offset);
+    }
+
+    return await query.get();
+  }
+
   static Stream<AppAthleteDb> getSingleAthlete(String athleteId) async* {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     Stream<AppAthleteDb> stream = (_db.athleteDb.select()
@@ -195,10 +252,14 @@ class DatabaseHandler {
 
   static Future<AppAthleteDb?> getSingleAthleteOnce(String athleteId) async {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
-    return await (_db.athleteDb.select()
-      ..where((tbl) => tbl.eventId.equals(eventId))
-      ..where((tbl) => tbl.athleteId.equals(athleteId)))
-        .getSingleOrNull();
+    try {
+      return await (_db.athleteDb.select()
+        ..where((tbl) => tbl.eventId.equals(eventId))
+        ..where((tbl) => tbl.athleteId.equals(athleteId)))
+          .getSingleOrNull();
+    } catch(e) {
+      return null;
+    }
   }
 
   static Stream<List<AppAthleteExtraDetailsDb>> getSingleAthleteDetails(
@@ -224,6 +285,11 @@ class DatabaseHandler {
     return await _db.delete(_db.athleteDb).go();
   }
 
+  static Future<int> removeAthlete(String id) async {
+    removeAthleteDetails(id);
+    return await (_db.delete(_db.athleteDb)..where((tbl) => tbl.athleteId.equals(id))).go();
+  }
+
   static Future<int> removeAthletesByEvent(int eventId) async {
     removeAthletesDetailsByEvent(eventId);
     return await (_db.delete(_db.athleteDb)
@@ -234,6 +300,12 @@ class DatabaseHandler {
   static Future<int> removeAthletesDetailsByEvent(int eventId) async {
     return await (_db.delete(_db.athleteExtraDetailsDb)
           ..where((tbl) => tbl.eventId.equals(eventId)))
+        .go();
+  }
+
+  static Future<int> removeAthleteDetails(String id) async {
+    return await (_db.delete(_db.athleteExtraDetailsDb)
+      ..where((tbl) => tbl.athleteId.equals(id)))
         .go();
   }
 

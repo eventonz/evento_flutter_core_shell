@@ -2,12 +2,15 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/db/models/athlete_extra_details.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/split_data_table.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes/athlete_details/athlete_details_controller.dart';
+import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -28,14 +31,19 @@ class AthleteDetailsScreen extends StatelessWidget {
         actions: [
           StreamBuilder<AppAthleteDb>(
               stream:
-                  controller.getSingleAthlete(controller.selEntrant.athleteId),
+                  controller.getSingleAthlete(controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
               builder: (_, snap) {
                 if (snap.hasData && controller.canFollow) {
                   final isFollowed = snap.data!.isFollowed;
                   if (isFollowed) {
                     return IconButton(
-                      onPressed: () =>
-                          controller.updateAthlete(snap.data!, isFollowed),
+                      onPressed: () {
+                        controller.updateAthlete(snap.data!, isFollowed);
+                        if(Get.arguments['on_follow'] != null) {
+                          print('kk');
+                          Get.arguments['on_follow']!();
+                        }
+                      },
                       icon: Icon(
                         Icons.star,
                         color: Theme.of(context).brightness == Brightness.light
@@ -55,7 +63,7 @@ class AthleteDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             child: AthleteRaceNo(
-              number: controller.selEntrant.disRaceNo ?? '',
+              number: controller.selEntrant?.disRaceNo ?? controller.selEntrantA?.disRaceNo ?? '',
               width: 20.w,
             ),
           )
@@ -74,7 +82,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                   color: Theme.of(context).brightness == Brightness.light
                       ? AppColors.white
                       : AppColors.darkBlack,
-                  controller.selEntrant.name,
+                  controller.selEntrant?.name ?? controller.selEntrantA?.name ?? '',
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
                   maxLines: 2,
@@ -95,8 +103,9 @@ class AthleteDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Wrap(
                         children: [
-                          if (controller
-                              .selEntrant.profileImage.isNotEmpty) ...[
+                          if ((controller
+                              .selEntrant?.profileImage ?? controller
+                              .selEntrantA?.profileImage ?? '').isNotEmpty) ...[
                             Obx(() => GestureDetector(
                                   onTap: controller.toggleEnlargedImage,
                                   child: AnimatedContainer(
@@ -112,7 +121,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(6),
                                       child: CachedNetworkImage(
                                         imageUrl:
-                                            controller.selEntrant.profileImage,
+                                            controller.selEntrant?.profileImage ?? controller.selEntrantA?.profileImage ?? '',
                                         placeholder: (_, val) => const Center(
                                             child: CircularProgressIndicator
                                                 .adaptive()),
@@ -137,7 +146,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: AppText(
-                              controller.selEntrant.info,
+                              (controller.selEntrant?.info ?? controller.selEntrantA?.info ?? '').replaceAll('null', '').trim(),
                               fontWeight: FontWeight.w500,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 6,
@@ -151,10 +160,17 @@ class AthleteDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: StreamBuilder<List<AppAthleteExtraDetailsDb>>(
                           stream: controller.getSingleAthleteDetails(
-                              controller.selEntrant.athleteId),
+                              controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
                           builder: (_, snap) {
-                            if (snap.hasData) {
-                              final details = snap.data ?? [];
+                            if (snap.hasData || snap.hasError) {
+                              var data = snap.data;
+                              if((data ?? []).isEmpty) {
+                                data = null;
+                              }
+                              print('controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
+                              final details = data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
+                                return AppAthleteExtraDetailsDb(id: 0, athleteId: details.athleteNumber, name: details.name, eventId: AppGlobals.selEventId, country: details.country, athleteNumber: details.athleteNumber);
+                              }).toList();
                               if (details.isEmpty) {
                                 return SizedBox(height: 2.h);
                               }
@@ -177,14 +193,6 @@ class AthleteDetailsScreen extends StatelessWidget {
                                     return AthleteDetailsTile(
                                         athleteExtraDetails: details[i]);
                                   });
-                            } else if (snap.hasError) {
-                              return CupertinoButton(
-                                  onPressed: () {},
-                                  padding: const EdgeInsets.all(8),
-                                  child: const AppText(
-                                    'Retry',
-                                    fontSize: 14,
-                                  ));
                             } else {
                               return const CircularProgressIndicator.adaptive();
                             }
@@ -192,102 +200,118 @@ class AthleteDetailsScreen extends StatelessWidget {
                     ),
                     StreamBuilder<AppAthleteDb>(
                         stream: controller
-                            .getSingleAthlete(controller.selEntrant.athleteId),
+                            .getSingleAthlete(controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
 
                         builder: (_, snap) {
-                          print('snap ${controller.selEntrant.athleteId} ${snap.data}');
-                          if (snap.hasData && controller.canFollow) {
-                            final isFollowed = snap.data!.isFollowed;
-                            return Column(
-                              children: [
-                                AnimatedContainer(
-                                  width: double.infinity,
-                                  curve: Curves.easeInOut,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                  duration: const Duration(milliseconds: 200),
-                                  decoration: BoxDecoration(
-                                      color: !snap.data!.canFollow ? Theme.of(context).disabledColor : (isFollowed
-                                          ? AppColors.transparent
-                                          : Theme.of(context).brightness ==
-                                          Brightness.light
-                                          ? AppColors.accentDark
-                                          : AppColors.accentLight),
-                                      borderRadius: BorderRadius.circular(6),
-                                      border: !snap.data!.canFollow ? null : Border.all(
-                                          color: Theme.of(context).brightness ==
-                                                  Brightness.light
+                          //print('snap ${controller.selEntrant.athleteId} ${snap.data}');
+                          final isFollowed = snap.data?.isFollowed ?? false;
+                          return Column(
+                            children: [
+                              if((Get.arguments['can_follow']) != false)
+                              AnimatedContainer(
+                                width: double.infinity,
+                                curve: Curves.easeInOut,
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16),
+                                duration: const Duration(milliseconds: 200),
+                                decoration: BoxDecoration(
+                                    color: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false) ? Theme
+                                        .of(context)
+                                        .disabledColor : (isFollowed
+                                        ? AppColors.transparent
+                                        : Theme
+                                        .of(context)
+                                        .brightness ==
+                                        Brightness.light
+                                        ? AppColors.accentDark
+                                        : AppColors.accentLight),
+                                    borderRadius: BorderRadius.circular(6),
+                                    border: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false)
+                                        ? null
+                                        : Border.all(
+                                        color: Theme
+                                            .of(context)
+                                            .brightness ==
+                                            Brightness.light
+                                            ? AppColors.accentDark
+                                            : AppColors.accentLight,
+                                        width: 0.4)),
+                                child: CupertinoButton(
+                                    padding: const EdgeInsets.all(0),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          isFollowed
+                                              ? Icons.star
+                                              : Icons.star_outline,
+                                          color: isFollowed
+                                              ? Theme
+                                              .of(context)
+                                              .brightness ==
+                                              Brightness.light
                                               ? AppColors.accentDark
-                                              : AppColors.accentLight,
-                                          width: 0.4)),
-                                  child: CupertinoButton(
-                                      padding: const EdgeInsets.all(0),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            isFollowed
-                                                ? Icons.star
-                                                : Icons.star_outline,
-                                            color: isFollowed
-                                                ? Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.light
-                                                    ? AppColors.accentDark
-                                                    : AppColors.accentLight
-                                                : AppColors.white,
-                                            size: 18,
-                                          ),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          AppText(
-                                            isFollowed ? 'Following' : 'Follow',
-                                            fontSize: 14,
-                                            color: isFollowed
-                                                ? Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.light
-                                                    ? AppColors.accentDark
-                                                    : AppColors.accentLight
-                                                : AppColors.white,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ],
-                                      ),
-                                      onPressed: !snap.data!.canFollow ? null : () => controller.updateAthlete(
-                                          snap.data!, isFollowed)),
-                                ),
-                                if(!snap.data!.canFollow)
+                                              : AppColors.accentLight
+                                              : AppColors.white,
+                                          size: 18,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        AppText(
+                                          isFollowed ? AppLocalizations.of(context)!.following : AppLocalizations.of(context)!.follow,
+                                          fontSize: 14,
+                                          color: isFollowed
+                                              ? Theme
+                                              .of(context)
+                                              .brightness ==
+                                              Brightness.light
+                                              ? AppColors.accentDark
+                                              : AppColors.accentLight
+                                              : AppColors.white,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ],
+                                    ),
+                                    onPressed: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false)
+                                        ? null
+                                        : () {
+                                      print('akk2');
+                                      //final detailsController = Get.put(AthletesController());
+                                      // detailsController.insertAthlete(
+                                      //     snap.data!, isFollowed);
+                                      if (Get.arguments['on_follow'] != null) {
+                                        print('akk');
+                                        Get.arguments['on_follow']!();
+                                      }
+                                    }),
+                              ),
+                              if((Get.arguments['can_follow']) != false)
+                                if(!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 4.0, right: 4.0, top: 4.0),
-                                  child: Text('Follow not available until Race Number has been assigned', style: TextStyle(
-                                    fontSize: 10,
-                                  ),),
+                                  padding: const EdgeInsets.only(
+                                      left: 4.0, right: 4.0, top: 4.0),
+                                  child: Text(
+                                    AppLocalizations.of(context)!.followNotAvailableUntilRaceNumberIsAssigned,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                    ),),
                                 ),
-                                const SizedBox(
-                                  height: 16,
-                                ),
-                                Divider(
-                                    height: 1,
-                                    thickness: .5,
-                                    color: Theme.of(context).brightness == Brightness.light
-                                                    ?  AppColors.darkgrey :AppColors.grey
-                                ),
-                              ],
-                            );
-                          } else if (snap.hasError) {
-                            return CupertinoButton(
-                                onPressed: () {},
-                                padding: const EdgeInsets.all(8),
-                                child: const AppText(
-                                  'Retry',
-                                  fontSize: 14,
-                                ));
-                          } else {
-                            return const CircularProgressIndicator.adaptive();
-                          }
-                        }),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              Divider(
+                                  height: 1,
+                                  thickness: .5,
+                                  color: Theme
+                                      .of(context)
+                                      .brightness == Brightness.light
+                                      ? AppColors.darkgrey : AppColors.grey
+                              ),
+                            ],
+                          );
+                        }
+                          ),
                   ],
                 ),
               ),
@@ -343,7 +367,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                     return SummaryDataContent2(
                         summary: controller.items[index].data);
                   } else if (controller.items[index].type == 'externallinks') {
-                    return ExternalLinkContent(link: controller.items[index].data, disRaceNo: controller.selEntrant.disRaceNo ?? '');
+                    return ExternalLinkContent(link: controller.items[index].data, disRaceNo: controller.selEntrant?.disRaceNo ?? controller.selEntrantA?.disRaceNo ?? '');
                   } else if (controller.items[index].type == 'title') {
                     return SplitTitleContent(title: controller.items[index].data);
                   } else if (controller.items[index].type == 'splits') {

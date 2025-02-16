@@ -1,4 +1,5 @@
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -22,14 +23,14 @@ class RetryLayout extends StatelessWidget {
         ),
         SizedBox(height: 1.h),
         AppText(
-          errorMessage ?? 'Something went wrong...',
+          errorMessage ?? '${AppLocalizations.of(context)!.somethingWentWrong}...',
           color: AppColors.grey,
           fontSize: 12,
         ),
         TextButton(
           onPressed: onTap,
-          child: const AppText(
-            'Retry',
+          child: AppText(
+            AppLocalizations.of(context)!.retry,
             color: AppColors.grey,
             fontWeight: FontWeight.bold,
           ),

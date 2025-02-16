@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/athlete_tab_details.dart';
 import 'package:evento_core/core/models/split_data.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
@@ -433,7 +434,7 @@ class SplitDataContent extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: AppText(
-              'Splits',
+              AppLocalizations.of(context)!.splits,
               fontWeight: FontWeight.bold,
               fontSize: 16.sp,
             ),

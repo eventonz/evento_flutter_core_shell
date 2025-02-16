@@ -34,6 +34,7 @@ class Entrants {
   late int contest;
   late String extra;
   late bool canFollow;
+  late bool isFollowed;
   List<AthleteDetails>? athleteDetails;
 
   Entrants(
@@ -45,7 +46,9 @@ class Entrants {
       this.id = '-1',
       this.contest = -1,
       this.extra = '',
-      this.canFollow = true});
+      this.athleteDetails,
+      this.canFollow = true,
+      this.isFollowed = false});
 
   Entrants.fromJson(Map<String, dynamic> json) {
     print(json);
@@ -53,11 +56,12 @@ class Entrants {
     number = json['number'] ?? '';
     name = json['name'] ?? '';
     profileImage = json['profile_image'] ?? '';
-    id = json['id'] ?? '-1';
+    id = json['id'] is int ? json['id'].toString() : (json['id'] ?? '-1');
     contest = json['contest'] ?? -1;
     extra = json['extra'] ?? '';
     disRaceNo = json['disRaceNo'] ?? '';
     canFollow = json['can_follow'] ?? true;
+    isFollowed = json['isFollowed'] ?? false;
     if (json['athlete_details'] != null) {
       athleteDetails = <AthleteDetails>[];
       json['athlete_details'].forEach((v) {

@@ -8,6 +8,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/athlete_race_no.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
@@ -157,9 +158,9 @@ class SliderAthleteTile extends StatelessWidget {
   final AthleteTrackDetail? trackDetail;
   final VoidCallback onTap;
 
-  String trackDetailsInfo() {
+  String trackDetailsInfo(BuildContext context) {
     final infoText = trackDetail!.info ?? '';
-    return infoText.isEmpty ? 'Tracking Not Available' : infoText.replaceAll('\\n', '\n').trim();
+    return infoText.isEmpty ? AppLocalizations.of(context)!.trackingNotAvailable : infoText.replaceAll('\\n', '\n').trim();
   }
 
   @override
@@ -234,7 +235,7 @@ class SliderAthleteTile extends StatelessWidget {
                 trackDetail == null
                     ? const SizedBox()
                     : AppText(
-                        trackDetailsInfo(),
+                        trackDetailsInfo(context),
                       ),
               ],
             ),

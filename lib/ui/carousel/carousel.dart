@@ -2,6 +2,7 @@ import 'package:evento_core/core/models/event_offer.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/utils/enums.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/cupertino.dart';
@@ -34,9 +35,9 @@ class EventOffersScreen extends StatelessWidget {
                 if (controller.dataSnapshot.value == DataSnapShot.loaded) {
                   final eventOffers = controller.eventOffers;
                   if (eventOffers.isEmpty) {
-                    return const Center(
+                    return Center(
                         child: NoDataFoundLayout(
-                      errorMessage: 'No Result Found',
+                      errorMessage: AppLocalizations.of(context)!.noResultFound,
                     ));
                   }
                   return Column(

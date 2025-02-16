@@ -1,7 +1,9 @@
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
+import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/results/results_screen_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -195,12 +197,12 @@ class ResultsScreen extends StatelessWidget {
                                               children: [
                                                 Expanded(child: Container(
                                                     padding: const EdgeInsets.all(16),
-                                                    child: Text('Gender', style: TextStyle(
+                                                    child: Text(AppLocalizations.of(context)!.gender, style: TextStyle(
                                                       fontSize: 16,
                                                     )))),
                                                 Expanded(child: Container(
                                                     padding: const EdgeInsets.all(16),
-                                                    child: Text('Category', style: TextStyle(
+                                                    child: Text(AppLocalizations.of(context)!.category, style: TextStyle(
                                                       fontSize: 16,
                                                     )))),
                                               ],
@@ -223,7 +225,7 @@ class ResultsScreen extends StatelessWidget {
                                                   color: AppColors.primary,
                                                   onPressed: () {
                                                 Navigator.of(context).pop();
-                                              }, child: Text('APPLY', style: TextStyle(
+                                              }, child: Text(AppLocalizations.of(context)!.apply.toUpperCase(), style: TextStyle(
                                                 fontWeight: FontWeight.w500,
                                               ),)),
                                             ),
@@ -235,7 +237,7 @@ class ResultsScreen extends StatelessWidget {
                                                   controller.setCategory(0);
                                                   controller.setGender(0);
                                                   Navigator.of(context).pop();
-                                                }, child: Text('CLEAR', style: TextStyle(
+                                                }, child: Text(AppLocalizations.of(context)!.clear.toUpperCase(), style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                             ))),
                                           ],
@@ -262,7 +264,7 @@ class ResultsScreen extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(5),
                         ),
-                        child: Center(child: Text('Filter', style: TextStyle(
+                        child: Center(child: Text(AppLocalizations.of(context)!.filter, style: TextStyle(
                           fontSize: 16,
                         ),)),
                       ),
@@ -277,7 +279,7 @@ class ResultsScreen extends StatelessWidget {
                     return Row(
                       children: [
                         const SizedBox(width: 16),
-                        Text('Gender ${gender?.name ?? gender?.code ?? 'All'} / Category ${category?.name ?? category?.code ?? 'All'}', style: TextStyle(
+                        Text('${AppLocalizations.of(context)!.gender} ${gender?.name ?? gender?.code ?? AppLocalizations.of(context)!.all} / ${AppLocalizations.of(context)!.category} ${category?.name ?? category?.code ?? AppLocalizations.of(context)!.all}', style: TextStyle(
                           fontWeight: FontWeight.w600,
                         )),
                       ],
@@ -296,7 +298,7 @@ class ResultsScreen extends StatelessWidget {
                       if(controller.search == '')
                       SizedBox(
                         width: 60,
-                        child: Center(child: Text('Pos.', style: TextStyle(
+                        child: Center(child: Text('${AppLocalizations.of(context)!.pos}.', style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -304,7 +306,7 @@ class ResultsScreen extends StatelessWidget {
                       ),
                       Expanded(child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: Text('Name.', style: TextStyle(
+                        child: Text('${AppLocalizations.of(context)!.name}.', style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -312,7 +314,7 @@ class ResultsScreen extends StatelessWidget {
                       )),
                       Container(
                         width: 80,
-                        child: Center(child: Text('Result', style: TextStyle(
+                        child: Center(child: Text('${AppLocalizations.of(context)!.result}', style: TextStyle(
                           color: Theme.of(context).scaffoldBackgroundColor,
                           fontWeight: FontWeight.w600,
                           fontSize: 16,
@@ -357,8 +359,9 @@ class ResultsScreen extends StatelessWidget {
                       if(!(controller.items?.linkToDetail ?? false)) {
                         return;
                       }
-                      AppAthleteDb athleteDb = AppAthleteDb(id: athlete.raceNo!, athleteId: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', raceno: athlete.raceNo!.toString(), eventId: athlete.eventId!, info: '', contestNo: athlete.overallPos!, searchTag: '', disRaceNo: athlete.raceNo?.toString() ?? '');
-                      Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: athleteDb, 'can_follow': false});
+                      Entrants entrant = Entrants(id: athlete.athleteId?.toString() ?? '', number: athlete.raceNo!.toString(), canFollow: false, isFollowed: false, name: athlete.name??'Unknown', extra: '', profileImage: '', info: '${athlete.event?.name ?? ''}\n${athlete.gender?.name ?? ''} ${athlete.category?.name ?? ''}\n${athlete.countryRepresenting?.name ?? ''}', contest: athlete.overallPos!, disRaceNo: athlete.raceNo?.toString() ?? '');
+
+                      Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant, 'can_follow': false});
                     },
                     child: Container(
                       height: 60,
