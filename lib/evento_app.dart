@@ -7,9 +7,12 @@ import 'package:evento_core/core/routes/router.dart';
 import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+
+import 'l10n/app_localizations.dart';
 
 
 final StreamController<bool> notificationHandlerController = StreamController<bool>.broadcast();
@@ -45,6 +48,12 @@ class EventoApp extends StatelessWidget {
               darkTheme: AppStyles.dark,
               initialRoute: Routes.landing,
               getPages: PageRouter.pages,
+              localizationsDelegates: [
+                AppLocalizations.delegate, // Add this line
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
               initialBinding: MainBinding(),
               builder: (_, child) {
                 return ResponsiveSizer(
