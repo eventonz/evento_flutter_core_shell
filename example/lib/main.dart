@@ -14,6 +14,16 @@ void main() {
  );
 
 */
+
+ final eventConfig = AppEventConfig(
+    oneSignalId: '111cddd2-0265-44d4-8aa2-af7982884d1b',
+    appName: 'Pop Up Races',
+    multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
+    multiEventListId: '27',
+    splashImage: 'assets/images/splash_image.png',
+  );
+
+/*
 final eventConfig = AppEventConfig(
    oneSignalId: 'bd954eea-e5dc-4118-8c77-188b5fc1c33d',
     appName: 'My Results by SES',
@@ -23,7 +33,7 @@ final eventConfig = AppEventConfig(
     searchbarcolor: const Color.fromRGBO(0, 0, 0, 0.5),
     
   );
-
+*/
 
   runApp(EventoApp(
     appEventConfig: eventConfig,
