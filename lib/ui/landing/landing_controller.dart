@@ -140,7 +140,7 @@ class LandingController extends GetxController {
       }
     } catch (e) {
       ToastUtils.show(e.toString());
-      if(AppGlobals.appEventConfig.multiEventListId != null) {
+      if(false && AppGlobals.appEventConfig.multiEventListId != null) {
         Preferences.setString(AppKeys.eventUrl, '');
         Get.off(
               () => const EventsScreen(),
