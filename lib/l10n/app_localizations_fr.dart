@@ -16,7 +16,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get athletesbutton => 'Athlètes';
 
   @override
-  String get riderbutton => 'Cavaliers';
+  String get riderbutton => 'Concurrents';
 
   @override
   String get participantsbutton => 'Participants';
@@ -61,10 +61,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get retry => 'Réessayer';
 
   @override
-  String get splits => 'Intervalles';
+  String get splits => 'Intermédiaires';
 
   @override
-  String get followNotAvailableUntilRaceNumberIsAssigned => 'Suivi non disponible jusqu\'à ce qu\'un numéro de course soit attribué';
+  String get followNotAvailableUntilRaceNumberIsAssigned => 'Suivi non disponible jusqu\'à ce qu\'un numéro de dossard soit attribué';
 
   @override
   String get follow => 'Suivre';
@@ -73,7 +73,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get following => 'Suivi';
 
   @override
-  String get searchForAthletesUsingNameOrRaceNo => 'Recherchez ici des Athlètes,\nen utilisant le Nom ou le Numéro\nde Course';
+  String get searchForAthletesUsingNameOrRaceNo => 'Recherchez ici des Athlètes,\nen utilisant le Nom ou le Numéro\nde Dossard';
 
   @override
   String get search => 'Rechercher';
@@ -105,7 +105,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get getDirections => 'Obtenir l\'Itinéraire';
 
   @override
-  String get distanceMarkers => 'Marqueurs de Distance';
+  String get distanceMarkers => 'Bornes kilométrique';
 
   @override
   String get mapStyle => 'Style de Carte';
@@ -120,13 +120,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get loadFailedClickRetry => 'Échec du Chargement ! Cliquez sur Réessayer!';
 
   @override
-  String get releaseToLoadMore => 'relâchez pour charger plus';
+  String get releaseToLoadMore => 'Relâchez pour charger plus';
 
   @override
   String get noMoreData => 'Plus de Données';
 
   @override
-  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => 'Souhaitez-vous recevoir des notifications push liées à cet événement?';
+  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => 'Souhaitez-vous recevoir des notifications liées à cet événement?';
 
   @override
   String get noThanks => 'Non merci';

@@ -64,7 +64,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get splits => 'Aufteilungen';
 
   @override
-  String get followNotAvailableUntilRaceNumberIsAssigned => 'Verfolgen nicht verfügbar, bis eine Rennnummer zugewiesen wurde';
+  String get followNotAvailableUntilRaceNumberIsAssigned => 'Verfolgung nicht verfügbar, bis eine Startnummer zugewiesen wurde.';
 
   @override
   String get follow => 'Folgen';
