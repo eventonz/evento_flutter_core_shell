@@ -55,8 +55,8 @@ class LanguageController extends GetxController {
   }
 
   setLocale(String locale) {
-    this.locale!.value = Locale(locale);
-    Get.updateLocale(this.locale!.value);
+    this.locale.value = Locale(locale);
+    Get.updateLocale(this.locale.value);
     update();
   }
 }

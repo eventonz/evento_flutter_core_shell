@@ -15,7 +15,7 @@ class LanguageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final controller = Get.put(LanguageController());
+    final controller = Get.find<LanguageController>();
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +37,7 @@ class LanguageScreen extends StatelessWidget {
           title: Text(controller.languages[index]['name'], style: TextStyle(
             fontSize: 16.sp,
           ),),
-          trailing: controller.locale!.value.languageCode == controller.languages[index]['code'] ? Icon(Icons.check) : null,
+          trailing: controller.locale.value.languageCode == controller.languages[index]['code'] ? Icon(Icons.check) : null,
         );
       }, itemCount: controller.languages.length, padding: const EdgeInsets.symmetric(vertical: 10),),
     );

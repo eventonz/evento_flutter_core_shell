@@ -6,6 +6,7 @@ import 'package:evento_core/core/res/app_styles.dart';
 import 'package:evento_core/core/routes/router.dart';
 import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
+import 'package:evento_core/ui/settings/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,8 @@ class EventoApp extends StatelessWidget {
       }
     });
 
+    final controller = Get.put(LanguageController());
+
     return LayoutBuilder(
       builder: (_, constraints) {
         return OrientationBuilder(
@@ -48,8 +51,9 @@ class EventoApp extends StatelessWidget {
               darkTheme: AppStyles.dark,
               initialRoute: Routes.landing,
               getPages: PageRouter.pages,
-              localizationsDelegates: [
-                AppLocalizations.delegate, // Add this line
+              supportedLocales: controller.supportedLanguages.map((s) => Locale(s)).toList(),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate,
                 GlobalCupertinoLocalizations.delegate,
