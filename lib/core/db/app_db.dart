@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 6;
+  int get schemaVersion => 7;
 
   @override
   MigrationStrategy get migration {
@@ -39,30 +39,35 @@ class AppDatabase extends _$AppDatabase {
           // version 2
           await m.addColumn(chatMessageDb, chatMessageDb.eventId);
         }
-        if(from < 3) {
-            // Add a temporary column with the new type
-            await customStatement('ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN raceno_temp TEXT');
+        if (from < 3) {
+          // Add a temporary column with the new type
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN raceno_temp TEXT');
 
-            // Copy the data from the old column to the new column
-            await customStatement('UPDATE ${athleteDb.actualTableName} SET raceno_temp = CAST(raceno AS TEXT)');
+          // Copy the data from the old column to the new column
+          await customStatement(
+              'UPDATE ${athleteDb.actualTableName} SET raceno_temp = CAST(raceno AS TEXT)');
 
-            // Drop the old column
-            await customStatement('ALTER TABLE ${athleteDb.actualTableName} DROP COLUMN raceno');
+          // Drop the old column
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} DROP COLUMN raceno');
 
-            // Rename the new column to match the original column name
-            await customStatement('ALTER TABLE ${athleteDb.actualTableName} RENAME COLUMN raceno_temp TO raceno');
-          }
+          // Rename the new column to match the original column name
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} RENAME COLUMN raceno_temp TO raceno');
+        }
 
-        if(from < 6) {
+        if (from < 6) {
           try {
             // Add a temporary column with the new type
             //await customStatement('ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN disRaceNo TEXT');}
-            await customStatement('ALTER TABLE ${athleteDb
-                .actualTableName} ADD COLUMN dis_race_no TEXT');
-          } catch(e) {
-
-          }
-          }
+            await customStatement(
+                'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN dis_race_no TEXT');
+          } catch (e) {}
+        }
+        if (from < 7) {
+          await customStatement('DELETE FROM ${athleteDb.actualTableName}');
+        }
       },
     );
   }
@@ -87,7 +92,7 @@ class DatabaseHandler {
     final followedAthletes = await getAthletes('', true).first;
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     print(' mytest');
-    
+
     await removeAthletesByEvent(eventId);
 
     List<AthleteDbCompanion> list = [];
@@ -107,20 +112,20 @@ class DatabaseHandler {
           disRaceNo: Value(entrant.disRaceNo),
           canFollow: entrant.canFollow,
           searchTag:
-          '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
-      detailsList.addAll(await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id));
+              '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+      detailsList.addAll(
+          await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id));
     }
     //print(1);
-      await Future(() async {
-        await _db.batch((batch) {
-          batch.insertAll(_db.athleteDb, list);
-          batch.insertAll(_db.athleteExtraDetailsDb, detailsList);
-        });
+    await Future(() async {
+      await _db.batch((batch) {
+        batch.insertAll(_db.athleteDb, list);
+        batch.insertAll(_db.athleteExtraDetailsDb, detailsList);
       });
-      stopwatch.stop();
-      
-      //print('Function Execution Time save athletes : ${stopwatch.elapsed}');
-      
+    });
+    stopwatch.stop();
+
+    //print('Function Execution Time save athletes : ${stopwatch.elapsed}');
 
     if (followedAthletes.isNotEmpty) {
       for (AppAthleteDb athlete in followedAthletes) {
@@ -151,8 +156,9 @@ class DatabaseHandler {
         disRaceNo: Value(entrant.disRaceNo),
         canFollow: entrant.canFollow,
         searchTag:
-        '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
-    _db.athleteExtraDetailsDb.insertAll((await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id)));
+            '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
+    _db.athleteExtraDetailsDb.insertAll(
+        (await insertAthleteDetails(entrant.athleteDetails ?? [], entrant.id)));
     stopwatch.stop();
     return 1;
   }
@@ -181,7 +187,8 @@ class DatabaseHandler {
   }
 
   static Stream<List<AppAthleteDb>> getAthletes(
-      String searchValue, bool isFollowed, {int? offset, int? limit}) async* {
+      String searchValue, bool isFollowed,
+      {int? offset, int? limit}) async* {
     searchValue = searchValue.toLowerCase();
     Stopwatch stopWatch = Stopwatch();
     stopWatch.start();
@@ -203,7 +210,7 @@ class DatabaseHandler {
       query.where((tbl) => tbl.isFollowed.equals(isFollowed));
     }
 
-    if(limit != null) {
+    if (limit != null) {
       query.limit(limit, offset: offset);
     }
 
@@ -211,7 +218,8 @@ class DatabaseHandler {
   }
 
   static Future<List<AppAthleteDb>> getAthletesOnce(
-      String searchValue, bool isFollowed, {int? offset, int? limit}) async {
+      String searchValue, bool isFollowed,
+      {int? offset, int? limit}) async {
     searchValue = searchValue.toLowerCase();
     Stopwatch stopWatch = Stopwatch();
     stopWatch.start();
@@ -233,7 +241,7 @@ class DatabaseHandler {
       query.where((tbl) => tbl.isFollowed.equals(isFollowed));
     }
 
-    if(limit != null) {
+    if (limit != null) {
       query.limit(limit, offset: offset);
     }
 
@@ -254,10 +262,10 @@ class DatabaseHandler {
     final eventId = Preferences.getInt(AppKeys.eventId, 0);
     try {
       return await (_db.athleteDb.select()
-        ..where((tbl) => tbl.eventId.equals(eventId))
-        ..where((tbl) => tbl.athleteId.equals(athleteId)))
+            ..where((tbl) => tbl.eventId.equals(eventId))
+            ..where((tbl) => tbl.athleteId.equals(athleteId)))
           .getSingleOrNull();
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -287,7 +295,9 @@ class DatabaseHandler {
 
   static Future<int> removeAthlete(String id) async {
     removeAthleteDetails(id);
-    return await (_db.delete(_db.athleteDb)..where((tbl) => tbl.athleteId.equals(id))).go();
+    return await (_db.delete(_db.athleteDb)
+          ..where((tbl) => tbl.athleteId.equals(id)))
+        .go();
   }
 
   static Future<int> removeAthletesByEvent(int eventId) async {
@@ -305,19 +315,22 @@ class DatabaseHandler {
 
   static Future<int> removeAthleteDetails(String id) async {
     return await (_db.delete(_db.athleteExtraDetailsDb)
-      ..where((tbl) => tbl.athleteId.equals(id)))
+          ..where((tbl) => tbl.athleteId.equals(id)))
         .go();
   }
 
   static Future<int> insertChatMessage(ChatMessageM message) {
     return _db.into(_db.chatMessageDb).insert(ChatMessageDbCompanion.insert(
-        role: message.role!, content: message.content!, eventId: Value(Preferences.getInt(AppKeys.eventId, 0).toString())));
+        role: message.role!,
+        content: message.content!,
+        eventId: Value(Preferences.getInt(AppKeys.eventId, 0).toString())));
   }
 
   static Future<List<ChatMessageM>> getAllChatMessages() async {
     var eventId = Preferences.getInt(AppKeys.eventId, 0).toString();
     final messages = await (_db.chatMessageDb.select()
-      ..where((tbl) => tbl.eventId.equals(eventId))).get();
+          ..where((tbl) => tbl.eventId.equals(eventId)))
+        .get();
     return messages
         .map((message) => ChatMessageM.fromJson(message.toJson()))
         .toList();

@@ -33,18 +33,21 @@ class AthleteTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.all(8),
-      /*leading: entrant.profileImage == '' ? null : Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 0, 0),
+      leading: entrant.profileImage == '' || onFollow != null ? null : Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 16.w,
-              child: Image.network(entrant.profileImage),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(2),
+              child: SizedBox(
+                width: 14.w,
+                child: Image.network(entrant.profileImage, fit: BoxFit.cover,),
+              ),
             ),
           ],
         ),
-      ),*/
+      ),
       title: Row(
         children: [
           Expanded(

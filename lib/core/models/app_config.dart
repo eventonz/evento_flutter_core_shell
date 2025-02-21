@@ -111,16 +111,138 @@ class AthleteDetails {
 
 class Home {
   String? image;
+  Shortcuts? shortcuts;
 
-  Home({this.image});
+  Home({this.image, this.shortcuts});
 
   Home.fromJson(Map<String, dynamic> json) {
     image = json['image'];
+    shortcuts = json['shortcuts'] == null ? null : Shortcuts.fromJson(json['shortcuts']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['image'] = image;
+    data['shortcuts'] = shortcuts?.toJson();
+    return data;
+  }
+}
+
+class Shortcuts {
+  List<SmallShortcut>? small;
+  List<LargeShortcut>? large;
+
+  Shortcuts({this.small});
+
+  Shortcuts.fromJson(Map<String, dynamic> json) {
+    small = (json['small'] as List?)?.map((e) => SmallShortcut.fromJson(e)).toList();
+    large = (json['large'] as List?)?.map((e) => LargeShortcut.fromJson(e)).toList();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['small'] = small?.map((e) => e.toJson());
+    data['large'] = large?.map((e) => e.toJson());
+    return data;
+  }
+}
+
+class SmallShortcut {
+  String? icon;
+  String? title;
+  String? subtitle;
+  String? action;
+  BackgroundGradient? backgroundGradient;
+  PageDetails? pageDetails;
+
+  SmallShortcut({this.icon, this.title, this.subtitle, this.action, this.backgroundGradient, this.pageDetails});
+
+  SmallShortcut.fromJson(Map<String, dynamic> json) {
+    icon = json['icon'];
+    title = json['title'];
+    subtitle = json['subtitle'];
+    action = json['action'];
+    backgroundGradient = json['backgroundGradient'] == null ? null : BackgroundGradient.fromJson(json['backgroundGradient']);
+    pageDetails = json['pageDetails'] == null ? null : PageDetails.fromJson(json['pageDetails']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['icon'] = icon;
+    data['title'] = title;
+    data['subtitle'] = subtitle;
+    data['action'] = action;
+    data['backgroundGradient'] = backgroundGradient?.toJson();
+    data['pageDetails'] = pageDetails?.toJson();
+    return data;
+  }
+}
+
+class LargeShortcut {
+  String? image;
+  String? action;
+  PageDetails? pageDetails;
+
+  LargeShortcut({this.image, this.action});
+
+  LargeShortcut.fromJson(Map<String, dynamic> json) {
+    image = json['image'];
+    action = json['action'];
+    pageDetails = json['pageDetails'] == null ? null : PageDetails.fromJson(json['pageDetails']);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['image'] = image;
+    data['action'] = action;
+    data['pageDetails'] = pageDetails?.toJson();
+    return data;
+  }
+}
+
+class PageDetails {
+  String? icon;
+  String? sourceId;
+  int? id;
+  String? type;
+  String? title;
+
+  PageDetails({this.icon, this.sourceId, this.id, this.type, this.title});
+
+  PageDetails.fromJson(Map<String, dynamic> json) {
+    icon = json['icon'];
+    sourceId = json['sourceId'];
+    id = json['id'];
+    type = json['type'];
+    title = json['title'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['icon'] = icon;
+    data['title'] = title;
+    data['id'] = id;
+    data['sourceId'] = sourceId;
+    data['type'] = type;
+    return data;
+  }
+}
+
+class BackgroundGradient {
+  String? startColor;
+  String? endColor;
+
+  BackgroundGradient({this.startColor, this.endColor});
+
+  BackgroundGradient.fromJson(Map<String, dynamic> json) {
+    startColor = json['startColor'];
+    endColor = json['endColor'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['startColor'] = startColor;
+    data['endColor'] = endColor;
     return data;
   }
 }

@@ -194,6 +194,8 @@ class _AndroidMapViewState extends State<AndroidMapView> {
     final ConfigReload reloadController = Get.find();
     final mapDataSnap = controller.mapDataSnap;
 
+    print('showStartIcon ${controller.showStartIcon}');
+
     onPointClick() {
       controller.pointAnnotationManager!.addOnPointAnnotationClickListener(AnnotationClickListener((annotation) {
         var point = controller.geoJson.features.where((element) => element.properties?['annotation'] == annotation.id).firstOrNull;
@@ -368,6 +370,7 @@ class _AndroidMapViewState extends State<AndroidMapView> {
 
         if (controller.showStartIcon[
         controller.routePathsCordinates.keys.toList()[x]] == true) {
+          print('startingpointa1');
           Widget widget = SvgPicture.asset(
               AppHelper.getSvg('startingpoint'), width: 27, height: 27);
 
@@ -376,8 +379,8 @@ class _AndroidMapViewState extends State<AndroidMapView> {
             controller.pointAnnotationManager!
                 .create(PointAnnotationOptions(
               geometry: Point(coordinates: Position(
-                  lineString.coordinates.first.latitude.toDouble(),
-                  lineString.coordinates.first.longitude.toDouble())),
+                  lineString.coordinates.first.longitude.toDouble(),
+                  lineString.coordinates.first.latitude.toDouble())),
               image: value,
             ));
           });
@@ -393,8 +396,8 @@ class _AndroidMapViewState extends State<AndroidMapView> {
             controller.pointAnnotationManager!
                 .create(PointAnnotationOptions(
               geometry: Point(coordinates: Position(
-                  lineString.coordinates.last.latitude.toDouble(),
-                  lineString.coordinates.last.longitude.toDouble())),
+                  lineString.coordinates.last.longitude.toDouble(),
+                  lineString.coordinates.last.latitude.toDouble())),
               image: value,
             ));
           });
@@ -543,6 +546,10 @@ class _AndroidMapViewState extends State<AndroidMapView> {
                                 enabled: true,
                                 pulsingEnabled: true
                             ));
+                        mapboxMap.compass.updateSettings(CompassSettings(
+                          marginTop: 60,
+                          marginRight: 16,
+                        ));
                         controller.mapboxMap = mapboxMap;
                         mapboxMap.annotations.createPolylineAnnotationManager()
                             .then((value) async {

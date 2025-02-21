@@ -11,17 +11,22 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final HomeController controller = Get.find();
-    return Obx(() => CachedNetworkImage(
-          imageUrl: controller.imagelink.value,
-          placeholder: (_, val) =>
-              const Center(child: CircularProgressIndicator.adaptive()),
-          errorWidget: (_, val, val2) => Center(
-              child: NoDataFoundLayout(
-            errorMessage: AppLocalizations.of(context)!.noImageFound,
-          )),
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-        ));
+    return Obx(() => Stack(
+      fit: StackFit.expand,
+      children: [
+        CachedNetworkImage(
+              imageUrl: controller.imagelink.value,
+              placeholder: (_, val) =>
+                  const Center(child: CircularProgressIndicator.adaptive()),
+              errorWidget: (_, val, val2) => Center(
+                  child: NoDataFoundLayout(
+                errorMessage: AppLocalizations.of(context)!.noImageFound,
+              )),
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
+      ],
+    ));
   }
 }
