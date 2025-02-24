@@ -148,7 +148,7 @@ class LandingController extends GetxController {
           transition: Transition.leftToRightWithFade,
         );
       } else {
-        print('EXCEPTION');
+        print('EXCEPTION $e');
         exception.value = true;
         update();
       }

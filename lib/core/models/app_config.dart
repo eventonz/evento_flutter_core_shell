@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 
@@ -117,7 +119,62 @@ class Home {
 
   Home.fromJson(Map<String, dynamic> json) {
     image = json['image'];
-    shortcuts = json['shortcuts'] == null ? null : Shortcuts.fromJson(json['shortcuts']);
+    shortcuts = Shortcuts.fromJson(({
+      "small": [
+        {
+          "icon": "shopping_bag",
+          "title": "Home",
+          "subtitle": "Go to homepage",
+          "action": "openPage",
+          "pagedetails":        {
+                "link_type": "web",
+                "icon": "shopping_bag",
+                "open_external": true,
+                "id": 1098,
+                "type": "link",
+                "link": {
+                    "url": "https://eventotracker.com/api/v3/modules/pages/redirect.cfm?page_id=1098"
+                },
+                "title": "Official ASICS Merchandise"
+            },
+ 
+        },
+        {
+          "icon": "terrain",
+          "backgroundGradient": {
+            "startColor": "#33B5E5",
+            "endColor": "#00D4FF"
+          },
+          "title": "Settings",
+          "subtitle": "Adjust your preferences",
+          "action": "openPage",
+          "pagedetails":{
+                "icon": "terrain",
+                "sourceId": "https://eventotracker.com/api/v3/api.cfm/maps/9203B04F-07E5-473C-A09C-09C1356C379E",
+                "id": 2054,
+                "type": "eventomap",
+                "title": "Maps"
+            }
+        },
+        {
+          "icon": "icon-profile",
+          "title": "Find Athletes",
+          "subtitle": "A complete list found here",
+          "action": "openAthletes"
+        }
+      ],
+      "large": [
+        {
+          "image": "https://picsum.photos/300/200",
+          "action": "openAthletes"
+        },
+        {
+          "image": "https://picsum.photos/300/200",
+          "action": "openResults"
+        }
+      ]
+    }));
+    //shortcuts = json['shortcuts'] == null ? null : Shortcuts.fromJson(json['shortcuts']);
   }
 
   Map<String, dynamic> toJson() {
@@ -153,7 +210,7 @@ class SmallShortcut {
   String? subtitle;
   String? action;
   BackgroundGradient? backgroundGradient;
-  PageDetails? pageDetails;
+  Items? pageDetails;
 
   SmallShortcut({this.icon, this.title, this.subtitle, this.action, this.backgroundGradient, this.pageDetails});
 
@@ -163,7 +220,7 @@ class SmallShortcut {
     subtitle = json['subtitle'];
     action = json['action'];
     backgroundGradient = json['backgroundGradient'] == null ? null : BackgroundGradient.fromJson(json['backgroundGradient']);
-    pageDetails = json['pageDetails'] == null ? null : PageDetails.fromJson(json['pageDetails']);
+    pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
   Map<String, dynamic> toJson() {
@@ -181,14 +238,14 @@ class SmallShortcut {
 class LargeShortcut {
   String? image;
   String? action;
-  PageDetails? pageDetails;
+  Items? pageDetails;
 
   LargeShortcut({this.image, this.action});
 
   LargeShortcut.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     action = json['action'];
-    pageDetails = json['pageDetails'] == null ? null : PageDetails.fromJson(json['pageDetails']);
+    pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
   Map<String, dynamic> toJson() {
