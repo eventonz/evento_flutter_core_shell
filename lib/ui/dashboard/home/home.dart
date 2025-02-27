@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                                           end: Alignment.bottomRight,
                                           colors: [
                                             AppHelper.hexToColor(shortcut.backgroundGradient!.startColor),
-                                            AppHelper.hexToColor(shortcut.backgroundGradient!.endColor')
+                                            AppHelper.hexToColor(shortcut.backgroundGradient!.endColor)
                                           ],
                                         )
                                       : null, // Apply gradient only if it's defined
