@@ -58,8 +58,8 @@ class AthleteTile extends StatelessWidget {
                 children: [
                   AppText(
                     entrant.name,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                     maxLines: 2,
                   ),
                   SizedBox(

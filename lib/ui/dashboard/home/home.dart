@@ -16,6 +16,9 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final HomeController controller = Get.find();
     final AppConfig config = AppGlobals.appConfig!;
+
+   
+
     return Obx(() => Stack(
       fit: StackFit.expand,
       children: [
@@ -69,10 +72,22 @@ class HomeScreen extends StatelessWidget {
                             width: 30,
                             height: 30,
                             padding: const EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).primaryColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
+                             decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: shortcut.backgroundGradient == null 
+                                      ? Theme.of(context).primaryColor 
+                                      : null, // Apply color only if there's no gradient
+                                  gradient: shortcut.backgroundGradient != null
+                                      ? LinearGradient(
+                                          begin: Alignment.topLeft,
+                                          end: Alignment.bottomRight,
+                                          colors: [
+                                            AppHelper.hexToColor(shortcut.backgroundGradient!.startColor),
+                                            AppHelper.hexToColor(shortcut.backgroundGradient!.endColor')
+                                          ],
+                                        )
+                                      : null, // Apply gradient only if it's defined
+                                ),
                               child: SvgPicture.asset(AppHelper.getSvg(shortcut.icon!), color: Colors.white,)),
                           const SizedBox(height: 8),
                           Text('${shortcut.title}', style: TextStyle(

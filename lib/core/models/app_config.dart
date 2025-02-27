@@ -142,8 +142,8 @@ class Home {
         {
           "icon": "terrain",
           "backgroundGradient": {
-            "startColor": "#33B5E5",
-            "endColor": "#00D4FF"
+            "startColor": "0xFF000000",
+            "endColor": "0xFFffffff"
           },
           "title": "Settings",
           "subtitle": "Adjust your preferences",
@@ -157,7 +157,7 @@ class Home {
             }
         },
         {
-          "icon": "icon-profile",
+          "icon": "terrain",
           "title": "Find Athletes",
           "subtitle": "A complete list found here",
           "action": "openAthletes"
@@ -165,15 +165,17 @@ class Home {
       ],
       "large": [
         {
-          "image": "https://picsum.photos/300/200",
+          "image": "https://i.ytimg.com/vi/P33IQ0KhnY0/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB",
           "action": "openAthletes"
         },
         {
-          "image": "https://picsum.photos/300/200",
+          "image": "https://i.ytimg.com/vi/Td6phSpGzlI/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB",
           "action": "openResults"
         }
       ]
     }));
+
+
     //shortcuts = json['shortcuts'] == null ? null : Shortcuts.fromJson(json['shortcuts']);
   }
 
