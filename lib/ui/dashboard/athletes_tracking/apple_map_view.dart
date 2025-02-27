@@ -148,6 +148,8 @@ class _AppleMapViewState extends State<AppleMapView> {
           return Stack(
             children: [
               AppleMap(
+                myLocationButtonEnabled: true,
+                myLocationEnabled: true,
                 mapType: controller.mapType.value,
                   initialCameraPosition: CameraPosition(
                       target: LatLng(
@@ -180,8 +182,8 @@ class _AppleMapViewState extends State<AppleMapView> {
                 padding: EdgeInsets.only(top: 68, right: 8),
               ),
               Positioned(
-                top: 16,
-                right: 16,
+                top: 40,
+                right: 11,
                 child: SafeArea(
                   child: GestureDetector(
                     onTap: () {
