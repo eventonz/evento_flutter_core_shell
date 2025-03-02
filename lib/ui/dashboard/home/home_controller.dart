@@ -19,11 +19,13 @@ class HomeController extends GetxController {
     imagelink.value = AppGlobals.appConfig?.home?.image ?? '';
   }
 
-  void openShortcut(String action, Items? page) {
+  void openShortcut(String action, int? pageId) {
     print(action);
 
     if(action == 'openPage') {
+
       final controller = Get.put(MoreController());
+      var page = AppGlobals.appConfig?.menu?.items?.where((item) => item.id == pageId).firstOrNull;
       controller.decideNextView(page!);
     }
 

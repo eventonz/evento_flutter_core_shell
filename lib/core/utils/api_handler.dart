@@ -31,6 +31,8 @@ class ApiHandler {
         ),
         data: body,
       ).timeout(const Duration(seconds: 5));
+      print('${_baseUrl + midpathApi + endPoint} ${response.data}');
+
       return ApiData(
           data: response.data,
           statusCode: response.statusCode,
@@ -41,9 +43,12 @@ class ApiHandler {
         'data': body,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('${baseUrl ?? endPoint} STATUS CODE: ${e.response?.statusCode}');
       FirebaseCrashlytics.instance
           .recordError(e, e.stackTrace, reason: e.message);
       debugPrint(e.toString());
+      print('${_baseUrl+midpathApi+endPoint} ${e.response?.data}');
+
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,
@@ -76,6 +81,8 @@ class ApiHandler {
         'data': body,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('${baseUrl ?? endPoint} STATUS CODE: ${e.response?.statusCode}');
+      print('${_baseUrl+midpathApi+endPoint} ${e.response?.data}');
       FirebaseCrashlytics.instance
           .recordError(e, e.stackTrace, reason: e.message);
       debugPrint(e.toString());
@@ -100,11 +107,13 @@ class ApiHandler {
           statusCode: response.statusCode,
           statusMessage: response.statusMessage);
     } on DioException catch (e) {
+      debugPrint('$baseUrl STATUS CODE: ${e.response?.statusCode}');
       FirebaseCrashlytics.instance.recordError(e, e.stackTrace, reason: {
         'url': baseUrl,
         'data': e,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('$baseUrl STATUS CODE: ${e.response?.statusCode}');
       FirebaseCrashlytics.instance
           .recordError(e, e.stackTrace, reason: e.message);
       debugPrint(e.toString());
@@ -137,6 +146,7 @@ class ApiHandler {
         'data': e,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('$baseUrl STATUS CODE: ${e.response?.statusCode}');
       FirebaseCrashlytics.instance
           .recordError(e, e.stackTrace, reason: e.message);
       debugPrint(e.toString());
@@ -165,6 +175,8 @@ class ApiHandler {
                 ),
           )
           .timeout(apiTimeout ?? const Duration(seconds: 30));
+      print('${url} ${response.data}');
+
       return ApiData(
           data: response.data,
           statusCode: response.statusCode,
@@ -174,7 +186,9 @@ class ApiHandler {
         'url': url,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('$url STATUS CODE: ${e.response?.statusCode}');
       debugPrint(e.toString());
+      print('$url ${e.response?.data}');
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,
@@ -198,15 +212,18 @@ class ApiHandler {
           headers: header ?? {'content-Type': 'application/json'},
         ),
       );
+      print('${_baseUrl + midpathApi + endPoint + params} ${response.data}');
       return ApiData(
           data: response.data,
           statusCode: response.statusCode,
           statusMessage: response.statusMessage);
     } on DioException catch (e) {
+      debugPrint('$endPoint STATUS CODE: ${e.response?.statusCode}');
       FirebaseCrashlytics.instance.recordError(e, e.stackTrace, reason: {
         'url': _baseUrl + midpathApi + endPoint + params,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      print('${_baseUrl+midpathApi+endPoint+params} ${e.response?.data}');
       debugPrint(e.toString());
       return ApiData(
           data: e.response?.data ?? {},
@@ -238,6 +255,7 @@ class ApiHandler {
         'data': body,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('$baseUrl STATUS CODE: ${e.response?.statusCode}');
       debugPrint(e.toString());
       return ApiData(
           data: e.response?.data ?? {},
@@ -272,6 +290,7 @@ class ApiHandler {
         'url': _baseUrl + midpathApi + endPoint + params,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+      debugPrint('$baseUrl STATUS CODE: ${e.response?.statusCode}');
       debugPrint(e.toString());
       return ApiData(
           data: e.response?.data ?? {},

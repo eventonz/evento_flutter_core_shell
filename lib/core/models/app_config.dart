@@ -209,20 +209,22 @@ class Shortcuts {
 class SmallShortcut {
   String? icon;
   String? title;
+  int? pageid;
   String? subtitle;
   String? action;
   BackgroundGradient? backgroundGradient;
-  Items? pageDetails;
+  //Items? pageDetails;
 
-  SmallShortcut({this.icon, this.title, this.subtitle, this.action, this.backgroundGradient, this.pageDetails});
+  SmallShortcut({this.icon, this.title, this.subtitle, this.action, this.backgroundGradient});
 
   SmallShortcut.fromJson(Map<String, dynamic> json) {
     icon = json['icon'];
     title = json['title'];
     subtitle = json['subtitle'];
     action = json['action'];
+    pageid = json['pageid'];
     backgroundGradient = json['backgroundGradient'] == null ? null : BackgroundGradient.fromJson(json['backgroundGradient']);
-    pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
+    //pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
   Map<String, dynamic> toJson() {
@@ -232,7 +234,7 @@ class SmallShortcut {
     data['subtitle'] = subtitle;
     data['action'] = action;
     data['backgroundGradient'] = backgroundGradient?.toJson();
-    data['pageDetails'] = pageDetails?.toJson();
+    //data['pageDetails'] = pageDetails?.toJson();
     return data;
   }
 }
@@ -240,21 +242,24 @@ class SmallShortcut {
 class LargeShortcut {
   String? image;
   String? action;
-  Items? pageDetails;
+  int? pageid;
+  //Items? pageDetails;
 
-  LargeShortcut({this.image, this.action});
+  LargeShortcut({this.image, this.action, this.pageid});
 
   LargeShortcut.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     action = json['action'];
-    pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
+    pageid = json['pageid'];
+    //pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['image'] = image;
     data['action'] = action;
-    data['pageDetails'] = pageDetails?.toJson();
+    data['pageid'] = pageid;
+    //data['pageDetails'] = pageDetails?.toJson();
     return data;
   }
 }

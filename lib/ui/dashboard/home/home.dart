@@ -50,7 +50,7 @@ class HomeScreen extends StatelessWidget {
 
                   return GestureDetector(
                     onTap: () {
-                      controller.openShortcut(shortcut.action!, shortcut.pageDetails);
+                      controller.openShortcut(shortcut.action!, shortcut.pageid);
                     },
                     child: Container(
                       width: Get.width*0.39,
@@ -104,6 +104,7 @@ class HomeScreen extends StatelessWidget {
                 }, padding: EdgeInsets.zero, scrollDirection: Axis.horizontal, itemCount: config.home?.shortcuts?.small?.length ?? 0, shrinkWrap: true),
               ),
               const SizedBox(height: 10),
+              if( config.home?.shortcuts?.large?.isNotEmpty ?? true)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: SizedBox(
@@ -112,7 +113,7 @@ class HomeScreen extends StatelessWidget {
                     var shortcut = config.home!.shortcuts!.large![index];
                     return GestureDetector(
                       onTap: () {
-                        controller.openShortcut(shortcut.action!, shortcut.pageDetails);
+                        controller.openShortcut(shortcut.action!, shortcut.pageid);
                       },
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 10),
