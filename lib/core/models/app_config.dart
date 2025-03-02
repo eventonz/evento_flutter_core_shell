@@ -126,17 +126,7 @@ class Home {
           "title": "Home",
           "subtitle": "Go to homepage",
           "action": "openPage",
-          "pagedetails":        {
-                "link_type": "web",
-                "icon": "shopping_bag",
-                "open_external": true,
-                "id": 1098,
-                "type": "link",
-                "link": {
-                    "url": "https://eventotracker.com/api/v3/modules/pages/redirect.cfm?page_id=1098"
-                },
-                "title": "Official ASICS Merchandise"
-            },
+          "pageid":1098
  
         },
         {
@@ -148,13 +138,7 @@ class Home {
           "title": "Settings",
           "subtitle": "Adjust your preferences",
           "action": "openPage",
-          "pagedetails":{
-                "icon": "terrain",
-                "sourceId": "https://eventotracker.com/api/v3/api.cfm/maps/9203B04F-07E5-473C-A09C-09C1356C379E",
-                "id": 2054,
-                "type": "eventomap",
-                "title": "Maps"
-            }
+          "pageid":2054
         },
         {
           "icon": "terrain",
