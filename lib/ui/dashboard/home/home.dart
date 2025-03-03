@@ -104,7 +104,7 @@ class HomeScreen extends StatelessWidget {
                 }, padding: EdgeInsets.zero, scrollDirection: Axis.horizontal, itemCount: config.home?.shortcuts?.small?.length ?? 0, shrinkWrap: true),
               ),
               const SizedBox(height: 10),
-              if( config.home?.shortcuts?.large?.isNotEmpty ?? true)
+              if( config.home?.shortcuts?.large?.isNotEmpty ?? false)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 10.0),
                 child: SizedBox(
