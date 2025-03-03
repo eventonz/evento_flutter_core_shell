@@ -37,7 +37,8 @@ class AppConfig {
         : null;
     home = json['home'] != null ? Home.fromJson(json['home']) : null;
     menu = json['menu'] != null ? Menu.fromJson(json['menu']) : null;
-    results = json['results'] != null ? Results.fromJson(json['results']) : null;
+    results =
+        json['results'] != null ? Results.fromJson(json['results']) : null;
     tracking =
         json['tracking'] != null ? Tracking.fromJson(json['tracking']) : null;
     athletes =
@@ -47,9 +48,12 @@ class AppConfig {
 
     theme = json['theme'] != null ? AppTheme.fromJson(json['theme']) : null;
 
-
-    miniPlayerConfig = json['miniplayer'] != null ? MiniPlayerConfig.fromJson(json['miniplayer'][0]) : null;
-    adverts = json['adverts'] != null ? (json['adverts'] as List).map((e) => Advert.fromJson(e)).toList() : [];
+    miniPlayerConfig = json['miniplayer'] != null
+        ? MiniPlayerConfig.fromJson(json['miniplayer'][0])
+        : null;
+    adverts = json['adverts'] != null
+        ? (json['adverts'] as List).map((e) => Advert.fromJson(e)).toList()
+        : [];
   }
 
   Map<String, dynamic> toJson() {
@@ -89,7 +93,6 @@ class AppConfig {
 
   @override
   int get hashCode => super.hashCode;
-
 }
 
 class AthleteDetails {
@@ -119,26 +122,29 @@ class Home {
 
   Home.fromJson(Map<String, dynamic> json) {
     image = json['image'];
-    shortcuts = Shortcuts.fromJson(({
+    shortcuts = json['shortcuts'] == null
+        ? null
+        : Shortcuts.fromJson(json['shortcuts']);
+    /* Example JSON structure for reference:
+    shortcuts = {
       "small": [
         {
           "icon": "shopping_bag",
           "title": "Home",
           "subtitle": "Go to homepage",
           "action": "openPage",
-          "pageid":1098
- 
+          "pageid":1512
         },
         {
-          "icon": "terrain",
+          "icon": "shopping_bag",
           "backgroundGradient": {
-            "startColor": "0xFF000000",
-            "endColor": "0xFFffffff"
+            "startColor": "#9bafd9",
+            "endColor": "#103783"
           },
           "title": "Settings",
           "subtitle": "Adjust your preferences",
           "action": "openPage",
-          "pageid":2054
+          "pageid":1511
         },
         {
           "icon": "terrain",
@@ -149,24 +155,25 @@ class Home {
       ],
       "large": [
         {
-          "image": "https://i.ytimg.com/vi/P33IQ0KhnY0/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB",
-          "action": "openAthletes"
+          "image": "https://i.ytimg.com/vi/P33IQ0KhnY0/hq720.jpg",
+          "action": "openPage",
+          "pageid": 2060
         },
         {
-          "image": "https://i.ytimg.com/vi/Td6phSpGzlI/hq720.jpg?sqp=-oaymwEnCNAFEJQDSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB",
-          "action": "openResults"
+          "image": "https://i.ytimg.com/vi/Td6phSpGzlI/hq720.jpg",
+          "action": "openAthletes"
         }
       ]
-    }));
-
-
-    //shortcuts = json['shortcuts'] == null ? null : Shortcuts.fromJson(json['shortcuts']);
+    }
+    */
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['image'] = image;
-    data['shortcuts'] = shortcuts?.toJson();
+    if (shortcuts != null) {
+      data['shortcuts'] = shortcuts!.toJson();
+    }
     return data;
   }
 }
@@ -178,8 +185,12 @@ class Shortcuts {
   Shortcuts({this.small});
 
   Shortcuts.fromJson(Map<String, dynamic> json) {
-    small = (json['small'] as List?)?.map((e) => SmallShortcut.fromJson(e)).toList();
-    large = (json['large'] as List?)?.map((e) => LargeShortcut.fromJson(e)).toList();
+    small = (json['small'] as List?)
+        ?.map((e) => SmallShortcut.fromJson(e))
+        .toList();
+    large = (json['large'] as List?)
+        ?.map((e) => LargeShortcut.fromJson(e))
+        .toList();
   }
 
   Map<String, dynamic> toJson() {
@@ -199,7 +210,12 @@ class SmallShortcut {
   BackgroundGradient? backgroundGradient;
   //Items? pageDetails;
 
-  SmallShortcut({this.icon, this.title, this.subtitle, this.action, this.backgroundGradient});
+  SmallShortcut(
+      {this.icon,
+      this.title,
+      this.subtitle,
+      this.action,
+      this.backgroundGradient});
 
   SmallShortcut.fromJson(Map<String, dynamic> json) {
     icon = json['icon'];
@@ -207,7 +223,9 @@ class SmallShortcut {
     subtitle = json['subtitle'];
     action = json['action'];
     pageid = json['pageid'];
-    backgroundGradient = json['backgroundGradient'] == null ? null : BackgroundGradient.fromJson(json['backgroundGradient']);
+    backgroundGradient = json['backgroundGradient'] == null
+        ? null
+        : BackgroundGradient.fromJson(json['backgroundGradient']);
     //pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
@@ -351,9 +369,7 @@ class Endpoint {
 
   @override
   int get hashCode => super.hashCode;
-
 }
-
 
 class Items {
   String? type;
@@ -405,7 +421,9 @@ class Items {
     sourceId = json['sourceId'];
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
     pages = json['pages'] != null ? Endpoint.fromJson(json['pages']) : null;
-    storySlider = json['storyslider'] != null ? Endpoint.fromJson(json['storyslider']) : null;
+    storySlider = json['storyslider'] != null
+        ? Endpoint.fromJson(json['storyslider'])
+        : null;
     schedule =
         json['schedule'] != null ? Endpoint.fromJson(json['schedule']) : null;
     carousel =
@@ -474,11 +492,21 @@ class Items {
   }
 
   @override
-  int get hashCode => type.hashCode ^ linkType.hashCode ^ title.hashCode ^
-  icon.hashCode ^ openExternal.hashCode ^ id.hashCode ^ sourceId.hashCode ^
-  storySlider.hashCode ^ link.hashCode ^ pages.hashCode ^ schedule.hashCode ^
-  carousel.hashCode ^ open.hashCode ^ actions.hashCode;
-
+  int get hashCode =>
+      type.hashCode ^
+      linkType.hashCode ^
+      title.hashCode ^
+      icon.hashCode ^
+      openExternal.hashCode ^
+      id.hashCode ^
+      sourceId.hashCode ^
+      storySlider.hashCode ^
+      link.hashCode ^
+      pages.hashCode ^
+      schedule.hashCode ^
+      carousel.hashCode ^
+      open.hashCode ^
+      actions.hashCode;
 }
 
 class Tracking {
@@ -565,9 +593,7 @@ class Paths {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Paths &&
-        url == other.url &&
-        name == other.name;
+    return other is Paths && url == other.url && name == other.name;
   }
 
   @override
@@ -587,8 +613,8 @@ class Results {
 
   Map<String, dynamic> toJson() {
     return {
-      'show_results' : showResults,
-      'config' : config?.toJson(),
+      'show_results': showResults,
+      'config': config?.toJson(),
     };
   }
 
@@ -602,10 +628,7 @@ class Results {
   }
 
   @override
-  int get hashCode =>
-      showResults.hashCode ^
-      config.hashCode;
-
+  int get hashCode => showResults.hashCode ^ config.hashCode;
 }
 
 class Athletes {
@@ -663,13 +686,14 @@ class Athletes {
   }
 
   @override
-  int get hashCode => edition.hashCode ^
-  text.hashCode ^
-  lastUpdated.hashCode ^
-  follow.hashCode ^
-  url.hashCode ^
-  label.hashCode ^
-  showAthletes.hashCode;
+  int get hashCode =>
+      edition.hashCode ^
+      text.hashCode ^
+      lastUpdated.hashCode ^
+      follow.hashCode ^
+      url.hashCode ^
+      label.hashCode ^
+      showAthletes.hashCode;
 }
 
 class Settings {
