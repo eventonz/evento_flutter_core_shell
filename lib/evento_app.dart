@@ -15,8 +15,8 @@ import 'package:responsive_sizer/responsive_sizer.dart';
 
 import 'l10n/app_localizations.dart';
 
-
-final StreamController<bool> notificationHandlerController = StreamController<bool>.broadcast();
+final StreamController<bool> notificationHandlerController =
+    StreamController<bool>.broadcast();
 
 bool canRunNotificationHandler = false;
 
@@ -51,7 +51,8 @@ class EventoApp extends StatelessWidget {
               darkTheme: AppStyles.dark,
               initialRoute: Routes.landing,
               getPages: PageRouter.pages,
-              supportedLocales: controller.supportedLanguages.map((s) => Locale(s)).toList(),
+              supportedLocales:
+                  controller.supportedLanguages.map((s) => Locale(s)).toList(),
               localizationsDelegates: const [
                 AppLocalizations.delegate,
                 GlobalMaterialLocalizations.delegate,

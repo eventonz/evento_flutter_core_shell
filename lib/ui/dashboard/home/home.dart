@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
+import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
@@ -75,7 +76,10 @@ class HomeScreen extends StatelessWidget {
                              decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(10),
                                   color: shortcut.backgroundGradient == null 
-                                      ? Theme.of(context).primaryColor 
+                                      ? (Theme.of(context).brightness ==
+                                        Brightness.light
+                                        ? AppColors.accentDark
+                                        : AppColors.accentLight)
                                       : null, // Apply color only if there's no gradient
                                   gradient: shortcut.backgroundGradient != null
                                       ? LinearGradient(
