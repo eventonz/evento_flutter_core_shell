@@ -1,5 +1,6 @@
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/utils/app_global.dart';
+import 'package:evento_core/core/utils/logger.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:get/get.dart';
@@ -20,29 +21,35 @@ class HomeController extends GetxController {
   }
 
   void openShortcut(String action, int? pageId) {
-    print(action);
+    Logger.d('Opening shortcut with action: $action');
 
-    if(action == 'openPage') {
-
+    if (action == 'openPage') {
       final controller = Get.put(MoreController());
-      var page = AppGlobals.appConfig?.menu?.items?.where((item) => item.id == pageId).firstOrNull;
+      var page = AppGlobals.appConfig?.menu?.items
+          ?.where((item) => item.id == pageId)
+          .firstOrNull;
       controller.decideNextView(page!);
     }
 
-    if(action == 'openTracking') {
+    if (action == 'openTracking') {
       final dashboard = Get.find<DashboardController>();
-      dashboard.selectMenu(dashboard.menus.where((e) => e.label == 'track').first);
+      dashboard
+          .selectMenu(dashboard.menus.where((e) => e.label == 'track').first);
     }
 
-    if(action == 'openAthletes') {
+    if (action == 'openAthletes') {
       final dashboard = Get.find<DashboardController>();
       final entrantsList = AppGlobals.appConfig?.athletes;
-      dashboard.selectMenu(dashboard.menus.where((e) => e.label == AppHelper.setAthleteMenuText(entrantsList?.text)).first);
+      dashboard.selectMenu(dashboard.menus
+          .where((e) =>
+              e.label == AppHelper.setAthleteMenuText(entrantsList?.text))
+          .first);
     }
 
-    if(action == 'openResults') {
+    if (action == 'openResults') {
       final dashboard = Get.find<DashboardController>();
-      dashboard.selectMenu(dashboard.menus.where((e) => e.label == 'results').first);
+      dashboard
+          .selectMenu(dashboard.menus.where((e) => e.label == 'results').first);
     }
   }
 }
