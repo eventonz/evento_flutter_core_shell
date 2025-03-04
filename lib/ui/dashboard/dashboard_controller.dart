@@ -292,15 +292,17 @@ class DashboardController extends GetxController {
     if (!showAthletes) {
       return;
     }
+    
     try {
-      final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
-      final athletesM = AthletesM.fromJson(res.data);
-      await DatabaseHandler.insertAthletes(athletesM.entrants!);
+      // final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
+      // final athletesM = AthletesM.fromJson(res.data);
+      // await DatabaseHandler.insertAthletes(athletesM.entrants!);
       await Future.delayed(const Duration(milliseconds: 500));
     } catch (e) {
       debugPrint(e.toString());
     }
   }
+  
   
 }
 

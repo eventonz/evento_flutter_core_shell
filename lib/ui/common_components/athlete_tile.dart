@@ -27,27 +27,31 @@ class AthleteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final controller = Get.put(AthletesController());
 
     return ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.all(8),
-      leading: entrant.profileImage == '' || onFollow != null ? null : Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(2),
-              child: SizedBox(
-                width: 14.w,
-                child: Image.network(entrant.profileImage, fit: BoxFit.cover,),
+      leading: entrant.profileImage == '' || onFollow != null
+          ? null
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 0, 0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(2),
+                    child: SizedBox(
+                      width: 14.w,
+                      child: Image.network(
+                        entrant.profileImage,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
       title: Row(
         children: [
           Expanded(
@@ -58,8 +62,8 @@ class AthleteTile extends StatelessWidget {
                 children: [
                   AppText(
                     entrant.name,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                     maxLines: 2,
                   ),
                   SizedBox(
@@ -69,8 +73,8 @@ class AthleteTile extends StatelessWidget {
                     entrant.info,
                     maxLines: 2,
                     color: Theme.of(context).brightness == Brightness.light
-                          ? AppColors.greyLight : AppColors.grey,
-
+                        ? AppColors.greyLight
+                        : AppColors.grey,
                     fontSize: 14,
                   ),
                 ],
@@ -89,14 +93,16 @@ class AthleteTile extends StatelessWidget {
                       vertical: .5.w,
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(5),
                         color: (Theme.of(context).brightness == Brightness.light
-                            ? AppColors.greyLight : AppColors.greyLight).withOpacity(0.3)
-                    ),
-                    child: Text(raceNo(), style: const TextStyle(
-                      fontSize: 12,
-                    ), textAlign: TextAlign.center)
-                ),
+                                ? AppColors.greyLight
+                                : AppColors.greyLight)
+                            .withOpacity(0.3)),
+                    child: Text(raceNo(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                        textAlign: TextAlign.center)),
                 SizedBox(
                   width: 48,
                   child: Row(
@@ -104,18 +110,23 @@ class AthleteTile extends StatelessWidget {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          if(onFollow != null) {
+                          if (onFollow != null) {
                             onFollow!();
                           } else {
                             onTap();
                           }
                         },
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.h),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 1.5.w, vertical: 1.h),
                           child: Icon(
-                            onFollow == null ? CupertinoIcons.arrow_right_circle : (entrant.isFollowed ? CupertinoIcons.checkmark_alt_circle_fill : CupertinoIcons.add_circled),
-                              //color: AppColors.primary,
-                              size: 6.5.w,
+                            onFollow == null
+                                ? CupertinoIcons.arrow_right_circle
+                                : (entrant.isFollowed
+                                    ? CupertinoIcons.checkmark_alt_circle_fill
+                                    : CupertinoIcons.add_circled),
+                            //color: AppColors.primary,
+                            size: 6.5.w,
                           ),
                         ),
                       ),

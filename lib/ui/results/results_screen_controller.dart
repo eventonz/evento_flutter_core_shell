@@ -46,15 +46,14 @@ class ResultsScreenController extends GetxController {
     items = (Get.arguments?[AppKeys.moreItem] as Items?);
     items ??= AppGlobals.appConfig?.results?.config;
 
-    print(items?.toJson());
+ 
 
     raceId = items!.sportSplitsRaceId ?? 0;
     getEvent();
     scrollController.addListener(() {
-      print(scrollController.position.maxScrollExtent);
-      print(scrollController.offset);
+   
       if(scrollController.position.maxScrollExtent-scrollController.offset <=200 && !loadingMore.value) {
-        print('scrolled');
+    
         loadingMore.value = true;
         page++;
         update();
@@ -139,7 +138,7 @@ class ResultsScreenController extends GetxController {
 
     update();
 
-    print(result.data);
+ 
   }
 
   filterResults() async {
@@ -155,7 +154,6 @@ class ResultsScreenController extends GetxController {
     if(search != '') {
       url = 'https://api.sportsplits.com/v2/races/$raceId/results/individuals?search=$search';
     }
-    print(url);
     if(category != -1) {
       url += '';
     }
@@ -167,7 +165,7 @@ class ResultsScreenController extends GetxController {
     loadingResults.value = false;
     loadingMore.value = false;
 
-    print(result.data);
+   
 
     if(page == 1) {
       this.eventResult = eventResult;
