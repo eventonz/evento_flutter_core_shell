@@ -12,6 +12,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:evento_core/core/utils/logger.dart';
 
 import 'l10n/app_localizations.dart';
 
@@ -34,7 +35,7 @@ class EventoApp extends StatelessWidget {
     notificationHandlerController.stream.listen((value) {
       if (value) {
         notificationHandlerController.close();
-        print('canRunNotificationHandler $value');
+        Logger.i('canRunNotificationHandler $value');
         canRunNotificationHandler = true;
       }
     });

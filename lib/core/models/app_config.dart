@@ -1,8 +1,8 @@
 import 'dart:convert';
-
+import 'package:evento_core/core/utils/logger.dart';
 import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/utils/helpers.dart';
-
+import 'package:evento_core/core/utils/logger.dart';
 import 'advert.dart';
 
 class AppConfig {
@@ -29,9 +29,7 @@ class AppConfig {
       this.theme});
 
   AppConfig.fromJson(Map<String, dynamic> json) {
-    print('config');
-    print(json);
-    print(json['results']);
+    Logger.i('config');
     athleteDetails = json['athlete_details'] != null
         ? AthleteDetails.fromJson(json['athlete_details'])
         : null;
@@ -575,7 +573,7 @@ class Paths {
   Paths({this.url, this.name, this.color});
 
   Paths.fromJson(Map<String, dynamic> json) {
-    print(json);
+   
     url = json['geojson'] ?? json['url'];
     name = json['name'];
     color = json['path_color'];

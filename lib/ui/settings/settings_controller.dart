@@ -161,9 +161,9 @@ class SettingsController extends GetxController {
       final athleteLabel = AppHelper.setAthleteMenuText(entrantsList.text);
       athletesloading.value = DataSnapShot.loading;
       ToastUtils.show('Updating $athleteLabel List');
-      final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
-      final athletesM = AthletesM.fromJson(res.data);
-      await DatabaseHandler.insertAthletes(athletesM.entrants!);
+      // final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
+      //final athletesM = AthletesM.fromJson(res.data);
+      // await DatabaseHandler.insertAthletes(athletesM.entrants!);
       await Future.delayed(const Duration(milliseconds: 500));
       athletesloading.value = DataSnapShot.loaded;
       ToastUtils.show('Refreshed $athleteLabel List');
