@@ -464,7 +464,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                       ? AppColors.darkgrey
                                       : AppColors.greyLighter)
                                   : null,
-                              height: 80, // Fixed height for all rows
+                              height: 70, // Fixed height for all rows
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: AppText(
@@ -572,7 +572,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                           : null,
                                       padding: const EdgeInsets.all(14),
                                       height:
-                                          80, // Same fixed height as first column
+                                        70, // Same fixed height as first column
                                       child: Row(
                                         children: [
                                           ...widgets,
