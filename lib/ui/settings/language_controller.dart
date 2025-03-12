@@ -50,7 +50,6 @@ class LanguageController extends GetxController {
     Get.updateLocale(locale.value);
 
     // Debugging
-    print('Set Locale to: ${locale.value}');
 
   }
 

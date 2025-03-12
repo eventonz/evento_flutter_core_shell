@@ -32,7 +32,7 @@ class AppOneSignalImpl implements AppOneSignal {
       Uri? initialLink = await appLinks.getInitialLink();
       if (initialLink != null) {
         // Handle the initial deep link
-        print(initialLink);
+       
       }
     } catch (e) {
       print('Error initializing deep link: $e');

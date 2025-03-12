@@ -206,7 +206,7 @@ class PointsOfInterestSection extends StatelessWidget {
 
         list.forEach((element) {
           if (!types.contains(element.properties?['type'] == 'custom' ? element.properties!['icon'] : element.properties?['type'])) {
-            print(element.properties);
+        
             types.add(element.properties?['type'] == 'custom' ? element.properties!['icon'] : element.properties?['type']);
             points.add(element);
           }

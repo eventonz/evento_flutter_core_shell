@@ -48,7 +48,7 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
         endPoint: url, body: {
           'action' : action,
     });
-    print(res.data);
+
   }
 
   @override

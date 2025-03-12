@@ -69,7 +69,7 @@ class EventsController extends GetxController {
   }
 
   scrollListener() {
-      print(scrollController.position.pixels);
+      
       if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
         loading.value = true;
         page +=1;

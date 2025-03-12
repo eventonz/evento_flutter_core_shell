@@ -14,7 +14,6 @@ class StorySlider {
     openUrl = json['open_url'];
     image = json['image'];
     video = json['video'];
-    print(video);
     type = json['type'];
   }
 

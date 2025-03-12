@@ -105,7 +105,7 @@ class ResultsScreen extends StatelessWidget {
                       onTap: () async {
                         controller.updateScrollController();
                         await showModalBottomSheet(context: context, elevation: 0, backgroundColor: Theme.of(context).bottomSheetTheme.backgroundColor, builder: (_) => BottomSheet(onClosing: () {
-                          print('closing');
+                          
                         }, builder: (_) {
                           return ClipRRect(
                             borderRadius: BorderRadius.only(
@@ -130,7 +130,7 @@ class ResultsScreen extends StatelessWidget {
                                               scrollController: FixedExtentScrollController(
                                                 initialItem: (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList().where((element) => element.enabled).toList().indexWhere((element) => element.id == controller.gender) ?? -1)+1,
                                               )..addListener(() {
-                                                print('scrolled');
+                                              
                                               }),
                                               onSelectedItemChanged: (val) {
                                                 controller.setGender(val);
@@ -343,16 +343,11 @@ class ResultsScreen extends StatelessWidget {
                     ));
                   }
 
-                  print('position');
+             
 
                   var athlete = controller.eventResult!.data![index];
 
-                  print('overallPos: ${athlete.overallPos}');
-                  print('netOverallPos: ${athlete.netOverallPos}');
-                  print('categoryPos: ${athlete.categoryPos}');
-                  print('netCategoryPos: ${athlete.netCategoryPos}');
-                  print('genderPos: ${athlete.genderPos}');
-                  print('netGenderPos: ${athlete.netGenderPos}');
+ 
 
                   return GestureDetector(
                     onTap: () {

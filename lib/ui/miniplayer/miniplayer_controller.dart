@@ -18,7 +18,6 @@ class MiniPlayerController extends GetxController {
   void onInit() {
     super.onInit();
     miniPlayerConfig = AppGlobals.appConfig!.miniPlayerConfig;
-    print(miniPlayerConfig!.ytUrl!);
     controller = YoutubePlayerController(
         initialVideoId: YoutubePlayer.convertUrlToId(miniPlayerConfig!.ytUrl!)!,
         flags: YoutubePlayerFlags(

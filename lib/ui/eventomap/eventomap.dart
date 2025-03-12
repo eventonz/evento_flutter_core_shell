@@ -158,7 +158,7 @@ class _EventoMapState extends State<EventoMap> {
         double minElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a < b ? a : b) ?? 0;
         double maxElevation = controller.trail.value?.elevationData.map((e) => e[1].toDouble()).reduce((a, b) => a > b ? a : b) ?? 0;
         double adjustedMaxElevation = maxElevation < (minElevation+250) ? (minElevation+250) : maxElevation; // Ensure maxElevation is at least 250
-        print('elevation $adjustedMaxElevation $maxElevation $minElevation');
+      
         double step = adjustedMaxElevation / 5;
 
         double top = 0;

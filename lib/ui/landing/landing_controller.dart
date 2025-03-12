@@ -73,7 +73,7 @@ class LandingController extends GetxController {
       late String url;
       final config = AppGlobals.appEventConfig;
       if (config.multiEventListId != null) {
-        print('config.multiEventListId ${config.multiEventListId}');
+      
         url = Preferences.getString(AppKeys.eventUrl, '');
         await getEvents(config);
       } else {
@@ -98,7 +98,7 @@ class LandingController extends GetxController {
         if(webUrl != '') {
           webViewController!.setJavaScriptMode(JavaScriptMode.unrestricted);
           webViewController!.setOnConsoleMessage((msg) {
-            print('msg: $msg');
+          
           });
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
@@ -118,7 +118,7 @@ class LandingController extends GetxController {
           return;
           webViewController!.setNavigationDelegate(NavigationDelegate(
             onPageFinished: (val) {
-              print('finished');
+       
               if(!done) {
                 done = true;
 
@@ -148,7 +148,7 @@ class LandingController extends GetxController {
           transition: Transition.leftToRightWithFade,
         );
       } else {
-        print('EXCEPTION');
+    
         exception.value = true;
         update();
       }
@@ -179,7 +179,7 @@ class LandingController extends GetxController {
         url: AppHelper.createUrl(
             config.multiEventListUrl!, config.multiEventListId!));
     AppGlobals.eventM = EventM.fromJson(res.data);
-    print(res.data);
+  
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {

@@ -218,7 +218,7 @@ class AthletesController extends GetxController {
   Future<void> insertAthleteA(AppAthleteDb athlete, bool isFollowed) async {
     var a = await DatabaseHandler.getSingleAthleteOnce(athlete.athleteId);
     if(a == null) {
-      print('here');
+     
       await DatabaseHandler.insertAthlete(Entrants(
         id: athlete.athleteId,
         disRaceNo: athlete.disRaceNo ?? '',
@@ -300,8 +300,7 @@ class AthletesController extends GetxController {
     //var data = await ApiHandler.genericGetHttp(url: entrantsList.url!);
 
     print(data.data);
-    print(entrantsList.url!);
-    print(entrantsList.url!);
+ 
     pagination = {
       "totalPages": data.data['pagination']['totalPages'],
       "currentPage": data.data['pagination']['currentPage'],
