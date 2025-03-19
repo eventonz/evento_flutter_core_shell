@@ -51,7 +51,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
         var raceId = AppGlobals.selEventId;
 
-        List<String> athletes = (await DatabaseHandler.getAthletesOnce('', true)).map((e) => e.raceno ?? '').toList();
+        List<String> athletes = (await DatabaseHandler.getAthletesOnce('', true)).map((e) => e.athleteId ?? '').toList();
 
 
         var data = await ApiHandler.patchHttp(endPoint: 'athletes/$raceId', body: {
@@ -59,13 +59,9 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
           'athletes' : athletes,
         });
 
-        print('athletesData ${data.data}');
-
-
         var list = (data.data['patchedathletes'] as List).map((e) => Entrants.fromJson(e)).toList();
 
-        print('oklist');
-        print(list.map((e) => e.toJson()));
+    
         
         await DatabaseHandler.removeAllAthletes();
 
