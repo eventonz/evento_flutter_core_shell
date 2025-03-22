@@ -11,8 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
-
+  uni_links: ^0.5.1
   cupertino_icons: ^1.0.2
   onesignal_flutter: ^5.2.5
   get: ^4.6.6
@@ -30,6 +29,7 @@ dependencies:
   path: ^1.9.0
   connectivity_plus: ^6.1.1
   syncfusion_flutter_pdfviewer: ^24.2.8
+  country_flags: ^2.2.0
   geojson:
     git:
       url: git@github.com:coding-master15/geojson.git
