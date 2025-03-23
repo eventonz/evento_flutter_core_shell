@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:country_flags/country_flags.dart';
 
 class AthleteTile extends StatelessWidget {
   const AthleteTile({
@@ -87,22 +88,51 @@ class AthleteTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                    width: 48,
-                    padding: EdgeInsets.symmetric(
-                      vertical: .5.w,
-                    ),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: (Theme.of(context).brightness == Brightness.light
-                                ? AppColors.greyLight
-                                : AppColors.greyLight)
-                            .withOpacity(0.3)),
-                    child: Text(raceNo(),
-                        style: const TextStyle(
-                          fontSize: 12,
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Demonstration flag - uncomment to test flag display
+                    // ClipRRect(
+                    //   borderRadius: BorderRadius.circular(4),
+                    //  child: CountryFlag.fromCountryCode(
+                    //     'nz',
+                     //    height: 20,
+                     //     width: 30,
+                    //   ),
+                     //),
+                    // const SizedBox(width: 8),
+                    if (entrant.country != null &&
+                        entrant.country.isNotEmpty) ...[
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: CountryFlag.fromCountryCode(
+                          entrant.country,
+                          height: 20,
+                          width: 30,
                         ),
-                        textAlign: TextAlign.center)),
+                      ),
+                      const SizedBox(width: 8),
+                    ],
+                    Container(
+                      width: 48,
+                      padding: EdgeInsets.symmetric(
+                        vertical: .5.w,
+                      ),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color:
+                              (Theme.of(context).brightness == Brightness.light
+                                      ? AppColors.greyLight
+                                      : AppColors.greyLight)
+                                  .withOpacity(0.3)),
+                      child: Text(raceNo(),
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                          textAlign: TextAlign.center),
+                    ),
+                  ],
+                ),
                 SizedBox(
                   width: 48,
                   child: Row(
@@ -125,7 +155,6 @@ class AthleteTile extends StatelessWidget {
                                 : (entrant.isFollowed
                                     ? CupertinoIcons.checkmark_alt_circle_fill
                                     : CupertinoIcons.add_circled),
-                            //color: AppColors.primary,
                             size: 6.5.w,
                           ),
                         ),

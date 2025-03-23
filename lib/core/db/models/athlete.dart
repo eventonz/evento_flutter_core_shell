@@ -17,4 +17,5 @@ class AthleteDb extends Table {
   TextColumn get info => text()();
   IntColumn get contestNo => integer()();
   TextColumn get searchTag => text()();
+  TextColumn get country => text().nullable()();
 }
