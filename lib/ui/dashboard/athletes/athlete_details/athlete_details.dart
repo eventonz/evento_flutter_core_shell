@@ -62,6 +62,23 @@ class AthleteDetailsScreen extends StatelessWidget {
           IconButton(
               onPressed: controller.getSplitDetails,
               icon: const Icon(Icons.refresh)),
+          if ((controller.selEntrant?.country != null &&
+                  controller.selEntrant!.country!.isNotEmpty) ||
+              (controller.selEntrantA?.country != null &&
+                  controller.selEntrantA!.country!.isNotEmpty)) ...[
+            const SizedBox(width: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: CountryFlag.fromCountryCode(
+                (controller.selEntrant?.country ??
+                        controller.selEntrantA?.country ??
+                        '')
+                    .toLowerCase(),
+                height: 20,
+                width: 30,
+              ),
+            ),
+          ],
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             child: AthleteRaceNo(
@@ -187,6 +204,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                               final details = data ??
                                   (controller.selEntrantA?.athleteDetails ?? [])
                                       .map((details) {
+                                    print(
+                                        'Processing athlete details: ${details.country}');
                                     return AppAthleteExtraDetailsDb(
                                         id: 0,
                                         athleteId: details.athleteNumber,
@@ -198,6 +217,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                               if (details.isEmpty) {
                                 return SizedBox(height: 2.h);
                               }
+                              print(
+                                  'Athlete Details - country: ${controller.selEntrant?.country ?? controller.selEntrantA?.country}');
                               return ListView.separated(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 16),
@@ -214,6 +235,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                                             : AppColors.greyLight);
                                   },
                                   itemBuilder: (_, i) {
+                                    print(
+                                        'Building tile for athlete: ${details[i].name} with country: ${details[i].country}');
                                     return AthleteDetailsTile(
                                         athleteExtraDetails: details[i]);
                                   });
@@ -489,19 +512,9 @@ class AthleteDetailsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('AthleteDetailsTile - country: ${athleteExtraDetails.country}');
     return Row(
       children: [
-        if (athleteExtraDetails.country.isNotEmpty) ...[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: CountryFlag.fromCountryCode(
-              athleteExtraDetails.country,
-              height: 20,
-              width: 30,
-            ),
-          ),
-          const SizedBox(width: 12),
-        ],
         if (athleteExtraDetails.athleteNumber.isNotEmpty)
           Container(
               padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
@@ -515,7 +528,9 @@ class AthleteDetailsTile extends StatelessWidget {
                 fontSize: 12,
               )),
         const SizedBox(width: 12),
-        AppText(athleteExtraDetails.name)
+        Expanded(
+          child: AppText(athleteExtraDetails.name),
+        ),
       ],
     );
   }
