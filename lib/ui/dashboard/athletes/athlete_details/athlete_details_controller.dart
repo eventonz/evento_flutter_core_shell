@@ -57,7 +57,7 @@ class AthleteDetailsController extends GetxController
       athleteSplitUrl = AppGlobals.appConfig!.athleteDetails!.url!;
     }
     String mainUrl = athleteSplitUrl.split('?').first;
-    print(mainUrl);
+ 
     if(selEntrant == null) {
       mainUrl =
       '$mainUrl?bib=${selEntrantA!.number}&id=${selEntrantA!.id}&contest=${selEntrantA!.contest}';
