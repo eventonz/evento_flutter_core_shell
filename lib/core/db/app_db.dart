@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration {
@@ -72,6 +72,10 @@ class AppDatabase extends _$AppDatabase {
           await customStatement(
               'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN country TEXT');
         }
+        if (from < 9) {
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN import_key TEXT');
+        }
       },
     );
   }
@@ -116,6 +120,7 @@ class DatabaseHandler {
           disRaceNo: Value(entrant.disRaceNo),
           canFollow: entrant.canFollow,
           country: Value(entrant.country),
+          importKey: Value(entrant.importKey),
           searchTag:
               '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
       detailsList.addAll(
@@ -161,6 +166,7 @@ class DatabaseHandler {
         disRaceNo: Value(entrant.disRaceNo),
         canFollow: entrant.canFollow,
         country: Value(entrant.country),
+        importKey: Value(entrant.importKey),
         searchTag:
             '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
     _db.athleteExtraDetailsDb.insertAll(

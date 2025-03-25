@@ -98,6 +98,12 @@ class $AthleteDbTable extends AthleteDb
   late final GeneratedColumn<String> country = GeneratedColumn<String>(
       'country', aliasedName, true,
       type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _importKeyMeta =
+      const VerificationMeta('importKey');
+  @override
+  late final GeneratedColumn<String> importKey = GeneratedColumn<String>(
+      'import_key', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
@@ -113,7 +119,8 @@ class $AthleteDbTable extends AthleteDb
         info,
         contestNo,
         searchTag,
-        country
+        country,
+        importKey
       ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -208,6 +215,10 @@ class $AthleteDbTable extends AthleteDb
       context.handle(_countryMeta,
           country.isAcceptableOrUnknown(data['country']!, _countryMeta));
     }
+    if (data.containsKey('import_key')) {
+      context.handle(_importKeyMeta,
+          importKey.isAcceptableOrUnknown(data['import_key']!, _importKeyMeta));
+    }
     return context;
   }
 
@@ -245,6 +256,8 @@ class $AthleteDbTable extends AthleteDb
           .read(DriftSqlType.string, data['${effectivePrefix}search_tag'])!,
       country: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}country']),
+      importKey: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}import_key']),
     );
   }
 
@@ -269,6 +282,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
   final int contestNo;
   final String searchTag;
   final String? country;
+  final String? importKey;
   const AppAthleteDb(
       {required this.id,
       required this.athleteId,
@@ -283,7 +297,8 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       required this.info,
       required this.contestNo,
       required this.searchTag,
-      this.country});
+      this.country,
+      this.importKey});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
@@ -304,6 +319,9 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
     map['search_tag'] = Variable<String>(searchTag);
     if (!nullToAbsent || country != null) {
       map['country'] = Variable<String>(country);
+    }
+    if (!nullToAbsent || importKey != null) {
+      map['import_key'] = Variable<String>(importKey);
     }
     return map;
   }
@@ -328,6 +346,9 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       country: country == null && nullToAbsent
           ? const Value.absent()
           : Value(country),
+      importKey: importKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(importKey),
     );
   }
 
@@ -349,6 +370,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       contestNo: serializer.fromJson<int>(json['contestNo']),
       searchTag: serializer.fromJson<String>(json['searchTag']),
       country: serializer.fromJson<String?>(json['country']),
+      importKey: serializer.fromJson<String?>(json['importKey']),
     );
   }
   @override
@@ -369,6 +391,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       'contestNo': serializer.toJson<int>(contestNo),
       'searchTag': serializer.toJson<String>(searchTag),
       'country': serializer.toJson<String?>(country),
+      'importKey': serializer.toJson<String?>(importKey),
     };
   }
 
@@ -386,7 +409,8 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           String? info,
           int? contestNo,
           String? searchTag,
-          Value<String?> country = const Value.absent()}) =>
+          Value<String?> country = const Value.absent(),
+          Value<String?> importKey = const Value.absent()}) =>
       AppAthleteDb(
         id: id ?? this.id,
         athleteId: athleteId ?? this.athleteId,
@@ -402,6 +426,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
         contestNo: contestNo ?? this.contestNo,
         searchTag: searchTag ?? this.searchTag,
         country: country.present ? country.value : this.country,
+        importKey: importKey.present ? importKey.value : this.importKey,
       );
   AppAthleteDb copyWithCompanion(AthleteDbCompanion data) {
     return AppAthleteDb(
@@ -422,6 +447,7 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       contestNo: data.contestNo.present ? data.contestNo.value : this.contestNo,
       searchTag: data.searchTag.present ? data.searchTag.value : this.searchTag,
       country: data.country.present ? data.country.value : this.country,
+      importKey: data.importKey.present ? data.importKey.value : this.importKey,
     );
   }
 
@@ -441,7 +467,8 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           ..write('info: $info, ')
           ..write('contestNo: $contestNo, ')
           ..write('searchTag: $searchTag, ')
-          ..write('country: $country')
+          ..write('country: $country, ')
+          ..write('importKey: $importKey')
           ..write(')'))
         .toString();
   }
@@ -461,7 +488,8 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
       info,
       contestNo,
       searchTag,
-      country);
+      country,
+      importKey);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -479,7 +507,8 @@ class AppAthleteDb extends DataClass implements Insertable<AppAthleteDb> {
           other.info == this.info &&
           other.contestNo == this.contestNo &&
           other.searchTag == this.searchTag &&
-          other.country == this.country);
+          other.country == this.country &&
+          other.importKey == this.importKey);
 }
 
 class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
@@ -497,6 +526,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
   final Value<int> contestNo;
   final Value<String> searchTag;
   final Value<String?> country;
+  final Value<String?> importKey;
   const AthleteDbCompanion({
     this.id = const Value.absent(),
     this.athleteId = const Value.absent(),
@@ -512,6 +542,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     this.contestNo = const Value.absent(),
     this.searchTag = const Value.absent(),
     this.country = const Value.absent(),
+    this.importKey = const Value.absent(),
   });
   AthleteDbCompanion.insert({
     this.id = const Value.absent(),
@@ -528,6 +559,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     required int contestNo,
     required String searchTag,
     this.country = const Value.absent(),
+    this.importKey = const Value.absent(),
   })  : athleteId = Value(athleteId),
         canFollow = Value(canFollow),
         isFollowed = Value(isFollowed),
@@ -554,6 +586,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     Expression<int>? contestNo,
     Expression<String>? searchTag,
     Expression<String>? country,
+    Expression<String>? importKey,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -570,6 +603,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       if (contestNo != null) 'contest_no': contestNo,
       if (searchTag != null) 'search_tag': searchTag,
       if (country != null) 'country': country,
+      if (importKey != null) 'import_key': importKey,
     });
   }
 
@@ -587,7 +621,8 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       Value<String>? info,
       Value<int>? contestNo,
       Value<String>? searchTag,
-      Value<String?>? country}) {
+      Value<String?>? country,
+      Value<String?>? importKey}) {
     return AthleteDbCompanion(
       id: id ?? this.id,
       athleteId: athleteId ?? this.athleteId,
@@ -603,6 +638,7 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
       contestNo: contestNo ?? this.contestNo,
       searchTag: searchTag ?? this.searchTag,
       country: country ?? this.country,
+      importKey: importKey ?? this.importKey,
     );
   }
 
@@ -651,6 +687,9 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
     if (country.present) {
       map['country'] = Variable<String>(country.value);
     }
+    if (importKey.present) {
+      map['import_key'] = Variable<String>(importKey.value);
+    }
     return map;
   }
 
@@ -670,7 +709,8 @@ class AthleteDbCompanion extends UpdateCompanion<AppAthleteDb> {
           ..write('info: $info, ')
           ..write('contestNo: $contestNo, ')
           ..write('searchTag: $searchTag, ')
-          ..write('country: $country')
+          ..write('country: $country, ')
+          ..write('importKey: $importKey')
           ..write(')'))
         .toString();
   }
@@ -1313,6 +1353,7 @@ typedef $$AthleteDbTableCreateCompanionBuilder = AthleteDbCompanion Function({
   required int contestNo,
   required String searchTag,
   Value<String?> country,
+  Value<String?> importKey,
 });
 typedef $$AthleteDbTableUpdateCompanionBuilder = AthleteDbCompanion Function({
   Value<int> id,
@@ -1329,6 +1370,7 @@ typedef $$AthleteDbTableUpdateCompanionBuilder = AthleteDbCompanion Function({
   Value<int> contestNo,
   Value<String> searchTag,
   Value<String?> country,
+  Value<String?> importKey,
 });
 
 class $$AthleteDbTableFilterComposer
@@ -1401,6 +1443,11 @@ class $$AthleteDbTableFilterComposer
 
   ColumnFilters<String> get country => $state.composableBuilder(
       column: $state.table.country,
+      builder: (column, joinBuilders) =>
+          ColumnFilters(column, joinBuilders: joinBuilders));
+
+  ColumnFilters<String> get importKey => $state.composableBuilder(
+      column: $state.table.importKey,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
 }
@@ -1477,6 +1524,11 @@ class $$AthleteDbTableOrderingComposer
       column: $state.table.country,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
+
+  ColumnOrderings<String> get importKey => $state.composableBuilder(
+      column: $state.table.importKey,
+      builder: (column, joinBuilders) =>
+          ColumnOrderings(column, joinBuilders: joinBuilders));
 }
 
 class $$AthleteDbTableTableManager extends RootTableManager<
@@ -1516,6 +1568,7 @@ class $$AthleteDbTableTableManager extends RootTableManager<
             Value<int> contestNo = const Value.absent(),
             Value<String> searchTag = const Value.absent(),
             Value<String?> country = const Value.absent(),
+            Value<String?> importKey = const Value.absent(),
           }) =>
               AthleteDbCompanion(
             id: id,
@@ -1532,6 +1585,7 @@ class $$AthleteDbTableTableManager extends RootTableManager<
             contestNo: contestNo,
             searchTag: searchTag,
             country: country,
+            importKey: importKey,
           ),
           createCompanionCallback: ({
             Value<int> id = const Value.absent(),
@@ -1548,6 +1602,7 @@ class $$AthleteDbTableTableManager extends RootTableManager<
             required int contestNo,
             required String searchTag,
             Value<String?> country = const Value.absent(),
+            Value<String?> importKey = const Value.absent(),
           }) =>
               AthleteDbCompanion.insert(
             id: id,
@@ -1564,6 +1619,7 @@ class $$AthleteDbTableTableManager extends RootTableManager<
             contestNo: contestNo,
             searchTag: searchTag,
             country: country,
+            importKey: importKey,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

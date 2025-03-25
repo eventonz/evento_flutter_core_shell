@@ -36,6 +36,7 @@ class Entrants {
   late bool canFollow;
   late bool isFollowed;
   String? country;
+  String? importKey;
   List<AthleteDetails>? athleteDetails;
 
   Entrants(
@@ -48,6 +49,7 @@ class Entrants {
       this.contest = -1,
       this.extra = '',
       this.country,
+      this.importKey,
       this.athleteDetails,
       this.canFollow = true,
       this.isFollowed = false});
@@ -65,6 +67,7 @@ class Entrants {
     canFollow = json['can_follow'] ?? true;
     isFollowed = json['isFollowed'] ?? false;
     country = json['country'];
+    importKey = json['import_key'];
     if (json['athlete_details'] != null) {
       athleteDetails = <AthleteDetails>[];
       json['athlete_details'].forEach((v) {
@@ -84,6 +87,7 @@ class Entrants {
     data['disRaceNo'] = disRaceNo;
     data['extra'] = extra;
     data['country'] = country;
+    data['import_key'] = importKey;
     if (athleteDetails != null) {
       data['athlete_details'] = athleteDetails!.map((v) => v.toJson()).toList();
     }
