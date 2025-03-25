@@ -431,10 +431,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           ),
           //Divider(height: .5, color: Colors.grey,),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 2,
+                flex: 35,
                 child: Container(
                   key: _pageKey,
                   child: ListView.builder(
@@ -457,31 +456,39 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                               }
                             });
                             return Container(
-                              padding: const EdgeInsets.all(14),
-                              color: i % 2 == 1
-                                  ? (Theme.of(Get.context!).brightness ==
-                                          Brightness.light
-                                      ? AppColors.darkgrey
-                                      : AppColors.greyLighter)
-                                  : null,
-                              height: 70, // Fixed height for all rows
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 14),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              height: 60, // Reduced from 80
                               child: Align(
                                 alignment: Alignment.centerLeft,
-                                child: AppText(
-                                  widget.data[i].values!.first
-                                      .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                  color: contentColor(
-                                      widget.data[i].values!.first, true),
-                                  fontWeight: contentWeight(
-                                      widget.data[i].values!.first, true),
-                                  textAlign: TextAlign.left,
-                                  fontSize: 15,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis,
-                                  fontStyle: widget.data[i].values!.first
-                                          .contains('*italic*')
-                                      ? FontStyle.italic
-                                      : null,
+                                child: MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(
+                                      textScaleFactor:
+                                          1.0), // Prevent text scaling
+                                  child: AppText(
+                                    widget.data[i].values!.first
+                                        .replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                    color: contentColor(
+                                        widget.data[i].values!.first, true),
+                                    fontWeight: contentWeight(
+                                        widget.data[i].values!.first, true),
+                                    textAlign: TextAlign.left,
+                                    fontSize: 13,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontStyle: widget.data[i].values!.first
+                                            .contains('*italic*')
+                                        ? FontStyle.italic
+                                        : null,
+                                  ),
                                 ),
                               ),
                             );
@@ -491,14 +498,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 ),
               ),
               Expanded(
-                flex: 5,
+                flex: 65,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: _currentPageHeight, // Adjust the height dynamically
+                  height: _currentPageHeight,
                   child: PageView.builder(
                       itemBuilder: (_, i) {
-                        print(
-                            'COLUMNS ${((widget.columns.length - 1) / 3).ceil()} ${widget.columns.length}');
                         return Container(
                           child: ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 0),
@@ -516,75 +521,63 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                       widget.segments[y].columns!.length;
                                 }
 
-                                //final startIndex2 = startIndex;
-
                                 var widgets = [];
 
                                 for (int x = startIndex;
                                     x < startIndex + columns.length;
                                     x++) {
-                                  //if(entry!.length > (x+(i*3)+1))
                                   widgets.add(Expanded(
                                     child: Center(
-                                      child: AppText(
-                                        entry!.length > x
-                                            ? entry[x].replaceAll(
-                                                RegExp(r'\*(\w+)\*'), '')
-                                            : '',
-                                        color: contentColor(entry[x], true),
-                                        fontWeight:
-                                            contentWeight(entry[x], true),
-                                        textAlign: TextAlign.center,
-                                        fontSize: 15,
-                                        fontStyle: (entry.length >
-                                                        (x + (i * 3) + 1)
-                                                    ? entry[(x + (i * 3)) + 1]
-                                                    : '')
-                                                .contains('*italics*')
-                                            ? FontStyle.italic
-                                            : null,
+                                      child: MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                            textScaleFactor:
+                                                1.0), // Prevent text scaling
+                                        child: AppText(
+                                          entry!.length > x
+                                              ? entry[x].replaceAll(
+                                                  RegExp(r'\*(\w+)\*'), '')
+                                              : '',
+                                          color: contentColor(entry[x], true),
+                                          fontWeight:
+                                              contentWeight(entry[x], true),
+                                          textAlign: TextAlign.center,
+                                          fontSize: 13,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontStyle: (entry.length >
+                                                          (x + (i * 3) + 1)
+                                                      ? entry[(x + (i * 3)) + 1]
+                                                      : '')
+                                                  .contains('*italics*')
+                                              ? FontStyle.italic
+                                              : null,
+                                        ),
                                       ),
                                     ),
                                   ));
-                                  //startIndex++;
                                 }
 
-                                return LayoutBuilder(
-                                  builder: (context, constraints) {
-                                    WidgetsBinding.instance
-                                        .addPostFrameCallback((_) {
-                                      if (index < _rowHeights.length) {
-                                        final RenderBox renderBox = context
-                                            .findRenderObject() as RenderBox;
-                                        final height = renderBox.size.height;
-                                        if (height != _rowHeights[index]) {
-                                          _updateRowHeight(index, height);
-                                        }
-                                      }
-                                    });
-                                    return Container(
-                                      color: index % 2 == 1
-                                          ? (Theme.of(Get.context!)
-                                                      .brightness ==
-                                                  Brightness.light
-                                              ? AppColors.darkgrey
-                                              : AppColors.greyLighter)
-                                          : null,
-                                      padding: const EdgeInsets.all(14),
-                                      height:
-                                        70, // Same fixed height as first column
-                                      child: Row(
-                                        children: [
-                                          ...widgets,
-                                        ],
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        width: 1,
                                       ),
-                                    );
-                                  },
+                                    ),
+                                  ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 14),
+                                  height: 60, // Match first column height
+                                  child: Row(
+                                    children: [
+                                      ...widgets,
+                                    ],
+                                  ),
                                 );
                               }),
                         );
                       },
-                      //itemCount: ((widget.columns.length-1)/3).ceil(),
                       itemCount: widget.segments.length,
                       controller: _controller,
                       physics: const NeverScrollableScrollPhysics()),

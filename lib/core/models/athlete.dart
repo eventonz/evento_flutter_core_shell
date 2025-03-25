@@ -35,6 +35,7 @@ class Entrants {
   late String extra;
   late bool canFollow;
   late bool isFollowed;
+  String? importKey;
   List<AthleteDetails>? athleteDetails;
 
   Entrants(
@@ -48,7 +49,8 @@ class Entrants {
       this.extra = '',
       this.athleteDetails,
       this.canFollow = true,
-      this.isFollowed = false});
+      this.isFollowed = false,
+      this.importKey});
 
   Entrants.fromJson(Map<String, dynamic> json) {
     print(json);
@@ -62,6 +64,7 @@ class Entrants {
     disRaceNo = json['disRaceNo'] ?? '';
     canFollow = json['can_follow'] ?? true;
     isFollowed = json['isFollowed'] ?? false;
+    importKey = json['import_key'];
     if (json['athlete_details'] != null) {
       athleteDetails = <AthleteDetails>[];
       json['athlete_details'].forEach((v) {
