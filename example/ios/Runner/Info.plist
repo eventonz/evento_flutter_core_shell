@@ -32,6 +32,8 @@
 	<string>This app needs location to show on the map.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>FlutterDeepLinkingEnabled</key>
+    <false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
