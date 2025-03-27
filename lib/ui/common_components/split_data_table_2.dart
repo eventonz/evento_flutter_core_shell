@@ -156,13 +156,13 @@ class SegmentedSplitDataContent extends StatefulWidget {
 class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> with SingleTickerProviderStateMixin {
 
   final PageController _controllerHeader = PageController();
-  final PageController _controller = PageController();
+  late List<PageController> _pageControllers;
 
-  double _currentPageHeight = 0;
+  late List<double> _currentPageHeight;
   int _currentPage = 0;
 
   // List of GlobalKeys to measure the height of each page
-  GlobalKey _pageKey = GlobalKey();
+  List<GlobalKey> _pageKey = <GlobalKey>[];
 
   contentWeight(String style, bool isText) {
 
@@ -251,31 +251,71 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
     super.initState();
     // Calculate the height of the first page after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateHeight(0);
     });
+    _initializePageControllers();
 
+    var indexA = 0;
     // Listen for page changes to update the height dynamically
-    _controller.addListener(() {
-      int currentPage = _controller.page?.round() ?? 0;
-      _updateHeight(currentPage);
+    _pageControllers.forEach((pageController) {
+      pageController.addListener(() {
+        //int currentPage = pageController.page?.round() ?? 0;
+        _updateHeight(indexA);
+      });
+      indexA++;
     });
   }
 
+  void _initializePageControllers() {
+    // Create a PageController for each normal row group
+    final splitList = _splitList(widget.data);
+    _pageControllers = List.generate(
+        splitList.whereType<_NormalRowsGroup>().length,
+            (_) => PageController()
+    );
+    _currentPageHeight = List.generate(
+        splitList.whereType<_NormalRowsGroup>().length,
+            (_) => 0
+    );
+    _pageKey = List.generate(
+        splitList.whereType<_NormalRowsGroup>().length,
+            (_) => GlobalKey()
+    );
+    for(int i = 0; i < _pageKey.length; i++) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _updateHeight(i);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    // Dispose all controllers
+    for (var controller in _pageControllers) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+
   void _updateHeight(int pageIndex) {
-    final context = _pageKey.currentContext;
+    final context = _pageKey[pageIndex].currentContext;
     print(context);
     print('context');
-    if (context != null) {
+    if (context != null && context.mounted) {
       final RenderBox renderBox = context.findRenderObject() as RenderBox;
       print('height: ${renderBox.size.height}');
       setState(() {
-        _currentPageHeight = renderBox.size.height;
+        _currentPageHeight[pageIndex] = renderBox.size.height;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+
+    int pageControllerIndex = 0;
+    int globalIndex = 0;
+    int keyIndex = -1;
+
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,7 +337,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                             setState(() {
                               _currentPage = index;
                             });
-                            _controller.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                            _pageControllers.forEach((pageController) {
+                              pageController.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                            });
                             _controllerHeader.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
                           },
                           child: Container(
@@ -362,6 +404,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
 
                             var columns = widget.segments[i].columns!;
 
+
                               return Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 4),
                                 child: Row(
@@ -393,102 +436,172 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 2,
-                child: Container(
-                  key: _pageKey,
-                  child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.data.length,
-                      shrinkWrap: true,
-                      itemBuilder: (_, i) {
-                        final entry = widget.data[i].values;
-                        return Container(
-                          padding: const EdgeInsets.all(14),
-                          color: i%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
-                          child: Center(
-                            child: AppText(
-                              widget.data[i].values!.first.replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                              color: contentColor(widget.data[i].values!.first, true),
-                              fontWeight: contentWeight(widget.data[i].values!.first, true),
-                              textAlign: TextAlign.center,
-                              fontSize: 15,
-                              fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
+              Container(
+                child: Expanded(
+                  flex: 2,
+                  child: Column(
+                    children: _splitList(widget.data).map((segment) {
+
+                      if(segment is _NormalRowsGroup) {
+                        keyIndex++;
+                      }
+                      int segmentLength = segment is _StaticRow ? 1 : segment.rows.length; // Get segment length
+                      final localStartIndex = globalIndex; // Store the starting index for this segment
+                      globalIndex += segmentLength; // Update globalIndex after using this segment
+
+                      return Container(
+                        key:  segment is _StaticRow ? null : _pageKey[keyIndex],
+                        child: ListView.builder(
+                        key: ValueKey(segment.hashCode), // Unique key for each segment
+                        padding: EdgeInsets.zero,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: segmentLength, // Use the segment's length
+                        shrinkWrap: true,
+                        itemBuilder: (_, i) {
+                          final currentIndex = localStartIndex + i; // Continue from the last segment
+                          final entry = widget.data[currentIndex].values;
+
+                          return Container(
+                            padding: const EdgeInsets.all(14),
+                            color: widget.data[currentIndex].style != null
+                                ? contentColor(widget.data[currentIndex].style!, false)
+                                : (currentIndex % 2 == 1
+                                ? (Theme.of(Get.context!).brightness == Brightness.light
+                                ? AppColors.darkgrey
+                                : AppColors.greyLighter)
+                                : null),
+                            child: Center(
+                              child: SizedBox(
+                                height: 21,
+                                child: AppText(
+                                  entry!.first.replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                  color: segment is _StaticRow ? Colors.white: contentColor(entry.first, true),
+                                  fontWeight: contentWeight(entry.first, true),
+                                  textAlign: TextAlign.center,
+                                  fontSize: 15,
+                                  fontStyle: entry.first.contains('*italic*') ? FontStyle.italic : null,
+                                ),
+                              ),
                             ),
-                          ),
-                        );
-                      }),
+                          );
+                        },
+                                            ),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
               Expanded(
                 flex: 5,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  height: _currentPageHeight, // Adjust the height dynamically
-                  child: PageView.builder(itemBuilder: (_, i) {
-                    print('COLUMNS ${((widget.columns.length-1)/3).ceil()} ${widget.columns.length}');
-                    return Container(
-                      child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: _splitList(widget.data).map((segment) {
+                    if (segment is _StaticRow) {
+                      return Container(
+                        color: segment.row.style != null
+                            ? contentColor(segment.row.style!, false)
+                            : (segment.row.index! % 2 == 1
+                            ? (Theme.of(context).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter)
+                            : null),
+                        padding: const EdgeInsets.all(14),
+                        child: widget.segments.first.columns!.length == 1 ? const SizedBox(
+                          height: 21,
+                        ) : Row(
+                          children: List.generate(
+                            segment.row.values!.length-1,
+                                (x) => Expanded(
+                              child: Center(
+                                child: SizedBox(height: 21, child: AppText(segment.row.values![x+1], color: Colors.white)),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    } else if (segment is _NormalRowsGroup) {
+
+                      final pageController = _pageControllers[pageControllerIndex++];
+                      // Render PageView for Normal Rows (Sliding)
+                      return AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        height: _currentPageHeight[pageControllerIndex-1],
+                        child: PageView.builder(
+                          itemCount: widget.segments.length,
+                          controller: pageController,
                           physics: const NeverScrollableScrollPhysics(),
-                          itemCount: widget.data.length,
-                          shrinkWrap: true,
-                          itemBuilder: (_, index) {
-                            final entry = widget.data[index].values;
-                            final columns = widget.segments[i].columns!;
+                          clipBehavior: Clip.antiAlias,
+                          itemBuilder: (_, i) {
 
                             int startIndex = 1;
-
-                            for(int y = 0; y < i; y++) {
-                              startIndex+=widget.segments[y].columns!.length;
-                            }
-
-                            //final startIndex2 = startIndex;
-
-                            var widgets = [];
-
-                            for (int x = startIndex; x < startIndex+columns.length; x++) {
-                              //if(entry!.length > (x+(i*3)+1))
-                              widgets.add(Expanded(
-                                child: Center(
-                                  child: AppText(
-                                    entry!.length > x
-                                        ? entry[x].replaceAll(
-                                        RegExp(r'\*(\w+)\*'), '')
-                                        : '',
-                                    color: contentColor(entry[x], true),
-                                    fontWeight: contentWeight(entry[x], true),
-                                    textAlign: TextAlign.center,
-                                    fontSize: 15,
-                                    fontStyle: (entry.length > (x + (i * 3) + 1)
-                                        ? entry[(x + (i * 3)) + 1]
-                                        : '').contains('*italics*') ? FontStyle
-                                        .italic : null,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ));
-                              //startIndex++;
+                            for (int y = 0; y < i; y++) {
+                              startIndex += widget.segments[y].columns!.length;
                             }
 
                             return Container(
-                              color: index%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
-                              padding: const EdgeInsets.all(14),
-                              child: Row(
-                                children: [
-                                  ...widgets,
-                                ],
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: segment.rows.length,
+                                shrinkWrap: true,
+                                itemBuilder: (_, index) {
+                                  final row = segment.rows[index];
+                                  final style = row.style;
+                                  final entry = row.values;
+                                  final columns = widget.segments[i].columns!;
+
+
+                                  print('index $index');
+
+                                  List<Widget> widgets = [];
+                                  if (entry?.length == 1 && row.point == 'static') {
+                                    for (int x = startIndex; x < (startIndex + columns.length); x++) {
+                                      widgets.add(const Expanded(
+                                        child: Center(
+                                          child: SizedBox(height: 21, child: AppText('')),
+                                        ),
+                                      ));
+                                    }
+                                  }
+
+                                  for (int x = row.point == 'static' ? 1 : startIndex;
+                                  x < (row.point == 'static' ? entry!.length : (startIndex + columns.length));
+                                  x++) {
+                                    widgets.add(Expanded(
+                                      child: Center(
+                                        child: SizedBox(
+                                          height: 21,
+                                          child: AppText(
+                                            entry!.length > x ? entry[x].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
+                                            color: contentColor(entry[x], true),
+                                            fontWeight: contentWeight(entry[x], true),
+                                            textAlign: TextAlign.center,
+                                            fontSize: 15,
+                                            fontStyle: (entry.length > (x + (i * 3) + 1) && entry[(x + (i * 3)) + 1].contains('*italics*'))
+                                                ? FontStyle.italic
+                                                : null,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                                  }
+
+                                  return Container(
+                                    color: style != null
+                                        ? contentColor(style, false)
+                                        : (segment.rows[index].index! % 2 == 1
+                                        ? (Theme.of(context).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter)
+                                        : null),
+                                    padding: const EdgeInsets.all(14),
+                                    child: Row(children: widgets),
+                                  );
+                                },
                               ),
-                            );
-                          }),
-                    );
-                  },
-                      //itemCount: ((widget.columns.length-1)/3).ceil(),
-                      itemCount: widget.segments.length,
-                      controller: _controller,
-                      physics: const NeverScrollableScrollPhysics()
-                  ),
+                            );                            },
+                        ),
+                      );
+                    }
+                    return const SizedBox();
+                  }).toList(),
                 ),
               ),
             ],
@@ -497,6 +610,48 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
       ),
     );
   }
+}
+
+List<dynamic> _splitList(List<SegmentedSplitData> data) {
+  List<dynamic> result = [];
+  int index = 0;
+  List<SegmentedSplitData> tempNormalRows = [];
+
+  for (var item in data) {
+    item.index = index;
+    if (item.point == 'static') {
+      // Push the previous normal row group first
+      if (tempNormalRows.isNotEmpty) {
+        // tempNormalRows.add(SegmentedSplitData.fromJson({
+        //   'values' : tempNormalRows.last.values!.map((e) => '').toList(),
+        // }));
+        result.add(_NormalRowsGroup(tempNormalRows));
+        tempNormalRows = [];
+      }
+      // Add static row separately
+      result.add(_StaticRow(item));
+    } else {
+      tempNormalRows.add(item);
+    }
+    index++;
+  }
+
+  // Add remaining normal rows if any
+  if (tempNormalRows.isNotEmpty) {
+    result.add(_NormalRowsGroup(tempNormalRows));
+  }
+
+  return result;
+}
+
+class _StaticRow {
+  final SegmentedSplitData row;
+  _StaticRow(this.row);
+}
+
+class _NormalRowsGroup {
+  final List<SegmentedSplitData> rows;
+  _NormalRowsGroup(this.rows);
 }
 
 
