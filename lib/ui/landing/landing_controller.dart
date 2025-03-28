@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:app_links/app_links.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:evento_core/app_event_config.dart';
 import 'package:evento_core/core/db/app_db.dart';
@@ -137,6 +138,23 @@ class LandingController extends GetxController {
         } else {
           Get.offNamed(Routes.dashboard);
         }
+
+        final appLinks = AppLinks();
+
+        final sub = appLinks.uriLinkStream.listen((uri) async {
+          var open = uri.path;
+          if(uri.path.contains('/event_id/')) {
+            var eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+            String athleteId = open.split('/athlete/')[1];
+            Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: await DatabaseHandler.getSingleAthleteOnce(athleteId)});
+          }
+        });
+
+        appLinks.getInitialLink().then((uri) {
+          if(uri!.path.contains('/eventid/')) {
+
+          }
+        });
       }
     } catch (e) {
       ToastUtils.show(e.toString());
