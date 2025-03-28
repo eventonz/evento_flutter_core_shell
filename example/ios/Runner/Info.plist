@@ -56,5 +56,22 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>evento</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.eventotracker.app</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>evento</string>
+	</array>
 </dict>
 </plist>

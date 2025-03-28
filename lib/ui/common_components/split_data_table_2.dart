@@ -143,30 +143,34 @@ class SplitNewDataContent2 extends StatelessWidget {
 
 class SegmentedSplitDataContent extends StatefulWidget {
   const SegmentedSplitDataContent(
-      {Key? key, required this.data, required this.segments, required this.columns})
+      {Key? key,
+      required this.data,
+      required this.segments,
+      required this.columns})
       : super(key: key);
   final List<SegmentedSplitData> data;
   final List<SegmentedSplitSegments> segments;
   final List<String> columns;
 
   @override
-  State<SegmentedSplitDataContent> createState() => _SegmentedSplitDataContentState();
+  State<SegmentedSplitDataContent> createState() =>
+      _SegmentedSplitDataContentState();
 }
 
-class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> with SingleTickerProviderStateMixin {
-
+class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
+    with SingleTickerProviderStateMixin {
   final PageController _controllerHeader = PageController();
   final PageController _controller = PageController();
 
   double _currentPageHeight = 0;
   int _currentPage = 0;
+  List<double> _rowHeights = [];
 
   // List of GlobalKeys to measure the height of each page
   GlobalKey _pageKey = GlobalKey();
 
   contentWeight(String style, bool isText) {
-
-    if(style.contains('*bold*')) {
+    if (style.contains('*bold*')) {
       return FontWeight.w700;
     }
 
@@ -180,16 +184,15 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
   }
 
   Color contentColor(String style, bool isText) {
-
-    if(style.contains('*red*')) {
+    if (style.contains('*red*')) {
       return AppColors.red;
     }
 
-    if(style.contains('*green*')) {
+    if (style.contains('*green*')) {
       return AppColors.splitGreen;
     }
 
-    if(style.contains('*black*')) {
+    if (style.contains('*black*')) {
       return AppColors.black;
     }
 
@@ -249,9 +252,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
   @override
   void initState() {
     super.initState();
+    // Initialize row heights array with a default height
+    _rowHeights = List.filled(widget.data.length, 50.0);
+
     // Calculate the height of the first page after the widget is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-        _updateHeight(0);
+      _updateHeight(0);
     });
 
     // Listen for page changes to update the height dynamically
@@ -259,6 +265,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
       int currentPage = _controller.page?.round() ?? 0;
       _updateHeight(currentPage);
     });
+  }
+
+  void _updateRowHeight(int index, double height) {
+    if (index >= 0 && index < _rowHeights.length) {
+      setState(() {
+        _rowHeights[index] = height;
+      });
+    }
   }
 
   void _updateHeight(int pageIndex) {
@@ -284,46 +298,64 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
             height: 2,
           ),
           Container(
-            color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.splitGrey,
+            color: Theme.of(Get.context!).brightness != Brightness.light
+                ? const Color(0xFFF7F7F7)
+                : AppColors.splitGrey,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(
               children: [
-                ...
-                  List.generate(widget.segments.length, (index) {
-                    return Expanded(
-                      child: Center(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _currentPage = index;
-                            });
-                            _controller.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
-                            _controllerHeader.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: _currentPage == index ? Theme.of(Get.context!).brightness != Brightness.light ? Colors.white.withOpacity(1) : Colors.white.withOpacity(0.3) : null,
-                              borderRadius: BorderRadius.circular(10),
-                               boxShadow: _currentPage == index
-                                  ? [BoxShadow(
-                                      color: Colors.black.withOpacity(0.1), // Light shadow color
+                ...List.generate(widget.segments.length, (index) {
+                  return Expanded(
+                    child: Center(
+                      child: GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _currentPage = index;
+                          });
+                          _controller.animateToPage(_currentPage,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                          _controllerHeader.animateToPage(_currentPage,
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.ease);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: _currentPage == index
+                                ? Theme.of(Get.context!).brightness !=
+                                        Brightness.light
+                                    ? Colors.white.withOpacity(1)
+                                    : Colors.white.withOpacity(0.3)
+                                : null,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: _currentPage == index
+                                ? [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(
+                                          0.1), // Light shadow color
                                       spreadRadius: 1,
                                       blurRadius: 4, // Soft shadow blur
-                                      offset: Offset(0, 2), // Slightly below the button
-                                    )]
-                                  : [],
-                            ),
-                            child: Center(
-                              child: Text(widget.segments[index].name ?? '', style: TextStyle(
+                                      offset: Offset(
+                                          0, 2), // Slightly below the button
+                                    )
+                                  ]
+                                : [],
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.segments[index].name ?? '',
+                              style: TextStyle(
                                 fontSize: 17,
-                              ),),
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    );
-                  })
+                    ),
+                  );
+                })
               ],
             ),
           ),
@@ -331,59 +363,67 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
             height: 16,
           ),
           Container(
-            color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.splitGrey,
+            color: Theme.of(Get.context!).brightness != Brightness.light
+                ? const Color(0xFFF7F7F7)
+                : AppColors.splitGrey,
             child: Row(
               children: [
                 Expanded(
                   flex: 2,
                   child: Container(
-                    child: Container(
-                            padding: const EdgeInsets.all(12),
-                            //color: contentColor(style, false),
-                            child: Center(
-                              child: AppText(
-                                widget.columns.first,
-                                fontSize: 14,
-                                //color: contentColor(widget.data[i].values!.first, true),
-                                //fontWeight: contentWeight(widget.data[i].values!.first, true),
-                                textAlign: TextAlign.center,
-                                //fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
-                              ),
-                            ),
-                          )
-                  ),
+                      child: Container(
+                    padding: const EdgeInsets.all(12),
+                    //color: contentColor(style, false),
+                    child: Center(
+                      child: AppText(
+                        widget.columns.first,
+                        fontSize: 14,
+                        //color: contentColor(widget.data[i].values!.first, true),
+                        //fontWeight: contentWeight(widget.data[i].values!.first, true),
+                        textAlign: TextAlign.left,
+                        //fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
+                      ),
+                    ),
+                  )),
                 ),
                 Expanded(
                   flex: 5,
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
                     height: 40, // Adjust the height dynamically
-                    child: PageView.builder(itemBuilder: (_, i) {
+                    child: PageView.builder(
+                      itemBuilder: (_, i) {
+                        var columns = widget.segments[i].columns!;
 
-                            var columns = widget.segments[i].columns!;
-
-                              return Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: Row(
-                                  children: [
-                                    for(int x = 0; x < columns.length; x++)
-                                      Expanded(
-                                        child: Center(
-                                          child: AppText(
-                                            x < columns.length ? columns[x].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
-                                            //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                            //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                            textAlign: TextAlign.center,
-                                            fontSize: 14,
-                                            //fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                      ),
-                                  ],
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Row(
+                            children: [
+                              for (int x = 0; x < columns.length; x++)
+                                Expanded(
+                                  child: Center(
+                                    child: AppText(
+                                      x < columns.length
+                                          ? columns[x].replaceAll(
+                                              RegExp(r'\*(\w+)\*'), '')
+                                          : '',
+                                      //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
+                                      //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
+                                      textAlign: TextAlign.center,
+                                      fontSize: 14,
+                                      //fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
+                                      maxLines: 1,
+                                    ),
+                                  ),
                                 ),
-                              );
-                    }, itemCount: widget.segments.length, controller: _controllerHeader, physics: const NeverScrollableScrollPhysics(),),
+                            ],
+                          ),
+                        );
+                      },
+                      itemCount: widget.segments.length,
+                      controller: _controllerHeader,
+                      physics: const NeverScrollableScrollPhysics(),
+                    ),
                   ),
                 ),
               ],
@@ -391,10 +431,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
           ),
           //Divider(height: .5, color: Colors.grey,),
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 2,
+                flex: 35,
                 child: Container(
                   key: _pageKey,
                   child: ListView.builder(
@@ -404,91 +443,144 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
                       shrinkWrap: true,
                       itemBuilder: (_, i) {
                         final entry = widget.data[i].values;
-                        return Container(
-                          padding: const EdgeInsets.all(14),
-                          color: i%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
-                          child: Center(
-                            child: AppText(
-                              widget.data[i].values!.first.replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                              color: contentColor(widget.data[i].values!.first, true),
-                              fontWeight: contentWeight(widget.data[i].values!.first, true),
-                              textAlign: TextAlign.center,
-                              fontSize: 15,
-                              fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
-                            ),
-                          ),
+                        return LayoutBuilder(
+                          builder: (context, constraints) {
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (i < _rowHeights.length) {
+                                final RenderBox renderBox =
+                                    context.findRenderObject() as RenderBox;
+                                final height = renderBox.size.height;
+                                if (height != _rowHeights[i]) {
+                                  _updateRowHeight(i, height);
+                                }
+                              }
+                            });
+                            return Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 8, horizontal: 14),
+                              decoration: BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    width: 1,
+                                  ),
+                                ),
+                              ),
+                              height: 60, // Reduced from 80
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: MediaQuery(
+                                  data: MediaQuery.of(context).copyWith(
+                                      textScaleFactor:
+                                          1.0), // Prevent text scaling
+                                  child: AppText(
+                                    widget.data[i].values!.first
+                                        .replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                    color: contentColor(
+                                        widget.data[i].values!.first, true),
+                                    fontWeight: contentWeight(
+                                        widget.data[i].values!.first, true),
+                                    textAlign: TextAlign.left,
+                                    fontSize: 13,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    fontStyle: widget.data[i].values!.first
+                                            .contains('*italic*')
+                                        ? FontStyle.italic
+                                        : null,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
                         );
                       }),
                 ),
               ),
               Expanded(
-                flex: 5,
+                flex: 65,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: _currentPageHeight, // Adjust the height dynamically
-                  child: PageView.builder(itemBuilder: (_, i) {
-                    print('COLUMNS ${((widget.columns.length-1)/3).ceil()} ${widget.columns.length}');
-                    return Container(
-                      child: ListView.builder(
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: widget.data.length,
-                          shrinkWrap: true,
-                          itemBuilder: (_, index) {
-                            final entry = widget.data[index].values;
-                            final columns = widget.segments[i].columns!;
+                  height: _currentPageHeight,
+                  child: PageView.builder(
+                      itemBuilder: (_, i) {
+                        return Container(
+                          child: ListView.builder(
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: widget.data.length,
+                              shrinkWrap: true,
+                              itemBuilder: (_, index) {
+                                final entry = widget.data[index].values;
+                                final columns = widget.segments[i].columns!;
 
-                            int startIndex = 1;
+                                int startIndex = 1;
 
-                            for(int y = 0; y < i; y++) {
-                              startIndex+=widget.segments[y].columns!.length;
-                            }
+                                for (int y = 0; y < i; y++) {
+                                  startIndex +=
+                                      widget.segments[y].columns!.length;
+                                }
 
-                            //final startIndex2 = startIndex;
+                                var widgets = [];
 
-                            var widgets = [];
+                                for (int x = startIndex;
+                                    x < startIndex + columns.length;
+                                    x++) {
+                                  widgets.add(Expanded(
+                                    child: Center(
+                                      child: MediaQuery(
+                                        data: MediaQuery.of(context).copyWith(
+                                            textScaleFactor:
+                                                1.0), // Prevent text scaling
+                                        child: AppText(
+                                          entry!.length > x
+                                              ? entry[x].replaceAll(
+                                                  RegExp(r'\*(\w+)\*'), '')
+                                              : '',
+                                          color: contentColor(entry[x], true),
+                                          fontWeight:
+                                              contentWeight(entry[x], true),
+                                          textAlign: TextAlign.center,
+                                          fontSize: 13,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          fontStyle: (entry.length >
+                                                          (x + (i * 3) + 1)
+                                                      ? entry[(x + (i * 3)) + 1]
+                                                      : '')
+                                                  .contains('*italics*')
+                                              ? FontStyle.italic
+                                              : null,
+                                        ),
+                                      ),
+                                    ),
+                                  ));
+                                }
 
-                            for (int x = startIndex; x < startIndex+columns.length; x++) {
-                              //if(entry!.length > (x+(i*3)+1))
-                              widgets.add(Expanded(
-                                child: Center(
-                                  child: AppText(
-                                    entry!.length > x
-                                        ? entry[x].replaceAll(
-                                        RegExp(r'\*(\w+)\*'), '')
-                                        : '',
-                                    color: contentColor(entry[x], true),
-                                    fontWeight: contentWeight(entry[x], true),
-                                    textAlign: TextAlign.center,
-                                    fontSize: 15,
-                                    fontStyle: (entry.length > (x + (i * 3) + 1)
-                                        ? entry[(x + (i * 3)) + 1]
-                                        : '').contains('*italics*') ? FontStyle
-                                        .italic : null,
-                                    maxLines: 1,
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: Colors.grey.withOpacity(0.2),
+                                        width: 1,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ));
-                              //startIndex++;
-                            }
-
-                            return Container(
-                              color: index%2 == 1 ? (Theme.of(Get.context!).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter) : null,
-                              padding: const EdgeInsets.all(14),
-                              child: Row(
-                                children: [
-                                  ...widgets,
-                                ],
-                              ),
-                            );
-                          }),
-                    );
-                  },
-                      //itemCount: ((widget.columns.length-1)/3).ceil(),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 14),
+                                  height: 60, // Match first column height
+                                  child: Row(
+                                    children: [
+                                      ...widgets,
+                                    ],
+                                  ),
+                                );
+                              }),
+                        );
+                      },
                       itemCount: widget.segments.length,
                       controller: _controller,
-                      physics: const NeverScrollableScrollPhysics()
-                  ),
+                      physics: const NeverScrollableScrollPhysics()),
                 ),
               ),
             ],
@@ -499,10 +591,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> w
   }
 }
 
-
 class SegmentedSplitNewDataContent2 extends StatelessWidget {
   const SegmentedSplitNewDataContent2(
-      {Key? key, required this.data, required this.segments, required this.columns})
+      {Key? key,
+      required this.data,
+      required this.segments,
+      required this.columns})
       : super(key: key);
   final List<SegmentedSplitData> data;
   final List<SegmentedSplitSegments> segments;
@@ -598,7 +692,10 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
                         //color: contentColor(style, false),
                         child: Center(
                           child: AppText(
-                            data[i].values!.first.replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                            data[i]
+                                .values!
+                                .first
+                                .replaceAll(RegExp(r'\*(\w+)\*'), ''),
                             //color: contentColor(style, true),
                             //fontWeight: contentWeight(style, true),
                             textAlign: TextAlign.center,
@@ -609,37 +706,40 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
               ),
               Expanded(
                 flex: 5,
-                child: PageView.builder(itemBuilder: (_, index) {
-                  return ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: data.length,
-                      shrinkWrap: true,
-                      itemBuilder: (_, i) {
-                        final entry = data[i].values;
-                        final style = data[i].point ?? '';
-                        return Container(
-                          height: 20,
-                          padding: const EdgeInsets.all(16),
-                          color: contentColor(style, false),
-                          child: Row(
-                            children: [
-                              for (String content in entry ?? [])
-                                Expanded(
-                                  child: Center(
-                                    child: AppText(
-                                      content,
-                                      color: contentColor(style, true),
-                                      fontWeight: contentWeight(style, true),
-                                      textAlign: TextAlign.center,
+                child: PageView.builder(
+                    itemBuilder: (_, index) {
+                      return ListView.builder(
+                          padding: const EdgeInsets.symmetric(vertical: 0),
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: data.length,
+                          shrinkWrap: true,
+                          itemBuilder: (_, i) {
+                            final entry = data[i].values;
+                            final style = data[i].point ?? '';
+                            return Container(
+                              height: 20,
+                              padding: const EdgeInsets.all(16),
+                              color: contentColor(style, false),
+                              child: Row(
+                                children: [
+                                  for (String content in entry ?? [])
+                                    Expanded(
+                                      child: Center(
+                                        child: AppText(
+                                          content,
+                                          color: contentColor(style, true),
+                                          fontWeight:
+                                              contentWeight(style, true),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                            ],
-                          ),
-                        );
-                      });
-                }, itemCount: (columns.length-1/3).toInt()),
+                                ],
+                              ),
+                            );
+                          });
+                    },
+                    itemCount: (columns.length - 1 / 3).toInt()),
               ),
             ],
           ),
@@ -650,106 +750,136 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
 }
 
 class ExternalLinkContent extends StatelessWidget {
-
   final List<ExternalLinkData> link;
   final String disRaceNo;
-  const ExternalLinkContent({super.key, required this.link, required this.disRaceNo});
+  const ExternalLinkContent(
+      {super.key, required this.link, required this.disRaceNo});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(itemBuilder: (_, index) {
-   
-      print( Theme.of(Get.context!).brightness);
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: ListTile(
-          onTap: () {
-            launchUrl(Uri.parse(link[index].url!.replaceAll('{{RaceNo}}', disRaceNo)));
-          },
-          tileColor: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : AppColors.darkgrey,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          leading: link[index].icon != null 
-              ? SvgPicture.asset(
-                  AppHelper.getSvg('${link[index].icon}'),
-                  height: 23,
-                  colorFilter: ColorFilter.mode(
-                    Theme.of(context).brightness == Brightness.light
-                        ? Colors.white.withOpacity(0.7)
-                        : Colors.black, // Color for light mode
-                    BlendMode.srcIn,
-                  ),
-                )
-              : null,
-          title: Text('${link[index].label}', style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 17,
-          ),),
-          trailing: Icon(Icons.chevron_right),
-        ),
-      );
-    }, physics: const NeverScrollableScrollPhysics(), itemCount: link.length, shrinkWrap: true, padding: const EdgeInsets.only(left: 18, right: 18, top: 16, bottom: 32));
+    return ListView.builder(
+        itemBuilder: (_, index) {
+          print(Theme.of(Get.context!).brightness);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ListTile(
+              onTap: () {
+                launchUrl(Uri.parse(
+                    link[index].url!.replaceAll('{{RaceNo}}', disRaceNo)));
+              },
+              tileColor: Theme.of(Get.context!).brightness != Brightness.light
+                  ? const Color(0xFFF7F7F7)
+                  : AppColors.darkgrey,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              leading: link[index].icon != null
+                  ? SvgPicture.asset(
+                      AppHelper.getSvg('${link[index].icon}'),
+                      height: 23,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context).brightness == Brightness.light
+                            ? Colors.white.withOpacity(0.7)
+                            : Colors.black, // Color for light mode
+                        BlendMode.srcIn,
+                      ),
+                    )
+                  : null,
+              title: Text(
+                '${link[index].label}',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 17,
+                ),
+              ),
+              trailing: Icon(Icons.chevron_right),
+            ),
+          );
+        },
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: link.length,
+        shrinkWrap: true,
+        padding:
+            const EdgeInsets.only(left: 18, right: 18, top: 16, bottom: 32));
   }
 }
 
 class PaceDataContent extends StatelessWidget {
-
   final List<PaceData> data;
   const PaceDataContent({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(itemBuilder: (_, index) {
-      print((MediaQuery.of(context).size.width));
-      print(((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36);
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Row(
-          children: [
-            Container(
-              width: ((MediaQuery.of(context).size.width/2)+(((MediaQuery.of(context).size.width/2)/100)*data[index].value!))-36,
-              height: 39,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              decoration: BoxDecoration(
-                color: Theme.of(Get.context!).brightness != Brightness.light ? const Color(0xFFF7F7F7) : Colors.white.withOpacity(0.14),
-              ),
-              child: Row(
-                children: [
-                 if (data[index].icon != null) ...[
-                      SvgPicture.asset(
-                        AppHelper.getSvg(data[index].icon!),
-                        height: 23,
-                        colorFilter: ColorFilter.mode(
-                          Theme.of(context).brightness == Brightness.light
-                            ? Colors.white.withOpacity(0.7): Colors.black, // Color for light mode
-                           // Color for dark mode
-                          BlendMode.srcIn,
+    return ListView.builder(
+        itemBuilder: (_, index) {
+          print((MediaQuery.of(context).size.width));
+          print(((MediaQuery.of(context).size.width / 2) +
+                  (((MediaQuery.of(context).size.width / 2) / 100) *
+                      data[index].value!)) -
+              36);
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: Row(
+              children: [
+                Container(
+                  width: ((MediaQuery.of(context).size.width / 2) +
+                          (((MediaQuery.of(context).size.width / 2) / 100) *
+                              data[index].value!)) -
+                      36,
+                  height: 39,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(Get.context!).brightness != Brightness.light
+                        ? const Color(0xFFF7F7F7)
+                        : Colors.white.withOpacity(0.14),
+                  ),
+                  child: Row(
+                    children: [
+                      if (data[index].icon != null) ...[
+                        SvgPicture.asset(
+                          AppHelper.getSvg(data[index].icon!),
+                          height: 23,
+                          colorFilter: ColorFilter.mode(
+                            Theme.of(context).brightness == Brightness.light
+                                ? Colors.white.withOpacity(0.7)
+                                : Colors.black, // Color for light mode
+                            // Color for dark mode
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(
+                            width:
+                                12), // Move this outside the SvgPicture widget
+                      ],
+                      Text(
+                        data[index].range!,
+                        style: TextStyle(
+                          fontSize: 18,
                         ),
                       ),
-                      const SizedBox(width: 12), // Move this outside the SvgPicture widget
+                      const SizedBox(width: 12),
+                      Text(
+                        data[index].time ?? '',
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
                     ],
-                  Text(data[index].range!, style: TextStyle(
-                    fontSize: 18,
-                  ),),
-                  const SizedBox(width: 12),
-                  Text(data[index].time ?? '', style: TextStyle(
-                    fontSize: 18,
-                  ),),
-                ],
-              ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      );
-    },
-    physics: const NeverScrollableScrollPhysics(), itemCount: data.length, shrinkWrap: true, padding: const EdgeInsets.only(left: 18, right: 18, top: 0, bottom: 32));
+          );
+        },
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: data.length,
+        shrinkWrap: true,
+        padding:
+            const EdgeInsets.only(left: 18, right: 18, top: 0, bottom: 32));
   }
 }
 
-
 class SplitTitleContent extends StatelessWidget {
-
   final TitleData title;
   const SplitTitleContent({super.key, required this.title});
 
@@ -757,14 +887,16 @@ class SplitTitleContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
-      child: Text(title.label!, style: TextStyle(
-        fontSize: 25,
-        fontWeight: FontWeight.w600,
-      ),),
+      child: Text(
+        title.label!,
+        style: TextStyle(
+          fontSize: 25,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }
-
 
 class SummaryDataContent2 extends StatelessWidget {
   const SummaryDataContent2({super.key, this.summary});
@@ -934,7 +1066,8 @@ class SplitTableBuild2 extends StatelessWidget {
 }
 
 class SplitDetailsHeader2 extends StatelessWidget {
-  const SplitDetailsHeader2({Key? key, required this.details}) : super(key: key);
+  const SplitDetailsHeader2({Key? key, required this.details})
+      : super(key: key);
   final ItemsWrapper details;
 
   Widget createSplitTimings() {
@@ -994,7 +1127,8 @@ class SplitDetailsHeader2 extends StatelessWidget {
 }
 
 class SplitDataContent2 extends StatelessWidget {
-  const SplitDataContent2({Key? key, required this.items, this.showSplit = true})
+  const SplitDataContent2(
+      {Key? key, required this.items, this.showSplit = true})
       : super(key: key);
   final List<ItemsWrapper> items;
   final bool showSplit;

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:country_flags/country_flags.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/db/models/athlete_extra_details.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -27,11 +28,12 @@ class AthleteDetailsScreen extends StatelessWidget {
     final controller = Get.put(AthleteDetailsController());
     return Scaffold(
       appBar: AppBar(
-         surfaceTintColor: Colors.white,
+        surfaceTintColor: Colors.white,
         actions: [
           StreamBuilder<AppAthleteDb>(
-              stream:
-                  controller.getSingleAthlete(controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
+              stream: controller.getSingleAthlete(controller.selEntrant != null
+                  ? controller.selEntrant!.athleteId
+                  : controller.selEntrantA!.id),
               builder: (_, snap) {
                 if (snap.hasData && controller.canFollow) {
                   final isFollowed = snap.data!.isFollowed;
@@ -39,7 +41,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                     return IconButton(
                       onPressed: () {
                         controller.updateAthlete(snap.data!, isFollowed);
-                        if(Get.arguments['on_follow'] != null) {
+                        if (Get.arguments['on_follow'] != null) {
                           print('kk');
                           Get.arguments['on_follow']!();
                         }
@@ -60,10 +62,29 @@ class AthleteDetailsScreen extends StatelessWidget {
           IconButton(
               onPressed: controller.getSplitDetails,
               icon: const Icon(Icons.refresh)),
+          if ((controller.selEntrant?.country != null &&
+                  controller.selEntrant!.country!.isNotEmpty) ||
+              (controller.selEntrantA?.country != null &&
+                  controller.selEntrantA!.country!.isNotEmpty)) ...[
+            const SizedBox(width: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: CountryFlag.fromCountryCode(
+                (controller.selEntrant?.country ??
+                        controller.selEntrantA?.country ??
+                        '')
+                    .toLowerCase(),
+                height: 20,
+                width: 30,
+              ),
+            ),
+          ],
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
             child: AthleteRaceNo(
-              number: controller.selEntrant?.disRaceNo ?? controller.selEntrantA?.disRaceNo ?? '',
+              number: controller.selEntrant?.disRaceNo ??
+                  controller.selEntrantA?.disRaceNo ??
+                  '',
               width: 20.w,
             ),
           )
@@ -82,7 +103,9 @@ class AthleteDetailsScreen extends StatelessWidget {
                   color: Theme.of(context).brightness == Brightness.light
                       ? AppColors.white
                       : AppColors.darkBlack,
-                  controller.selEntrant?.name ?? controller.selEntrantA?.name ?? '',
+                  controller.selEntrant?.name ??
+                      controller.selEntrantA?.name ??
+                      '',
                   fontWeight: FontWeight.bold,
                   fontSize: 24,
                   maxLines: 2,
@@ -94,7 +117,6 @@ class AthleteDetailsScreen extends StatelessWidget {
               SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  
                   children: [
                     const SizedBox(
                       height: 10,
@@ -103,9 +125,10 @@ class AthleteDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Wrap(
                         children: [
-                          if ((controller
-                              .selEntrant?.profileImage ?? controller
-                              .selEntrantA?.profileImage ?? '').isNotEmpty) ...[
+                          if ((controller.selEntrant?.profileImage ??
+                                  controller.selEntrantA?.profileImage ??
+                                  '')
+                              .isNotEmpty) ...[
                             Obx(() => GestureDetector(
                                   onTap: controller.toggleEnlargedImage,
                                   child: AnimatedContainer(
@@ -120,8 +143,11 @@ class AthleteDetailsScreen extends StatelessWidget {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(6),
                                       child: CachedNetworkImage(
-                                        imageUrl:
-                                            controller.selEntrant?.profileImage ?? controller.selEntrantA?.profileImage ?? '',
+                                        imageUrl: controller
+                                                .selEntrant?.profileImage ??
+                                            controller
+                                                .selEntrantA?.profileImage ??
+                                            '',
                                         placeholder: (_, val) => const Center(
                                             child: CircularProgressIndicator
                                                 .adaptive()),
@@ -146,7 +172,11 @@ class AthleteDetailsScreen extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: AppText(
-                              (controller.selEntrant?.info ?? controller.selEntrantA?.info ?? '').replaceAll('null', '').trim(),
+                              (controller.selEntrant?.info ??
+                                      controller.selEntrantA?.info ??
+                                      '')
+                                  .replaceAll('null', '')
+                                  .trim(),
                               fontWeight: FontWeight.w500,
                               overflow: TextOverflow.ellipsis,
                               maxLines: 6,
@@ -160,20 +190,35 @@ class AthleteDetailsScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: StreamBuilder<List<AppAthleteExtraDetailsDb>>(
                           stream: controller.getSingleAthleteDetails(
-                              controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
+                              controller.selEntrant != null
+                                  ? controller.selEntrant!.athleteId
+                                  : controller.selEntrantA!.id),
                           builder: (_, snap) {
                             if (snap.hasData || snap.hasError) {
                               var data = snap.data;
-                              if((data ?? []).isEmpty) {
+                              if ((data ?? []).isEmpty) {
                                 data = null;
                               }
-                              print('controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
-                              final details = data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
-                                return AppAthleteExtraDetailsDb(id: 0, athleteId: details.athleteNumber, name: details.name, eventId: AppGlobals.selEventId, country: details.country, athleteNumber: details.athleteNumber);
-                              }).toList();
+                              print(
+                                  'controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
+                              final details = data ??
+                                  (controller.selEntrantA?.athleteDetails ?? [])
+                                      .map((details) {
+                                    print(
+                                        'Processing athlete details: ${details.country}');
+                                    return AppAthleteExtraDetailsDb(
+                                        id: 0,
+                                        athleteId: details.athleteNumber,
+                                        name: details.name,
+                                        eventId: AppGlobals.selEventId,
+                                        country: details.country,
+                                        athleteNumber: details.athleteNumber);
+                                  }).toList();
                               if (details.isEmpty) {
                                 return SizedBox(height: 2.h);
                               }
+                              print(
+                                  'Athlete Details - country: ${controller.selEntrant?.country ?? controller.selEntrantA?.country}');
                               return ListView.separated(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 16),
@@ -190,6 +235,8 @@ class AthleteDetailsScreen extends StatelessWidget {
                                             : AppColors.greyLight);
                                   },
                                   itemBuilder: (_, i) {
+                                    print(
+                                        'Building tile for athlete: ${details[i].name} with country: ${details[i].country}');
                                     return AthleteDetailsTile(
                                         athleteExtraDetails: details[i]);
                                   });
@@ -199,190 +246,220 @@ class AthleteDetailsScreen extends StatelessWidget {
                           }),
                     ),
                     StreamBuilder<AppAthleteDb>(
-                        stream: controller
-                            .getSingleAthlete(controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
-
+                        stream: controller.getSingleAthlete(
+                            controller.selEntrant != null
+                                ? controller.selEntrant!.athleteId
+                                : controller.selEntrantA!.id),
                         builder: (_, snap) {
                           //print('snap ${controller.selEntrant.athleteId} ${snap.data}');
                           final isFollowed = snap.data?.isFollowed ?? false;
                           return Column(
                             children: [
-                              if((Get.arguments['can_follow']) != false)
-                              AnimatedContainer(
-                                width: double.infinity,
-                                curve: Curves.easeInOut,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16),
-                                duration: const Duration(milliseconds: 200),
-                                decoration: BoxDecoration(
-                                    color: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false) ? Theme
-                                        .of(context)
-                                        .disabledColor : (isFollowed
-                                        ? AppColors.transparent
-                                        : Theme
-                                        .of(context)
-                                        .brightness ==
-                                        Brightness.light
-                                        ? AppColors.accentDark
-                                        : AppColors.accentLight),
-                                    borderRadius: BorderRadius.circular(6),
-                                    border: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false)
-                                        ? null
-                                        : Border.all(
-                                        color: Theme
-                                            .of(context)
-                                            .brightness ==
-                                            Brightness.light
-                                            ? AppColors.accentDark
-                                            : AppColors.accentLight,
-                                        width: 0.4)),
-                                child: CupertinoButton(
-                                    padding: const EdgeInsets.all(0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(
-                                          isFollowed
-                                              ? Icons.star
-                                              : Icons.star_outline,
-                                          color: isFollowed
-                                              ? Theme
-                                              .of(context)
-                                              .brightness ==
-                                              Brightness.light
-                                              ? AppColors.accentDark
-                                              : AppColors.accentLight
-                                              : AppColors.white,
-                                          size: 18,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
-                                        AppText(
-                                          isFollowed ? AppLocalizations.of(context)!.following : AppLocalizations.of(context)!.follow,
-                                          fontSize: 14,
-                                          color: isFollowed
-                                              ? Theme
-                                              .of(context)
-                                              .brightness ==
-                                              Brightness.light
-                                              ? AppColors.accentDark
-                                              : AppColors.accentLight
-                                              : AppColors.white,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ],
-                                    ),
-                                    onPressed: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false)
-                                        ? null
-                                        : () {
-                                      print('akk2');
-                                      //final detailsController = Get.put(AthletesController());
-                                      // detailsController.insertAthlete(
-                                      //     snap.data!, isFollowed);
-                                      if (Get.arguments['on_follow'] != null) {
-                                        print('akk');
-                                        Get.arguments['on_follow']!();
-                                      }
-                                    }),
-                              ),
-                              if((Get.arguments['can_follow']) != false)
-                                if(!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 4.0, right: 4.0, top: 4.0),
-                                  child: Text(
-                                    AppLocalizations.of(context)!.followNotAvailableUntilRaceNumberIsAssigned,
-                                    style: TextStyle(
-                                      fontSize: 10,
-                                    ),),
+                              if ((Get.arguments['can_follow']) != false)
+                                AnimatedContainer(
+                                  width: double.infinity,
+                                  curve: Curves.easeInOut,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16),
+                                  duration: const Duration(milliseconds: 200),
+                                  decoration: BoxDecoration(
+                                      color: !(controller
+                                                  .selEntrant?.canFollow ??
+                                              controller
+                                                  .selEntrantA?.canFollow ??
+                                              false)
+                                          ? Theme.of(context).disabledColor
+                                          : (isFollowed
+                                              ? AppColors.transparent
+                                              : Theme.of(context).brightness ==
+                                                      Brightness.light
+                                                  ? AppColors.accentDark
+                                                  : AppColors.accentLight),
+                                      borderRadius: BorderRadius.circular(6),
+                                      border:
+                                          !(controller.selEntrant?.canFollow ??
+                                                  controller
+                                                      .selEntrantA?.canFollow ??
+                                                  false)
+                                              ? null
+                                              : Border.all(
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? AppColors.accentDark
+                                                      : AppColors.accentLight,
+                                                  width: 0.4)),
+                                  child: CupertinoButton(
+                                      padding: const EdgeInsets.all(0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isFollowed
+                                                ? Icons.star
+                                                : Icons.star_outline,
+                                            color: isFollowed
+                                                ? Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.light
+                                                    ? AppColors.accentDark
+                                                    : AppColors.accentLight
+                                                : AppColors.white,
+                                            size: 18,
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          AppText(
+                                            isFollowed
+                                                ? AppLocalizations.of(context)!
+                                                    .following
+                                                : AppLocalizations.of(context)!
+                                                    .follow,
+                                            fontSize: 14,
+                                            color: isFollowed
+                                                ? Theme.of(context)
+                                                            .brightness ==
+                                                        Brightness.light
+                                                    ? AppColors.accentDark
+                                                    : AppColors.accentLight
+                                                : AppColors.white,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ],
+                                      ),
+                                      onPressed: !(controller
+                                                  .selEntrant?.canFollow ??
+                                              controller
+                                                  .selEntrantA?.canFollow ??
+                                              false)
+                                          ? null
+                                          : () {
+                                              print('akk2');
+                                              //final detailsController = Get.put(AthletesController());
+                                              // detailsController.insertAthlete(
+                                              //     snap.data!, isFollowed);
+                                              if (Get.arguments['on_follow'] !=
+                                                  null) {
+                                                print('akk');
+                                                Get.arguments['on_follow']!();
+                                              }
+                                            }),
                                 ),
+                              if ((Get.arguments['can_follow']) != false)
+                                if (!(controller.selEntrant?.canFollow ??
+                                    controller.selEntrantA?.canFollow ??
+                                    false))
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 4.0, right: 4.0, top: 4.0),
+                                    child: Text(
+                                      AppLocalizations.of(context)!
+                                          .followNotAvailableUntilRaceNumberIsAssigned,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
                               const SizedBox(
                                 height: 16,
                               ),
                               Divider(
                                   height: 1,
                                   thickness: .5,
-                                  color: Theme
-                                      .of(context)
-                                      .brightness == Brightness.light
-                                      ? AppColors.darkgrey : AppColors.grey
-                              ),
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? AppColors.darkgrey
+                                      : AppColors.grey),
                             ],
                           );
-                        }
-                          ),
+                        }),
                   ],
                 ),
               ),
-              if(!controller.version2)
-              SliverAppBar(
-                surfaceTintColor: Colors.white,
-                automaticallyImplyLeading: false,
-                pinned: true,
-                titleSpacing: 0,
-                toolbarHeight: 49,
-                title: Obx(() {
-                  if (controller.athleteSplitDataSnap.value ==
-                      DataSnapShot.loaded) {
-                    return Column(
-                      children: [
-                        TabBar(
-                          controller: controller.tabController,
-                          enableFeedback: true,
-                          labelColor: Theme.of(context).brightness == Brightness.light
-                                                    ? AppColors.accentDark
-                                                    : AppColors.accentLight,
-                          unselectedLabelColor:
-                              Theme.of(context).brightness == Brightness.light
-                                                    ? AppColors.accentDark.withOpacity(0.8)
-                                                    : AppColors.accentLight.withOpacity(0.8),
-                          indicatorSize: TabBarIndicatorSize.tab,
-                          indicatorColor: Theme.of(context).brightness == Brightness.light
-                                                    ? AppColors.accentDark.withOpacity(0.8)
-                                                    : AppColors.accentLight.withOpacity(0.8),
-                          tabs: controller.detailsTabs,
-                        ),
-                        Divider(
-                            height: 1,
-                            thickness: .5,
-                            color: Theme.of(context).brightness == Brightness.light
-                                            ?  AppColors.darkgrey :AppColors.greyLight
-                        ),
-                      ],
-                    );
-                  } else {
-                    return const SizedBox();
-                  }
-                }),
-              ),
+              if (!controller.version2)
+                SliverAppBar(
+                  surfaceTintColor: Colors.white,
+                  automaticallyImplyLeading: false,
+                  pinned: true,
+                  titleSpacing: 0,
+                  toolbarHeight: 49,
+                  title: Obx(() {
+                    if (controller.athleteSplitDataSnap.value ==
+                        DataSnapShot.loaded) {
+                      return Column(
+                        children: [
+                          TabBar(
+                            controller: controller.tabController,
+                            enableFeedback: true,
+                            labelColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? AppColors.accentDark
+                                    : AppColors.accentLight,
+                            unselectedLabelColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? AppColors.accentDark.withOpacity(0.8)
+                                    : AppColors.accentLight.withOpacity(0.8),
+                            indicatorSize: TabBarIndicatorSize.tab,
+                            indicatorColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? AppColors.accentDark.withOpacity(0.8)
+                                    : AppColors.accentLight.withOpacity(0.8),
+                            tabs: controller.detailsTabs,
+                          ),
+                          Divider(
+                              height: 1,
+                              thickness: .5,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.darkgrey
+                                  : AppColors.greyLight),
+                        ],
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  }),
+                ),
             ];
           },
           body: Obx(() {
             if (controller.athleteSplitDataSnap.value == DataSnapShot.loaded) {
-
-              if(controller.version2) {
-                return ListView.builder(itemBuilder: (_, index) {
-                  if(controller.items[index].type == 'summary') {
-                    return SummaryDataContent2(
-                        summary: controller.items[index].data);
-                  } else if (controller.items[index].type == 'externallinks') {
-                    return ExternalLinkContent(link: controller.items[index].data, disRaceNo: controller.selEntrant?.disRaceNo ?? controller.selEntrantA?.disRaceNo ?? '');
-                  } else if (controller.items[index].type == 'title') {
-                    return SplitTitleContent(title: controller.items[index].data);
-                  } else if (controller.items[index].type == 'splits') {
-                    return SplitNewDataContent2(splitDataList: controller.items[index].splits ?? [], showSplit: false);
-                  } else if (controller.items[index].type == 'segmentedsplit') {
-                    return SegmentedSplitDataContent(
-                        data: controller.items[index].data ?? [],
-                        segments: controller.items[index].segments ?? [],
-                        columns: controller.items[index].columns ?? [],
-                    );
-                  } else if (controller.items[index].type == 'pace') {
-                    return PaceDataContent(data: controller.items[index].data ?? []);
-                  }
-                  return const SizedBox();
-                }, itemCount: controller.items.length, shrinkWrap: true);
+              if (controller.version2) {
+                return ListView.builder(
+                    itemBuilder: (_, index) {
+                      if (controller.items[index].type == 'summary') {
+                        return SummaryDataContent2(
+                            summary: controller.items[index].data);
+                      } else if (controller.items[index].type ==
+                          'externallinks') {
+                        return ExternalLinkContent(
+                            link: controller.items[index].data,
+                            disRaceNo: controller.selEntrant?.disRaceNo ??
+                                controller.selEntrantA?.disRaceNo ??
+                                '');
+                      } else if (controller.items[index].type == 'title') {
+                        return SplitTitleContent(
+                            title: controller.items[index].data);
+                      } else if (controller.items[index].type == 'splits') {
+                        return SplitNewDataContent2(
+                            splitDataList: controller.items[index].splits ?? [],
+                            showSplit: false);
+                      } else if (controller.items[index].type ==
+                          'segmentedsplit') {
+                        return SegmentedSplitDataContent(
+                          data: controller.items[index].data ?? [],
+                          segments: controller.items[index].segments ?? [],
+                          columns: controller.items[index].columns ?? [],
+                        );
+                      } else if (controller.items[index].type == 'pace') {
+                        return PaceDataContent(
+                            data: controller.items[index].data ?? []);
+                      }
+                      return const SizedBox();
+                    },
+                    itemCount: controller.items.length,
+                    shrinkWrap: true);
               }
 
               return TabBarView(
@@ -435,50 +512,26 @@ class AthleteDetailsTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('AthleteDetailsTile - country: ${athleteExtraDetails.country}');
     return Row(
       children: [
-        if (athleteExtraDetails.country.isNotEmpty) ...[
-          AppText(
-            getFlagEmoji(athleteExtraDetails.country),
-            fontSize: 20,
-          ),
-          const SizedBox(width: 12),
-        ],
-        if(athleteExtraDetails.athleteNumber.isNotEmpty)
-        Container(
-            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
-            decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.darkBlack
-                    : AppColors.greyLighter,
-                borderRadius: BorderRadius.circular(6)),
-            child: AppText(
-              athleteExtraDetails.athleteNumber,
-              fontSize: 12,
-            )),
+        if (athleteExtraDetails.athleteNumber.isNotEmpty)
+          Container(
+              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 24),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.darkBlack
+                      : AppColors.greyLighter,
+                  borderRadius: BorderRadius.circular(6)),
+              child: AppText(
+                athleteExtraDetails.athleteNumber,
+                fontSize: 12,
+              )),
         const SizedBox(width: 12),
-        AppText(athleteExtraDetails.name)
+        Expanded(
+          child: AppText(athleteExtraDetails.name),
+        ),
       ],
     );
-  }
-
-  String getFlagEmoji(String countryCode) {
-    const int offset = 127397;
-    final int a = 'A'.codeUnitAt(0);
-    final int z = 'Z'.codeUnitAt(0);
-    const exception =
-        FormatException('Provided code is not an alpha 2 country code.');
-    if (countryCode.length != 2) throw exception;
-
-    String formatted = countryCode.toUpperCase();
-    final int first = formatted.codeUnitAt(0);
-    final int second = formatted.codeUnitAt(1);
-
-    if (first > z || first < a || second > z || second < a) {
-      throw exception;
-    }
-
-    return String.fromCharCode(first + offset) +
-        String.fromCharCode(second + offset);
   }
 }

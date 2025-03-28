@@ -46,7 +46,6 @@ class AthletesController extends GetxController {
 
   Map pagination = {};
 
-
   @override
   void onInit() {
     super.onInit();
@@ -58,9 +57,9 @@ class AthletesController extends GetxController {
   }
 
   void onScroll() {
-
-    if((scrollController.position.maxScrollExtent-scrollController.offset) < 400) {
-      if(lastOffset == offset.value) {
+    if ((scrollController.position.maxScrollExtent - scrollController.offset) <
+        400) {
+      if (lastOffset == offset.value) {
         offset.value = offset.value + limit;
         update();
       }
@@ -68,12 +67,13 @@ class AthletesController extends GetxController {
   }
 
   void onSearchScroll() {
-
-    if((searchScrollController.position.maxScrollExtent-searchScrollController.offset) < 400) {
-      if(lastPage == page) {
+    if ((searchScrollController.position.maxScrollExtent -
+            searchScrollController.offset) <
+        400) {
+      if (lastPage == page) {
         page = page + 1;
         update();
-        if(page <= (pagination['totalPages'] ?? 1)) {
+        if (page <= (pagination['totalPages'] ?? 1)) {
           getAthletes(searchText.value);
         }
       }
@@ -125,7 +125,6 @@ class AthletesController extends GetxController {
     update();
   }
 
-
   Future<void> searchAthletes(String val) async {
     searchText.value = val;
     offset.value = 0;
@@ -140,7 +139,6 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthlete(Entrants athelete) async {
-
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -174,7 +172,6 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthleteA(AppAthleteDb athelete) async {
-
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -208,7 +205,7 @@ class AthletesController extends GetxController {
   }
 
   Future<void> insertAthlete(Entrants athlete, bool isFollowed) async {
-    if(isFollowed) {
+    if (isFollowed) {
       await DatabaseHandler.insertAthlete(athlete);
     } else {
       await DatabaseHandler.removeAthlete(athlete.id);
@@ -217,8 +214,7 @@ class AthletesController extends GetxController {
 
   Future<void> insertAthleteA(AppAthleteDb athlete, bool isFollowed) async {
     var a = await DatabaseHandler.getSingleAthleteOnce(athlete.athleteId);
-    if(a == null) {
-     
+    if (a == null) {
       await DatabaseHandler.insertAthlete(Entrants(
         id: athlete.athleteId,
         disRaceNo: athlete.disRaceNo ?? '',
@@ -274,8 +270,7 @@ class AthletesController extends GetxController {
   }
 
   Future<List<Entrants>> getAthletes(String val, {bool init = false}) async {
-
-    if(init) {
+    if (init) {
       loading.value = true;
       searchAccumulatedList.clear();
       page = 1;
@@ -294,13 +289,14 @@ class AthletesController extends GetxController {
     var raceId = AppGlobals.selEventId;
 
     var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
-      'searchstring' : searchText.value,
-      'pagenumber' : page,
+      'searchstring': searchText.value,
+      'pagenumber': page,
+      'include_country': true,
     });
     //var data = await ApiHandler.genericGetHttp(url: entrantsList.url!);
 
-    print(data.data);
- 
+    print('API Response Data: ${data.data}');
+
     pagination = {
       "totalPages": data.data['pagination']['totalPages'],
       "currentPage": data.data['pagination']['currentPage'],
@@ -308,23 +304,11 @@ class AthletesController extends GetxController {
     };
 
     for (final item in data.data['athletes']) {
-
-
-        //int index = searchAccumulatedList.indexWhere((element) => element.athleteId == item.athleteId);
-        //if(index == -1) {
+      print('Athlete Item: $item');
+      print('Country Field: ${item['country']}');
       var entrant = Entrants.fromJson(item);
-      // var followedAthletes = await DatabaseHandler.getSingleAthleteOnce(entrant.id);
-      // if(followedAthletes != null) {
-      //   entrant.isFollowed = followedAthletes.isFollowed;
-      // }
+      print('Parsed Entrant Country: ${entrant.country}');
       searchAccumulatedList.add(entrant);
-
-      //} else {
-
-        //  searchAccumulatedList.removeAt(index);
-        //  searchAccumulatedList.insert(index, item);
-        //}
-        // Yield a copy of the accumulated list
     }
     lastPage = page;
 
@@ -349,29 +333,29 @@ class AthletesController extends GetxController {
 
   void toAthleteDetails(dynamic entrant, {VoidCallback? onFollow}) async {
     Get.focusScope?.unfocus();
-    Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: entrant, 'on_follow': onFollow});
+    Get.toNamed(Routes.athleteDetails,
+        arguments: {AppKeys.athlete: entrant, 'on_follow': onFollow});
   }
 
+  List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
+    athletes.sort((x, y) {
+      int xValue = _parseRaceno(x.raceno);
+      int yValue = _parseRaceno(y.raceno);
+      return xValue.compareTo(yValue);
+    });
 
-List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
-  athletes.sort((x, y) {
-    int xValue = _parseRaceno(x.raceno);
-    int yValue = _parseRaceno(y.raceno);
-    return xValue.compareTo(yValue);
-  });
+    List<AppAthleteDb> assignedRaceNoAthletes = [];
+    List<AppAthleteDb> unAssignedRaceNoAthletes = [];
 
-  List<AppAthleteDb> assignedRaceNoAthletes = [];
-  List<AppAthleteDb> unAssignedRaceNoAthletes = [];
-  
-  // Put unassigned racenumber athletes to the end of list 
-  for (AppAthleteDb athlete in athletes) {
-    if (athlete.athleteId == '9999999') {
-      unAssignedRaceNoAthletes.add(athlete);
-    } else {
-      assignedRaceNoAthletes.add(athlete);
+    // Put unassigned racenumber athletes to the end of list
+    for (AppAthleteDb athlete in athletes) {
+      if (athlete.athleteId == '9999999') {
+        unAssignedRaceNoAthletes.add(athlete);
+      } else {
+        assignedRaceNoAthletes.add(athlete);
+      }
     }
-  }
-  
+
     return [...assignedRaceNoAthletes, ...unAssignedRaceNoAthletes];
   }
 
@@ -396,12 +380,13 @@ List<AppAthleteDb> sortFilterAthletes(List<AppAthleteDb> athletes) {
 
     return [...assignedRaceNoAthletes, ...unAssignedRaceNoAthletes];
   }
-  int _parseRaceno(String raceno) {
-  try {
-    return int.parse(raceno);
-  } catch (e) {
-    return double.maxFinite.toInt(); // Assign a large value to non-integer raceno
-  }
-}
 
+  int _parseRaceno(String raceno) {
+    try {
+      return int.parse(raceno);
+    } catch (e) {
+      return double.maxFinite
+          .toInt(); // Assign a large value to non-integer raceno
+    }
+  }
 }

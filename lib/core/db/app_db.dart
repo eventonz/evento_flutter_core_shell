@@ -22,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 7;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration {
@@ -68,6 +68,14 @@ class AppDatabase extends _$AppDatabase {
         if (from < 7) {
           await customStatement('DELETE FROM ${athleteDb.actualTableName}');
         }
+        if (from < 8) {
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN country TEXT');
+        }
+        if (from < 9) {
+          await customStatement(
+              'ALTER TABLE ${athleteDb.actualTableName} ADD COLUMN import_key TEXT');
+        }
       },
     );
   }
@@ -111,6 +119,8 @@ class DatabaseHandler {
           extra: entrant.extra,
           disRaceNo: Value(entrant.disRaceNo),
           canFollow: entrant.canFollow,
+          country: Value(entrant.country),
+          importKey: Value(entrant.importKey),
           searchTag:
               '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
       detailsList.addAll(
@@ -155,6 +165,8 @@ class DatabaseHandler {
         extra: entrant.extra,
         disRaceNo: Value(entrant.disRaceNo),
         canFollow: entrant.canFollow,
+        country: Value(entrant.country),
+        importKey: Value(entrant.importKey),
         searchTag:
             '${entrant.number} ${entrant.name.toLowerCase()} ${entrant.info} ${entrant.extra}'));
     _db.athleteExtraDetailsDb.insertAll(
