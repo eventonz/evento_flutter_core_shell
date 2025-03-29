@@ -14,7 +14,6 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:evento_core/core/utils/logger.dart';
-import 'package:uni_links/uni_links.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/utils/keys.dart';
 
@@ -44,17 +43,7 @@ class _EventoAppState extends State<EventoApp> {
 
   void _handleIncomingLinks() {
     Logger.i('Setting up deep link handler');
-    _sub = uriLinkStream.listen(
-      (Uri? uri) {
-        Logger.i('Received deep link: $uri');
-        if (uri != null) {
-          _handleDeepLink(uri);
-        }
-      },
-      onError: (err) {
-        Logger.e('Deep link error: $err');
-      },
-    );
+
   }
 
   void _handleDeepLink(Uri uri) async {
