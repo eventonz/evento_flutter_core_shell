@@ -30,6 +30,7 @@ class AthleteDetailsController extends GetxController
   bool version2 = false;
   late int selectedTabIndex = 0;
 
+  RxBool loading = false.obs;
   bool canFollow = true;
   final ScrollController scrollController = ScrollController();
 
@@ -49,7 +50,30 @@ class AthleteDetailsController extends GetxController
   @override
   void onReady() {
     super.onReady();
-    getSplitDetails();
+    if(Get.arguments[AppKeys.athlete] != null) {
+      getSplitDetails();
+    } else {
+      getAthlete(Get.arguments['id'].toString());
+    }
+  }
+
+  Future<void> getAthlete(String id) async {
+    print(id);
+    loading.value = true;
+    update();
+
+    var raceId = AppGlobals.selEventId;
+
+    var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
+      'searchstring' : id,
+      'pagenumber' : 1,
+    });
+
+    if(data.data['athletes'].isNotEmpty) {
+      selEntrantA = Entrants.fromJson(data.data['athletes'][0]);
+    }
+    loading.value = false;
+    update();
   }
 
   Future<void> getSplitDetails() async {

@@ -146,7 +146,10 @@ class LandingController extends GetxController {
           if(uri.path.contains('/event_id/')) {
             var eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
             String athleteId = open.split('/athlete/')[1];
-            Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: await DatabaseHandler.getSingleAthleteOnce(athleteId)});
+            AppGlobals.selEventId = int.parse(eventId);
+            await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
+
+            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
           }
         });
 
