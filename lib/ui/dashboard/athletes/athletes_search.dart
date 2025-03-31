@@ -54,62 +54,100 @@ class AthletesSearchScreen extends StatelessWidget {
             height: 1.h,
           ),
           Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: TextField(
-                      focusNode: controller.focusNode,
-                      controller: controller.searchTextEditController,
-                      onSubmitted: (val) => controller.searchAthletes(val),
-                      cursorColor: AppColors.grey,
-                      style: const TextStyle(fontSize: 16),
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Search ${controller.athleteText}',
-                        hintStyle: TextStyle(
-                          fontSize: 15,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? AppColors.greyLight
-                                  : AppColors.grey,
-                        ),
-                        filled: true,
-                        fillColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? AppColors.white.withOpacity(0.045)
-                                : AppColors.black.withOpacity(0.045),
-                        prefixIcon: Icon(
-                          FeatherIcons.search,
-                          size: 5.w,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? AppColors.white
-                                  : AppColors.black,
-                        ),
-                        suffixIcon:
-                            Obx(() => controller.searchText.value.isEmpty
-                                ? const SizedBox()
-                                : GestureDetector(
-                                    onTap: controller.clearSearchField,
-                                    child: Icon(
-                                      FeatherIcons.x,
-                                      size: 4.w,
-                                      color: Theme.of(context).brightness ==
-                                              Brightness.light
-                                          ? AppColors.white
-                                          : AppColors.black,
-                                    ))),
-                        contentPadding: const EdgeInsets.all(12),
-                        focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: AppColors.black, width: 0.8),
-                            borderRadius: BorderRadius.circular(10),
-                            gapPadding: 0),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: AppColors.transparent, width: 0),
-                            borderRadius: BorderRadius.circular(10),
-                            gapPadding: 0),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    focusNode: controller.focusNode,
+                    controller: controller.searchTextEditController,
+                    onSubmitted: (val) => controller.searchAthletes(val),
+                    cursorColor: AppColors.grey,
+                    style: const TextStyle(fontSize: 16),
+                    textInputAction: TextInputAction.search,
+                    decoration: InputDecoration(
+                      isDense: true,
+                      hintText: 'Search ${controller.athleteText}',
+                      hintStyle: TextStyle(
+                        fontSize: 15,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? AppColors.greyLight
+                            : AppColors.grey,
                       ),
+                      filled: true,
+                      fillColor:
+                          Theme.of(context).brightness == Brightness.light
+                              ? AppColors.white.withOpacity(0.045)
+                              : AppColors.black.withOpacity(0.045),
+                      prefixIcon: Icon(
+                        FeatherIcons.search,
+                        size: 5.w,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? AppColors.white
+                            : AppColors.black,
+                      ),
+                      suffixIcon: Obx(() => controller.searchText.value.isEmpty
+                          ? const SizedBox()
+                          : GestureDetector(
+                              onTap: controller.clearSearchField,
+                              child: Icon(
+                                FeatherIcons.x,
+                                size: 4.w,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.white
+                                    : AppColors.black,
+                              ))),
+                      contentPadding: const EdgeInsets.all(12),
+                      focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: AppColors.black, width: 0.8),
+                          borderRadius: BorderRadius.circular(10),
+                          gapPadding: 0),
+                      enabledBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: AppColors.transparent, width: 0),
+                          borderRadius: BorderRadius.circular(10),
+                          gapPadding: 0),
                     ),
+                  ),
+                ),
+                SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: () => controller
+                      .searchAthletes(controller.searchTextEditController.text),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).brightness == Brightness.light
+                            ? AppColors.white.withOpacity(0.045)
+                            : AppColors.black.withOpacity(0.045),
+                    foregroundColor:
+                        Theme.of(context).brightness == Brightness.light
+                            ? AppColors.white
+                            : AppColors.black,
+                    elevation: 0,
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    side: BorderSide(
+                      color: AppColors.black,
+                      width: 0.8,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    AppLocalizations.of(context)!.search,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? AppColors.white
+                          : AppColors.black,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           // SizedBox(
           //   height: 1.h,
@@ -210,26 +248,35 @@ class AthletesSearchScreen extends StatelessWidget {
                                             );
                                           }
 
-
-                                          if(snap.hasData && snap.data!.firstWhereOrNull((a) => a.athleteId == controller.searchAccumulatedList[i-1].id) != null) {
-                                          
-                                            controller.searchAccumulatedList[i-1].isFollowed = true;
+                                          if (snap.hasData &&
+                                              snap.data!.firstWhereOrNull((a) =>
+                                                      a.athleteId ==
+                                                      controller
+                                                          .searchAccumulatedList[
+                                                              i - 1]
+                                                          .id) !=
+                                                  null) {
+                                            controller
+                                                .searchAccumulatedList[i - 1]
+                                                .isFollowed = true;
                                             entrants[i - 1].isFollowed = true;
                                           } else {
-                                           
-                                            controller.searchAccumulatedList[i-1].isFollowed = false;
+                                            controller
+                                                .searchAccumulatedList[i - 1]
+                                                .isFollowed = false;
                                             entrants[i - 1].isFollowed = false;
                                           }
 
                                           final entrant = entrants[i - 1];
 
                                           onFollow() async {
-                                            
-                                            await controller.insertAthlete(entrant, !entrant.isFollowed);
+                                            await controller.insertAthlete(
+                                                entrant, !entrant.isFollowed);
                                             if (!entrant.isFollowed) {
                                               controller.followAthlete(entrant);
                                             } else {
-                                              controller.unfollowAthlete(entrant);
+                                              controller
+                                                  .unfollowAthlete(entrant);
                                             }
                                             //controller.update();
                                           }
@@ -237,9 +284,8 @@ class AthletesSearchScreen extends StatelessWidget {
                                           return AthleteTile(
                                               entrant: entrant,
                                               onFollow: onFollow,
-                                              onTap: () =>
-                                                  controller.toAthleteDetails(
-                                                      entrant,
+                                              onTap: () => controller
+                                                  .toAthleteDetails(entrant,
                                                       onFollow: onFollow));
                                         });
                                   } else if (controller.loading.value) {
@@ -252,16 +298,22 @@ class AthletesSearchScreen extends StatelessWidget {
                                     );
                                   } else {
                                     return Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 30.h),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 30.h),
                                       child: Center(
-                                          child: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Image.asset(AppHelper.getImage('empty_search.png'), width: 65),
-                                              SizedBox(height: 10),
-                                              Text(AppLocalizations.of(context)!.noAthleteFound(controller.athleteText)),
-                                            ],
-                                          ),
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.asset(
+                                                AppHelper.getImage(
+                                                    'empty_search.png'),
+                                                width: 65),
+                                            SizedBox(height: 10),
+                                            Text(AppLocalizations.of(context)!
+                                                .noAthleteFound(
+                                                    controller.athleteText)),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }
