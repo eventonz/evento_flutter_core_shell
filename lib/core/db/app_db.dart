@@ -66,7 +66,11 @@ class AppDatabase extends _$AppDatabase {
           } catch (e) {}
         }
         if (from < 7) {
-          await customStatement('DELETE FROM ${athleteDb.actualTableName}');
+          try {
+            await customStatement('DELETE FROM ${athleteDb.actualTableName}');
+          } catch (e) {
+            //
+          }
         }
         if (from < 8) {
           await customStatement(
