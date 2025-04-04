@@ -21,7 +21,28 @@ class DetailItem {
     } else if(type == 'splits') {
       splits = json['splits'].map<Splits>((e) => Splits.fromJson(e)).toList();
     } else if(type == 'segmentedsplit') {
-      print(json);
+     /*
+    json['data'].insert(4, {
+        "values": [
+          "*bold*Swim Leg",
+          " ",
+          "00:00",
+        ],
+        "point": "static",
+        "style": "split_green",
+      });
+
+      json['data'].insert(2, {
+        "values": [
+          "Swim Leg",
+          " ",
+          "00:00",
+        ],
+        "point": "static",
+ 
+      });
+      */
+
       data = json['data'].map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e)).toList();
       segments = json['segments'].map<SegmentedSplitSegments>((e) => SegmentedSplitSegments.fromJson(e)).toList();
       columns = json['columns'].map<String>((e) => e as String).toList();
@@ -99,11 +120,14 @@ class PaceData {
 }
 
 class SegmentedSplitData {
+  int? index;
+  String? style;
   String? point;
   List<String>? values;
 
   SegmentedSplitData.fromJson(Map<String, dynamic> json) {
     point = json['point'];
+    style = json['style'];
     values = json['values'].map<String>((e) => e as String).toList();;
   }
 }
