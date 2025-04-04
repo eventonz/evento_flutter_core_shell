@@ -51,7 +51,8 @@ class HomeScreen extends StatelessWidget {
                           return GestureDetector(
                             onTap: () {
                               controller.openShortcut(
-                                  shortcut.action!, shortcut.pageid);
+                                  shortcut.action!, shortcut.pageid,
+                                  url: shortcut.url);
                             },
                             child: Container(
                               width: Get.width * 0.39,
@@ -139,7 +140,8 @@ class HomeScreen extends StatelessWidget {
                               return GestureDetector(
                                 onTap: () {
                                   controller.openShortcut(
-                                      shortcut.action!, shortcut.pageid);
+                                      shortcut.action!, shortcut.pageid,
+                                      url: shortcut.url);
                                 },
                                 child: Container(
                                   margin: const EdgeInsets.symmetric(
