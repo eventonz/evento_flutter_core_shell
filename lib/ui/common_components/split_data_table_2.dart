@@ -313,11 +313,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                             _currentPage = index;
                           });
                           _controller.animateToPage(_currentPage,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease);
+                              duration: const Duration(milliseconds: 0),
+                              curve: Curves.linear);
                           _controllerHeader.animateToPage(_currentPage,
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.ease);
+                              duration: const Duration(milliseconds: 0),
+                              curve: Curves.linear);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -388,9 +388,8 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 ),
                 Expanded(
                   flex: 5,
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    height: 40, // Adjust the height dynamically
+                  child: Container(
+                    height: 40,
                     child: PageView.builder(
                       itemBuilder: (_, i) {
                         var columns = widget.segments[i].columns!;
@@ -407,11 +406,8 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                           ? columns[x].replaceAll(
                                               RegExp(r'\*(\w+)\*'), '')
                                           : '',
-                                      //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                      //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
                                       textAlign: TextAlign.center,
                                       fontSize: 14,
-                                      //fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
                                       maxLines: 1,
                                     ),
                                   ),
@@ -499,8 +495,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
               ),
               Expanded(
                 flex: 65,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                child: Container(
                   height: _currentPageHeight,
                   child: PageView.builder(
                       itemBuilder: (_, i) {
