@@ -10,7 +10,7 @@ class AppColors {
   static const Color greyLighter = Color(0xFFF5F5F5);
   static const Color greyLight = Color(0xFFDEDEDE);
   static const Color grey = Color(0xFF616161);
-  static const Color darkgrey = Color(0xFF2E2E2E);
+   static const Color darkgrey = Color(0xFF2E2E2E);
   static const Color pink = Color(0xFFC52D5F);
   static const Color faceBookColor = Color(0xFF3B5998);
   static const Color instagramColor = Color(0xFFC13584);
@@ -33,9 +33,6 @@ class AppColors {
   static Color splitGreen = const Color(0xFF1DA666);
   static Color splitOrange = const Color(0xFFEB1313);
   static Color splitGrey = const Color(0xFF4A4A4A);
-  static Color splitBlue = const Color(0xFF2196F3);
-  static Color splitLightBlue = const Color(0xFF90CAF9);
-  static Color splitLightGrey = const Color(0xFFE0E0E0);
   static Color splitTextColor = Colors.white;
 
   static Color red = const Color(0xFFFD0B0B);
