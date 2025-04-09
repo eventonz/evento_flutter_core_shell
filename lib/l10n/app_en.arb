@@ -9,7 +9,7 @@
   "menubutton": "Menu",
   "language": "Language",
   "askAQuestion": "Ask a Question",
-  "defaultAssistantMessage": "Ask me any questions about the Athlete Guide - I'll try my best to answer.",
+  "defaultAssistantMessage": "Ask me any questions about the Athlete Guide - I use AI to help answer your questions so double check any key details.",
   "wouldYouLikeToRemoveAllMessages": "Would you like to remove all the messages?",
   "yes": "Yes",
   "cancel": "Cancel",
