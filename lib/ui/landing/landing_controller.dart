@@ -161,7 +161,7 @@ class LandingController extends GetxController {
       }
     } catch (e) {
       ToastUtils.show(e.toString());
-      if(false && AppGlobals.appEventConfig.multiEventListId != null) {
+      if(AppGlobals.appEventConfig.multiEventListId != null) {
         Preferences.setString(AppKeys.eventUrl, '');
         Get.off(
               () => const EventsScreen(),
@@ -169,7 +169,6 @@ class LandingController extends GetxController {
           transition: Transition.leftToRightWithFade,
         );
       } else {
-    
         exception.value = true;
         update();
       }

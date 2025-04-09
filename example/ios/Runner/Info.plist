@@ -11,7 +11,7 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
-	<string>nz.netproject.eventotracker.demo</string>
+	<string>nz.netproject.chronoconsult</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -32,8 +32,6 @@
 	<string>This app needs location to show on the map.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<key>FlutterDeepLinkingEnabled</key>
-    <false/>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
@@ -58,5 +56,22 @@
 	</array>
 	<key>io.flutter.embedded_views_preview</key>
 	<string>YES</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>evento</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.eventotracker.app</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>evento</string>
+	</array>
 </dict>
 </plist>
