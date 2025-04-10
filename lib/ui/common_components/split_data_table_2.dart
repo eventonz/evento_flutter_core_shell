@@ -499,8 +499,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
               ),
               Expanded(
                 flex: 65,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                child: Container(
                   height: _currentPageHeight,
                   child: PageView.builder(
                       itemBuilder: (_, i) {
