@@ -4,7 +4,6 @@ import 'package:evento_core/core/utils/logger.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/utils/helpers.dart';
 
@@ -21,7 +20,7 @@ class HomeController extends GetxController {
     imagelink.value = AppGlobals.appConfig?.home?.image ?? '';
   }
 
-  void openShortcut(String action, int? pageId, {String? url}) {
+  void openShortcut(String action, int? pageId) {
     Logger.d('Opening shortcut with action: $action');
 
     if (action == 'openPage') {
@@ -29,11 +28,7 @@ class HomeController extends GetxController {
       var page = AppGlobals.appConfig?.menu?.items
           ?.where((item) => item.id == pageId)
           .firstOrNull;
-      if (page != null) {
-        controller.decideNextView(page);
-      } else {
-        Logger.e('Page not found for ID: $pageId');
-      }
+      controller.decideNextView(page!);
     }
 
     if (action == 'openTracking') {
@@ -55,19 +50,6 @@ class HomeController extends GetxController {
       final dashboard = Get.find<DashboardController>();
       dashboard
           .selectMenu(dashboard.menus.where((e) => e.label == 'results').first);
-    }
-
-    if (action == 'openURL') {
-      if (url != null && url.isNotEmpty) {
-        try {
-          final uri = Uri.parse(url);
-          launchUrl(uri, mode: LaunchMode.platformDefault);
-        } catch (e) {
-          Logger.e('Failed to launch URL: $url');
-        }
-      } else {
-        Logger.e('URL is null or empty for openURL action');
-      }
     }
   }
 }

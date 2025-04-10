@@ -205,7 +205,6 @@ class SmallShortcut {
   int? pageid;
   String? subtitle;
   String? action;
-  String? url;
   BackgroundGradient? backgroundGradient;
   //Items? pageDetails;
 
@@ -214,7 +213,6 @@ class SmallShortcut {
       this.title,
       this.subtitle,
       this.action,
-      this.url,
       this.backgroundGradient});
 
   SmallShortcut.fromJson(Map<String, dynamic> json) {
@@ -223,7 +221,6 @@ class SmallShortcut {
     subtitle = json['subtitle'];
     action = json['action'];
     pageid = json['pageid'];
-    url = json['url'];
     backgroundGradient = json['backgroundGradient'] == null
         ? null
         : BackgroundGradient.fromJson(json['backgroundGradient']);
@@ -236,8 +233,6 @@ class SmallShortcut {
     data['title'] = title;
     data['subtitle'] = subtitle;
     data['action'] = action;
-    data['pageid'] = pageid;
-    data['url'] = url;
     data['backgroundGradient'] = backgroundGradient?.toJson();
     //data['pageDetails'] = pageDetails?.toJson();
     return data;
@@ -248,16 +243,14 @@ class LargeShortcut {
   String? image;
   String? action;
   int? pageid;
-  String? url;
   //Items? pageDetails;
 
-  LargeShortcut({this.image, this.action, this.pageid, this.url});
+  LargeShortcut({this.image, this.action, this.pageid});
 
   LargeShortcut.fromJson(Map<String, dynamic> json) {
     image = json['image'];
     action = json['action'];
     pageid = json['pageid'];
-    url = json['url'];
     //pageDetails = json['pagedetails'] == null ? null : Items.fromJson(json['pagedetails']);
   }
 
@@ -266,7 +259,6 @@ class LargeShortcut {
     data['image'] = image;
     data['action'] = action;
     data['pageid'] = pageid;
-    data['url'] = url;
     //data['pageDetails'] = pageDetails?.toJson();
     return data;
   }
@@ -581,6 +573,7 @@ class Paths {
   Paths({this.url, this.name, this.color});
 
   Paths.fromJson(Map<String, dynamic> json) {
+   
     url = json['geojson'] ?? json['url'];
     name = json['name'];
     color = json['path_color'];
