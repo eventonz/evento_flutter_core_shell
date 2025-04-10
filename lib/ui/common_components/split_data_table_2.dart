@@ -163,12 +163,12 @@ class SplitNewDataContent2 extends StatelessWidget {
 }
 
 class SegmentedSplitDataContent extends StatefulWidget {
-  const SegmentedSplitDataContent(
-      {Key? key,
-      required this.data,
-      required this.segments,
-      required this.columns})
-      : super(key: key);
+  const SegmentedSplitDataContent({
+    Key? key,
+    required this.data,
+    required this.segments,
+    required this.columns,
+  }) : super(key: key);
   final List<SegmentedSplitData> data;
   final List<SegmentedSplitSegments> segments;
   final List<String> columns;
@@ -178,13 +178,12 @@ class SegmentedSplitDataContent extends StatefulWidget {
       _SegmentedSplitDataContentState();
 }
 
-class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
-    with SingleTickerProviderStateMixin {
+class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
   late PageController _controllerHeader;
   late PageController _controller;
-  double _currentPageHeight = 0;
   int _currentPage = 0;
-  GlobalKey _pageKey = GlobalKey();
+  double _currentPageHeight = 0;
+  final GlobalKey _pageKey = GlobalKey();
 
   @override
   void initState() {
@@ -211,6 +210,15 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
         _currentPageHeight = renderBox.size.height;
       });
     }
+  }
+
+  void _onPageChange(int index) {
+    setState(() {
+      _currentPage = index;
+      _controller.jumpToPage(index);
+      _controllerHeader.jumpToPage(index);
+      _updateHeight(index);
+    });
   }
 
   contentWeight(String style, bool isText) {
@@ -310,14 +318,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                   return Expanded(
                     child: Center(
                       child: GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _currentPage = index;
-                            _controller.jumpToPage(_currentPage);
-                            _controllerHeader.jumpToPage(_currentPage);
-                            _updateHeight(_currentPage);
-                          });
-                        },
+                        onTap: () => _onPageChange(index),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 3),
@@ -376,11 +377,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 ),
                 Expanded(
                   flex: 5,
-                  child: Container(
+                  child: SizedBox(
                     height: 40,
                     child: PageView.builder(
                       controller: _controllerHeader,
                       physics: const NeverScrollableScrollPhysics(),
+                      onPageChanged: _onPageChange,
                       itemCount: widget.segments.length,
                       itemBuilder: (_, i) {
                         var columns = widget.segments[i].columns!;
@@ -467,12 +469,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 ),
               ),
               Expanded(
-                flex: 65,
-                child: Container(
+                flex: 5,
+                child: SizedBox(
                   height: _currentPageHeight,
                   child: PageView.builder(
+                    key: _pageKey,
                     controller: _controller,
                     physics: const NeverScrollableScrollPhysics(),
+                    onPageChanged: _onPageChange,
                     itemCount: widget.segments.length,
                     itemBuilder: (_, i) {
                       return ListView.builder(
