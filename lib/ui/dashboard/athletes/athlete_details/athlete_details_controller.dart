@@ -38,7 +38,7 @@ class AthleteDetailsController extends GetxController
     super.onInit();
     final res = Get.arguments;
     entrantsList = AppGlobals.appConfig!.athletes!;
-    if (res[AppKeys.athlete] is AppAthleteDb) {
+    if(res[AppKeys.athlete] is AppAthleteDb) {
       selEntrant = res[AppKeys.athlete];
     } else {
       selEntrantA = res[AppKeys.athlete];
@@ -62,7 +62,7 @@ class AthleteDetailsController extends GetxController
           '$mainUrl?bib=${selEntrantA!.number}&id=${selEntrantA!.id}&contest=${selEntrantA!.contest}';
     } else {
       mainUrl =
-          '$mainUrl?bib=${selEntrant!.raceno}&id=${selEntrant!.athleteId}&contest=${selEntrant!.contestNo}';
+      '$mainUrl?bib=${selEntrant!.raceno}&id=${selEntrant!.athleteId}&contest=${selEntrant!.contestNo}';
     }
 
     athleteSplitDataSnap.value = DataSnapShot.loading;
@@ -129,6 +129,7 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> followAthlete(AppAthleteDb athelete) async {
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
