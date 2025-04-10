@@ -180,13 +180,43 @@ class SegmentedSplitDataContent extends StatefulWidget {
 
 class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
     with SingleTickerProviderStateMixin {
+  late PageController _controllerHeader;
+  late PageController _controller;
+  double _currentPageHeight = 0;
   int _currentPage = 0;
+  GlobalKey _pageKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    _controllerHeader = PageController(initialPage: _currentPage);
+    _controller = PageController(initialPage: _currentPage);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateHeight(_currentPage);
+    });
+  }
+
+  @override
+  void dispose() {
+    _controllerHeader.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _updateHeight(int pageIndex) {
+    final context = _pageKey.currentContext;
+    if (context != null) {
+      final RenderBox renderBox = context.findRenderObject() as RenderBox;
+      setState(() {
+        _currentPageHeight = renderBox.size.height;
+      });
+    }
+  }
 
   contentWeight(String style, bool isText) {
     if (style.contains('*bold*')) {
       return FontWeight.w700;
     }
-
     switch (style) {
       case 'split_bold':
         return FontWeight.w700;
@@ -196,17 +226,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
   }
 
   Color contentColor(String style, bool isText) {
-    if (style.contains('*red*')) {
-      return AppColors.red;
-    }
-
-    if (style.contains('*green*')) {
-      return AppColors.splitGreen;
-    }
-
-    if (style.contains('*black*')) {
-      return AppColors.black;
-    }
+    if (style.contains('*red*')) return AppColors.red;
+    if (style.contains('*green*')) return AppColors.splitGreen;
+    if (style.contains('*black*')) return AppColors.black;
 
     if (!isText) {
       switch (style) {
@@ -291,16 +313,10 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                         onTap: () {
                           setState(() {
                             _currentPage = index;
+                            _controller.jumpToPage(_currentPage);
+                            _controllerHeader.jumpToPage(_currentPage);
+                            _updateHeight(_currentPage);
                           });
-<<<<<<< HEAD
-                          _controller.animateToPage(_currentPage,
-                              duration: const Duration(milliseconds: 0),
-                              curve: Curves.linear);
-                          _controllerHeader.animateToPage(_currentPage,
-                              duration: const Duration(milliseconds: 0),
-                              curve: Curves.linear);
-=======
->>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -362,11 +378,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                   flex: 5,
                   child: Container(
                     height: 40,
-<<<<<<< HEAD
                     child: PageView.builder(
+                      controller: _controllerHeader,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: widget.segments.length,
                       itemBuilder: (_, i) {
                         var columns = widget.segments[i].columns!;
-
                         return Container(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Row(
@@ -386,26 +403,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                   ),
                                 ),
                             ],
-=======
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    child: Row(
-                      children: [
-                        for (int x = 0;
-                            x < widget.segments[_currentPage].columns!.length;
-                            x++)
-                          Expanded(
-                            child: Center(
-                              child: AppText(
-                                widget.segments[_currentPage].columns![x]
-                                    .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                textAlign: TextAlign.center,
-                                fontSize: 14,
-                                maxLines: 1,
-                              ),
-                            ),
->>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
                           ),
-                      ],
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -467,141 +467,88 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 ),
               ),
               Expanded(
-<<<<<<< HEAD
                 flex: 65,
                 child: Container(
                   height: _currentPageHeight,
                   child: PageView.builder(
-                      itemBuilder: (_, i) {
-                        return Container(
-                          child: ListView.builder(
-                              padding: const EdgeInsets.symmetric(vertical: 0),
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: widget.data.length,
-                              shrinkWrap: true,
-                              itemBuilder: (_, index) {
-                                final entry = widget.data[index].values;
-                                final columns = widget.segments[i].columns!;
+                    controller: _controller,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: widget.segments.length,
+                    itemBuilder: (_, i) {
+                      return ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: widget.data.length,
+                        shrinkWrap: true,
+                        itemBuilder: (_, index) {
+                          final entry = widget.data[index].values;
+                          final columns = widget.segments[i].columns!;
+                          final style = widget.data[index].style;
 
-                                int startIndex = 1;
+                          int startIndex = 1;
+                          for (int y = 0; y < i; y++) {
+                            startIndex += widget.segments[y].columns!.length;
+                          }
 
-                                for (int y = 0; y < i; y++) {
-                                  startIndex +=
-                                      widget.segments[y].columns!.length;
-                                }
-
-                                var widgets = [];
-
-                                for (int x = startIndex;
-                                    x < startIndex + columns.length;
-                                    x++) {
-                                  widgets.add(Expanded(
-=======
-                flex: 5,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: _splitList(widget.data).map((segment) {
-                    if (segment is _StaticRow) {
-                      return Container(
-                        color: segment.row.style != null
-                            ? contentColor(segment.row.style!, false)
-                            : (segment.row.index! % 2 == 1
-                                ? (Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? AppColors.darkgrey
-                                    : AppColors.greyLighter)
-                                : null),
-                        padding: const EdgeInsets.all(14),
-                        child: widget.segments.first.columns!.length == 1
-                            ? const SizedBox(height: 21)
-                            : Row(
-                                children: List.generate(
-                                  segment.row.values!.length - 1,
-                                  (x) => Expanded(
->>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
-                                    child: Center(
-                                      child: SizedBox(
-                                        height: 21,
-                                        child: AppText(
-                                          segment.row.values![x + 1],
-                                          color: Colors.white,
-                                        ),
-                                      ),
+                          List<Widget> widgets = [];
+                          for (int x = startIndex;
+                              x < startIndex + columns.length;
+                              x++) {
+                            widgets.add(
+                              Expanded(
+                                child: Center(
+                                  child: MediaQuery(
+                                    data: MediaQuery.of(context)
+                                        .copyWith(textScaleFactor: 1.0),
+                                    child: AppText(
+                                      entry!.length > x
+                                          ? entry[x].replaceAll(
+                                              RegExp(r'\*(\w+)\*'), '')
+                                          : '',
+                                      color: contentColor(entry[x], true),
+                                      fontWeight: contentWeight(entry[x], true),
+                                      textAlign: TextAlign.center,
+                                      fontSize: 13,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontStyle: entry[x].contains('*italic*')
+                                          ? FontStyle.italic
+                                          : null,
                                     ),
                                   ),
                                 ),
                               ),
-                      );
-                    } else {
-                      return ListView.builder(
-                        padding: EdgeInsets.zero,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: segment.rows.length,
-                        shrinkWrap: true,
-                        itemBuilder: (_, index) {
-                          final row = segment.rows[index];
-                          final style = row.style;
-                          final entry = row.values;
-                          final columns =
-                              widget.segments[_currentPage].columns!;
-
-                          List<Widget> widgets = [];
-                          if (entry?.length == 1 && row.point == 'static') {
-                            for (int x = 0; x < columns.length; x++) {
-                              widgets.add(const Expanded(
-                                child: Center(
-                                  child:
-                                      SizedBox(height: 21, child: AppText('')),
-                                ),
-                              ));
-                            }
-                          }
-
-                          for (int x = row.point == 'static' ? 1 : 0;
-                              x <
-                                  (row.point == 'static'
-                                      ? entry!.length
-                                      : columns.length);
-                              x++) {
-                            widgets.add(Expanded(
-                              child: Center(
-                                child: SizedBox(
-                                  height: 21,
-                                  child: AppText(
-                                    entry!.length > x
-                                        ? entry[x].replaceAll(
-                                            RegExp(r'\*(\w+)\*'), '')
-                                        : '',
-                                    color: contentColor(entry[x], true),
-                                    fontWeight: contentWeight(entry[x], true),
-                                    textAlign: TextAlign.center,
-                                    fontSize: 15,
-                                    fontStyle: entry[x].contains('*italic*')
-                                        ? FontStyle.italic
-                                        : null,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                              ),
-                            ));
+                            );
                           }
 
                           return Container(
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8,
+                              horizontal: 14,
+                            ),
                             color: style != null
                                 ? contentColor(style, false)
-                                : (segment.rows[index].index! % 2 == 1
+                                : (index % 2 == 1
                                     ? (Theme.of(context).brightness ==
                                             Brightness.light
                                         ? AppColors.darkgrey
                                         : AppColors.greyLighter)
                                     : null),
-                            padding: const EdgeInsets.all(14),
+                            height: 60,
                             child: Row(children: widgets),
                           );
                         },
                       );
-                    }
-                  }).toList(),
+                    },
+                  ),
                 ),
               ),
             ],
