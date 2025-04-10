@@ -33,6 +33,18 @@ class SplitNewDataContent2 extends StatelessWidget {
   }
 
   Color contentColor(String style, bool isText) {
+    if (style.contains('*red*')) {
+      return AppColors.red;
+    }
+
+    if (style.contains('*green*')) {
+      return AppColors.splitGreen;
+    }
+
+    if (style.contains('*black*')) {
+      return AppColors.black;
+    }
+
     if (!isText) {
       switch (style) {
         case 'split_black':
@@ -45,6 +57,12 @@ class SplitNewDataContent2 extends StatelessWidget {
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.darkgrey
               : AppColors.splitGrey;
+        case 'split_blue':
+          return AppColors.splitBlue;
+        case 'split_lightblue':
+          return AppColors.splitLightBlue;
+        case 'split_lightgrey':
+          return AppColors.splitLightGrey;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.grey
@@ -66,7 +84,11 @@ class SplitNewDataContent2 extends StatelessWidget {
         case 'split_green':
         case 'split_orange':
         case 'split_grey':
+        case 'split_blue':
+        case 'split_lightblue':
           return AppColors.white;
+        case 'split_lightgrey':
+          return AppColors.black;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
@@ -75,13 +97,12 @@ class SplitNewDataContent2 extends StatelessWidget {
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
               : AppColors.headerText;
-
         case 'estimate':
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.white
-              : AppColors.black;
+              : AppColors.black.withOpacity(0.75);
       }
     }
   }
@@ -159,15 +180,7 @@ class SegmentedSplitDataContent extends StatefulWidget {
 
 class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
     with SingleTickerProviderStateMixin {
-  final PageController _controllerHeader = PageController();
-  final PageController _controller = PageController();
-
-  double _currentPageHeight = 0;
   int _currentPage = 0;
-  List<double> _rowHeights = [];
-
-  // List of GlobalKeys to measure the height of each page
-  GlobalKey _pageKey = GlobalKey();
 
   contentWeight(String style, bool isText) {
     if (style.contains('*bold*')) {
@@ -177,7 +190,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
     switch (style) {
       case 'split_bold':
         return FontWeight.w700;
-
       default:
         return FontWeight.w400;
     }
@@ -208,6 +220,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.darkgrey
               : AppColors.splitGrey;
+        case 'split_blue':
+          return AppColors.splitBlue;
+        case 'split_lightblue':
+          return AppColors.splitLightBlue;
+        case 'split_lightgrey':
+          return AppColors.splitLightGrey;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.grey
@@ -229,7 +247,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
         case 'split_green':
         case 'split_orange':
         case 'split_grey':
+        case 'split_blue':
+        case 'split_lightblue':
           return AppColors.white;
+        case 'split_lightgrey':
+          return AppColors.black;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
@@ -238,7 +260,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
               : AppColors.headerText;
-
         case 'estimate':
           return AppColors.estimateText;
         default:
@@ -250,53 +271,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
   }
 
   @override
-  void initState() {
-    super.initState();
-    // Initialize row heights array with a default height
-    _rowHeights = List.filled(widget.data.length, 50.0);
-
-    // Calculate the height of the first page after the widget is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _updateHeight(0);
-    });
-
-    // Listen for page changes to update the height dynamically
-    _controller.addListener(() {
-      int currentPage = _controller.page?.round() ?? 0;
-      _updateHeight(currentPage);
-    });
-  }
-
-  void _updateRowHeight(int index, double height) {
-    if (index >= 0 && index < _rowHeights.length) {
-      setState(() {
-        _rowHeights[index] = height;
-      });
-    }
-  }
-
-  void _updateHeight(int pageIndex) {
-    final context = _pageKey.currentContext;
-    print(context);
-    print('context');
-    if (context != null) {
-      final RenderBox renderBox = context.findRenderObject() as RenderBox;
-      print('height: ${renderBox.size.height}');
-      setState(() {
-        _currentPageHeight = renderBox.size.height;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 2,
-          ),
+          const SizedBox(height: 2),
           Container(
             color: Theme.of(Get.context!).brightness != Brightness.light
                 ? const Color(0xFFF7F7F7)
@@ -312,12 +292,15 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                           setState(() {
                             _currentPage = index;
                           });
+<<<<<<< HEAD
                           _controller.animateToPage(_currentPage,
                               duration: const Duration(milliseconds: 0),
                               curve: Curves.linear);
                           _controllerHeader.animateToPage(_currentPage,
                               duration: const Duration(milliseconds: 0),
                               curve: Curves.linear);
+=======
+>>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -333,12 +316,10 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                             boxShadow: _currentPage == index
                                 ? [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(
-                                          0.1), // Light shadow color
+                                      color: Colors.black.withOpacity(0.1),
                                       spreadRadius: 1,
-                                      blurRadius: 4, // Soft shadow blur
-                                      offset: Offset(
-                                          0, 2), // Slightly below the button
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
                                     )
                                   ]
                                 : [],
@@ -346,9 +327,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                           child: Center(
                             child: Text(
                               widget.segments[index].name ?? '',
-                              style: TextStyle(
-                                fontSize: 17,
-                              ),
+                              style: const TextStyle(fontSize: 17),
                             ),
                           ),
                         ),
@@ -359,9 +338,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
               ],
             ),
           ),
-          const SizedBox(
-            height: 16,
-          ),
+          const SizedBox(height: 16),
           Container(
             color: Theme.of(Get.context!).brightness != Brightness.light
                 ? const Color(0xFFF7F7F7)
@@ -371,25 +348,21 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 Expanded(
                   flex: 2,
                   child: Container(
-                      child: Container(
                     padding: const EdgeInsets.all(12),
-                    //color: contentColor(style, false),
                     child: Center(
                       child: AppText(
                         widget.columns.first,
                         fontSize: 14,
-                        //color: contentColor(widget.data[i].values!.first, true),
-                        //fontWeight: contentWeight(widget.data[i].values!.first, true),
-                        textAlign: TextAlign.left,
-                        //fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  )),
+                  ),
                 ),
                 Expanded(
                   flex: 5,
                   child: Container(
                     height: 40,
+<<<<<<< HEAD
                     child: PageView.builder(
                       itemBuilder: (_, i) {
                         var columns = widget.segments[i].columns!;
@@ -413,87 +386,88 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                   ),
                                 ),
                             ],
+=======
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Row(
+                      children: [
+                        for (int x = 0;
+                            x < widget.segments[_currentPage].columns!.length;
+                            x++)
+                          Expanded(
+                            child: Center(
+                              child: AppText(
+                                widget.segments[_currentPage].columns![x]
+                                    .replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                textAlign: TextAlign.center,
+                                fontSize: 14,
+                                maxLines: 1,
+                              ),
+                            ),
+>>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
                           ),
-                        );
-                      },
-                      itemCount: widget.segments.length,
-                      controller: _controllerHeader,
-                      physics: const NeverScrollableScrollPhysics(),
+                      ],
                     ),
                   ),
                 ),
               ],
             ),
           ),
-          //Divider(height: .5, color: Colors.grey,),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                flex: 35,
-                child: Container(
-                  key: _pageKey,
-                  child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(vertical: 0),
+                flex: 2,
+                child: Column(
+                  children: _splitList(widget.data).map((segment) {
+                    int segmentLength =
+                        segment is _StaticRow ? 1 : segment.rows.length;
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: widget.data.length,
+                      itemCount: segmentLength,
                       shrinkWrap: true,
                       itemBuilder: (_, i) {
-                        final entry = widget.data[i].values;
-                        return LayoutBuilder(
-                          builder: (context, constraints) {
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (i < _rowHeights.length) {
-                                final RenderBox renderBox =
-                                    context.findRenderObject() as RenderBox;
-                                final height = renderBox.size.height;
-                                if (height != _rowHeights[i]) {
-                                  _updateRowHeight(i, height);
-                                }
-                              }
-                            });
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 8, horizontal: 14),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    width: 1,
-                                  ),
-                                ),
+                        final currentIndex = segment is _StaticRow
+                            ? segment.row.index!
+                            : segment.rows[i].index!;
+                        final entry = widget.data[currentIndex].values;
+                        return Container(
+                          padding: const EdgeInsets.all(14),
+                          color: widget.data[currentIndex].style != null
+                              ? contentColor(
+                                  widget.data[currentIndex].style!, false)
+                              : (currentIndex % 2 == 1
+                                  ? (Theme.of(Get.context!).brightness ==
+                                          Brightness.light
+                                      ? AppColors.darkgrey
+                                      : AppColors.greyLighter)
+                                  : null),
+                          child: Center(
+                            child: SizedBox(
+                              height: 21,
+                              child: AppText(
+                                entry!.first
+                                    .replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                color: segment is _StaticRow
+                                    ? Colors.white
+                                    : contentColor(entry.first, true),
+                                fontWeight: contentWeight(entry.first, true),
+                                textAlign: TextAlign.center,
+                                fontSize: 15,
+                                fontStyle: entry.first.contains('*italic*')
+                                    ? FontStyle.italic
+                                    : null,
                               ),
-                              height: 60, // Reduced from 80
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: MediaQuery(
-                                  data: MediaQuery.of(context).copyWith(
-                                      textScaleFactor:
-                                          1.0), // Prevent text scaling
-                                  child: AppText(
-                                    widget.data[i].values!.first
-                                        .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                    color: contentColor(
-                                        widget.data[i].values!.first, true),
-                                    fontWeight: contentWeight(
-                                        widget.data[i].values!.first, true),
-                                    textAlign: TextAlign.left,
-                                    fontSize: 13,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    fontStyle: widget.data[i].values!.first
-                                            .contains('*italic*')
-                                        ? FontStyle.italic
-                                        : null,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
+                            ),
+                          ),
                         );
-                      }),
+                      },
+                    );
+                  }).toList(),
                 ),
               ),
               Expanded(
+<<<<<<< HEAD
                 flex: 65,
                 child: Container(
                   height: _currentPageHeight,
@@ -522,60 +496,112 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                     x < startIndex + columns.length;
                                     x++) {
                                   widgets.add(Expanded(
+=======
+                flex: 5,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: _splitList(widget.data).map((segment) {
+                    if (segment is _StaticRow) {
+                      return Container(
+                        color: segment.row.style != null
+                            ? contentColor(segment.row.style!, false)
+                            : (segment.row.index! % 2 == 1
+                                ? (Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.darkgrey
+                                    : AppColors.greyLighter)
+                                : null),
+                        padding: const EdgeInsets.all(14),
+                        child: widget.segments.first.columns!.length == 1
+                            ? const SizedBox(height: 21)
+                            : Row(
+                                children: List.generate(
+                                  segment.row.values!.length - 1,
+                                  (x) => Expanded(
+>>>>>>> parent of 2aad2d5 (Revert "Merge branch 'splits'")
                                     child: Center(
-                                      child: MediaQuery(
-                                        data: MediaQuery.of(context).copyWith(
-                                            textScaleFactor:
-                                                1.0), // Prevent text scaling
+                                      child: SizedBox(
+                                        height: 21,
                                         child: AppText(
-                                          entry!.length > x
-                                              ? entry[x].replaceAll(
-                                                  RegExp(r'\*(\w+)\*'), '')
-                                              : '',
-                                          color: contentColor(entry[x], true),
-                                          fontWeight:
-                                              contentWeight(entry[x], true),
-                                          textAlign: TextAlign.center,
-                                          fontSize: 13,
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                          fontStyle: (entry.length >
-                                                          (x + (i * 3) + 1)
-                                                      ? entry[(x + (i * 3)) + 1]
-                                                      : '')
-                                                  .contains('*italics*')
-                                              ? FontStyle.italic
-                                              : null,
+                                          segment.row.values![x + 1],
+                                          color: Colors.white,
                                         ),
                                       ),
                                     ),
-                                  ));
-                                }
+                                  ),
+                                ),
+                              ),
+                      );
+                    } else {
+                      return ListView.builder(
+                        padding: EdgeInsets.zero,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: segment.rows.length,
+                        shrinkWrap: true,
+                        itemBuilder: (_, index) {
+                          final row = segment.rows[index];
+                          final style = row.style;
+                          final entry = row.values;
+                          final columns =
+                              widget.segments[_currentPage].columns!;
 
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        width: 1,
-                                      ),
-                                    ),
+                          List<Widget> widgets = [];
+                          if (entry?.length == 1 && row.point == 'static') {
+                            for (int x = 0; x < columns.length; x++) {
+                              widgets.add(const Expanded(
+                                child: Center(
+                                  child:
+                                      SizedBox(height: 21, child: AppText('')),
+                                ),
+                              ));
+                            }
+                          }
+
+                          for (int x = row.point == 'static' ? 1 : 0;
+                              x <
+                                  (row.point == 'static'
+                                      ? entry!.length
+                                      : columns.length);
+                              x++) {
+                            widgets.add(Expanded(
+                              child: Center(
+                                child: SizedBox(
+                                  height: 21,
+                                  child: AppText(
+                                    entry!.length > x
+                                        ? entry[x].replaceAll(
+                                            RegExp(r'\*(\w+)\*'), '')
+                                        : '',
+                                    color: contentColor(entry[x], true),
+                                    fontWeight: contentWeight(entry[x], true),
+                                    textAlign: TextAlign.center,
+                                    fontSize: 15,
+                                    fontStyle: entry[x].contains('*italic*')
+                                        ? FontStyle.italic
+                                        : null,
+                                    maxLines: 1,
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 14),
-                                  height: 60, // Match first column height
-                                  child: Row(
-                                    children: [
-                                      ...widgets,
-                                    ],
-                                  ),
-                                );
-                              }),
-                        );
-                      },
-                      itemCount: widget.segments.length,
-                      controller: _controller,
-                      physics: const NeverScrollableScrollPhysics()),
+                                ),
+                              ),
+                            ));
+                          }
+
+                          return Container(
+                            color: style != null
+                                ? contentColor(style, false)
+                                : (segment.rows[index].index! % 2 == 1
+                                    ? (Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? AppColors.darkgrey
+                                        : AppColors.greyLighter)
+                                    : null),
+                            padding: const EdgeInsets.all(14),
+                            child: Row(children: widgets),
+                          );
+                        },
+                      );
+                    }
+                  }).toList(),
                 ),
               ),
             ],
@@ -584,6 +610,48 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
       ),
     );
   }
+}
+
+List<dynamic> _splitList(List<SegmentedSplitData> data) {
+  List<dynamic> result = [];
+  int index = 0;
+  List<SegmentedSplitData> tempNormalRows = [];
+
+  for (var item in data) {
+    item.index = index;
+    if (item.point == 'static') {
+      // Push the previous normal row group first
+      if (tempNormalRows.isNotEmpty) {
+        // tempNormalRows.add(SegmentedSplitData.fromJson({
+        //   'values' : tempNormalRows.last.values!.map((e) => '').toList(),
+        // }));
+        result.add(_NormalRowsGroup(tempNormalRows));
+        tempNormalRows = [];
+      }
+      // Add static row separately
+      result.add(_StaticRow(item));
+    } else {
+      tempNormalRows.add(item);
+    }
+    index++;
+  }
+
+  // Add remaining normal rows if any
+  if (tempNormalRows.isNotEmpty) {
+    result.add(_NormalRowsGroup(tempNormalRows));
+  }
+
+  return result;
+}
+
+class _StaticRow {
+  final SegmentedSplitData row;
+  _StaticRow(this.row);
+}
+
+class _NormalRowsGroup {
+  final List<SegmentedSplitData> rows;
+  _NormalRowsGroup(this.rows);
 }
 
 class SegmentedSplitNewDataContent2 extends StatelessWidget {
@@ -620,6 +688,12 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.darkgrey
               : AppColors.splitGrey;
+        case 'split_blue':
+          return AppColors.splitBlue;
+        case 'split_lightblue':
+          return AppColors.splitLightBlue;
+        case 'split_lightgrey':
+          return AppColors.splitLightGrey;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.grey
@@ -641,7 +715,11 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
         case 'split_green':
         case 'split_orange':
         case 'split_grey':
+        case 'split_blue':
+        case 'split_lightblue':
           return AppColors.white;
+        case 'split_lightgrey':
+          return AppColors.black;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
@@ -650,7 +728,6 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.greyLighter
               : AppColors.headerText;
-
         case 'estimate':
           return AppColors.estimateText;
         default:
