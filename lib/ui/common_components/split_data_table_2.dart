@@ -33,29 +33,9 @@ class SplitNewDataContent2 extends StatelessWidget {
   }
 
   Color contentColor(String style, bool isText) {
-    if (style.contains('*red*')) {
-      return AppColors.red;
-    }
-
-    if (style.contains('*green*')) {
-      return AppColors.splitGreen;
-    }
-
-    if (style.contains('*black*')) {
-      return AppColors.black;
-    }
-
-    if (style.contains('*red*')) {
-      return AppColors.red;
-    }
-
-    if (style.contains('*green*')) {
-      return AppColors.splitGreen;
-    }
-
-    if (style.contains('*black*')) {
-      return AppColors.black;
-    }
+    if (style.contains('*red*')) return AppColors.red;
+    if (style.contains('*green*')) return AppColors.splitGreen;
+    if (style.contains('*black*')) return AppColors.black;
 
     if (!isText) {
       switch (style) {
@@ -69,12 +49,6 @@ class SplitNewDataContent2 extends StatelessWidget {
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.darkgrey
               : AppColors.splitGrey;
-        case 'split_blue':
-          return AppColors.splitBlue;
-        case 'split_lightblue':
-          return AppColors.splitLightBlue;
-        case 'split_lightgrey':
-          return AppColors.splitLightGrey;
         case 'split_blue':
           return AppColors.splitBlue;
         case 'split_lightblue':
@@ -104,11 +78,7 @@ class SplitNewDataContent2 extends StatelessWidget {
         case 'split_grey':
         case 'split_blue':
         case 'split_lightblue':
-        case 'split_blue':
-        case 'split_lightblue':
           return AppColors.white;
-        case 'split_lightgrey':
-          return AppColors.black;
         case 'split_lightgrey':
           return AppColors.black;
         case 'separator':
@@ -124,7 +94,6 @@ class SplitNewDataContent2 extends StatelessWidget {
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.white
-              : AppColors.black.withOpacity(0.75);
               : AppColors.black.withOpacity(0.75);
       }
     }
@@ -279,12 +248,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
           return AppColors.splitLightBlue;
         case 'split_lightgrey':
           return AppColors.splitLightGrey;
-        case 'split_blue':
-          return AppColors.splitBlue;
-        case 'split_lightblue':
-          return AppColors.splitLightBlue;
-        case 'split_lightgrey':
-          return AppColors.splitLightGrey;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
               ? AppColors.grey
@@ -308,11 +271,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
         case 'split_grey':
         case 'split_blue':
         case 'split_lightblue':
-        case 'split_blue':
-        case 'split_lightblue':
           return AppColors.white;
-        case 'split_lightgrey':
-          return AppColors.black;
         case 'split_lightgrey':
           return AppColors.black;
         case 'separator':
@@ -368,10 +327,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
                                 ? [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.1),
-                                      color: Colors.black.withOpacity(0.1),
                                       spreadRadius: 1,
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
                                       blurRadius: 4,
                                       offset: const Offset(0, 2),
                                     )
@@ -381,7 +337,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
                           child: Center(
                             child: Text(
                               widget.segments[index].name ?? '',
-                              style: const TextStyle(fontSize: 17),
                               style: const TextStyle(fontSize: 17),
                             ),
                           ),
@@ -394,7 +349,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
             ),
           ),
           const SizedBox(height: 16),
-          const SizedBox(height: 16),
           Container(
             color: Theme.of(Get.context!).brightness != Brightness.light
                 ? const Color(0xFFF7F7F7)
@@ -404,17 +358,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
                 Expanded(
                   flex: 2,
                   child: Container(
-                  child: Container(
                     padding: const EdgeInsets.all(12),
                     child: Center(
                       child: AppText(
                         widget.columns.first,
                         fontSize: 14,
                         textAlign: TextAlign.center,
-                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
                   ),
                 ),
                 Expanded(
@@ -458,7 +409,6 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
                 flex: 2,
@@ -468,55 +418,10 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent> {
                         segment is _StaticRow ? 1 : segment.rows.length;
                     return ListView.builder(
                       padding: EdgeInsets.zero,
-                flex: 2,
-                child: Column(
-                  children: _splitList(widget.data).map((segment) {
-                    int segmentLength =
-                        segment is _StaticRow ? 1 : segment.rows.length;
-                    return ListView.builder(
-                      padding: EdgeInsets.zero,
                       physics: const NeverScrollableScrollPhysics(),
-                      itemCount: segmentLength,
                       itemCount: segmentLength,
                       shrinkWrap: true,
                       itemBuilder: (_, i) {
-                        final currentIndex = segment is _StaticRow
-                            ? segment.row.index!
-                            : segment.rows[i].index!;
-                        final entry = widget.data[currentIndex].values;
-                        return Container(
-                          padding: const EdgeInsets.all(14),
-                          color: widget.data[currentIndex].style != null
-                              ? contentColor(
-                                  widget.data[currentIndex].style!, false)
-                              : (currentIndex % 2 == 1
-                                  ? (Theme.of(Get.context!).brightness ==
-                                          Brightness.light
-                                      ? AppColors.darkgrey
-                                      : AppColors.greyLighter)
-                                  : null),
-                          child: Center(
-                            child: SizedBox(
-                              height: 21,
-                              child: AppText(
-                                entry!.first
-                                    .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                color: segment is _StaticRow
-                                    ? Colors.white
-                                    : contentColor(entry.first, true),
-                                fontWeight: contentWeight(entry.first, true),
-                                textAlign: TextAlign.center,
-                                fontSize: 15,
-                                fontStyle: entry.first.contains('*italic*')
-                                    ? FontStyle.italic
-                                    : null,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  }).toList(),
                         final currentIndex = segment is _StaticRow
                             ? segment.row.index!
                             : segment.rows[i].index!;
@@ -659,15 +564,10 @@ List<dynamic> _splitList(List<SegmentedSplitData> data) {
   for (var item in data) {
     item.index = index;
     if (item.point == 'static') {
-      // Push the previous normal row group first
       if (tempNormalRows.isNotEmpty) {
-        // tempNormalRows.add(SegmentedSplitData.fromJson({
-        //   'values' : tempNormalRows.last.values!.map((e) => '').toList(),
-        // }));
         result.add(_NormalRowsGroup(tempNormalRows));
         tempNormalRows = [];
       }
-      // Add static row separately
       result.add(_StaticRow(item));
     } else {
       tempNormalRows.add(item);
@@ -675,49 +575,6 @@ List<dynamic> _splitList(List<SegmentedSplitData> data) {
     index++;
   }
 
-  // Add remaining normal rows if any
-  if (tempNormalRows.isNotEmpty) {
-    result.add(_NormalRowsGroup(tempNormalRows));
-  }
-
-  return result;
-}
-
-class _StaticRow {
-  final SegmentedSplitData row;
-  _StaticRow(this.row);
-}
-
-class _NormalRowsGroup {
-  final List<SegmentedSplitData> rows;
-  _NormalRowsGroup(this.rows);
-}
-
-List<dynamic> _splitList(List<SegmentedSplitData> data) {
-  List<dynamic> result = [];
-  int index = 0;
-  List<SegmentedSplitData> tempNormalRows = [];
-
-  for (var item in data) {
-    item.index = index;
-    if (item.point == 'static') {
-      // Push the previous normal row group first
-      if (tempNormalRows.isNotEmpty) {
-        // tempNormalRows.add(SegmentedSplitData.fromJson({
-        //   'values' : tempNormalRows.last.values!.map((e) => '').toList(),
-        // }));
-        result.add(_NormalRowsGroup(tempNormalRows));
-        tempNormalRows = [];
-      }
-      // Add static row separately
-      result.add(_StaticRow(item));
-    } else {
-      tempNormalRows.add(item);
-    }
-    index++;
-  }
-
-  // Add remaining normal rows if any
   if (tempNormalRows.isNotEmpty) {
     result.add(_NormalRowsGroup(tempNormalRows));
   }
