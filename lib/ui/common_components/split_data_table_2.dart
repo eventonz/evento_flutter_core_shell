@@ -495,74 +495,55 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                         itemCount: segmentLength,
                         shrinkWrap: true,
                         itemBuilder: (_, i) {
-                          final entry = widget.data[i].values;
-                          return LayoutBuilder(
-                            builder: (context, constraints) {
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                if (i < _rowHeights.length) {
-                                  final RenderBox renderBox =
-                                      context.findRenderObject() as RenderBox;
-                                  final height = renderBox.size.height;
-                                  if (height != _rowHeights[i]) {
-                                    _updateRowHeight(i, height);
-                                  }
-                                }
-                              });
-                              return Container(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 14),
-                                height: 60, // Reduced from 80
-                                decoration: BoxDecoration(
+                          final entry = segment is _StaticRow
+                              ? segment.row.values!.first
+                              : widget.data[localStartIndex + i].values!.first;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 14),
+                            height: 60, // Reduced from 80
+                            decoration: BoxDecoration(
+                              color: segment is _StaticRow
+                                  ? (segment.row.style != null
+                                      ? contentColor(segment.row.style!, false)
+                                      : (segment.row.index! % 2 == 1
+                                          ? (Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? AppColors.darkgrey
+                                              : AppColors.greyLighter)
+                                          : null))
+                                  : null,
+                              border: Border(
+                                bottom: BorderSide(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  width: 1,
+                                ),
+                              ),
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: MediaQuery(
+                                data: MediaQuery.of(context).copyWith(
+                                    textScaleFactor:
+                                        1.0), // Prevent text scaling
+                                child: AppText(
+                                  entry.replaceAll(RegExp(r'\*(\w+)\*'), ''),
                                   color: segment is _StaticRow
-                                      ? (segment.row.style != null
-                                          ? contentColor(
-                                              segment.row.style!, false)
-                                          : (segment.row.index! % 2 == 1
-                                              ? (Theme.of(context).brightness ==
-                                                      Brightness.light
-                                                  ? AppColors.darkgrey
-                                                  : AppColors.greyLighter)
-                                              : null))
+                                      ? Colors.white
+                                      : contentColor(entry, true),
+                                  fontWeight: segment is _StaticRow
+                                      ? FontWeight.bold
+                                      : contentWeight(entry, true),
+                                  textAlign: TextAlign.left,
+                                  fontSize: 13,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  fontStyle: entry.contains('*italic*')
+                                      ? FontStyle.italic
                                       : null,
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey.withOpacity(0.2),
-                                      width: 1,
-                                    ),
-                                  ),
                                 ),
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: MediaQuery(
-                                    data: MediaQuery.of(context).copyWith(
-                                        textScaleFactor:
-                                            1.0), // Prevent text scaling
-                                    child: AppText(
-                                      widget.data[i].values!.first
-                                          .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                      color: segment is _StaticRow
-                                          ? Colors.white
-                                          : contentColor(
-                                              widget.data[i].values!.first,
-                                              true),
-                                      fontWeight: segment is _StaticRow
-                                          ? FontWeight.bold
-                                          : contentWeight(
-                                              widget.data[i].values!.first,
-                                              true),
-                                      textAlign: TextAlign.left,
-                                      fontSize: 13,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      fontStyle: widget.data[i].values!.first
-                                              .contains('*italic*')
-                                          ? FontStyle.italic
-                                          : null,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
+                              ),
+                            ),
                           );
                         }),
                   );
