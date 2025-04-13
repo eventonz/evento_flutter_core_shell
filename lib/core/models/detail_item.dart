@@ -21,27 +21,15 @@ class DetailItem {
     } else if(type == 'splits') {
       splits = json['splits'].map<Splits>((e) => Splits.fromJson(e)).toList();
     } else if(type == 'segmentedsplit') {
-     /*
-    json['data'].insert(4, {
+      json['data'].insert(4, {
         "values": [
-          "*bold*Swim Leg",
-          " ",
+          "Swim Leg",
+          "Todd Giles",
           "00:00",
         ],
         "point": "static",
         "style": "split_green",
       });
-
-      json['data'].insert(2, {
-        "values": [
-          "Swim Leg",
-          " ",
-          "00:00",
-        ],
-        "point": "static",
- 
-      });
-      */
 
       data = json['data'].map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e)).toList();
       segments = json['segments'].map<SegmentedSplitSegments>((e) => SegmentedSplitSegments.fromJson(e)).toList();

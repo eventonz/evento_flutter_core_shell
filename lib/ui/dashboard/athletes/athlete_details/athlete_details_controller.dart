@@ -57,6 +57,7 @@ class AthleteDetailsController extends GetxController
       athleteSplitUrl = AppGlobals.appConfig!.athleteDetails!.url!;
     }
     String mainUrl = athleteSplitUrl.split('?').first;
+    mainUrl = 'https://eventotracker.com/api/v3/api.cfm/splits/race/91';
     if (selEntrant == null) {
       mainUrl =
           '$mainUrl?bib=${selEntrantA!.number}&id=${selEntrantA!.id}&contest=${selEntrantA!.contest}';
