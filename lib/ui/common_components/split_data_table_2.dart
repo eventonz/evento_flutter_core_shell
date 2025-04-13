@@ -276,17 +276,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
     final splitList = _splitList(widget.data);
     _pageControllers = List.generate(
         splitList.whereType<_NormalRowsGroup>().length,
-            (_) => PageController()
-    );
-    _currentPageHeight = List.generate(
-        splitList.whereType<_NormalRowsGroup>().length,
-            (_) => 0
-    );
+        (_) => PageController());
+    _currentPageHeight =
+        List.generate(splitList.whereType<_NormalRowsGroup>().length, (_) => 0);
     _pageKey = List.generate(
-        splitList.whereType<_NormalRowsGroup>().length,
-            (_) => GlobalKey()
-    );
-    for(int i = 0; i < _pageKey.length; i++) {
+        splitList.whereType<_NormalRowsGroup>().length, (_) => GlobalKey());
+    for (int i = 0; i < _pageKey.length; i++) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateHeight(i);
       });
@@ -322,13 +317,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           _currentPageHeight[pageIndex] = renderBox.size.height;
         });
       }
-    } catch (e) {
-
-    }
+    } catch (e) {}
   }
+
   @override
   Widget build(BuildContext context) {
-
     int pageControllerIndex = 0;
     int globalIndex = 0;
     int keyIndex = -1;
@@ -356,7 +349,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                             _currentPage = index;
                           });
                           _pageControllers.forEach((pageController) {
-                            pageController.animateToPage(_currentPage, duration: const Duration(milliseconds: 300), curve: Curves.ease);
+                            pageController.animateToPage(_currentPage,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.ease);
                           });
                           _controllerHeader.animateToPage(_currentPage,
                               duration: const Duration(milliseconds: 300),
@@ -432,7 +427,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                 Expanded(
                   flex: 5,
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 0),
                     height: 40, // Adjust the height dynamically
                     child: PageView.builder(
                       itemBuilder: (_, i) {
@@ -478,85 +473,100 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
               Expanded(
                 flex: 35,
                 child: Column(
-                  children: _splitList(widget.data).map((segment) {
+                    children: _splitList(widget.data).map((segment) {
+                  if (segment is _NormalRowsGroup) {
+                    keyIndex++;
+                  }
+                  int segmentLength = segment is _StaticRow
+                      ? 1
+                      : segment.rows.length; // Get segment length
+                  final localStartIndex =
+                      globalIndex; // Store the starting index for this segment
+                  globalIndex +=
+                      segmentLength; // Update globalIndex after using this segment
 
-                    if(segment is _NormalRowsGroup) {
-                      keyIndex++;
-                    }
-                    int segmentLength = segment is _StaticRow ? 1 : segment.rows.length; // Get segment length
-                    final localStartIndex = globalIndex; // Store the starting index for this segment
-                    globalIndex += segmentLength; // Update globalIndex after using this segment
-
-                    return Container(
-                      key:  segment is _StaticRow ? null : _pageKey[keyIndex],
-                      child: ListView.builder(
-                          key: ValueKey(segment.hashCode), // Unique key for each segment
-                          padding: const EdgeInsets.symmetric(vertical: 0),
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: segmentLength,
-                          shrinkWrap: true,
-                          itemBuilder: (_, i) {
-                            final entry = widget.data[i].values;
-                            return LayoutBuilder(
-                              builder: (context, constraints) {
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  if (i < _rowHeights.length) {
-                                    final RenderBox renderBox =
-                                    context.findRenderObject() as RenderBox;
-                                    final height = renderBox.size.height;
-                                    if (height != _rowHeights[i]) {
-                                      _updateRowHeight(i, height);
-                                    }
+                  return Container(
+                    key: segment is _StaticRow ? null : _pageKey[keyIndex],
+                    child: ListView.builder(
+                        key: ValueKey(
+                            segment.hashCode), // Unique key for each segment
+                        padding: const EdgeInsets.symmetric(vertical: 0),
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: segmentLength,
+                        shrinkWrap: true,
+                        itemBuilder: (_, i) {
+                          final entry = widget.data[i].values;
+                          return LayoutBuilder(
+                            builder: (context, constraints) {
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                if (i < _rowHeights.length) {
+                                  final RenderBox renderBox =
+                                      context.findRenderObject() as RenderBox;
+                                  final height = renderBox.size.height;
+                                  if (height != _rowHeights[i]) {
+                                    _updateRowHeight(i, height);
                                   }
-                                });
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                    color: segment is _StaticRow ? (segment.row.style != null
-                                        ? contentColor(segment.row.style!, false)
-                                        : (segment.row.index! % 2 == 1
-                                        ? (Theme.of(context).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter)
-                                        : null)) : null,
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Colors.grey.withOpacity(0.2),
-                                        width: 1,
-                                      ),
+                                }
+                              });
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8, horizontal: 14),
+                                height: 60, // Reduced from 80
+                                decoration: BoxDecoration(
+                                  color: segment is _StaticRow
+                                      ? (segment.row.style != null
+                                          ? contentColor(
+                                              segment.row.style!, false)
+                                          : (segment.row.index! % 2 == 1
+                                              ? (Theme.of(context).brightness ==
+                                                      Brightness.light
+                                                  ? AppColors.darkgrey
+                                                  : AppColors.greyLighter)
+                                              : null))
+                                      : null,
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Colors.grey.withOpacity(0.2),
+                                      width: 1,
                                     ),
                                   ),
-                                  height: 60, // Reduced from 80
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: MediaQuery(
-                                      data: MediaQuery.of(context).copyWith(
-                                          textScaleFactor:
-                                          1.0), // Prevent text scaling
-                                      child: AppText(
-                                        widget.data[i].values!.first
-                                            .replaceAll(RegExp(r'\*(\w+)\*'), ''),
-                                        color: contentColor(
-                                            widget.data[i].values!.first, true),
-                                        fontWeight: contentWeight(
-                                            widget.data[i].values!.first, true),
-                                        textAlign: TextAlign.left,
-                                        fontSize: 13,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        fontStyle: widget.data[i].values!.first
-                                            .contains('*italic*')
-                                            ? FontStyle.italic
-                                            : null,
-                                      ),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: MediaQuery(
+                                    data: MediaQuery.of(context).copyWith(
+                                        textScaleFactor:
+                                            1.0), // Prevent text scaling
+                                    child: AppText(
+                                      widget.data[i].values!.first
+                                          .replaceAll(RegExp(r'\*(\w+)\*'), ''),
+                                      color: segment is _StaticRow
+                                          ? Colors.white
+                                          : contentColor(
+                                              widget.data[i].values!.first,
+                                              true),
+                                      fontWeight: segment is _StaticRow
+                                          ? FontWeight.bold
+                                          : contentWeight(
+                                              widget.data[i].values!.first,
+                                              true),
+                                      textAlign: TextAlign.left,
+                                      fontSize: 13,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      fontStyle: widget.data[i].values!.first
+                                              .contains('*italic*')
+                                          ? FontStyle.italic
+                                          : null,
                                     ),
                                   ),
-                                );
-                              },
-                            );
-                          }),
-                    );
-                  }).toList()
-                ),
+                                ),
+                              );
+                            },
+                          );
+                        }),
+                  );
+                }).toList()),
               ),
               Expanded(
                 flex: 65,
@@ -569,36 +579,44 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                         color: segment.row.style != null
                             ? contentColor(segment.row.style!, false)
                             : (segment.row.index! % 2 == 1
-                            ? (Theme.of(context).brightness == Brightness.light ? AppColors.darkgrey : AppColors.greyLighter)
-                            : null),
+                                ? (Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.darkgrey
+                                    : AppColors.greyLighter)
+                                : null),
                         padding: const EdgeInsets.all(14),
-                        child: widget.segments.first.columns!.length == 1 ? const SizedBox(
-                          height: 21,
-                        ) : Row(
-                          children: List.generate(
-                            segment.row.values!.length-1,
-                                (x) => Expanded(
-                              child: Center(
-                                child: SizedBox(height: 21, child: AppText(segment.row.values![x+1], color: Colors.white)),
+                        child: widget.segments.first.columns!.length == 1
+                            ? const SizedBox(
+                                height: 21,
+                              )
+                            : Row(
+                                children: List.generate(
+                                  segment.row.values!.length - 1,
+                                  (x) => Expanded(
+                                    child: Center(
+                                      child: SizedBox(
+                                          height: 21,
+                                          child: AppText(
+                                              segment.row.values![x + 1],
+                                              color: Colors.white)),
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
                       );
                     } else if (segment is _NormalRowsGroup) {
-
-                      final pageController = _pageControllers[pageControllerIndex++];
+                      final pageController =
+                          _pageControllers[pageControllerIndex++];
                       // Render PageView for Normal Rows (Sliding)
                       return AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        height: _currentPageHeight[pageControllerIndex-1],
+                        duration: const Duration(milliseconds: 0),
+                        height: _currentPageHeight[pageControllerIndex - 1],
                         child: PageView.builder(
                           itemCount: widget.segments.length,
                           controller: pageController,
                           physics: const NeverScrollableScrollPhysics(),
                           clipBehavior: Clip.antiAlias,
                           itemBuilder: (_, i) {
-
                             int startIndex = 1;
                             for (int y = 0; y < i; y++) {
                               startIndex += widget.segments[y].columns!.length;
@@ -616,34 +634,49 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                   final entry = row.values;
                                   final columns = widget.segments[i].columns!;
 
-
                                   print('index $index');
 
                                   List<Widget> widgets = [];
-                                  if (entry?.length == 1 && row.point == 'static') {
-                                    for (int x = startIndex; x < (startIndex + columns.length); x++) {
+                                  if (entry?.length == 1 &&
+                                      row.point == 'static') {
+                                    for (int x = startIndex;
+                                        x < (startIndex + columns.length);
+                                        x++) {
                                       widgets.add(const Expanded(
                                         child: Center(
-                                          child: SizedBox(height: 21, child: AppText('')),
+                                          child: SizedBox(
+                                              height: 21, child: AppText('')),
                                         ),
                                       ));
                                     }
                                   }
 
-                                  for (int x = row.point == 'static' ? 1 : startIndex;
-                                  x < (row.point == 'static' ? entry!.length : (startIndex + columns.length));
-                                  x++) {
+                                  for (int x = row.point == 'static'
+                                          ? 1
+                                          : startIndex;
+                                      x <
+                                          (row.point == 'static'
+                                              ? entry!.length
+                                              : (startIndex + columns.length));
+                                      x++) {
                                     widgets.add(Expanded(
                                       child: Center(
                                         child: SizedBox(
                                           height: 21,
                                           child: AppText(
-                                            entry!.length > x ? entry[x].replaceAll(RegExp(r'\*(\w+)\*'), '') : '',
+                                            entry!.length > x
+                                                ? entry[x].replaceAll(
+                                                    RegExp(r'\*(\w+)\*'), '')
+                                                : '',
                                             color: contentColor(entry[x], true),
-                                            fontWeight: contentWeight(entry[x], true),
+                                            fontWeight:
+                                                contentWeight(entry[x], true),
                                             textAlign: TextAlign.center,
-                                            fontSize: 15,
-                                            fontStyle: (entry.length > (x + (i * 3) + 1) && entry[(x + (i * 3)) + 1].contains('*italics*'))
+                                            fontSize: 13,
+                                            fontStyle: (entry.length >
+                                                        (x + (i * 3) + 1) &&
+                                                    entry[(x + (i * 3)) + 1]
+                                                        .contains('*italics*'))
                                                 ? FontStyle.italic
                                                 : null,
                                             maxLines: 1,
@@ -666,13 +699,13 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                         ),
                                       ),
                                     ),
-
                                     padding: const EdgeInsets.all(14),
                                     child: Row(children: widgets),
                                   );
                                 },
                               ),
-                            );                            },
+                            );
+                          },
                         ),
                       );
                     }
@@ -729,8 +762,6 @@ class _NormalRowsGroup {
   final List<SegmentedSplitData> rows;
   _NormalRowsGroup(this.rows);
 }
-
-
 
 class SegmentedSplitNewDataContent2 extends StatelessWidget {
   const SegmentedSplitNewDataContent2(

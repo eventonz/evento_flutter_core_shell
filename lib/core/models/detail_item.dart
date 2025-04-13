@@ -28,7 +28,7 @@ class DetailItem {
           "00:00",
         ],
         "point": "static",
-        "style": "split_green",
+        "style": "split_black",
       });
 
       data = json['data'].map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e)).toList();
