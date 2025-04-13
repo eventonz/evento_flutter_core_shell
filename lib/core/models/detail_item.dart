@@ -1,7 +1,6 @@
 import 'athlete_tab_details.dart';
 
 class DetailItem {
-
   String? type;
   dynamic data;
   List<Splits>? splits;
@@ -10,15 +9,17 @@ class DetailItem {
 
   DetailItem.fromJson(Map<String, dynamic> json) {
     type = json['type'];
-    if(type == 'summary') {
+    if (type == 'summary') {
       data = SummaryData.fromJson(json['data']);
-    } else if(type == 'externallinks') {
-      data = json['data'].map<ExternalLinkData>((e) => ExternalLinkData.fromJson(e)).toList();
-    } else if(type == 'pace') {
+    } else if (type == 'externallinks') {
+      data = json['data']
+          .map<ExternalLinkData>((e) => ExternalLinkData.fromJson(e))
+          .toList();
+    } else if (type == 'pace') {
       data = json['data'].map<PaceData>((e) => PaceData.fromJson(e)).toList();
-    } else if(type == 'title') {
+    } else if (type == 'title') {
       data = TitleData.fromJson(json['data']);
-    } else if(type == 'splits') {
+    } else if (type == 'splits') {
       splits = json['splits'].map<Splits>((e) => Splits.fromJson(e)).toList();
     } else if(type == 'segmentedsplit') {
       json['data'].insert(4, {
@@ -31,8 +32,13 @@ class DetailItem {
         "style": "split_black",
       });
 
-      data = json['data'].map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e)).toList();
-      segments = json['segments'].map<SegmentedSplitSegments>((e) => SegmentedSplitSegments.fromJson(e)).toList();
+      data = json['data']
+          .map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e))
+          .toList();
+      segments = json['segments']
+          .map<SegmentedSplitSegments>(
+              (e) => SegmentedSplitSegments.fromJson(e))
+          .toList();
       columns = json['columns'].map<String>((e) => e as String).toList();
     }
   }
@@ -46,14 +52,15 @@ class SummaryData {
 }
 
 class SummaryDataTop {
-
   String? medal;
   String? subtitle;
   String? result;
   List<SummaryDataTopInfoBar> infoBar = [];
 
   SummaryDataTop.fromJson(Map<String, dynamic> json) {
-    infoBar = json['info_bar'].map<SummaryDataTopInfoBar>((e) => SummaryDataTopInfoBar.fromJson(e)).toList();
+    infoBar = json['info_bar']
+        .map<SummaryDataTopInfoBar>((e) => SummaryDataTopInfoBar.fromJson(e))
+        .toList();
     medal = json['medal'];
     subtitle = json['subtitle'];
     result = json['result'];
@@ -73,7 +80,6 @@ class SummaryDataTopInfoBar {
 }
 
 class ExternalLinkData {
-
   String? icon;
   String? url;
   String? label;
@@ -116,7 +122,8 @@ class SegmentedSplitData {
   SegmentedSplitData.fromJson(Map<String, dynamic> json) {
     point = json['point'];
     style = json['style'];
-    values = json['values'].map<String>((e) => e as String).toList();;
+    values = json['values'].map<String>((e) => e as String).toList();
+    ;
   }
 }
 
