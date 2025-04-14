@@ -308,11 +308,10 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
   void _updateHeight(int pageIndex) {
     try {
       final context = _pageKey[pageIndex].currentContext;
-      print(context);
-      print('context');
+
       if (context != null && context.mounted) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
-        print('height: ${renderBox.size.height}');
+       // print('height: ${renderBox.size.height}');
         setState(() {
           _currentPageHeight[pageIndex] = renderBox.size.height;
         });
@@ -501,7 +500,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                           return Container(
                             padding: const EdgeInsets.symmetric(
                                 vertical: 8, horizontal: 14),
-                            height: 60, // Reduced from 80
+                            height: 60,
                             decoration: BoxDecoration(
                               color: segment is _StaticRow
                                   ? (segment.row.style != null
@@ -556,7 +555,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                   children: _splitList(widget.data).map((segment) {
                     if (segment is _StaticRow) {
                       return Container(
-                        height: 60, // Reduced from 80
+                        height: 60,
                         color: segment.row.style != null
                             ? contentColor(segment.row.style!, false)
                             : (segment.row.index! % 2 == 1
@@ -579,7 +578,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                           height: 21,
                                           child: AppText(
                                               segment.row.values![x + 1],
-                                              color: Colors.white)),
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                          )
+                                      ),
+                                              //fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                 ),
@@ -615,7 +618,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                   final entry = row.values;
                                   final columns = widget.segments[i].columns!;
 
-                                  print('index $index');
+                                  //print('index $index');
 
                                   List<Widget> widgets = [];
                                   if (entry?.length == 1 &&
@@ -649,17 +652,14 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                                 ? entry[x].replaceAll(
                                                     RegExp(r'\*(\w+)\*'), '')
                                                 : '',
-                                            color: contentColor(entry[x], true),
-                                            fontWeight:
-                                                contentWeight(entry[x], true),
+                                            color: row.point == 'static'
+                                                ? Colors.white
+                                                : contentColor(entry[x], true),
+                                            fontWeight: row.point == 'static'
+                                                ? FontWeight.bold
+                                                : contentWeight(entry[x], true),
                                             textAlign: TextAlign.center,
                                             fontSize: 13,
-                                            fontStyle: (entry.length >
-                                                        (x + (i * 3) + 1) &&
-                                                    entry[(x + (i * 3)) + 1]
-                                                        .contains('*italics*'))
-                                                ? FontStyle.italic
-                                                : null,
                                             maxLines: 1,
                                           ),
                                         ),
@@ -670,9 +670,19 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                   return Container(
                                     height: 60,
                                     decoration: BoxDecoration(
-                                      color: style != null
-                                          ? contentColor(style, false)
-                                          : null,
+                                      color: row.point == 'static'
+                                          ? (style != null
+                                              ? contentColor(style, false)
+                                              : (index % 2 == 1
+                                                  ? (Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? AppColors.darkgrey
+                                                      : AppColors.greyLighter)
+                                                  : null))
+                                          : (style != null
+                                              ? contentColor(style, false)
+                                              : null),
                                       border: Border(
                                         bottom: BorderSide(
                                           color: Colors.grey.withOpacity(0.2),

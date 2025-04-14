@@ -22,15 +22,7 @@ class DetailItem {
     } else if (type == 'splits') {
       splits = json['splits'].map<Splits>((e) => Splits.fromJson(e)).toList();
     } else if(type == 'segmentedsplit') {
-      json['data'].insert(4, {
-        "values": [
-          "Swim Leg",
-          "Todd Giles",
-          "00:00",
-        ],
-        "point": "static",
-        "style": "split_black",
-      });
+
 
       data = json['data']
           .map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e))
