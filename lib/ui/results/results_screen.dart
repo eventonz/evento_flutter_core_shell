@@ -551,7 +551,7 @@ class ResultsScreen extends StatelessWidget {
                                 return;
                               }
                               Entrants entrant = Entrants(
-                                  id: athlete.athleteId?.toString() ?? '',
+                                  id: athlete.importKey.toString(),
                                   number: athlete.raceNo!.toString(),
                                   canFollow: false,
                                   isFollowed: false,
