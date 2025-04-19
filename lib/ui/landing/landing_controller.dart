@@ -119,7 +119,7 @@ class LandingController extends GetxController {
           return;
           webViewController!.setNavigationDelegate(NavigationDelegate(
             onPageFinished: (val) {
-       
+
               if(!done) {
                 done = true;
 
@@ -153,9 +153,18 @@ class LandingController extends GetxController {
           }
         });
 
-        appLinks.getInitialLink().then((uri) {
-          if(uri!.path.contains('/eventid/')) {
+        appLinks.getInitialLink().then((uri) async {
+          if(uri == null) {
+            return;
+          }
+          var open = uri.path;
+          if(uri.path.contains('/event_id/')) {
+            var eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+            String athleteId = open.split('/athlete/')[1];
+            AppGlobals.selEventId = int.parse(eventId);
+            await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
 
+            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
           }
         });
       }
