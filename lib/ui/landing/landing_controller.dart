@@ -82,9 +82,15 @@ class LandingController extends GetxController {
         Logger.i(
             'Deep link contains event_id: $eventId and athlete_id: $athleteId');
 
+        // Store the event ID
         AppGlobals.selEventId = int.parse(eventId);
         await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
 
+        // First navigate to dashboard to show event context
+        Logger.i('Navigating to dashboard for event: $eventId');
+        await Get.offAllNamed(Routes.dashboard);
+
+        // Then navigate to athlete details
         Logger.i('Navigating to athlete details for athlete: $athleteId');
         Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
       } catch (e) {
@@ -109,12 +115,10 @@ class LandingController extends GetxController {
     if ((!result.contains(ConnectivityResult.wifi) &&
         !result.contains(ConnectivityResult.mobile) &&
         !result.contains(ConnectivityResult.ethernet))) {
-      
       noConnection.value = true;
       update();
     } else {
       navigate();
-      
     }
   }
 
