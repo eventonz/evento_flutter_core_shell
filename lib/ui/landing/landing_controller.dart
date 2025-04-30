@@ -14,6 +14,7 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/core/utils/logger.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:evento_core/ui/dashboard/webview_event_page.dart';
 import 'package:flutter/material.dart';
@@ -40,7 +41,58 @@ class LandingController extends GetxController {
     if (res != null) {
       isPrev = true;
     }
+    setupDeepLinkListener();
+  }
 
+  void setupDeepLinkListener() {
+    Logger.i('Setting up deep link listener');
+    final appLinks = AppLinks();
+
+    // Handle initial deep link
+    appLinks.getInitialLink().then((Uri? initialLink) {
+      if (initialLink != null) {
+        Logger.i('Received initial deep link: ${initialLink.path}');
+        handleDeepLink(initialLink);
+      }
+    }).catchError((e) {
+      Logger.e('Error getting initial deep link: $e');
+    });
+
+    // Listen for incoming deep links
+    appLinks.uriLinkStream.listen((Uri? link) {
+      if (link != null) {
+        Logger.i('Received deep link: ${link.path}');
+        handleDeepLink(link);
+      }
+    }, onError: (error) {
+      Logger.e('Error listening to deep links: $error');
+    });
+  }
+
+  void handleDeepLink(Uri uri) async {
+    Logger.i('Processing deep link: $uri');
+    final path = uri.path;
+
+    if (path.contains('/event_id/')) {
+      try {
+        final eventId = path.substring(
+            path.indexOf('event_id/') + 9, path.indexOf('/athlete/'));
+        final athleteId = path.split('/athlete/')[1];
+
+        Logger.i(
+            'Deep link contains event_id: $eventId and athlete_id: $athleteId');
+
+        AppGlobals.selEventId = int.parse(eventId);
+        await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
+
+        Logger.i('Navigating to athlete details for athlete: $athleteId');
+        Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
+      } catch (e) {
+        Logger.e('Error processing deep link: $e');
+      }
+    } else {
+      Logger.w('Deep link path does not contain expected pattern: $path');
+    }
   }
 
   @override
@@ -52,16 +104,18 @@ class LandingController extends GetxController {
   checkConnection() async {
     await Future.delayed(const Duration(milliseconds: 300));
     var result = await connectivity.checkConnectivity();
-      print(result.map((e) => e.toString()));
+    print(result.map((e) => e.toString()));
 
-      if((!result.contains(ConnectivityResult.wifi) && !result.contains(ConnectivityResult.mobile) && !result.contains(ConnectivityResult.ethernet))) {
-        print('NO CONNECTION');
-        noConnection.value = true;
-        update();
-      } else {
-        navigate();
-        print('CONNECTION');
-      }
+    if ((!result.contains(ConnectivityResult.wifi) &&
+        !result.contains(ConnectivityResult.mobile) &&
+        !result.contains(ConnectivityResult.ethernet))) {
+      
+      noConnection.value = true;
+      update();
+    } else {
+      navigate();
+      
+    }
   }
 
   void navigate() async {
@@ -74,7 +128,6 @@ class LandingController extends GetxController {
       late String url;
       final config = AppGlobals.appEventConfig;
       if (config.multiEventListId != null) {
-      
         url = Preferences.getString(AppKeys.eventUrl, '');
         await getEvents(config);
       } else {
@@ -91,46 +144,39 @@ class LandingController extends GetxController {
       } else {
         final webUrl = Preferences.getString(AppKeys.eventLink, '');
         print(webUrl);
-        if(webUrl == '') {
+        if (webUrl == '') {
           await getConfigDetails(url, config.configUrl);
           // await getAthletes();
         }
         webViewController = WebViewController();
-        if(webUrl != '') {
+        if (webUrl != '') {
           webViewController!.setJavaScriptMode(JavaScriptMode.unrestricted);
-          webViewController!.setOnConsoleMessage((msg) {
-          
-          });
+          webViewController!.setOnConsoleMessage((msg) {});
           await webViewController!.loadRequest(Uri.parse(webUrl));
           bool done = false;
           print('loaded');
           await Future.delayed(const Duration(seconds: 1));
           if (isPrev) {
-            Get.off(
-                    () => const WebViewEventPage(),
+            Get.off(() => const WebViewEventPage(),
                 routeName: Routes.webviewEvent,
                 transition: Transition.fadeIn,
                 duration: const Duration(milliseconds: 1000),
-                arguments: webViewController
-            );
+                arguments: webViewController);
           } else {
             Get.offNamed(Routes.webviewEvent, arguments: webViewController);
           }
           return;
-          webViewController!.setNavigationDelegate(NavigationDelegate(
-            onPageFinished: (val) {
-       
-              if(!done) {
-                done = true;
-
-              }
+          webViewController!
+              .setNavigationDelegate(NavigationDelegate(onPageFinished: (val) {
+            if (!done) {
+              done = true;
             }
-          ));
+          }));
           return;
         }
         if (isPrev) {
           Get.off(
-                () => const DashboardScreen(),
+            () => const DashboardScreen(),
             routeName: Routes.dashboard,
             transition: Transition.fadeIn,
             duration: const Duration(milliseconds: 1000),
@@ -143,8 +189,9 @@ class LandingController extends GetxController {
 
         final sub = appLinks.uriLinkStream.listen((uri) async {
           var open = uri.path;
-          if(uri.path.contains('/event_id/')) {
-            var eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+          if (uri.path.contains('/event_id/')) {
+            var eventId = open.substring(
+                open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
             String athleteId = open.split('/athlete/')[1];
             AppGlobals.selEventId = int.parse(eventId);
             await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
@@ -154,17 +201,15 @@ class LandingController extends GetxController {
         });
 
         appLinks.getInitialLink().then((uri) {
-          if(uri!.path.contains('/eventid/')) {
-
-          }
+          if (uri!.path.contains('/eventid/')) {}
         });
       }
     } catch (e) {
       ToastUtils.show(e.toString());
-      if(AppGlobals.appEventConfig.multiEventListId != null) {
+      if (AppGlobals.appEventConfig.multiEventListId != null) {
         Preferences.setString(AppKeys.eventUrl, '');
         Get.off(
-              () => const EventsScreen(),
+          () => const EventsScreen(),
           routeName: Routes.events,
           transition: Transition.leftToRightWithFade,
         );
@@ -181,9 +226,9 @@ class LandingController extends GetxController {
 
     if (!isInitiallyLaunched) {
       //await ApiHandler.postHttp(
-       //   baseUrl:
-        //      'https://eventotracker.com/api/v3/api.cfm/downloads/${AppGlobals.appEventConfig.oneSignalId}',
-       //   body: {});
+      //   baseUrl:
+      //      'https://eventotracker.com/api/v3/api.cfm/downloads/${AppGlobals.appEventConfig.oneSignalId}',
+      //   body: {});
       Preferences.setBool(AppKeys.isInitiallyLaunched, true);
     }
   }
@@ -199,7 +244,6 @@ class LandingController extends GetxController {
         url: AppHelper.createUrl(
             config.multiEventListUrl!, config.multiEventListId!));
     AppGlobals.eventM = EventM.fromJson(res.data);
-  
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {
