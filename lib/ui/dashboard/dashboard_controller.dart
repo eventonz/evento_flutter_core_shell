@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:app_links/app_links.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/overlays/fullscreen_advert.dart';
@@ -31,6 +32,7 @@ import 'package:get/get.dart';
 //import 'package:new_version_plus/new_version_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/models/advert.dart';
+import '../landing/landing.dart';
 import 'home/home.dart';
 import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
@@ -129,7 +131,40 @@ class DashboardController extends GetxController {
       //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
 
     });
+    var appLinks = AppLinks();
+    final sub = appLinks.uriLinkStream.listen((uri) async {
+      var appLinks = AppLinks();
+      var uri = await appLinks.getInitialLink();
+      if(uri == null) {
+        return;
+      }
+      var open = uri.path;
+      if (open.contains('/event_id/')) {
+        var eventId = open.substring(
+            open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+        var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == eventId);
+        saveEventSelection(event);
+        if(uri.path.contains('/athlete/')) {
+          String athleteId = open.split('/athlete/')[1];
+          Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+        } else {
+          Get.off(() => const LandingScreen(),
+              routeName: Routes.landing,
+              transition: Transition.topLevel,
+              duration: const Duration(milliseconds: 1500),
+              arguments: const {'is_prev': true});
+        }
+      }
+    });
   }
+
+  static void saveEventSelection(dynamic event) {
+    Preferences.setString(AppKeys.eventUrl, event.config!);
+    Preferences.setString(AppKeys.eventLink, event.link!);
+    Preferences.setInt(AppKeys.eventId, event.id);
+    AppGlobals.selEventId = event.id;
+  }
+
 
   void reloadMenu() {
     var entrantsList = AppGlobals.appConfig!.athletes!;

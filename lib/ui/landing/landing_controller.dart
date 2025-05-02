@@ -23,6 +23,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../core/overlays/toast.dart';
 import '../events/events.dart';
+import 'landing.dart';
 
 class LandingController extends GetxController {
   bool isPrev = false;
@@ -41,7 +42,7 @@ class LandingController extends GetxController {
     if (res != null) {
       isPrev = true;
     }
-    setupDeepLinkListener();
+    //setupDeepLinkListener();
   }
 
   void setupDeepLinkListener() {
@@ -143,6 +144,32 @@ class LandingController extends GetxController {
       AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
       checkTheme();
       await Future.delayed(const Duration(milliseconds: 1300));
+
+      var appLinks = AppLinks();
+      var uri = await appLinks.getInitialLink();
+      if(uri != null) {
+        var open = uri.path;
+        if (open.contains('/event_id/')) {
+          var eventId = open.substring(
+              open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+          var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) =>
+          e.id == int.parse(eventId));
+          saveEventSelection(event);
+          Get.off(() => const LandingScreen(),
+              routeName: Routes.landing,
+              transition: Transition.topLevel,
+              duration: const Duration(milliseconds: 1500),
+              arguments: const {'is_prev': true});
+          if (uri.path.contains('/athlete/')) {
+            String athleteId = open.split('/athlete/')[1];
+            Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+            return;
+          } else {
+            return;
+          }
+        }
+      }
+
       if (url.isEmpty) {
         Get.offNamed(Routes.events);
       } else {
@@ -188,25 +215,6 @@ class LandingController extends GetxController {
         } else {
           Get.offNamed(Routes.dashboard);
         }
-
-        final appLinks = AppLinks();
-
-        final sub = appLinks.uriLinkStream.listen((uri) async {
-          var open = uri.path;
-          if (uri.path.contains('/event_id/')) {
-            var eventId = open.substring(
-                open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
-            String athleteId = open.split('/athlete/')[1];
-            AppGlobals.selEventId = int.parse(eventId);
-            await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
-
-            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
-          }
-        });
-
-        appLinks.getInitialLink().then((uri) {
-          if (uri!.path.contains('/eventid/')) {}
-        });
       }
     } catch (e) {
       ToastUtils.show(e.toString());
@@ -222,6 +230,13 @@ class LandingController extends GetxController {
         update();
       }
     }
+  }
+
+  static void saveEventSelection(dynamic event) {
+    Preferences.setString(AppKeys.eventUrl, event.config!);
+    Preferences.setString(AppKeys.eventLink, event.link!);
+    Preferences.setInt(AppKeys.eventId, event.id);
+    AppGlobals.selEventId = event.id;
   }
 
   Future<void> checkLaunchState() async {

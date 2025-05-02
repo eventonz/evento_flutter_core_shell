@@ -39,7 +39,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get askAQuestion => 'Ask a Question';
 
   @override
-  String get defaultAssistantMessage => 'Ask me any questions about the Athlete Guide - I use AI to help answer your questions so double check any key details.';
+  String get defaultAssistantMessage => 'Ask me any questions about the Athlete Guide - I\'ll try my best to answer.';
 
   @override
   String get wouldYouLikeToRemoveAllMessages => 'Would you like to remove all the messages?';
