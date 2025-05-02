@@ -123,6 +123,14 @@ class LandingController extends GetxController {
     }
   }
 
+  String extractEventId(String url) {
+    final startIndex = url.indexOf('event_id/') + 9;
+    final endIndex = url.contains('/athlete/')
+        ? url.indexOf('/athlete/')
+        : url.length;
+    return url.substring(startIndex, endIndex);
+  }
+
   void navigate() async {
     try {
       if (!isPrev) {
@@ -150,21 +158,27 @@ class LandingController extends GetxController {
       if(uri != null) {
         var open = uri.path;
         if (open.contains('/event_id/')) {
-          var eventId = open.substring(
-              open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+          var eventId = extractEventId(open);
           var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) =>
           e.id == int.parse(eventId));
           saveEventSelection(event);
-          Get.off(() => const LandingScreen(),
-              routeName: Routes.landing,
-              transition: Transition.topLevel,
-              duration: const Duration(milliseconds: 1500),
-              arguments: const {'is_prev': true});
+
           if (uri.path.contains('/athlete/')) {
             String athleteId = open.split('/athlete/')[1];
-            Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+            Get.off(() => const LandingScreen(),
+                routeName: Routes.landing,
+                transition: Transition.topLevel,
+                duration: const Duration(milliseconds: 1500),
+                arguments: const {'is_prev': true})?.then((_) {
+              Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+            });
             return;
           } else {
+            Get.off(() => const LandingScreen(),
+                routeName: Routes.landing,
+                transition: Transition.topLevel,
+                duration: const Duration(milliseconds: 1500),
+                arguments: const {'is_prev': true});
             return;
           }
         }

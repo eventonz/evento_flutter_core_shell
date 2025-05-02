@@ -58,6 +58,14 @@ class DashboardController extends GetxController {
         view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu', text: AppLocalizations.of(Get.context!)!.menubutton),
   ]);
 
+  String extractEventId(String url) {
+    final startIndex = url.indexOf('event_id/') + 9;
+    final endIndex = url.contains('/athlete/')
+        ? url.indexOf('/athlete/')
+        : url.length;
+    return url.substring(startIndex, endIndex);
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -140,8 +148,7 @@ class DashboardController extends GetxController {
       }
       var open = uri.path;
       if (open.contains('/event_id/')) {
-        var eventId = open.substring(
-            open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+        var eventId = extractEventId(open);
         var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == eventId);
         saveEventSelection(event);
         if(uri.path.contains('/athlete/')) {
