@@ -19,6 +19,7 @@ import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
@@ -141,28 +142,55 @@ class DashboardController extends GetxController {
     });
     var appLinks = AppLinks();
     final sub = appLinks.uriLinkStream.listen((uri) async {
-      var appLinks = AppLinks();
-      var uri = await appLinks.getInitialLink();
-      if(uri == null) {
-        return;
-      }
+      print('HANDLE DEEPLINK ${uri.path}');
+      print('--- DEEP LINK DEBUG ---');
+      print('Full URI: $uri');
+      print('Scheme: ${uri.scheme}');
+      print('Host: ${uri.host}');
+      print('Path: ${uri.path}');
+      print('Segments: ${uri.pathSegments}');
       var open = uri.path;
       if (open.contains('/event_id/')) {
         var eventId = extractEventId(open);
-        var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == eventId);
-        saveEventSelection(event);
-        if(uri.path.contains('/athlete/')) {
-          String athleteId = open.split('/athlete/')[1];
-          Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+        print('eventId');
+        print(eventId);
+        if(AppGlobals.appEventConfig.multiEventListId != null) {
+          var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == int.parse(eventId));
+          if(eventId != AppGlobals.selEventId.toString()) {
+            saveEventSelection(event);
+            String? athleteId = uri.path.contains('/athlete/') ? open.split('/athlete/')[1] : null;
+            Get.offAll(() => const LandingScreen(),
+                routeName: Routes.landing,
+                transition: Transition.topLevel,
+                duration: const Duration(milliseconds: 1500),
+                arguments: {'is_prev': true, 'athlete_id' : athleteId});
+          } else {
+            if(uri.path.contains('/athlete/')) {
+              String athleteId = open.split('/athlete/')[1];
+              Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+            }
+          }
         } else {
-          Get.off(() => const LandingScreen(),
-              routeName: Routes.landing,
-              transition: Transition.topLevel,
-              duration: const Duration(milliseconds: 1500),
-              arguments: const {'is_prev': true});
+          if(uri.path.contains('/athlete/')) {
+            String athleteId = open.split('/athlete/')[1];
+            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+          }
         }
       }
     });
+  }
+
+  onFollow(entrant) async {
+    AthletesController controller = Get.isRegistered<AthletesController>() ? Get.find<AthletesController>() : Get.put(AthletesController());
+    await controller.insertAthlete(
+        entrant, !entrant.isFollowed);
+    if (!entrant.isFollowed) {
+      controller.followAthlete(entrant);
+    } else {
+      controller
+          .unfollowAthlete(entrant);
+    }
+    //controller.update();
   }
 
   static void saveEventSelection(dynamic event) {

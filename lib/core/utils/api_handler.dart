@@ -20,6 +20,7 @@ class ApiHandler {
   static Future<ApiData> postHttp(
       {String endPoint = '',
       required dynamic body,
+      int? timeout,
       Map<String, dynamic>? header,
       String? baseUrl}) async {
     final url = baseUrl ?? (_baseUrl + midpathApi + endPoint);
@@ -36,7 +37,7 @@ class ApiHandler {
             ),
             data: body,
           )
-          .timeout(const Duration(seconds: 5));
+          .timeout(Duration(seconds: timeout ?? 5));
 
       Logger.i('POST Response from: $url');
       Logger.d('Response Data: ${response.data}');

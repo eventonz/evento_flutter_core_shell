@@ -41,6 +41,8 @@ class AthleteDetailsController extends GetxController
     entrantsList = AppGlobals.appConfig!.athletes!;
     if (res[AppKeys.athlete] is AppAthleteDb) {
       selEntrant = res[AppKeys.athlete];
+    } else if(res['id'] != null) {
+      loading.value = true;
     } else {
       selEntrantA = res[AppKeys.athlete];
     }
@@ -58,7 +60,7 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> getAthlete(String id) async {
-    print(id);
+    print('getAthlete $id');
     loading.value = true;
     update();
 
@@ -67,13 +69,16 @@ class AthleteDetailsController extends GetxController
     var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
       'searchstring' : id,
       'pagenumber' : 1,
-    });
+    }, timeout: 15);
+
+    print(data.data);
 
     if(data.data['athletes'].isNotEmpty) {
       selEntrantA = Entrants.fromJson(data.data['athletes'][0]);
     }
     loading.value = false;
     update();
+    getSplitDetails();
   }
 
   Future<void> getSplitDetails() async {

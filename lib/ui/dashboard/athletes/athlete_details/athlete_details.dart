@@ -169,12 +169,15 @@ class AthleteDetailsScreen extends StatelessWidget {
                             stream: controller.getSingleAthleteDetails(
                                 controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id),
                             builder: (_, snap) {
+                              print(snap.connectionState);
+                              print(snap.error);
                               if (snap.hasData || snap.hasError) {
                                 var data = snap.data;
                                 if((data ?? []).isEmpty) {
                                   data = null;
                                 }
-                                print('controller.selEntrantA?.athleteDetails ${controller.selEntrantA?.athleteDetails}');
+
+                                print('controller.selEntrantA?.athleteDetails ${controller.selEntrant != null ? controller.selEntrant!.athleteId : controller.selEntrantA!.id} ${controller.selEntrantA?.athleteDetails}');
                                 final details = data ?? (controller.selEntrantA?.athleteDetails ?? []).map((details) {
                                   return AppAthleteExtraDetailsDb(id: 0, athleteId: details.athleteNumber, name: details.name, eventId: AppGlobals.selEventId, country: details.country, athleteNumber: details.athleteNumber);
                                 }).toList();
@@ -214,7 +217,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                             final isFollowed = snap.data?.isFollowed ?? false;
                             return Column(
                               children: [
-                                if((Get.arguments['can_follow']) != false)
+                                if((Get.arguments?['can_follow']) != false)
                                 AnimatedContainer(
                                   width: double.infinity,
                                   curve: Curves.easeInOut,
@@ -280,7 +283,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                                           ),
                                         ],
                                       ),
-                                      onPressed: !(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false)
+                                      onPressed: (!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
                                           ? null
                                           : () {
                                         print('akk2');
@@ -289,11 +292,11 @@ class AthleteDetailsScreen extends StatelessWidget {
                                         //     snap.data!, isFollowed);
                                         if (Get.arguments['on_follow'] != null) {
                                           print('akk');
-                                          Get.arguments['on_follow']!();
+                                          Get.arguments['on_follow']!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow);
                                         }
                                       }),
                                 ),
-                                if((Get.arguments['can_follow']) != false)
+                                if((Get.arguments?['can_follow']) != false)
                                   if(!(controller.selEntrant?.canFollow ?? controller.selEntrantA?.canFollow ?? false))
                                   Padding(
                                     padding: const EdgeInsets.only(
@@ -378,6 +381,7 @@ class AthleteDetailsScreen extends StatelessWidget {
                     } else if (controller.items[index].type == 'title') {
                       return SplitTitleContent(title: controller.items[index].data);
                     } else if (controller.items[index].type == 'splits') {
+                      print('YES SPLITS ${controller.items[index].splits?.length}');
                       return SplitNewDataContent2(splitDataList: controller.items[index].splits ?? [], showSplit: false);
                     } else if (controller.items[index].type == 'segmentedsplit') {
                       return SegmentedSplitDataContent(

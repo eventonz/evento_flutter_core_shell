@@ -304,8 +304,8 @@ class AthletesScreen extends StatelessWidget {
                                         return AthleteTile(
                                             entrant: entrant,
                                             onTap: () => controller
-                                                .toAthleteDetails(entrant, onFollow: () {
-                                              onFollow() async {
+                                                .toAthleteDetails(entrant, onFollow: (ent) {
+                                              onFollow(ent) async {
                                                 print('isFOLLOWED ${!entrant.isFollowed}');
                                                 await controller.insertAthleteA(entrant, !entrant.isFollowed);
                                                 if (!entrant.isFollowed) {
@@ -315,7 +315,7 @@ class AthletesScreen extends StatelessWidget {
                                                 }
                                                 //controller.update();
                                               }
-                                              onFollow();
+                                              onFollow(ent);
                                             }));
                                       });
                                 } else if (snap.hasError) {

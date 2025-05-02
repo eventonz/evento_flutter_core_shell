@@ -269,7 +269,7 @@ class AthletesSearchScreen extends StatelessWidget {
 
                                           final entrant = entrants[i - 1];
 
-                                          onFollow() async {
+                                          onFollow(ent) async {
                                             await controller.insertAthlete(
                                                 entrant, !entrant.isFollowed);
                                             if (!entrant.isFollowed) {

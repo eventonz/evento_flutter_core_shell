@@ -153,34 +153,61 @@ class LandingController extends GetxController {
       checkTheme();
       await Future.delayed(const Duration(milliseconds: 1300));
 
+      if(Get.arguments?['athlete_id'] != null) {
+        Get.offNamed(Routes.dashboard)?.then((_) {
+          Get.toNamed(Routes.athleteDetails, arguments: {'id' : Get.arguments['athlete_id']});
+        });
+      }
+
       var appLinks = AppLinks();
       var uri = await appLinks.getInitialLink();
       if(uri != null) {
         var open = uri.path;
         if (open.contains('/event_id/')) {
           var eventId = extractEventId(open);
+          print(eventId);
           var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) =>
           e.id == int.parse(eventId));
-          saveEventSelection(event);
+          if(event != null) {
+            if(AppGlobals.appEventConfig.multiEventListId != null) {
+              saveEventSelection(event);
 
-          if (uri.path.contains('/athlete/')) {
-            String athleteId = open.split('/athlete/')[1];
-            Get.off(() => const LandingScreen(),
-                routeName: Routes.landing,
-                transition: Transition.topLevel,
-                duration: const Duration(milliseconds: 1500),
-                arguments: const {'is_prev': true})?.then((_) {
-              Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
-            });
-            return;
-          } else {
-            Get.off(() => const LandingScreen(),
-                routeName: Routes.landing,
-                transition: Transition.topLevel,
-                duration: const Duration(milliseconds: 1500),
-                arguments: const {'is_prev': true});
-            return;
+              await getConfigDetails(event.config!, null);
+
+              if (uri.path.contains('/athlete/')) {
+                String athleteId = open.split('/athlete/')[1];
+                Get.off(() => const DashboardScreen(),
+                    routeName: Routes.dashboard,
+                    transition: Transition.topLevel,
+                    duration: const Duration(milliseconds: 1500),
+                    arguments: const {'is_prev': true})?.then((_) {
+                  Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+                });
+                return;
+              } else {
+                Get.off(() => const DashboardScreen(),
+                    routeName: Routes.dashboard,
+                    transition: Transition.topLevel,
+                    duration: const Duration(milliseconds: 1500),
+                    arguments: const {'is_prev': true});
+                return;
+              }
+            } else {
+              if (uri.path.contains('/athlete/')) {
+                String athleteId = open.split('/athlete/')[1];
+                Get.off(() => const DashboardScreen(),
+                    routeName: Routes.dashboard,
+                    transition: Transition.topLevel,
+                    duration: const Duration(milliseconds: 1500),
+                    arguments: const {'is_prev': true})?.then((_) {
+                  Get.offNamed(Routes.athleteDetails, arguments: {'id': (athleteId)});
+                });
+                return;
+              }
+            }
+
           }
+
         }
       }
 

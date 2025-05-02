@@ -331,7 +331,7 @@ class AthletesController extends GetxController {
     getAthletes('', init: true);
   }
 
-  void toAthleteDetails(dynamic entrant, {VoidCallback? onFollow}) async {
+  void toAthleteDetails(dynamic entrant, {Function(Entrants)? onFollow}) async {
     Get.focusScope?.unfocus();
     Get.toNamed(Routes.athleteDetails,
         arguments: {AppKeys.athlete: entrant, 'on_follow': onFollow});
