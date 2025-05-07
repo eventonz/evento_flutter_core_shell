@@ -7,6 +7,7 @@ import 'package:evento_core/core/routes/router.dart';
 import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/ui/landing/landing.dart';
 import 'package:evento_core/ui/settings/language_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -108,6 +109,10 @@ class _EventoAppState extends State<EventoApp> {
               theme: AppStyles.light,
               darkTheme: AppStyles.dark,
               initialRoute: Routes.landing,
+              unknownRoute: GetPage(
+                name: Routes.landing,
+                page: () => const LandingScreen(),
+              ),
               getPages: PageRouter.pages,
               supportedLocales:
                   controller.supportedLanguages.map((s) => Locale(s)).toList(),
