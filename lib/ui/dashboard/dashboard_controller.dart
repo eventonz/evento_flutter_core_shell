@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:math';
 
+import 'package:app_links/app_links.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/models/miniplayer.dart';
 import 'package:evento_core/core/overlays/fullscreen_advert.dart';
@@ -18,6 +19,7 @@ import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/tracking_controller.dart';
 import 'package:evento_core/ui/dashboard/home/home_controller.dart';
 import 'package:evento_core/ui/dashboard/more/more_controller.dart';
@@ -31,6 +33,7 @@ import 'package:get/get.dart';
 //import 'package:new_version_plus/new_version_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/models/advert.dart';
+import '../landing/landing.dart';
 import 'home/home.dart';
 import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
@@ -55,6 +58,14 @@ class DashboardController extends GetxController {
     BottomNavMenu(
         view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu', text: AppLocalizations.of(Get.context!)!.menubutton),
   ]);
+
+  String extractEventId(String url) {
+    final startIndex = url.indexOf('event_id/') + 9;
+    final endIndex = url.contains('/athlete/')
+        ? url.indexOf('/athlete/')
+        : url.length;
+    return url.substring(startIndex, endIndex);
+  }
 
   @override
   void onInit() {
@@ -129,7 +140,66 @@ class DashboardController extends GetxController {
       //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
 
     });
+    var appLinks = AppLinks();
+    final sub = appLinks.uriLinkStream.listen((uri) async {
+      print('HANDLE DEEPLINK ${uri.path}');
+      print('--- DEEP LINK DEBUG ---');
+      print('Full URI: $uri');
+      print('Scheme: ${uri.scheme}');
+      print('Host: ${uri.host}');
+      print('Path: ${uri.path}');
+      print('Segments: ${uri.pathSegments}');
+      var open = uri.path;
+      if (open.contains('/event_id/')) {
+        var eventId = extractEventId(open);
+        print('eventId');
+        print(eventId);
+        if(AppGlobals.appEventConfig.multiEventListId != null) {
+          var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == int.parse(eventId));
+          if(eventId != AppGlobals.selEventId.toString()) {
+            saveEventSelection(event);
+            String? athleteId = uri.path.contains('/athlete/') ? open.split('/athlete/')[1] : null;
+            Get.offAll(() => const LandingScreen(),
+                routeName: Routes.landing,
+                transition: Transition.topLevel,
+                duration: const Duration(milliseconds: 1500),
+                arguments: {'is_prev': true, 'athlete_id' : athleteId});
+          } else {
+            if(uri.path.contains('/athlete/')) {
+              String athleteId = open.split('/athlete/')[1];
+              Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+            }
+          }
+        } else {
+          if(uri.path.contains('/athlete/')) {
+            String athleteId = open.split('/athlete/')[1];
+            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+          }
+        }
+      }
+    });
   }
+
+  onFollow(entrant) async {
+    AthletesController controller = Get.isRegistered<AthletesController>() ? Get.find<AthletesController>() : Get.put(AthletesController());
+    await controller.insertAthlete(
+        entrant, !entrant.isFollowed);
+    if (!entrant.isFollowed) {
+      controller.followAthlete(entrant);
+    } else {
+      controller
+          .unfollowAthlete(entrant);
+    }
+    //controller.update();
+  }
+
+  static void saveEventSelection(dynamic event) {
+    Preferences.setString(AppKeys.eventUrl, event.config!);
+    Preferences.setString(AppKeys.eventLink, event.link!);
+    Preferences.setInt(AppKeys.eventId, event.id);
+    AppGlobals.selEventId = event.id;
+  }
+
 
   void reloadMenu() {
     var entrantsList = AppGlobals.appConfig!.athletes!;

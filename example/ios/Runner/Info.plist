@@ -73,5 +73,7 @@
 	<array>
 		<string>evento</string>
 	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+    <false/>
 </dict>
 </plist>

@@ -30,6 +30,7 @@ class AthleteDetailsController extends GetxController
   bool version2 = false;
   late int selectedTabIndex = 0;
 
+  RxBool loading = false.obs;
   bool canFollow = true;
   final ScrollController scrollController = ScrollController();
 
@@ -40,6 +41,8 @@ class AthleteDetailsController extends GetxController
     entrantsList = AppGlobals.appConfig!.athletes!;
     if (res[AppKeys.athlete] is AppAthleteDb) {
       selEntrant = res[AppKeys.athlete];
+    } else if(res['id'] != null) {
+      loading.value = true;
     } else {
       selEntrantA = res[AppKeys.athlete];
     }
@@ -49,6 +52,32 @@ class AthleteDetailsController extends GetxController
   @override
   void onReady() {
     super.onReady();
+    if(Get.arguments[AppKeys.athlete] != null) {
+      getSplitDetails();
+    } else {
+      getAthlete(Get.arguments['id'].toString());
+    }
+  }
+
+  Future<void> getAthlete(String id) async {
+    print('getAthlete $id');
+    loading.value = true;
+    update();
+
+    var raceId = AppGlobals.selEventId;
+
+    var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
+      'searchstring' : id,
+      'pagenumber' : 1,
+    }, timeout: 15);
+
+    print(data.data);
+
+    if(data.data['athletes'].isNotEmpty) {
+      selEntrantA = Entrants.fromJson(data.data['athletes'][0]);
+    }
+    loading.value = false;
+    update();
     getSplitDetails();
   }
 

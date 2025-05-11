@@ -162,7 +162,7 @@ abstract class AppLocalizations {
   /// No description provided for @defaultAssistantMessage.
   ///
   /// In en, this message translates to:
-  /// **'Ask me any questions about the Athlete Guide - I\\\'ll try my best to answer.'**
+  /// **'Ask me any questions about the Athlete Guide - I use AI to help answer your questions so double check any key details.'**
   String get defaultAssistantMessage;
 
   /// No description provided for @wouldYouLikeToRemoveAllMessages.

@@ -201,6 +201,7 @@ class EventsScreen extends StatelessWidget {
                             },
                             itemBuilder: (_, i) {
                               final event = controller.events[i];
+                              print('event ${event.id}');
                               return EventTile(
                                   onTap: () => controller.selectEvent(event),
                                   event: event);

@@ -1,4 +1,5 @@
 import 'package:evento_core/core/db/app_db.dart';
+import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:evento_core/ui/dashboard/athletes/athletes_controller.dart';
@@ -17,7 +18,7 @@ class AthleteTile extends StatelessWidget {
   }) : super(key: key);
   final dynamic entrant;
   final VoidCallback onTap;
-  final VoidCallback? onFollow;
+  final Function(Entrants)? onFollow;
 
   String raceNo() {
     if (entrant.disRaceNo == '') {
@@ -141,7 +142,7 @@ class AthleteTile extends StatelessWidget {
                       GestureDetector(
                         onTap: () {
                           if (onFollow != null) {
-                            onFollow!();
+                            onFollow!(entrant);
                           } else {
                             onTap();
                           }
