@@ -41,7 +41,7 @@ class AthleteDetailsController extends GetxController
     entrantsList = AppGlobals.appConfig!.athletes!;
     if (res[AppKeys.athlete] is AppAthleteDb) {
       selEntrant = res[AppKeys.athlete];
-    } else if(res['id'] != null) {
+    } else if (res['id'] != null) {
       loading.value = true;
     } else {
       selEntrantA = res[AppKeys.athlete];
@@ -52,7 +52,7 @@ class AthleteDetailsController extends GetxController
   @override
   void onReady() {
     super.onReady();
-    if(Get.arguments[AppKeys.athlete] != null) {
+    if (Get.arguments[AppKeys.athlete] != null) {
       getSplitDetails();
     } else {
       getAthlete(Get.arguments['id'].toString());
@@ -60,20 +60,24 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> getAthlete(String id) async {
-    print('getAthlete $id');
+    //print('getAthlete $id');
     loading.value = true;
     update();
 
     var raceId = AppGlobals.selEventId;
 
-    var data = await ApiHandler.postHttp(endPoint: 'athletes/$raceId', body: {
-      'searchstring' : id,
-      'pagenumber' : 1,
-    }, timeout: 15);
+    var data = await ApiHandler.postHttp(
+        endPoint: 'athletes/$raceId',
+        body: {
+          'searchstring': id,
+          'athlete_id': id,
+          'pagenumber': 1,
+        },
+        timeout: 15);
 
-    print(data.data);
+    //print(data.data);
 
-    if(data.data['athletes'].isNotEmpty) {
+    if (data.data['athletes'].isNotEmpty) {
       selEntrantA = Entrants.fromJson(data.data['athletes'][0]);
     }
     loading.value = false;
