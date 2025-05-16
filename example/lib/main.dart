@@ -13,16 +13,16 @@ void main() {
  //   splashImage: 'assets/images/splash_image.png',
  // );
 
-  /*
+
  final eventConfig = AppEventConfig(
    oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
    appName: 'Single Event App',
    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
    //configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/91.json',
-   singleEventId: '348',
+   singleEventId: '418',
    splashImage: 'assets/images/splash_image.png',
  );
- */
+   /*
  final eventConfig = AppEventConfig(
     oneSignalId: '111cddd2-0265-44d4-8aa2-af7982884d1b',
     appName: 'Pop Up Races',
@@ -30,6 +30,7 @@ void main() {
     multiEventListId: '27',
     splashImage: 'assets/images/splash_image.png',
   );
+  */
 /*
 final eventConfig = AppEventConfig(
    oneSignalId: 'bd954eea-e5dc-4118-8c77-188b5fc1c33d',
