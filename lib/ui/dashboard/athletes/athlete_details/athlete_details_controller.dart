@@ -136,6 +136,7 @@ class AthleteDetailsController extends GetxController
       } else {
         athleteSplitDataSnap.value = DataSnapShot.error;
       }
+      update();
     } catch (e) {
       debugPrint(e.toString());
       athleteSplitDataSnap.value = DataSnapShot.error;
