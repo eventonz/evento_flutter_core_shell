@@ -17,7 +17,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter/webview_flutter.dart' as wf;
 
 class AppHelper {
   static String getImage(String imageName) =>
@@ -170,8 +170,8 @@ class AppHelper {
     //   url = 'https://docs.google.com/gview?embedded=true&url=${url}';
     // }
 
-    final WebViewController webViewController = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+    final wf.WebViewController webViewController = wf.WebViewController()
+      ..setJavaScriptMode(wf.JavaScriptMode.unrestricted)
       ..setBackgroundColor(AppColors.white)
       ..enableZoom(true)
       ..loadRequest(Uri.parse(url));
@@ -203,7 +203,7 @@ class AppHelper {
               child: Platform.isAndroid && linkType == 'pdf'
                   ? ColoredBox(
                       color: AppColors.white, child: SfPdfViewer.network(url))
-                  : WebViewWidget(
+                  : wf.WebViewWidget(
                       controller: webViewController,
                     ),
             )

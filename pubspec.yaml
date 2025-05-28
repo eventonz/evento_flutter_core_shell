@@ -44,7 +44,7 @@ dependencies:
   drift_sqflite: 2.0.1
   drift: 2.20.2
   collection: ^1.18.0
-  webview_flutter: ^4.10.0
+  webview_flutter: ^4.13.0
   flutter_svg: ^2.0.10+1
   # mobile_scanner: ^3.5.2
   pull_to_refresh: ^2.0.0
