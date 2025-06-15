@@ -387,6 +387,7 @@ class Items {
   bool? linkToDetail;
   int? id;
   String? sourceId;
+  String? prefixprompt;
   Endpoint? storySlider;
   Endpoint? link;
   Endpoint? pages;
@@ -403,6 +404,7 @@ class Items {
       this.sportSplitsRaceId,
       this.linkToDetail,
       this.openExternal,
+      this.prefixprompt,
       this.id,
       this.sourceId,
       this.link,
@@ -419,6 +421,7 @@ class Items {
     title = json['title'];
     supplier = json['supplier'];
     sportSplitsRaceId = json['sportsplits_raceid'];
+    prefixprompt = json['prefixprompt'] ?? '';
     icon = json['icon'];
     openExternal = json['open_external'] ?? false;
     linkToDetail = json['opens_athlete_detail'] ?? false;

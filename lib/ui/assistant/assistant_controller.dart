@@ -109,9 +109,11 @@ class AssistantController extends GetxController {
       if (messageText.value.isEmpty) return;
       callServer(messageText.value);
       final userMessage = ChatMessageM(
+          role: 'user', content: '${item.prefixprompt} ${messageText.value}');
+      final userMessage2 = ChatMessageM(
           role: 'user', content: messageText.value);
       chatMessages.add(userMessage);
-      DatabaseHandler.insertChatMessage(userMessage);
+      DatabaseHandler.insertChatMessage(userMessage2);
       messageTextEditingController.clear();
       messageText.value = '';
       scrollToBottom();
@@ -119,11 +121,8 @@ class AssistantController extends GetxController {
       final headers = {
         'content-Type': 'application/json',
         'x-api-key': 'sec_qDPiWawARnBc2qT1iVDDOVHaiumJ0Tdr'
+        //'x-api-key': '${item.sourceId}'
       };
-
-      
-
-      
 
       final data = {
         'stream': true,
@@ -144,6 +143,7 @@ class AssistantController extends GetxController {
         chatMessages.add(assistantMessage);
         stream.listen((chunk) {
           final decodedChunk = utf8.decode(chunk);
+          print(decodedChunk);
           message = message + decodedChunk;
           chatMessages.last.content = message;
           update();
@@ -157,7 +157,8 @@ class AssistantController extends GetxController {
         assistantResponseSnapshot.value = DataSnapShot.error;
       }
     } catch (e) {
-      print(((e as DioException).response?.data as ResponseBody));
+      print(((e as DioException).error));
+      print(((e as DioException).message));
 
     }
   }
