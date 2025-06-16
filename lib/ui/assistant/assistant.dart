@@ -148,6 +148,7 @@ class ChatMessage extends StatelessWidget {
                   getUserName(),
                 ),
               ),
+              if(message.role != 'user')
               GestureDetector(
                   onTap: () {
                     void showFlagMessageDialog(BuildContext context, void Function(String reason) onSubmit) {
