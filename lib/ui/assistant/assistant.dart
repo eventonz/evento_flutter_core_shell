@@ -183,10 +183,10 @@ class ChatMessage extends StatelessWidget {
                                             margin: EdgeInsets.only(bottom: 12),
                                             padding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                                             decoration: BoxDecoration(
-                                              color: isSelected ? Theme.of(context).primaryColor.withOpacity(0.05) : Theme.of(context).primaryColor.withOpacity(0.1),
+                                              color: isSelected ? AppColors.primary.withOpacity(0.05) : AppColors.primary.withOpacity(0.1),
                                               borderRadius: BorderRadius.circular(12),
                                               border: Border.all(
-                                                color: isSelected ? Theme.of(context).primaryColor : Theme.of(context).primaryColor.withOpacity(0.3),
+                                                color: isSelected ? AppColors.primary : AppColors.primary.withOpacity(0.3),
                                                 width: 1.5,
                                               ),
                                             ),
@@ -194,7 +194,7 @@ class ChatMessage extends StatelessWidget {
                                               children: [
                                                 Icon(
                                                   isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                                                  color: isSelected ? Theme.of(context).primaryColor : Colors.grey,
+                                                  color: isSelected ? AppColors.primary : Colors.grey,
                                                 ),
                                                 SizedBox(width: 10),
                                                 Text(option, style: TextStyle(fontSize: 16)),
@@ -214,7 +214,7 @@ class ChatMessage extends StatelessWidget {
                                           SizedBox(width: 8),
                                           ElevatedButton(
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: Theme.of(context).primaryColor,
+                                              backgroundColor: AppColors.primary,
                                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                                             ),
                                             onPressed: selectedReason == null
