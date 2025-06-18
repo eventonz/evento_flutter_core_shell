@@ -111,7 +111,7 @@ class DashboardController extends GetxController {
     advertList = AppGlobals.appConfig!.adverts ?? [];
 
     var splashImage = advertList.where((element) => element.type == AdvertType.splash).firstOrNull;
-    if(splashImage != null) {
+    if(splashImage != null && Get.arguments?['is_deeplink'] != true) {
       if(splashImage.frequency == AdvertFrequency.daily) {
         String lastOpen = Preferences.getString('last_splash_open', '');
         if(lastOpen != '') {

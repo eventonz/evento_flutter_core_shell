@@ -131,13 +131,16 @@ class LandingController extends GetxController {
     return url.substring(startIndex, endIndex);
   }
 
-  Future<void> _navigateToAthleteDetails(String athleteId) async {
+  Future<void> _navigateToAthleteDetails(String athleteId, String url, AppEventConfig config) async {
+
+    await getConfigDetails(url, config.configUrl);
+
     Get.offAll(
           () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
       duration: const Duration(milliseconds: 1500),
-      arguments: const {'is_prev': true},
+      arguments: const {'is_prev': true, 'is_deeplink': true},
     );
     await Future.delayed(const Duration(milliseconds: 2000));
     Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
@@ -212,17 +215,17 @@ class LandingController extends GetxController {
           final eventId = extractEventId(path);
           final event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == int.parse(eventId));
 
-          if (event != null) {
+          if (event != null || AppGlobals.appEventConfig.multiEventListId == null) {
             // Handle multi-event case
             if (AppGlobals.appEventConfig.multiEventListId != null) {
               saveEventSelection(event);
-              await getConfigDetails(event.config!, null);
+              await getConfigDetails(event!.config!, null);
             }
 
             // Handle athlete deep link
             if (path.contains('/athlete/')) {
               final athleteId = path.split('/athlete/')[1];
-              await _navigateToAthleteDetails(athleteId);
+              await _navigateToAthleteDetails(athleteId, url, config);
               return; // This will prevent further execution
             } else {
               await _navigateToDashboard();

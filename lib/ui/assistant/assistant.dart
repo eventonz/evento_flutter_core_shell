@@ -209,9 +209,9 @@ class ChatMessage extends StatelessWidget {
                                         children: [
                                           TextButton(
                                             onPressed: () => Navigator.of(context).pop(),
-                                            child: Text('Cancel'),
+                                            child: const Text('Cancel'),
                                           ),
-                                          SizedBox(width: 8),
+                                          const SizedBox(width: 8),
                                           ElevatedButton(
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: AppColors.primary,
@@ -223,7 +223,7 @@ class ChatMessage extends StatelessWidget {
                                               Navigator.of(context).pop();
                                               onSubmit(selectedReason!);
                                             },
-                                            child: Text('Submit', style: TextStyle(
+                                            child: const Text('Submit', style: TextStyle(
                                               color: Colors.white,
                                             ),),
                                           ),
