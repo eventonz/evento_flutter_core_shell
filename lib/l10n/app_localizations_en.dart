@@ -1,5 +1,3 @@
-// ignore: unused_import
-import 'package:intl/intl.dart' as intl;
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -10,27 +8,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helloWorld => 'Hello World!';
-
-  @override
-  String get homebutton => 'Home';
-
-  @override
-  String get athletesbutton => 'Athletes';
-
-  @override
-  String get riderbutton => 'Riders';
-
-  @override
-  String get participantsbutton => 'Participants';
-
-  @override
-  String get trackingbutton => 'Tracking';
-
-  @override
-  String get resultsbutton => 'Results';
-
-  @override
-  String get menubutton => 'Menu';
 
   @override
   String get language => 'Language';
@@ -218,5 +195,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get light => 'Light';
 
   @override
+  String get homebutton => 'Home';
+
+  @override
+  String get athletesbutton => 'Athletes';
+
+  @override
+  String get riderbutton => 'Riders';
+
+  @override
+  String get participantsbutton => 'Participants';
+
+  @override
+  String get trackingbutton => 'Tracking';
+
+  @override
+  String get resultsbutton => 'Results';
+
+  @override
+  String get menubutton => 'Menu';
+
+  @override
   String get menu => 'Menu';
+
+  @override
+  String get diff => 'Diff';
 }

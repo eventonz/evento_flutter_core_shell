@@ -155,7 +155,7 @@ class AthleteData {
       overallPosFinishers: json['overall_pos_finishers'],
       team1: json['team1'] != null ? Team.fromJson(json['team1']) : null,
       wave: json['wave'] != null ? Wave.fromJson(json['wave']) : null,
-      eventId: json['event_id'],
+      eventId: json['event_id'] is String ? int.tryParse(json['event_id']) : json['event_id'],
       finishTime: json['finish_time'],
       netTime: json['net_time'],
       startTod: json['start_tod'],

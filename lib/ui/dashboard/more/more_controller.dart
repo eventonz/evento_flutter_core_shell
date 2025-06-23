@@ -105,6 +105,8 @@ class MoreController extends GetxController {
       Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item, 'slides' : sliders});
     } else if (itemType == 'results') {
       Get.toNamed(Routes.results, arguments: {AppKeys.moreItem: item});
+    } else if (itemType == 'leaderboard') {
+      Get.toNamed(Routes.leaderboard, arguments: {AppKeys.moreItem: item});
     } else {
       ToastUtils.show('${AppLocalizations.of(Get.context!)!.somethingWentWrong}...');
     }

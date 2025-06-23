@@ -395,6 +395,7 @@ class Items {
   Endpoint? carousel;
   Endpoint? open;
   Endpoint? actions;
+  List<int>? listEvents;
 
   Items(
       {this.type,
@@ -413,6 +414,7 @@ class Items {
       this.schedule,
       this.carousel,
       this.open,
+      this.listEvents,
       this.actions});
 
   Items.fromJson(Map<String, dynamic> json) {
@@ -420,13 +422,14 @@ class Items {
     type = json['type'];
     title = json['title'];
     supplier = json['supplier'];
-    sportSplitsRaceId = json['sportsplits_raceid'];
+    sportSplitsRaceId = json['ss_raceid'] ?? json['sportsplits_raceid'];
     prefixprompt = json['prefixprompt'] ?? '';
     icon = json['icon'];
     openExternal = json['open_external'] ?? false;
     linkToDetail = json['opens_athlete_detail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];
+    listEvents = (json['list_events'] as List?)?.map((e) => e as int).toList();
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
     pages = json['pages'] != null ? Endpoint.fromJson(json['pages']) : null;
     storySlider = json['storyslider'] != null

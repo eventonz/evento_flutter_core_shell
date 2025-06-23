@@ -16,4 +16,5 @@ class Routes {
   static const String assistant = '/assistant';
   static const String storySlider = '/storySlider';
   static const String results = '/results';
+  static const String leaderboard = '/leaderboard';
 }

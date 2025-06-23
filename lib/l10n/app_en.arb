@@ -1,12 +1,5 @@
 {
   "helloWorld": "Hello World!",
-  "homebutton": "Home",
-  "athletesbutton": "Athletes",
-  "riderbutton": "Riders",
-  "participantsbutton": "Participants",
-  "trackingbutton": "Tracking",
-  "resultsbutton": "Results",
-  "menubutton": "Menu",
   "language": "Language",
   "askAQuestion": "Ask a Question",
   "defaultAssistantMessage": "Ask me any questions about the Athlete Guide - I use AI to help answer your questions so double check any key details.",
@@ -73,5 +66,6 @@
   "trackingbutton":"Tracking",
   "resultsbutton":"Results",
   "menubutton":"Menu",
-  "menu":"Menu"
+  "menu":"Menu",
+  "diff": "Diff"
 }

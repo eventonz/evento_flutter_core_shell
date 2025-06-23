@@ -4,6 +4,7 @@ import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:evento_core/ui/carousel/carousel.dart';
 import 'package:evento_core/ui/dashboard/webview_event_page.dart';
 import 'package:evento_core/ui/eventomap/eventomap.dart';
+import 'package:evento_core/ui/leaderboard/leaderboard_screen.dart';
 import 'package:evento_core/ui/list_page/list_page.dart';
 import 'package:evento_core/ui/events/events.dart';
 import 'package:evento_core/ui/landing/landing.dart';
@@ -87,6 +88,10 @@ class PageRouter {
     GetPage(
       name: Routes.results,
       page: () => const ResultsScreen(),
+    ),
+    GetPage(
+      name: Routes.leaderboard,
+      page: () => const LeaderboardScreen(),
     ),
   ];
 }

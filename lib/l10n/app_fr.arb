@@ -65,5 +65,6 @@
   "selectAppTheme": "Sélectionnez le Thème de l'Application",
   "system": "Système",
   "dark": "Sombre",
-  "light": "Clair"
+  "light": "Clair",
+  "diff": "Diff"
 }

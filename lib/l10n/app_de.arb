@@ -65,5 +65,6 @@
   "selectAppTheme": "Wählen Sie das App-Thema aus",
   "system": "System",
   "dark": "Dunkel",
-  "light": "Hell"
+  "light": "Hell",
+  "diff": "Diff"
 }
