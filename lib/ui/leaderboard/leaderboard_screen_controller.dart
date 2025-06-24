@@ -43,6 +43,11 @@ class LeaderboardScreenController extends GetxController {
   Timer? _refreshTimer;
   RxBool isRefreshed = false.obs;
 
+  List<Map<String, dynamic>> splits = [
+    {'id': 0, 'name': 'Overall'}
+  ];
+  RxInt selectedSplitId = 0.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -51,7 +56,7 @@ class LeaderboardScreenController extends GetxController {
     items ??= AppGlobals.appConfig?.results?.config;
 
     raceId = items!.sportSplitsRaceId ?? 0;
-    getEvent();
+    getEvent().then((_) => fetchSplits());
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent - scrollController.offset <=
               200 &&
@@ -132,7 +137,8 @@ class LeaderboardScreenController extends GetxController {
     loading.value = true;
     loadingResults.value = true;
     update();
-    getEvent(false);
+    await getEvent(false);
+    await fetchSplits();
   }
 
   updateScrollController() {
@@ -207,8 +213,11 @@ class LeaderboardScreenController extends GetxController {
   getResults({bool showLoading = true}) async {
     try {
       final apiGender = (gender == -1) ? 1 : gender;
+      String splitPath = selectedSplitId.value == 0
+          ? 'overall'
+          : 'split/${selectedSplitId.value}';
       var url =
-          'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/leaderboards/leaderboard/results/${category == -1 && gender == -1 ? 'gender/$apiGender' : (category != -1 && gender != -1 ? 'gender/$apiGender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$apiGender')))}/overall?page=$page${search != '' ? '&search=$search' : ''}';
+          'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/leaderboards/leaderboard/results/${category == -1 && gender == -1 ? 'gender/$apiGender' : (category != -1 && gender != -1 ? 'gender/$apiGender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$apiGender')))}/$splitPath?page=$page${search != '' ? '&search=$search' : ''}';
 
       if (search != '') {
         url =
@@ -242,5 +251,27 @@ class LeaderboardScreenController extends GetxController {
       }
       rethrow;
     }
+  }
+
+  Future<void> fetchSplits() async {
+    splits = [
+      {'id': 0, 'name': 'Overall'}
+    ];
+    var url =
+        'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/splits';
+    var result = await ApiHandler.genericGetHttp(url: url, header: {
+      'X-API-KEY': 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
+    });
+    if (result.data['data'] != null) {
+      for (var split in result.data['data']) {
+        splits.add({'id': split['split_id'], 'name': split['name']});
+      }
+    }
+    update();
+  }
+
+  setSplit(int splitId) {
+    selectedSplitId.value = splitId;
+    filterResults();
   }
 }

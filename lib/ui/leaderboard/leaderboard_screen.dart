@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:country_flags/country_flags.dart';
 
 import '../../core/models/app_config.dart';
 import '../../core/res/app_colors.dart';
@@ -87,9 +88,8 @@ class LeaderboardScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Container(
-                          margin: const EdgeInsets.only(
-                            left: 16,
-                          ),
+                          margin:
+                              const EdgeInsets.only(left: 16, right: 8, top: 0),
                           decoration: BoxDecoration(
                             border: Border.all(
                               color: Colors.grey,
@@ -97,90 +97,153 @@ class LeaderboardScreen extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          child: DropdownButton<String>(
-                              items: [
-                                DropdownMenuItem(
-                                    value: 'overall', child: Text('Overall'))
-                              ],
-                              onChanged: (val) {
-                                //controller.changeEvent(val!);
-                              },
-                              icon: Icon(CupertinoIcons.chevron_down,
-                                  color: Colors.grey),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 0),
-                              value: 'overall',
-                              isExpanded: true,
-                              borderRadius: BorderRadius.circular(5),
-                              underline: Container()),
+                          child: DropdownButton<int>(
+                            items: [
+                              DropdownMenuItem<int>(
+                                  value: 0, child: Text('Overall')),
+                              ...controller.splits
+                                  .where((split) => split['id'] != 0)
+                                  .map<DropdownMenuItem<int>>(
+                                      (split) => DropdownMenuItem<int>(
+                                            value: split['id'] as int,
+                                            child: Text(split['name']),
+                                          ))
+                                  .toList(),
+                            ],
+                            onChanged: (val) {
+                              controller.setSplit(val!);
+                            },
+                            icon: Icon(CupertinoIcons.chevron_down,
+                                color: Colors.grey),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 0),
+                            value: controller.selectedSplitId.value,
+                            isExpanded: true,
+                            borderRadius: BorderRadius.circular(5),
+                            underline: Container(),
+                          ),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Expanded(
-                        child: GestureDetector(
-                          onTap: () async {
-                            controller.updateScrollController();
-                            await showModalBottomSheet(
-                                context: context,
-                                elevation: 0,
-                                backgroundColor: Theme.of(context)
-                                    .bottomSheetTheme
-                                    .backgroundColor,
-                                builder: (_) => BottomSheet(
-                                      onClosing: () {},
-                                      builder: (_) {
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(15),
-                                            topRight: Radius.circular(15),
-                                          ),
-                                          child: Container(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.6,
-                                            child: Stack(
-                                              children: [
-                                                Positioned(
-                                                  top: 0,
-                                                  left: 0,
-                                                  right: 0,
-                                                  bottom: 0,
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Expanded(
+                        child: Container(
+                          margin:
+                              const EdgeInsets.only(right: 16, left: 8, top: 0),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey, width: .5),
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: GestureDetector(
+                            onTap: () async {
+                              controller.updateScrollController();
+                              await showModalBottomSheet(
+                                  context: context,
+                                  elevation: 0,
+                                  backgroundColor: Theme.of(context)
+                                      .bottomSheetTheme
+                                      .backgroundColor,
+                                  builder: (_) => BottomSheet(
+                                        onClosing: () {},
+                                        builder: (_) {
+                                          return ClipRRect(
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(15),
+                                              topRight: Radius.circular(15),
+                                            ),
+                                            child: Container(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.6,
+                                              child: Stack(
+                                                children: [
+                                                  Positioned(
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    bottom: 0,
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: Expanded(
+                                                            child:
+                                                                CupertinoPicker(
+                                                              itemExtent: 70,
+                                                              scrollController:
+                                                                  FixedExtentScrollController(
+                                                                initialItem: (controller
+                                                                            .eventResponse
+                                                                            ?.data
+                                                                            ?.where((element) =>
+                                                                                element.eventId ==
+                                                                                controller.selectedEvent.value)
+                                                                            .firstOrNull
+                                                                            ?.genders
+                                                                            .where((element) => element.enabled)
+                                                                            .toList()
+                                                                            .where((element) => element.enabled)
+                                                                            .toList()
+                                                                            .indexWhere((element) => element.id == controller.gender) ??
+                                                                        -1) +
+                                                                    1,
+                                                              )..addListener(
+                                                                      () {}),
+                                                              onSelectedItemChanged:
+                                                                  (val) {
+                                                                controller
+                                                                    .setGender(
+                                                                        val);
+                                                              },
+                                                              children: [
+                                                                Center(
+                                                                  child: Text(
+                                                                    'All',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                ...controller
+                                                                        .eventResponse
+                                                                        ?.data
+                                                                        ?.where((element) =>
+                                                                            element.eventId ==
+                                                                            controller
+                                                                                .selectedEvent.value)
+                                                                        .firstOrNull
+                                                                        ?.genders
+                                                                        .where((element) =>
+                                                                            element
+                                                                                .enabled)
+                                                                        .map((e) =>
+                                                                            Container(
+                                                                              child: Center(
+                                                                                child: Text(
+                                                                                  '${e.name}',
+                                                                                  style: TextStyle(
+                                                                                    color: Colors.black,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ))
+                                                                        .toList() ??
+                                                                    [],
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
                                                           child:
                                                               CupertinoPicker(
                                                             itemExtent: 70,
                                                             scrollController:
-                                                                FixedExtentScrollController(
-                                                              initialItem: (controller
-                                                                          .eventResponse
-                                                                          ?.data
-                                                                          ?.where((element) =>
-                                                                              element.eventId ==
-                                                                              controller
-                                                                                  .selectedEvent.value)
-                                                                          .firstOrNull
-                                                                          ?.genders
-                                                                          .where((element) => element
-                                                                              .enabled)
-                                                                          .toList()
-                                                                          .where((element) => element
-                                                                              .enabled)
-                                                                          .toList()
-                                                                          .indexWhere((element) =>
-                                                                              element.id ==
-                                                                              controller.gender) ??
-                                                                      -1) +
-                                                                  1,
-                                                            )..addListener(
-                                                                    () {}),
+                                                                controller
+                                                                    .categoryScrollController,
                                                             onSelectedItemChanged:
                                                                 (val) {
                                                               controller
-                                                                  .setGender(
+                                                                  .setCategory(
                                                                       val);
                                                             },
                                                             children: [
@@ -204,16 +267,13 @@ class LeaderboardScreen extends StatelessWidget {
                                                                               .selectedEvent
                                                                               .value)
                                                                       .firstOrNull
-                                                                      ?.genders
-                                                                      .where((element) =>
-                                                                          element
-                                                                              .enabled)
+                                                                      ?.categories
                                                                       .map((e) =>
                                                                           Container(
                                                                             child:
                                                                                 Center(
                                                                               child: Text(
-                                                                                '${e.name}',
+                                                                                '${e.name ?? e.code}',
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
                                                                                 ),
@@ -225,214 +285,149 @@ class LeaderboardScreen extends StatelessWidget {
                                                             ],
                                                           ),
                                                         ),
-                                                      ),
-                                                      Expanded(
-                                                        child: CupertinoPicker(
-                                                          itemExtent: 70,
-                                                          scrollController:
-                                                              controller
-                                                                  .categoryScrollController,
-                                                          onSelectedItemChanged:
-                                                              (val) {
-                                                            controller
-                                                                .setCategory(
-                                                                    val);
-                                                          },
-                                                          children: [
-                                                            Center(
-                                                              child: Text(
-                                                                'All',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            ...controller
-                                                                    .eventResponse
-                                                                    ?.data
-                                                                    ?.where((element) =>
-                                                                        element
-                                                                            .eventId ==
-                                                                        controller
-                                                                            .selectedEvent
-                                                                            .value)
-                                                                    .firstOrNull
-                                                                    ?.categories
-                                                                    .map((e) =>
-                                                                        Container(
-                                                                          child:
-                                                                              Center(
-                                                                            child:
-                                                                                Text(
-                                                                              '${e.name ?? e.code}',
-                                                                              style: TextStyle(
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ))
-                                                                    .toList() ??
-                                                                [],
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                Positioned(
-                                                  top: 0,
-                                                  bottom: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.32,
-                                                  left: 0,
-                                                  right: 0,
-                                                  child: Container(
-                                                    decoration: BoxDecoration(
-                                                      color: Theme.of(context)
-                                                          .bottomSheetTheme
-                                                          .backgroundColor,
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .stretch,
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .symmetric(
-                                                                  horizontal:
-                                                                      16.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                  child: Container(
-                                                                      padding: const EdgeInsets.all(16),
-                                                                      child: Text(AppLocalizations.of(context)!.gender,
-                                                                          style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                          )))),
-                                                              Expanded(
-                                                                  child: Container(
-                                                                      padding: const EdgeInsets.all(16),
-                                                                      child: Text(AppLocalizations.of(context)!.category,
-                                                                          style: TextStyle(
-                                                                            fontSize:
-                                                                                16,
-                                                                          )))),
-                                                            ],
-                                                          ),
-                                                        ),
                                                       ],
                                                     ),
                                                   ),
-                                                ),
-                                                Positioned(
+                                                  Positioned(
+                                                    top: 0,
+                                                    bottom:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                            0.32,
                                                     left: 0,
                                                     right: 0,
-                                                    top: 0,
-                                                    child: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              16.0),
-                                                      child: Row(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        color: Theme.of(context)
+                                                            .bottomSheetTheme
+                                                            .backgroundColor,
+                                                      ),
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .stretch,
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .end,
                                                         children: [
-                                                          Expanded(
-                                                            child:
-                                                                CupertinoButton(
-                                                                    color: AppColors
-                                                                        .primary,
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop();
-                                                                      controller
-                                                                          .filterResults();
-                                                                    },
-                                                                    child: Text(
-                                                                      AppLocalizations.of(
-                                                                              context)!
-                                                                          .apply
-                                                                          .toUpperCase(),
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    )),
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16.0),
+                                                            child: Row(
+                                                              children: [
+                                                                Expanded(
+                                                                    child: Container(
+                                                                        padding: const EdgeInsets.all(16),
+                                                                        child: Text(AppLocalizations.of(context)!.gender,
+                                                                            style: TextStyle(
+                                                                              fontSize: 16,
+                                                                            )))),
+                                                                Expanded(
+                                                                    child: Container(
+                                                                        padding: const EdgeInsets.all(16),
+                                                                        child: Text(AppLocalizations.of(context)!.category,
+                                                                            style: TextStyle(
+                                                                              fontSize: 16,
+                                                                            )))),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          const SizedBox(
-                                                              width: 16),
-                                                          CupertinoButton(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16),
-                                                              color: Colors
-                                                                  .grey[400],
-                                                              onPressed: () {
-                                                                controller
-                                                                    .setCategory(
-                                                                        0);
-                                                                controller
-                                                                    .setGender(
-                                                                        0);
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              },
-                                                              child: Text(
-                                                                  AppLocalizations.of(
-                                                                          context)!
-                                                                      .clear
-                                                                      .toUpperCase(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ))),
                                                         ],
                                                       ),
-                                                    ))
-                                              ],
+                                                    ),
+                                                  ),
+                                                  Positioned(
+                                                      left: 0,
+                                                      right: 0,
+                                                      top: 0,
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child:
+                                                                  CupertinoButton(
+                                                                      color: AppColors
+                                                                          .primary,
+                                                                      onPressed:
+                                                                          () {
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                        controller
+                                                                            .filterResults();
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        AppLocalizations.of(context)!
+                                                                            .apply
+                                                                            .toUpperCase(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      )),
+                                                            ),
+                                                            const SizedBox(
+                                                                width: 16),
+                                                            CupertinoButton(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                                color: Colors
+                                                                    .grey[400],
+                                                                onPressed: () {
+                                                                  controller
+                                                                      .setCategory(
+                                                                          0);
+                                                                  controller
+                                                                      .setGender(
+                                                                          0);
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child: Text(
+                                                                    AppLocalizations.of(
+                                                                            context)!
+                                                                        .clear
+                                                                        .toUpperCase(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ))),
+                                                          ],
+                                                        ),
+                                                      ))
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                      elevation: 0,
-                                    ));
-                            controller.filterResults();
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                              right: 16,
-                              left: 8,
-                            ),
-                            height: 48,
-                            padding: const EdgeInsets.symmetric(horizontal: 30),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: .5,
-                              ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Center(
+                                          );
+                                        },
+                                        elevation: 0,
+                                      ));
+                              controller.filterResults();
+                            },
+                            child: Container(
+                              height: 48,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 30),
+                              child: Center(
                                 child: Text(
-                              AppLocalizations.of(context)!.filter,
-                              style: TextStyle(
-                                fontSize: 16,
+                                  AppLocalizations.of(context)!.filter,
+                                  style: TextStyle(fontSize: 16),
+                                ),
                               ),
-                            )),
+                            ),
                           ),
                         ),
                       ),
@@ -574,7 +569,7 @@ class LeaderboardScreen extends StatelessWidget {
                                   extra: '',
                                   profileImage: '',
                                   info:
-                                      '${athlete.splitName ?? ''}\n${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
+                                      '${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
                                   contest: athlete.overallPos,
                                   disRaceNo: athlete.raceNo.toString() ?? '',
                                   importKey: athlete.importKey);
@@ -606,28 +601,63 @@ class LeaderboardScreen extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Text('${athlete.fullName}',
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                '${athlete.fullName}',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            if ((athlete.countryRepresenting
+                                                        .iso2 ??
+                                                    '')
+                                                .isNotEmpty)
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    left: 6.0),
+                                                child:
+                                                    CountryFlag.fromCountryCode(
+                                                  athlete
+                                                      .countryRepresenting.iso2
+                                                      .toLowerCase(),
+                                                  height: 16,
+                                                  width: 22,
+                                                  borderRadius: 4,
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                        if ((athlete.splitName ?? '')
+                                            .isNotEmpty)
+                                          Text(
+                                            athlete.splitName,
                                             style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 12,
+                                              color: Colors.grey[700],
                                             ),
                                             maxLines: 1,
-                                            overflow: TextOverflow.ellipsis),
-                                        Text(
-                                          '${athlete.gender.name} ${athlete.category.name}',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.w300,
-                                            fontSize: 12,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                        ),
                                       ],
                                     ),
                                   )),
                                   Container(
                                       width: 100,
                                       padding: const EdgeInsets.fromLTRB(
-                                          0.0, 0.0, 10.0, 0.0),
+                                          0.0, 0.0, 20.0, 0.0),
                                       child: Text(
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
                                         index != 0
                                             ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
                                             : '',
