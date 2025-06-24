@@ -34,7 +34,7 @@ class LeaderboardScreenController extends GetxController {
   Items? items;
 
   int category = -1;
-  int gender = 1;
+  int gender = -1;
 
   bool attached = true;
 
@@ -206,8 +206,9 @@ class LeaderboardScreenController extends GetxController {
 
   getResults({bool showLoading = true}) async {
     try {
+      final apiGender = (gender == -1) ? 1 : gender;
       var url =
-          'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/leaderboards/leaderboard/results/${category == -1 && gender == -1 ? 'gender/1' : (category != -1 && gender != -1 ? 'gender/$gender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$gender')))}/overall?page=$page${search != '' ? '&search=$search' : ''}';
+          'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/leaderboards/leaderboard/results/${category == -1 && gender == -1 ? 'gender/$apiGender' : (category != -1 && gender != -1 ? 'gender/$apiGender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$apiGender')))}/overall?page=$page${search != '' ? '&search=$search' : ''}';
 
       if (search != '') {
         url =

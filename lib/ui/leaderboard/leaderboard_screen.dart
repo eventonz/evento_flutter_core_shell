@@ -184,6 +184,16 @@ class LeaderboardScreen extends StatelessWidget {
                                                                       val);
                                                             },
                                                             children: [
+                                                              Center(
+                                                                child: Text(
+                                                                  'All',
+                                                                  style:
+                                                                      TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                  ),
+                                                                ),
+                                                              ),
                                                               ...controller
                                                                       .eventResponse
                                                                       ?.data
@@ -198,7 +208,6 @@ class LeaderboardScreen extends StatelessWidget {
                                                                       .where((element) =>
                                                                           element
                                                                               .enabled)
-                                                                      .toList()
                                                                       .map((e) =>
                                                                           Container(
                                                                             child:
@@ -344,6 +353,8 @@ class LeaderboardScreen extends StatelessWidget {
                                                                       Navigator.of(
                                                                               context)
                                                                           .pop();
+                                                                      controller
+                                                                          .filterResults();
                                                                     },
                                                                     child: Text(
                                                                       AppLocalizations.of(

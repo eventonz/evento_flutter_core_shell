@@ -31,20 +31,25 @@ class AthleteLeaderboardResponse {
 
   factory AthleteLeaderboardResponse.fromJson(Map<String, dynamic> json) {
     return AthleteLeaderboardResponse(
-      currentPage: json['current_page'],
-      data: List<AthleteResult>.from(
-          json['data'].map((x) => AthleteResult.fromJson(x))),
-      firstPageUrl: json['first_page_url'],
-      from: json['from'],
-      lastPage: json['last_page'],
-      lastPageUrl: json['last_page_url'],
-      links: List<PageLink>.from(json['links'].map((x) => PageLink.fromJson(x))),
-      nextPageUrl: json['next_page_url'],
-      path: json['path'],
-      perPage: json['per_page'],
+      currentPage: json['current_page'] ?? 1,
+      data: json['data'] == null
+          ? []
+          : List<AthleteResult>.from(
+              (json['data'] as List).map((x) => AthleteResult.fromJson(x))),
+      firstPageUrl: json['first_page_url'] ?? '',
+      from: json['from'] ?? 0,
+      lastPage: json['last_page'] ?? 1,
+      lastPageUrl: json['last_page_url'] ?? '',
+      links: json['links'] == null
+          ? []
+          : List<PageLink>.from(
+              (json['links'] as List).map((x) => PageLink.fromJson(x))),
+      nextPageUrl: json['next_page_url'] ?? '',
+      path: json['path'] ?? '',
+      perPage: json['per_page'] ?? 0,
       prevPageUrl: json['prev_page_url'],
-      to: json['to'],
-      total: json['total'],
+      to: json['to'] ?? 0,
+      total: json['total'] ?? 0,
     );
   }
 }
@@ -132,44 +137,53 @@ class AthleteResult {
 
   factory AthleteResult.fromJson(Map<String, dynamic> json) {
     return AthleteResult(
-      athleteId: json['athlete_id'],
-      eventId: json['event_id'],
+      athleteId: json['athlete_id'] ?? 0,
+      eventId: json['event_id'] ?? '',
       alphaRaceNo: json['alpha_race_no'],
-      bib: json['bib'],
-      firstName: json['first_name'],
-      gender: Gender.fromJson(json['gender']),
-      lastName: json['last_name'],
-      raceNo: json['race_no'],
-      countryRepresenting: Country.fromJson(json['country_representing']),
-      importKey: json['import_key'],
-      leaderboardId: json['leaderboard_id'],
-      category: Category.fromJson(json['category']),
-      splitId: json['split_id'],
-      splitName: json['split_name'],
-      ftpName: json['ftp_name'],
-      smsName: json['sms_name'],
-      splitOrder: json['split_order'],
-      splitSpeed: json['split_speed'].toDouble(),
-      legSpeed: json['leg_speed'].toDouble(),
-      distanceFromPreviousSplit: json['distance_from_previous_split'].toDouble(),
-      distanceFromPreviousLeg: json['distance_from_previous_leg'].toDouble(),
-      distanceToNextSplit: json['distance_to_next_split'].toDouble(),
-      distanceToNextLeg: json['distance_to_next_leg'].toDouble(),
-      genderPos: json['gender_pos'],
-      categoryPos: json['category_pos'],
-      overallPos: json['overall_pos'],
-      tod: json['tod'],
-      splitTime: json['split_time'],
-      raceTime: json['race_time'],
-      legTime: json['leg_time'],
-      splitPace: json['split_pace'],
-      legPace: json['leg_pace'],
-      estimatedNextLegRaceTime: json['estimated_next_leg_race_time'],
-      estimatedNextSplitRaceTime: json['estimated_next_split_race_time'],
-      estimatedNextSplitTod: json['estimated_next_split_tod'],
-      timeBehindOverallLeader: json['time_behind_overall_leader'],
-      timeBehindGenderLeader: json['time_behind_gender_leader'],
-      timeBehindCategoryLeader: json['time_behind_category_leader'],
+      bib: json['bib'] ?? 0,
+      firstName: json['first_name'] ?? '',
+      gender: json['gender'] == null
+          ? Gender(id: 0, name: '', code: '')
+          : Gender.fromJson(json['gender']),
+      lastName: json['last_name'] ?? '',
+      raceNo: json['race_no'] ?? 0,
+      countryRepresenting: json['country_representing'] == null
+          ? Country(id: 0, code: '', ioc: '', iso2: '', name: '')
+          : Country.fromJson(json['country_representing']),
+      importKey: json['import_key'] ?? '',
+      leaderboardId: json['leaderboard_id'] ?? '',
+      category: json['category'] == null
+          ? Category(
+              id: 0, order: 0, code: '', spotterDescription: null, name: '')
+          : Category.fromJson(json['category']),
+      splitId: json['split_id'] ?? 0,
+      splitName: json['split_name'] ?? '',
+      ftpName: json['ftp_name'] ?? '',
+      smsName: json['sms_name'] ?? '',
+      splitOrder: json['split_order'] ?? 0,
+      splitSpeed: (json['split_speed'] ?? 0).toDouble(),
+      legSpeed: (json['leg_speed'] ?? 0).toDouble(),
+      distanceFromPreviousSplit:
+          (json['distance_from_previous_split'] ?? 0).toDouble(),
+      distanceFromPreviousLeg:
+          (json['distance_from_previous_leg'] ?? 0).toDouble(),
+      distanceToNextSplit: (json['distance_to_next_split'] ?? 0).toDouble(),
+      distanceToNextLeg: (json['distance_to_next_leg'] ?? 0).toDouble(),
+      genderPos: json['gender_pos'] ?? 0,
+      categoryPos: json['category_pos'] ?? 0,
+      overallPos: json['overall_pos'] ?? 0,
+      tod: json['tod'] ?? '',
+      splitTime: json['split_time'] ?? '',
+      raceTime: json['race_time'] ?? '',
+      legTime: json['leg_time'] ?? '',
+      splitPace: json['split_pace'] ?? '',
+      legPace: json['leg_pace'] ?? '',
+      estimatedNextLegRaceTime: json['estimated_next_leg_race_time'] ?? '',
+      estimatedNextSplitRaceTime: json['estimated_next_split_race_time'] ?? '',
+      estimatedNextSplitTod: json['estimated_next_split_tod'] ?? '',
+      timeBehindOverallLeader: json['time_behind_overall_leader'] ?? '',
+      timeBehindGenderLeader: json['time_behind_gender_leader'] ?? '',
+      timeBehindCategoryLeader: json['time_behind_category_leader'] ?? '',
     );
   }
 
