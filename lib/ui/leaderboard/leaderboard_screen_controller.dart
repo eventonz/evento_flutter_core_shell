@@ -137,6 +137,7 @@ class LeaderboardScreenController extends GetxController {
     selectedSplitId.value = 0;
     loading.value = true;
     loadingResults.value = true;
+    page = 1;
     update();
     await getEvent(false);
     await fetchSplits();
@@ -273,6 +274,7 @@ class LeaderboardScreenController extends GetxController {
 
   setSplit(int splitId) {
     selectedSplitId.value = splitId;
+    page = 1;
     filterResults();
   }
 }

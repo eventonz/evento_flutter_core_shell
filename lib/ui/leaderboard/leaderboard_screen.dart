@@ -108,40 +108,201 @@ class LeaderboardScreen extends StatelessWidget {
                               ),
                               borderRadius: BorderRadius.circular(5),
                             ),
-                            child: Theme(
-                              data: Theme.of(context).copyWith(
-                                dropdownMenuTheme: DropdownMenuThemeData(
-                                  menuStyle: MenuStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.white),
-                                  ),
+                            child: GestureDetector(
+                              onTap: () async {
+                                int tempSelectedIndex = controller.splits
+                                        .indexWhere((split) =>
+                                            split['id'] ==
+                                            controller.selectedSplitId.value) ??
+                                    0;
+
+                                await showModalBottomSheet(
+                                    context: context,
+                                    elevation: 0,
+                                    backgroundColor: Theme.of(context)
+                                        .bottomSheetTheme
+                                        .backgroundColor,
+                                    builder: (_) => BottomSheet(
+                                          onClosing: () {},
+                                          builder: (_) {
+                                            return StatefulBuilder(
+                                              builder: (context, setState) {
+                                                return ClipRRect(
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(15),
+                                                    topRight:
+                                                        Radius.circular(15),
+                                                  ),
+                                                  child: Container(
+                                                    height: 320,
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  top: 16.0,
+                                                                  bottom: 8.0),
+                                                          child: Text(
+                                                            'Split',
+                                                            style: TextStyle(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child:
+                                                              CupertinoPicker(
+                                                            itemExtent: 48,
+                                                            scrollController:
+                                                                FixedExtentScrollController(
+                                                              initialItem:
+                                                                  tempSelectedIndex,
+                                                            ),
+                                                            onSelectedItemChanged:
+                                                                (val) {
+                                                              tempSelectedIndex =
+                                                                  val;
+                                                            },
+                                                            children: controller
+                                                                .splits
+                                                                .map(
+                                                                    (split) =>
+                                                                        Center(
+                                                                          child:
+                                                                              Text(
+                                                                            '${split['name']}',
+                                                                            style:
+                                                                                TextStyle(
+                                                                              color: Colors.black,
+                                                                              fontSize: 22,
+                                                                            ),
+                                                                          ),
+                                                                        ))
+                                                                .toList(),
+                                                          ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
+                                                                  16.0,
+                                                                  16.0,
+                                                                  16.0,
+                                                                  32.0),
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child:
+                                                                    CupertinoButton(
+                                                                  color: AppColors
+                                                                      .primary,
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                  onPressed:
+                                                                      () {
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                    final selectedSplit =
+                                                                        controller
+                                                                            .splits[tempSelectedIndex];
+                                                                    controller.setSplit(
+                                                                        selectedSplit['id']
+                                                                            as int);
+                                                                  },
+                                                                  child: Text(
+                                                                    AppLocalizations.of(
+                                                                            context)!
+                                                                        .apply
+                                                                        .toUpperCase(),
+                                                                    style:
+                                                                        TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 16),
+                                                              CupertinoButton(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                                color: Colors
+                                                                    .grey[400],
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            8),
+                                                                onPressed: () {
+                                                                  controller
+                                                                      .setSplit(
+                                                                          0); // Reset to Overall
+                                                                  Navigator.of(
+                                                                          context)
+                                                                      .pop();
+                                                                },
+                                                                child: Text(
+                                                                  AppLocalizations.of(
+                                                                          context)!
+                                                                      .clear
+                                                                      .toUpperCase(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          elevation: 0,
+                                        ));
+                              },
+                              child: Container(
+                                height: 48,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Obx(() => Text(
+                                            controller.splits.firstWhereOrNull(
+                                                    (split) =>
+                                                        split['id'] ==
+                                                        controller
+                                                            .selectedSplitId
+                                                            .value)?['name'] ??
+                                                'Overall',
+                                            style: TextStyle(fontSize: 16),
+                                          )),
+                                    ),
+                                    Icon(CupertinoIcons.chevron_down,
+                                        color: Colors.grey),
+                                  ],
                                 ),
-                              ),
-                              child: DropdownButton<int>(
-                                items: [
-                                  DropdownMenuItem<int>(
-                                      value: 0, child: Text('Overall')),
-                                  ...controller.splits
-                                      .where((split) => split['id'] != 0)
-                                      .map<DropdownMenuItem<int>>(
-                                          (split) => DropdownMenuItem<int>(
-                                                value: split['id'] as int,
-                                                child: Text(split['name']),
-                                              ))
-                                      .toList(),
-                                ],
-                                onChanged: (val) {
-                                  controller.setSplit(val!);
-                                },
-                                icon: Icon(CupertinoIcons.chevron_down,
-                                    color: Colors.grey),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 0),
-                                value: controller.selectedSplitId.value,
-                                isExpanded: true,
-                                borderRadius: BorderRadius.circular(5),
-                                underline: Container(),
                               ),
                             ),
                           ),
@@ -172,84 +333,75 @@ class LeaderboardScreen extends StatelessWidget {
                                                 topRight: Radius.circular(15),
                                               ),
                                               child: Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.6,
-                                                child: Stack(
+                                                height: 360,
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
-                                                    Positioned(
-                                                      top: 0,
-                                                      left: 0,
-                                                      right: 0,
-                                                      bottom: 0,
+                                                    Expanded(
                                                       child: Row(
                                                         children: [
                                                           Expanded(
-                                                            child: Expanded(
-                                                              child:
-                                                                  CupertinoPicker(
-                                                                itemExtent: 70,
-                                                                scrollController:
-                                                                    FixedExtentScrollController(
-                                                                  initialItem: (controller
-                                                                              .eventResponse
-                                                                              ?.data
-                                                                              ?.where((element) => element.eventId == controller.selectedEvent.value)
-                                                                              .firstOrNull
-                                                                              ?.genders
-                                                                              .where((element) => element.enabled)
-                                                                              .toList()
-                                                                              .where((element) => element.enabled)
-                                                                              .toList()
-                                                                              .indexWhere((element) => element.id == controller.gender) ??
-                                                                          -1) +
-                                                                      1,
-                                                                )..addListener(
-                                                                        () {}),
-                                                                onSelectedItemChanged:
-                                                                    (val) {
-                                                                  controller
-                                                                      .setGender(
-                                                                          val);
-                                                                },
-                                                                children: [
-                                                                  Center(
-                                                                    child: Text(
-                                                                      'All',
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: Colors
-                                                                            .black,
-                                                                      ),
+                                                            child:
+                                                                CupertinoPicker(
+                                                              itemExtent: 70,
+                                                              scrollController:
+                                                                  FixedExtentScrollController(
+                                                                initialItem: (controller
+                                                                            .eventResponse
+                                                                            ?.data
+                                                                            ?.where((element) =>
+                                                                                element.eventId ==
+                                                                                controller.selectedEvent.value)
+                                                                            .firstOrNull
+                                                                            ?.genders
+                                                                            .where((element) => element.enabled)
+                                                                            .toList()
+                                                                            .indexWhere((element) => element.id == controller.gender) ??
+                                                                        -1) +
+                                                                    1,
+                                                              ),
+                                                              onSelectedItemChanged:
+                                                                  (val) {
+                                                                controller
+                                                                    .setGender(
+                                                                        val);
+                                                              },
+                                                              children: [
+                                                                Center(
+                                                                  child: Text(
+                                                                    'All',
+                                                                    style:
+                                                                        TextStyle(
+                                                                      color: Colors
+                                                                          .black,
                                                                     ),
                                                                   ),
-                                                                  ...controller
-                                                                          .eventResponse
-                                                                          ?.data
-                                                                          ?.where((element) =>
-                                                                              element.eventId ==
-                                                                              controller
-                                                                                  .selectedEvent.value)
-                                                                          .firstOrNull
-                                                                          ?.genders
-                                                                          .where((element) => element
-                                                                              .enabled)
-                                                                          .map((e) =>
-                                                                              Container(
-                                                                                child: Center(
-                                                                                  child: Text(
-                                                                                    '${e.name}',
-                                                                                    style: TextStyle(
-                                                                                      color: Colors.black,
-                                                                                    ),
-                                                                                  ),
+                                                                ),
+                                                                ...controller
+                                                                        .eventResponse
+                                                                        ?.data
+                                                                        ?.where((element) =>
+                                                                            element.eventId ==
+                                                                            controller
+                                                                                .selectedEvent.value)
+                                                                        .firstOrNull
+                                                                        ?.genders
+                                                                        .where((element) =>
+                                                                            element
+                                                                                .enabled)
+                                                                        .map((e) =>
+                                                                            Center(
+                                                                              child: Text(
+                                                                                '${e.name}',
+                                                                                style: TextStyle(
+                                                                                  color: Colors.black,
                                                                                 ),
-                                                                              ))
-                                                                          .toList() ??
-                                                                      [],
-                                                                ],
-                                                              ),
+                                                                              ),
+                                                                            ))
+                                                                        ?.toList() ??
+                                                                    [],
+                                                              ],
                                                             ),
                                                           ),
                                                           Expanded(
@@ -286,17 +438,15 @@ class LeaderboardScreen extends StatelessWidget {
                                                                         .firstOrNull
                                                                         ?.categories
                                                                         .map((e) =>
-                                                                            Container(
-                                                                              child: Center(
-                                                                                child: Text(
-                                                                                  '${e.name ?? e.code}',
-                                                                                  style: TextStyle(
-                                                                                    color: Colors.black,
-                                                                                  ),
+                                                                            Center(
+                                                                              child: Text(
+                                                                                '${e.name ?? e.code}',
+                                                                                style: TextStyle(
+                                                                                  color: Colors.black,
                                                                                 ),
                                                                               ),
                                                                             ))
-                                                                        .toList() ??
+                                                                        ?.toList() ??
                                                                     [],
                                                               ],
                                                             ),
@@ -304,129 +454,81 @@ class LeaderboardScreen extends StatelessWidget {
                                                         ],
                                                       ),
                                                     ),
-                                                    Positioned(
-                                                      top: 0,
-                                                      bottom:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.32,
-                                                      left: 0,
-                                                      right: 0,
-                                                      child: Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Theme.of(
-                                                                  context)
-                                                              .bottomSheetTheme
-                                                              .backgroundColor,
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .stretch,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .end,
-                                                          children: [
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16.0),
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                      child: Container(
-                                                                          padding: const EdgeInsets.all(16),
-                                                                          child: Text(AppLocalizations.of(context)!.gender,
-                                                                              style: TextStyle(
-                                                                                fontSize: 16,
-                                                                              )))),
-                                                                  Expanded(
-                                                                      child: Container(
-                                                                          padding: const EdgeInsets.all(16),
-                                                                          child: Text(AppLocalizations.of(context)!.category,
-                                                                              style: TextStyle(
-                                                                                fontSize: 16,
-                                                                              )))),
-                                                                ],
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(16.0, 16.0,
+                                                          16.0, 32.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                CupertinoButton(
+                                                              color: AppColors
+                                                                  .primary,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                              onPressed: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                controller
+                                                                    .filterResults();
+                                                              },
+                                                              child: Text(
+                                                                AppLocalizations.of(
+                                                                        context)!
+                                                                    .apply
+                                                                    .toUpperCase(),
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 16),
+                                                          CupertinoButton(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16),
+                                                            color: Colors
+                                                                .grey[400],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            onPressed: () {
+                                                              controller
+                                                                  .setCategory(
+                                                                      0);
+                                                              controller
+                                                                  .setGender(0);
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            },
+                                                            child: Text(
+                                                              AppLocalizations.of(
+                                                                      context)!
+                                                                  .clear
+                                                                  .toUpperCase(),
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
-                                                    Positioned(
-                                                        left: 0,
-                                                        right: 0,
-                                                        top: 0,
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(16.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child:
-                                                                    CupertinoButton(
-                                                                        color: AppColors
-                                                                            .primary,
-                                                                        onPressed:
-                                                                            () {
-                                                                          Navigator.of(context)
-                                                                              .pop();
-                                                                          controller
-                                                                              .filterResults();
-                                                                        },
-                                                                        child:
-                                                                            Text(
-                                                                          AppLocalizations.of(context)!
-                                                                              .apply
-                                                                              .toUpperCase(),
-                                                                          style:
-                                                                              TextStyle(
-                                                                            fontWeight:
-                                                                                FontWeight.w500,
-                                                                          ),
-                                                                        )),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 16),
-                                                              CupertinoButton(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16),
-                                                                  color: Colors
-                                                                          .grey[
-                                                                      400],
-                                                                  onPressed:
-                                                                      () {
-                                                                    controller
-                                                                        .setCategory(
-                                                                            0);
-                                                                    controller
-                                                                        .setGender(
-                                                                            0);
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  },
-                                                                  child: Text(
-                                                                      AppLocalizations.of(
-                                                                              context)!
-                                                                          .clear
-                                                                          .toUpperCase(),
-                                                                      style:
-                                                                          TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ))),
-                                                            ],
-                                                          ),
-                                                        ))
                                                   ],
                                                 ),
                                               ),
@@ -732,7 +834,7 @@ class LeaderboardScreen extends StatelessWidget {
                 right: 24,
                 child: FloatingActionButton(
                   mini: true,
-                  backgroundColor: Colors.grey[800],
+                  backgroundColor: Colors.white,
                   onPressed: () {
                     controller.scrollController.animateTo(
                       0,
@@ -740,7 +842,7 @@ class LeaderboardScreen extends StatelessWidget {
                       curve: Curves.easeOut,
                     );
                   },
-                  child: Icon(Icons.keyboard_arrow_up, color: Colors.white),
+                  child: Icon(Icons.keyboard_arrow_up, color: Colors.black),
                 ),
               );
             },
