@@ -97,30 +97,41 @@ class LeaderboardScreen extends StatelessWidget {
                             ),
                             borderRadius: BorderRadius.circular(5),
                           ),
-                          child: DropdownButton<int>(
-                            items: [
-                              DropdownMenuItem<int>(
-                                  value: 0, child: Text('Overall')),
-                              ...controller.splits
-                                  .where((split) => split['id'] != 0)
-                                  .map<DropdownMenuItem<int>>(
-                                      (split) => DropdownMenuItem<int>(
-                                            value: split['id'] as int,
-                                            child: Text(split['name']),
-                                          ))
-                                  .toList(),
-                            ],
-                            onChanged: (val) {
-                              controller.setSplit(val!);
-                            },
-                            icon: Icon(CupertinoIcons.chevron_down,
-                                color: Colors.grey),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 0),
-                            value: controller.selectedSplitId.value,
-                            isExpanded: true,
-                            borderRadius: BorderRadius.circular(5),
-                            underline: Container(),
+                          child: Theme(
+                            data: Theme.of(context).copyWith(
+                              dropdownMenuTheme: DropdownMenuThemeData(
+                                menuStyle: MenuStyle(
+                                  backgroundColor:
+                                      MaterialStateProperty.all<Color>(
+                                          Colors.white),
+                                ),
+                              ),
+                            ),
+                            child: DropdownButton<int>(
+                              items: [
+                                DropdownMenuItem<int>(
+                                    value: 0, child: Text('Overall')),
+                                ...controller.splits
+                                    .where((split) => split['id'] != 0)
+                                    .map<DropdownMenuItem<int>>(
+                                        (split) => DropdownMenuItem<int>(
+                                              value: split['id'] as int,
+                                              child: Text(split['name']),
+                                            ))
+                                    .toList(),
+                              ],
+                              onChanged: (val) {
+                                controller.setSplit(val!);
+                              },
+                              icon: Icon(CupertinoIcons.chevron_down,
+                                  color: Colors.grey),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 0),
+                              value: controller.selectedSplitId.value,
+                              isExpanded: true,
+                              borderRadius: BorderRadius.circular(5),
+                              underline: Container(),
+                            ),
                           ),
                         ),
                       ),
@@ -579,92 +590,114 @@ class LeaderboardScreen extends StatelessWidget {
                                 'can_follow': false
                               });
                             },
-                            child: Container(
-                              height: 60,
-                              child: Row(
-                                children: [
-                                  if (controller.search == '')
-                                    Container(
-                                      width: 60,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          15.0, 0.0, 0.0, 0.0),
-                                      child: Text((index + 1)
-                                          .toString() /*'${athlete.netOverallPos ?? athlete.overallPos}'*/),
-                                    ),
-                                  Expanded(
-                                      child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Row(
+                            child: Column(
+                              children: [
+                                Container(
+                                  height: 60,
+                                  child: Row(
+                                    children: [
+                                      if (controller.search == '')
+                                        Container(
+                                          width: 60,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              15.0, 0.0, 0.0, 0.0),
+                                          child: Text(
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w800,
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                              ),
+                                              (index + 1)
+                                                  .toString() /*'${athlete.netOverallPos ?? athlete.overallPos}'*/),
+                                        ),
+                                      Expanded(
+                                          child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            Expanded(
-                                              child: Text(
-                                                '${athlete.fullName}',
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    '${athlete.fullName}',
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 16,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                if ((athlete.countryRepresenting
+                                                            .iso2 ??
+                                                        '')
+                                                    .isNotEmpty)
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 6.0),
+                                                    child: CountryFlag
+                                                        .fromCountryCode(
+                                                      athlete
+                                                          .countryRepresenting
+                                                          .iso2
+                                                          .toLowerCase(),
+                                                      height: 16,
+                                                      width: 22,
+                                                      borderRadius: 4,
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                            if ((athlete.splitName ?? '')
+                                                .isNotEmpty)
+                                              Text(
+                                                athlete.splitName,
                                                 style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 12,
+                                                  color: Colors.grey[700],
                                                 ),
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                               ),
-                                            ),
-                                            if ((athlete.countryRepresenting
-                                                        .iso2 ??
-                                                    '')
-                                                .isNotEmpty)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 6.0),
-                                                child:
-                                                    CountryFlag.fromCountryCode(
-                                                  athlete
-                                                      .countryRepresenting.iso2
-                                                      .toLowerCase(),
-                                                  height: 16,
-                                                  width: 22,
-                                                  borderRadius: 4,
-                                                ),
-                                              ),
                                           ],
                                         ),
-                                        if ((athlete.splitName ?? '')
-                                            .isNotEmpty)
-                                          Text(
-                                            athlete.splitName,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 12,
-                                              color: Colors.grey[700],
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                      ],
-                                    ),
-                                  )),
-                                  Container(
-                                      width: 100,
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0.0, 0.0, 20.0, 0.0),
-                                      child: Text(
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 14,
-                                          color: Colors.black,
-                                        ),
-                                        index != 0
-                                            ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
-                                            : '',
-                                        textAlign: TextAlign.end,
                                       )),
-                                ],
-                              ),
+                                      Container(
+                                          width: 100,
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0.0, 0.0, 20.0, 0.0),
+                                          child: Text(
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                            index != 0
+                                                ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
+                                                : '',
+                                            textAlign: TextAlign.end,
+                                          )),
+                                    ],
+                                  ),
+                                ),
+                                if (index <
+                                    (controller.eventResult!.data.length - 1))
+                                  Container(
+                                    height: 1,
+                                    color: Colors.grey[300],
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                  ),
+                              ],
                             ),
                           );
                         },

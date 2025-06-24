@@ -134,6 +134,7 @@ class LeaderboardScreenController extends GetxController {
     selectedEvent.value = id;
     gender = -1;
     category = -1;
+    selectedSplitId.value = 0;
     loading.value = true;
     loadingResults.value = true;
     update();
