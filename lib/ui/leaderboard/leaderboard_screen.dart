@@ -23,8 +23,6 @@ class LeaderboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(LeaderboardScreenController());
 
-
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -62,10 +60,14 @@ class LeaderboardScreen extends StatelessWidget {
                     ),
                     child: DropdownButton<int>(
                         items: [
-                          ...(controller.eventResponse?.data?.where((e) => controller.items?.listEvents?.contains(e.eventId) ?? false)
-                              .map((e) => DropdownMenuItem(
-                              value: e.eventId, child: Text(e.name)))
-                              .toList() ??
+                          ...(controller.eventResponse?.data
+                                  ?.where((e) =>
+                                      controller.items?.listEvents
+                                          ?.contains(e.eventId) ??
+                                      false)
+                                  .map((e) => DropdownMenuItem(
+                                      value: e.eventId, child: Text(e.name)))
+                                  .toList() ??
                               []),
                         ],
                         onChanged: (val) {
@@ -148,7 +150,8 @@ class LeaderboardScreen extends StatelessWidget {
                                                     children: [
                                                       Expanded(
                                                         child: Expanded(
-                                                          child: CupertinoPicker(
+                                                          child:
+                                                              CupertinoPicker(
                                                             itemExtent: 70,
                                                             scrollController:
                                                                 FixedExtentScrollController(
@@ -161,24 +164,24 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                   .selectedEvent.value)
                                                                           .firstOrNull
                                                                           ?.genders
-                                                                          .where((element) =>
-                                                                              element
-                                                                                  .enabled)
+                                                                          .where((element) => element
+                                                                              .enabled)
                                                                           .toList()
-                                                                          .where((element) =>
-                                                                              element
-                                                                                  .enabled)
+                                                                          .where((element) => element
+                                                                              .enabled)
                                                                           .toList()
                                                                           .indexWhere((element) =>
                                                                               element.id ==
                                                                               controller.gender) ??
                                                                       -1) +
                                                                   1,
-                                                            )..addListener(() {}),
+                                                            )..addListener(
+                                                                    () {}),
                                                             onSelectedItemChanged:
                                                                 (val) {
                                                               controller
-                                                                  .setGender(val);
+                                                                  .setGender(
+                                                                      val);
                                                             },
                                                             children: [
                                                               ...controller
@@ -200,8 +203,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                           Container(
                                                                             child:
                                                                                 Center(
-                                                                              child:
-                                                                                  Text(
+                                                                              child: Text(
                                                                                 '${e.name}',
                                                                                 style: TextStyle(
                                                                                   color: Colors.black,
@@ -218,18 +220,21 @@ class LeaderboardScreen extends StatelessWidget {
                                                       Expanded(
                                                         child: CupertinoPicker(
                                                           itemExtent: 70,
-                                                          scrollController: controller
-                                                              .categoryScrollController,
+                                                          scrollController:
+                                                              controller
+                                                                  .categoryScrollController,
                                                           onSelectedItemChanged:
                                                               (val) {
                                                             controller
-                                                                .setCategory(val);
+                                                                .setCategory(
+                                                                    val);
                                                           },
                                                           children: [
                                                             Center(
                                                               child: Text(
                                                                 'All',
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   color: Colors
                                                                       .black,
                                                                 ),
@@ -253,8 +258,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                             child:
                                                                                 Text(
                                                                               '${e.name ?? e.code}',
-                                                                              style:
-                                                                                  TextStyle(
+                                                                              style: TextStyle(
                                                                                 color: Colors.black,
                                                                               ),
                                                                             ),
@@ -298,31 +302,21 @@ class LeaderboardScreen extends StatelessWidget {
                                                           child: Row(
                                                             children: [
                                                               Expanded(
-                                                                  child:
-                                                                      Container(
-                                                                          padding: const EdgeInsets
-                                                                              .all(
-                                                                              16),
-                                                                          child: Text(
-                                                                              AppLocalizations.of(context)!
-                                                                                  .gender,
-                                                                              style:
-                                                                                  TextStyle(
-                                                                                fontSize: 16,
-                                                                              )))),
+                                                                  child: Container(
+                                                                      padding: const EdgeInsets.all(16),
+                                                                      child: Text(AppLocalizations.of(context)!.gender,
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                          )))),
                                                               Expanded(
-                                                                  child:
-                                                                      Container(
-                                                                          padding: const EdgeInsets
-                                                                              .all(
-                                                                              16),
-                                                                          child: Text(
-                                                                              AppLocalizations.of(context)!
-                                                                                  .category,
-                                                                              style:
-                                                                                  TextStyle(
-                                                                                fontSize: 16,
-                                                                              )))),
+                                                                  child: Container(
+                                                                      padding: const EdgeInsets.all(16),
+                                                                      child: Text(AppLocalizations.of(context)!.category,
+                                                                          style: TextStyle(
+                                                                            fontSize:
+                                                                                16,
+                                                                          )))),
                                                             ],
                                                           ),
                                                         ),
@@ -359,8 +353,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                       style:
                                                                           TextStyle(
                                                                         fontWeight:
-                                                                            FontWeight
-                                                                                .w500,
+                                                                            FontWeight.w500,
                                                                       ),
                                                                     )),
                                                           ),
@@ -379,7 +372,8 @@ class LeaderboardScreen extends StatelessWidget {
                                                                     .setCategory(
                                                                         0);
                                                                 controller
-                                                                    .setGender(0);
+                                                                    .setGender(
+                                                                        0);
                                                                 Navigator.of(
                                                                         context)
                                                                     .pop();
@@ -459,6 +453,19 @@ class LeaderboardScreen extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                             )),
+                        Obx(() => AnimatedOpacity(
+                              opacity: controller.isRefreshed.value ? 1.0 : 0.0,
+                              duration: Duration(milliseconds: 300),
+                              child: Container(
+                                margin: EdgeInsets.only(left: 8),
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            )),
                       ],
                     );
                   }),
@@ -535,7 +542,12 @@ class LeaderboardScreen extends StatelessWidget {
 
                           var athlete = controller.eventResult!.data[index];
 
-                          var timeDiff = controller.gender == -1 && controller.category == -1 ? athlete.timeBehindOverallLeader : (controller.category == -1 ? athlete.timeBehindGenderLeader : athlete.timeBehindCategoryLeader);
+                          var timeDiff = controller.gender == -1 &&
+                                  controller.category == -1
+                              ? athlete.timeBehindOverallLeader
+                              : (controller.category == -1
+                                  ? athlete.timeBehindGenderLeader
+                                  : athlete.timeBehindCategoryLeader);
 
                           return GestureDetector(
                             onTap: () {
@@ -550,8 +562,8 @@ class LeaderboardScreen extends StatelessWidget {
                                   name: athlete.fullName ?? 'Unknown',
                                   extra: '',
                                   profileImage: '',
-                                   info:
-                                       '${athlete.splitName ?? ''}\n${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
+                                  info:
+                                      '${athlete.splitName ?? ''}\n${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
                                   contest: athlete.overallPos,
                                   disRaceNo: athlete.raceNo.toString() ?? '',
                                   importKey: athlete.importKey);
@@ -601,16 +613,15 @@ class LeaderboardScreen extends StatelessWidget {
                                     ),
                                   )),
                                   Container(
-                                    width: 100,
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0.0, 0.0, 10.0, 0.0),
-                                    child: Text(
-                                     index != 0 ? '+${timeDiff.startsWith('00:')
-                                         ? timeDiff.substring(3)
-                                         : timeDiff}' : '',
-                                      textAlign: TextAlign.end,
-                                    )
-                                  ),
+                                      width: 100,
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0.0, 0.0, 10.0, 0.0),
+                                      child: Text(
+                                        index != 0
+                                            ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
+                                            : '',
+                                        textAlign: TextAlign.end,
+                                      )),
                                 ],
                               ),
                             ),
