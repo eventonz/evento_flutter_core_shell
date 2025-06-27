@@ -1,5 +1,6 @@
 import 'dart:ffi';
 import 'dart:math';
+import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -39,7 +40,6 @@ import 'athletes/athletes.dart';
 import 'athletes_tracking/tracking.dart';
 import 'more/more.dart';
 
-
 class DashboardController extends GetxController {
   final selMenu = Rx<BottomNavMenu?>(null);
   final AppOneSignal oneSignalService = Get.find();
@@ -51,19 +51,26 @@ class DashboardController extends GetxController {
   final athleteSnapData = DataSnapShot.loaded.obs;
   late int eventId;
   WebViewController? webViewController;
+  bool isSplashAdvertShowing = false;
+  Timer? _notificationTimer;
 
   RxList<BottomNavMenu> menus = RxList([
     BottomNavMenu(
-        view: const HomeScreen(), iconData: FeatherIcons.home, label: 'home', text: AppLocalizations.of(Get.context!)!.homebutton),
+        view: const HomeScreen(),
+        iconData: FeatherIcons.home,
+        label: 'home',
+        text: AppLocalizations.of(Get.context!)!.homebutton),
     BottomNavMenu(
-        view: const MoreScreen(), iconData: FeatherIcons.menu, label: 'menu', text: AppLocalizations.of(Get.context!)!.menubutton),
+        view: const MoreScreen(),
+        iconData: FeatherIcons.menu,
+        label: 'menu',
+        text: AppLocalizations.of(Get.context!)!.menubutton),
   ]);
 
   String extractEventId(String url) {
     final startIndex = url.indexOf('event_id/') + 9;
-    final endIndex = url.contains('/athlete/')
-        ? url.indexOf('/athlete/')
-        : url.length;
+    final endIndex =
+        url.contains('/athlete/') ? url.indexOf('/athlete/') : url.length;
     return url.substring(startIndex, endIndex);
   }
 
@@ -94,51 +101,80 @@ class DashboardController extends GetxController {
         BottomNavMenu(
             view: const TrackingScreen(),
             iconData: FeatherIcons.navigation,
-            label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
+            label: 'track',
+            text: AppLocalizations.of(Get.context!)!.trackingbutton),
       );
     }
     if (resultsData != null && resultsData?.showResults == true) {
       menus.insert(
-        showAthletes && trackingData != null ? 3 : ((showAthletes || trackingData != null) ? 2 : 1) ,
+        1,
         BottomNavMenu(
             view: const ResultsScreen(),
             image: AppHelper.getImage('trophy.png'),
-            label: 'results', text: AppLocalizations.of(Get.context!)!.resultsbutton),
+            label: 'results',
+            text: AppLocalizations.of(Get.context!)!.resultsbutton),
       );
     }
     selMenu.value = menus.first;
 
     advertList = AppGlobals.appConfig!.adverts ?? [];
 
-    var splashImage = advertList.where((element) => element.type == AdvertType.splash).firstOrNull;
-    if(splashImage != null && Get.arguments?['is_deeplink'] != true) {
-      if(splashImage.frequency == AdvertFrequency.daily) {
+    var splashImage = advertList
+        .where((element) => element.type == AdvertType.splash)
+        .firstOrNull;
+    if (splashImage != null && Get.arguments?['is_deeplink'] != true) {
+      print('DEBUG: Splash advert found, checking frequency');
+      if (splashImage.frequency == AdvertFrequency.daily) {
         String lastOpen = Preferences.getString('last_splash_open', '');
-        if(lastOpen != '') {
+        if (lastOpen != '') {
           DateTime dateTime = DateTime.parse(lastOpen);
-          if(dateTime.day == DateTime.now().day) {
+          if (dateTime.day == DateTime.now().day) {
+            // If daily splash already shown today, no splash will be shown
+            print(
+                'DEBUG: Daily splash already shown today, no splash will be shown');
+            isSplashAdvertShowing = false;
             return;
           }
         }
         Preferences.setString('last_splash_open', DateTime.now().toString());
       }
-      precacheImage(CachedNetworkImageProvider(splashImage.image!), Get.context!);
+      // Splash advert will be shown
+      print('DEBUG: Setting splash advert flag to true');
+      isSplashAdvertShowing = true;
+      precacheImage(
+          CachedNetworkImageProvider(splashImage.image!), Get.context!);
       Future.delayed(const Duration(seconds: 1), () {
-        Navigator.of(Get.context!).push(MaterialPageRoute(builder: (_) => FullscreenAdvert(splashImage)));
+        print('DEBUG: Showing splash advert now');
+        Navigator.of(Get.context!).push(MaterialPageRoute(
+            builder: (_) => FullscreenAdvert(
+                  splashImage,
+                  onDismissed: () {
+                    // Show notification prompt after splash advert is dismissed
+                    print(
+                        'DEBUG: Splash advert dismissed, showing OneSignal prompt');
+                    isSplashAdvertShowing = false;
+                    oneSignalService.initializeOneSignal().then((_) {
+                      showNotificationPrompt();
+                    });
+                  },
+                )));
       });
+    } else {
+      // No splash advert will be shown
+      print('DEBUG: No splash advert found, setting flag to false');
+      isSplashAdvertShowing = false;
     }
 
-    if(AppGlobals.appConfig?.menu?.items?.length == 0) {
+    if (AppGlobals.appConfig?.menu?.items?.length == 0) {
       menus.removeLast();
     }
 
-    if(Get.arguments != null && Get.arguments is WebViewController) {
+    if (Get.arguments != null && Get.arguments is WebViewController) {
       webViewController = Get.arguments;
     }
 
     Future.delayed(Duration(seconds: 1), () {
       //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
-
     });
     var appLinks = AppLinks();
     final sub = appLinks.uriLinkStream.listen((uri) async {
@@ -154,26 +190,37 @@ class DashboardController extends GetxController {
         var eventId = extractEventId(open);
         print('eventId');
         print(eventId);
-        if(AppGlobals.appEventConfig.multiEventListId != null) {
-          var event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == int.parse(eventId));
-          if(eventId != AppGlobals.selEventId.toString()) {
+        if (AppGlobals.appEventConfig.multiEventListId != null) {
+          var event = AppGlobals.eventM?.events
+              ?.firstWhereOrNull((e) => e.id == int.parse(eventId));
+          if (eventId != AppGlobals.selEventId.toString()) {
             saveEventSelection(event);
-            String? athleteId = uri.path.contains('/athlete/') ? open.split('/athlete/')[1] : null;
+            String? athleteId = uri.path.contains('/athlete/')
+                ? open.split('/athlete/')[1]
+                : null;
             Get.offAll(() => const LandingScreen(),
                 routeName: Routes.landing,
                 transition: Transition.topLevel,
                 duration: const Duration(milliseconds: 1500),
-                arguments: {'is_prev': true, 'athlete_id' : athleteId});
+                arguments: {'is_prev': true, 'athlete_id': athleteId});
           } else {
-            if(uri.path.contains('/athlete/')) {
+            if (uri.path.contains('/athlete/')) {
               String athleteId = open.split('/athlete/')[1];
-              Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+              Get.toNamed(Routes.athleteDetails, arguments: {
+                'id': (athleteId),
+                'can_follow': true,
+                'on_follow': onFollow
+              });
             }
           }
         } else {
-          if(uri.path.contains('/athlete/')) {
+          if (uri.path.contains('/athlete/')) {
             String athleteId = open.split('/athlete/')[1];
-            Get.toNamed(Routes.athleteDetails, arguments: {'id': (athleteId), 'can_follow': true, 'on_follow' : onFollow});
+            Get.toNamed(Routes.athleteDetails, arguments: {
+              'id': (athleteId),
+              'can_follow': true,
+              'on_follow': onFollow
+            });
           }
         }
       }
@@ -181,14 +228,14 @@ class DashboardController extends GetxController {
   }
 
   onFollow(entrant) async {
-    AthletesController controller = Get.isRegistered<AthletesController>() ? Get.find<AthletesController>() : Get.put(AthletesController());
-    await controller.insertAthlete(
-        entrant, !entrant.isFollowed);
+    AthletesController controller = Get.isRegistered<AthletesController>()
+        ? Get.find<AthletesController>()
+        : Get.put(AthletesController());
+    await controller.insertAthlete(entrant, !entrant.isFollowed);
     if (!entrant.isFollowed) {
       controller.followAthlete(entrant);
     } else {
-      controller
-          .unfollowAthlete(entrant);
+      controller.unfollowAthlete(entrant);
     }
     //controller.update();
   }
@@ -200,18 +247,18 @@ class DashboardController extends GetxController {
     AppGlobals.selEventId = event.id;
   }
 
-
   void reloadMenu() {
     var entrantsList = AppGlobals.appConfig!.athletes!;
     var trackingData = AppGlobals.appConfig!.tracking;
+    var resultsData = AppGlobals.appConfig!.results;
     final showAthletes = entrantsList.showAthletes ?? false;
 
+    // Handle Athletes tab
     if (showAthletes) {
-      if(menus.where((element) => ![
-        'home',
-        'track',
-        'menu',
-      ].contains(element.label)).isEmpty) {
+      if (menus
+          .where((element) =>
+              !['home', 'track', 'results', 'menu'].contains(element.label))
+          .isEmpty) {
         menus.insert(
           1,
           BottomNavMenu(
@@ -221,30 +268,45 @@ class DashboardController extends GetxController {
         );
       }
     } else {
-      menus.removeWhere((element) => ![
-        'home',
-        'track',
-        'menu',
-      ].contains(element.label));
+      menus.removeWhere((element) =>
+          !['home', 'track', 'results', 'menu'].contains(element.label));
     }
 
-      if(trackingData != null) {
-        print('trackingData');
-        if(menus.where((element) => element.label == 'track').isEmpty) {
-          menus.insert(
-            showAthletes ? 2 : 1,
-            BottomNavMenu(
-                view: const TrackingScreen(),
-                iconData: FeatherIcons.navigation,
-                label: 'track', text: AppLocalizations.of(Get.context!)!.trackingbutton),
-          );
-        }
-      } else {
-        menus.removeWhere((element) => element.label == 'track');
+    // Handle Tracking tab
+    if (trackingData != null) {
+      if (menus.where((element) => element.label == 'track').isEmpty) {
+        menus.insert(
+          showAthletes ? 2 : 1,
+          BottomNavMenu(
+              view: const TrackingScreen(),
+              iconData: FeatherIcons.navigation,
+              label: 'track',
+              text: AppLocalizations.of(Get.context!)!.trackingbutton),
+        );
       }
-      update();
-      //dashboardController.menus.removeAt(1);
-    if(AppGlobals.appConfig?.menu?.items?.length == 0) {
+    } else {
+      menus.removeWhere((element) => element.label == 'track');
+    }
+
+    // Handle Results tab independently
+    if (resultsData != null && resultsData?.showResults == true) {
+      if (menus.where((element) => element.label == 'results').isEmpty) {
+        menus.insert(
+          1, // Always second position
+          BottomNavMenu(
+              view: const ResultsScreen(),
+              image: AppHelper.getImage('trophy.png'),
+              label: 'results',
+              text: AppLocalizations.of(Get.context!)!.resultsbutton),
+        );
+      }
+    } else {
+      menus.removeWhere((element) => element.label == 'results');
+    }
+
+    update();
+
+    if (AppGlobals.appConfig?.menu?.items?.length == 0) {
       menus.removeWhere((element) => element.label == 'menu');
     }
   }
@@ -257,54 +319,57 @@ class DashboardController extends GetxController {
   @override
   void onReady() {
     super.onReady();
-    oneSignalService.setOneSignalUserId();
-    showNotificationPrompt();
+
+    final isMultiEvent = AppGlobals.appEventConfig.multiEventListId != null;
+    final isSingleEvent = AppGlobals.appEventConfig.singleEventId != null;
+
+    if (isSingleEvent && isSplashAdvertShowing) {
+      // Single event mode and splash advert is showing: delay OneSignal init
+      print(
+          'DEBUG: Single event mode with splash advert, will init OneSignal after splash advert');
+      // OneSignal will be initialized in splash advert onDismissed callback
+    } else {
+      // Multi event mode or no splash advert: initialize OneSignal immediately
+      print(
+          'DEBUG: Multi event mode or no splash advert, initializing OneSignal now');
+      oneSignalService.initializeOneSignal().then((_) {
+        _scheduleNotificationPrompt();
+      });
+    }
+  }
+
+  void _scheduleNotificationPrompt() {
+    // Cancel any existing timer
+    _notificationTimer?.cancel();
+
+    // Schedule the notification prompt with a delay
+    _notificationTimer = Timer(const Duration(seconds: 2), () {
+      print('DEBUG: Timer fired, checking if splash advert is still showing');
+      if (!isSplashAdvertShowing) {
+        print('DEBUG: Splash advert not showing, displaying OneSignal prompt');
+        showNotificationPrompt();
+      } else {
+        print(
+            'DEBUG: Splash advert still showing, not showing OneSignal prompt');
+      }
+    });
   }
 
   void showNotificationPrompt() {
-    final notificationSettingChanged = Preferences.getString(
-        AppHelper.notificationPrefenceKey(eventId),
-        NotificationStatus.initial.name);
-    if (AppGlobals.appEventConfig.multiEventListId == null) return;
-    if (notificationSettingChanged != NotificationStatus.initial.name) return;
-
-    showCupertinoDialog(
+    // Safety check: don't show if splash advert is still showing
+    if (isSplashAdvertShowing) {
+      print(
+          'DEBUG: Not showing OneSignal prompt - splash advert is still showing');
+      return;
+    }
+    AppHelper.showNotificationOptInPrompt(
       context: Get.context!,
-      builder: (context) => CupertinoAlertDialog(
-        title: AppText(
-          AppLocalizations.of(context)!.wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
-          textAlign: TextAlign.center,
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child:  AppText(
-              AppLocalizations.of(context)!.noThanks,
-                color: Theme.of(context).brightness == Brightness.light
-                                ? AppColors.darkgrey
-                                : AppColors.white,
-            ),
-            onPressed: () => setShowNotification(NotificationStatus.hidden),
-          ),
-          CupertinoDialogAction(
-            child: AppText(
-              'Yes',
-              color: Theme.of(context).brightness == Brightness.light
-                                ? AppColors.darkgrey
-                                : AppColors.white,
-            ),
-            onPressed: () => setShowNotification(NotificationStatus.show),
-          ),
-        ],
-      ),
+      eventId: eventId,
+      onResult: (allow) {
+        oneSignalService.updateNotificationStatus(
+            AppGlobals.oneSignalUserId, eventId, allow);
+      },
     );
-  }
-
-  void setShowNotification(NotificationStatus status) {
-    oneSignalService.updateNotificationStatus(
-        AppGlobals.oneSignalUserId, eventId, status == NotificationStatus.show);
-    Preferences.setString(
-        AppHelper.notificationPrefenceKey(eventId), status.name);
-    Get.back();
   }
 
   void selectMenu(BottomNavMenu menu) async {
@@ -318,7 +383,6 @@ class DashboardController extends GetxController {
       //controller.pointAnnotationManager?.deleteAll();
       //controller.polylineAnnotationManager?.deleteAll();
     }
-
 
     // if (menu == menus.first) {
     //   homeController.startFade();
@@ -335,8 +399,6 @@ class DashboardController extends GetxController {
       transition: Transition.leftToRightWithFade,
     );
   }
-
-  
 
   Future<void> getConfigDetails() async {
     final config = AppGlobals.appEventConfig;
@@ -362,7 +424,7 @@ class DashboardController extends GetxController {
     if (!showAthletes) {
       return;
     }
-    
+
     try {
       // final res = await ApiHandler.genericGetHttp(url: entrantsList.url!);
       // final athletesM = AthletesM.fromJson(res.data);
@@ -372,13 +434,21 @@ class DashboardController extends GetxController {
       debugPrint(e.toString());
     }
   }
-  
-  
+
+  @override
+  void onClose() {
+    _notificationTimer?.cancel();
+    super.onClose();
+  }
 }
 
 class BottomNavMenu {
   BottomNavMenu(
-      {required this.view, this.iconData, required this.label, this.image, this.text});
+      {required this.view,
+      this.iconData,
+      required this.label,
+      this.image,
+      this.text});
   final Widget view;
   final IconData? iconData;
   final String? image;

@@ -17,11 +17,10 @@ import '../../../ui/dashboard/more/more_controller.dart';
 import '../../models/app_config.dart';
 
 class AppOneSignalImpl implements AppOneSignal {
-
   final appLinks = AppLinks();
 
   AppOneSignalImpl() {
-    init();
+    // Do not call init() here. Initialization will be triggered manually.
     initUniLinks();
   }
 
@@ -32,7 +31,6 @@ class AppOneSignalImpl implements AppOneSignal {
       Uri? initialLink = await appLinks.getInitialLink();
       if (initialLink != null) {
         // Handle the initial deep link
-       
       }
     } catch (e) {
       print('Error initializing deep link: $e');
@@ -49,18 +47,18 @@ class AppOneSignalImpl implements AppOneSignal {
     });
   }
 
-  Future<void> init() async {
+  Future<void> initializeOneSignal() async {
     await Future.delayed(const Duration(seconds: 1));
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(AppGlobals.appEventConfig.oneSignalId);
     OneSignal.Notifications.requestPermission(true);
 
-
     OneSignal.Notifications.addClickListener((event) async {
-      debugPrint('NOTIFICATION OPENED HANDLER CALLED WITH: ${event.notification.additionalData?['open']} ${event.result.url} ${event.result.actionId}');
+      debugPrint(
+          'NOTIFICATION OPENED HANDLER CALLED WITH: [33m${event.notification.additionalData?['open']} ${event.result.url} ${event.result.actionId}[0m');
       String? open = event.notification.additionalData?['open'];
-      if(open != null) {
-        if(canRunNotificationHandler) {
+      if (open != null) {
+        if (canRunNotificationHandler) {
           notificationHandler(open);
         }
         notificationHandlerController.stream.listen((value) {
@@ -85,19 +83,24 @@ class AppOneSignalImpl implements AppOneSignal {
     Future.delayed(const Duration(seconds: 1), () async {
       Get.offNamedUntil(Routes.dashboard, (_) => false);
       String? eventId;
-      if(open.contains('event_id/')) {
-      }
-      if(open.contains('/athlete/')) {
-        eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
+      if (open.contains('event_id/')) {}
+      if (open.contains('/athlete/')) {
+        eventId = open.substring(
+            open.indexOf('event_id/') + 9, open.indexOf('/athlete/'));
         String athleteId = open.split('/athlete/')[1];
-        Get.toNamed(Routes.athleteDetails, arguments: {AppKeys.athlete: await DatabaseHandler.getSingleAthleteOnce(athleteId)});
+        Get.toNamed(Routes.athleteDetails, arguments: {
+          AppKeys.athlete: await DatabaseHandler.getSingleAthleteOnce(athleteId)
+        });
       }
-      if(open.contains('/page/')) {
-        eventId = open.substring(open.indexOf('event_id/') + 9, open.indexOf('/page/'));
+      if (open.contains('/page/')) {
+        eventId = open.substring(
+            open.indexOf('event_id/') + 9, open.indexOf('/page/'));
         String menuId = open.split('/page/')[1];
         final MoreController controller = Get.find();
-        Items? item = controller.moreDetails.items?.where((element) => element.id == int.parse(menuId)).firstOrNull;
-        if(item != null) {
+        Items? item = controller.moreDetails.items
+            ?.where((element) => element.id == int.parse(menuId))
+            .firstOrNull;
+        if (item != null) {
           controller.decideNextView(item);
         }
       }

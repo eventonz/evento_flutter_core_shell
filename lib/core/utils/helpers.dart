@@ -18,17 +18,86 @@ import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart' as wf;
+import 'package:evento_core/l10n/app_localizations.dart';
+import 'package:evento_core/core/utils/preferences.dart';
+import 'package:evento_core/core/utils/app_global.dart';
+import 'package:evento_core/core/utils/enums.dart';
+import 'package:flutter/cupertino.dart';
 
 class AppHelper {
   static String getImage(String imageName) =>
       'packages/evento_core/assets/images/$imageName';
 
   static Uint8List emptyImage = Uint8List.fromList([
-    0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x48, 0x44, 0x52,
-    0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x06, 0x00, 0x00, 0x00, 0x1F, 0x15, 0xC4,
-    0x89, 0x00, 0x00, 0x00, 0x0D, 0x49, 0x44, 0x41, 0x54, 0x78, 0x9C, 0x63, 0x60, 0x60, 0x60, 0x00,
-    0x00, 0x00, 0x05, 0x00, 0x01, 0xA5, 0xF6, 0x45, 0x40, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4E,
-    0x44, 0xAE, 0x42, 0x60, 0x82
+    0x89,
+    0x50,
+    0x4E,
+    0x47,
+    0x0D,
+    0x0A,
+    0x1A,
+    0x0A,
+    0x00,
+    0x00,
+    0x00,
+    0x0D,
+    0x49,
+    0x48,
+    0x44,
+    0x52,
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x00,
+    0x00,
+    0x00,
+    0x01,
+    0x08,
+    0x06,
+    0x00,
+    0x00,
+    0x00,
+    0x1F,
+    0x15,
+    0xC4,
+    0x89,
+    0x00,
+    0x00,
+    0x00,
+    0x0D,
+    0x49,
+    0x44,
+    0x41,
+    0x54,
+    0x78,
+    0x9C,
+    0x63,
+    0x60,
+    0x60,
+    0x60,
+    0x00,
+    0x00,
+    0x00,
+    0x05,
+    0x00,
+    0x01,
+    0xA5,
+    0xF6,
+    0x45,
+    0x40,
+    0x00,
+    0x00,
+    0x00,
+    0x00,
+    0x49,
+    0x45,
+    0x4E,
+    0x44,
+    0xAE,
+    0x42,
+    0x60,
+    0x82
   ]);
 
   static String getSvg(String imageName) =>
@@ -45,7 +114,8 @@ class AppHelper {
     return Color(int.parse(color.replaceAll('#', '0xFF')));
   }
 
-  static double dgetBoundsZoomLevel(LatLngBounds bounds, {
+  static double dgetBoundsZoomLevel(
+    LatLngBounds bounds, {
     required double height,
     required double width,
   }) {
@@ -62,7 +132,7 @@ class AppHelper {
     double latRad(lat) {
       var sin2 = sin(lat * pi / 180);
       var radX2 = log((1 + sin2) / (1 - sin2)) / 2;
-      return max(min(radX2, pi), - pi) / 2;
+      return max(min(radX2, pi), -pi) / 2;
     }
 
     double zoom(mapPx, worldPx, fraction) {
@@ -83,9 +153,11 @@ class AppHelper {
     return min(latZoom, lngZoom);
   }
 
-  static Future<Uint8List> widgetToBytes(Widget widget, {int milliseconds = 100}) async {
+  static Future<Uint8List> widgetToBytes(Widget widget,
+      {int milliseconds = 100}) async {
     ScreenshotController screenshotController = ScreenshotController();
-    var value = await screenshotController.captureFromWidget(widget, delay: Duration(milliseconds: milliseconds));
+    var value = await screenshotController.captureFromWidget(widget,
+        delay: Duration(milliseconds: milliseconds));
     return value;
     Codec codec = await instantiateImageCodec(value);
     FrameInfo fi = await codec.getNextFrame();
@@ -106,7 +178,7 @@ class AppHelper {
 
     if (Platform.isIOS) {
       final googleUrlRes =
-      await AppHelper.launchUrlApp(googleUrl, showErrorMessage: false);
+          await AppHelper.launchUrlApp(googleUrl, showErrorMessage: false);
       if (!googleUrlRes) {
         await AppHelper.launchUrlApp(appleUrl, errorMessage: errorMessage);
       }
@@ -114,7 +186,6 @@ class AppHelper {
       await AppHelper.launchUrlApp(googleUrl, errorMessage: errorMessage);
     }
   }
-
 
   static bool listsAreEqual(List list1, List list2) {
     if (list1.length != list2.length) {
@@ -148,7 +219,8 @@ class AppHelper {
     }
   }
 
-  static Future<void> showWebBottomSheet(String? title, String url, [String? linkType]) async {
+  static Future<void> showWebBottomSheet(String? title, String url,
+      [String? linkType]) async {
     String pageTitle = '';
     if (title == null) {
       try {
@@ -273,7 +345,6 @@ class AppHelper {
   }
 
   static Color getRandomLightColor() {
-
     Random random = Random();
 
     int red = random.nextInt(250) + 5;
@@ -281,5 +352,58 @@ class AppHelper {
     int blue = random.nextInt(250) + 5;
 
     return Color.fromARGB(255, red, green, blue);
+  }
+
+  static void showNotificationOptInPrompt({
+    required BuildContext context,
+    required int eventId,
+    required void Function(bool allow) onResult,
+  }) {
+    final notificationSettingChanged = Preferences.getString(
+        AppHelper.notificationPrefenceKey(eventId),
+        NotificationStatus.initial.name);
+    if (AppGlobals.appEventConfig.multiEventListId == null) return;
+    if (notificationSettingChanged != NotificationStatus.initial.name) return;
+
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: AppText(
+          AppLocalizations.of(context)!
+              .wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          CupertinoDialogAction(
+            child: AppText(
+              AppLocalizations.of(context)!.noThanks,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.darkgrey
+                  : AppColors.white,
+            ),
+            onPressed: () {
+              Preferences.setString(AppHelper.notificationPrefenceKey(eventId),
+                  NotificationStatus.hidden.name);
+              Navigator.of(context, rootNavigator: true).pop();
+              onResult(false);
+            },
+          ),
+          CupertinoDialogAction(
+            child: AppText(
+              'Yes',
+              color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.darkgrey
+                  : AppColors.white,
+            ),
+            onPressed: () {
+              Preferences.setString(AppHelper.notificationPrefenceKey(eventId),
+                  NotificationStatus.show.name);
+              Navigator.of(context, rootNavigator: true).pop();
+              onResult(true);
+            },
+          ),
+        ],
+      ),
+    );
   }
 }

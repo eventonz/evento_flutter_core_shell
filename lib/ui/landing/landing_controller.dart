@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:app_links/app_links.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:evento_core/app_event_config.dart';
@@ -105,6 +106,23 @@ class LandingController extends GetxController {
   @override
   void onReady() {
     super.onReady();
+    final isMultiEvent = AppGlobals.appEventConfig.multiEventListId != null;
+    if (isMultiEvent) {
+      Preferences.init().then((_) {
+        final oneSignalService = Get.find<AppOneSignal>();
+        final eventId = Preferences.getInt(AppKeys.eventId, 0);
+        oneSignalService.initializeOneSignal().then((_) {
+          AppHelper.showNotificationOptInPrompt(
+            context: Get.context!,
+            eventId: eventId,
+            onResult: (allow) {
+              oneSignalService.updateNotificationStatus(
+                  AppGlobals.oneSignalUserId, eventId, allow);
+            },
+          );
+        });
+      });
+    }
     checkConnection();
   }
 
@@ -125,18 +143,17 @@ class LandingController extends GetxController {
 
   String extractEventId(String url) {
     final startIndex = url.indexOf('event_id/') + 9;
-    final endIndex = url.contains('/athlete/')
-        ? url.indexOf('/athlete/')
-        : url.length;
+    final endIndex =
+        url.contains('/athlete/') ? url.indexOf('/athlete/') : url.length;
     return url.substring(startIndex, endIndex);
   }
 
-  Future<void> _navigateToAthleteDetails(String athleteId, String url, AppEventConfig config) async {
-
+  Future<void> _navigateToAthleteDetails(
+      String athleteId, String url, AppEventConfig config) async {
     await getConfigDetails(url, config.configUrl);
 
     Get.offAll(
-          () => const DashboardScreen(),
+      () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
       duration: const Duration(milliseconds: 1500),
@@ -148,7 +165,7 @@ class LandingController extends GetxController {
 
   Future<void> _navigateToDashboard() async {
     Get.offAll(
-          () => const DashboardScreen(),
+      () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
       duration: const Duration(milliseconds: 1500),
@@ -156,7 +173,8 @@ class LandingController extends GetxController {
     );
   }
 
-  Future<void> _handleWebViewNavigation(String url, String? configUrl, bool isPrev) async {
+  Future<void> _handleWebViewNavigation(
+      String url, String? configUrl, bool isPrev) async {
     final webUrl = Preferences.getString(AppKeys.eventLink, '');
     if (webUrl.isNotEmpty) {
       webViewController = WebViewController()
@@ -164,7 +182,7 @@ class LandingController extends GetxController {
         ..loadRequest(Uri.parse(webUrl));
 
       Get.offAll(
-            () => WebViewEventPage(),
+        () => WebViewEventPage(),
         routeName: Routes.webviewEvent,
         arguments: webViewController,
       );
@@ -173,7 +191,7 @@ class LandingController extends GetxController {
 
     await getConfigDetails(url, configUrl);
     Get.offAll(
-          () => isPrev ? const DashboardScreen() : WebViewEventPage(),
+      () => isPrev ? const DashboardScreen() : WebViewEventPage(),
       routeName: isPrev ? Routes.dashboard : Routes.webviewEvent,
     );
   }
@@ -200,9 +218,10 @@ class LandingController extends GetxController {
       checkTheme();
       await Future.delayed(const Duration(milliseconds: 1300));
 
-      if(Get.arguments?['athlete_id'] != null) {
+      if (Get.arguments?['athlete_id'] != null) {
         Get.offNamed(Routes.dashboard)?.then((_) {
-          Get.toNamed(Routes.athleteDetails, arguments: {'id' : Get.arguments['athlete_id']});
+          Get.toNamed(Routes.athleteDetails,
+              arguments: {'id': Get.arguments['athlete_id']});
         });
       }
 
@@ -213,9 +232,11 @@ class LandingController extends GetxController {
         final path = uri.path;
         if (path.contains('/event_id/')) {
           final eventId = extractEventId(path);
-          final event = AppGlobals.eventM?.events?.firstWhereOrNull((e) => e.id == int.parse(eventId));
+          final event = AppGlobals.eventM?.events
+              ?.firstWhereOrNull((e) => e.id == int.parse(eventId));
 
-          if (event != null || AppGlobals.appEventConfig.multiEventListId == null) {
+          if (event != null ||
+              AppGlobals.appEventConfig.multiEventListId == null) {
             // Handle multi-event case
             if (AppGlobals.appEventConfig.multiEventListId != null) {
               saveEventSelection(event);
@@ -243,7 +264,6 @@ class LandingController extends GetxController {
       }
 
 // Helper methods
-
     } catch (e) {
       ToastUtils.show(e.toString());
       if (AppGlobals.appEventConfig.multiEventListId != null) {

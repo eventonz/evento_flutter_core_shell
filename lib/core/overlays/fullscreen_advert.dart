@@ -12,16 +12,16 @@ import '../utils/keys.dart';
 import '../utils/preferences.dart';
 
 class FullscreenAdvert extends StatefulWidget {
-
   final Advert advert;
-  const FullscreenAdvert(this.advert, {super.key});
+  final VoidCallback? onDismissed;
+
+  const FullscreenAdvert(this.advert, {super.key, this.onDismissed});
 
   @override
   State<FullscreenAdvert> createState() => _FullscreenAdvertState();
 }
 
 class _FullscreenAdvertState extends State<FullscreenAdvert> {
-
   int seconds = 5;
 
   late Timer timer;
@@ -34,8 +34,9 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
       setState(() {
         seconds--;
       });
-      if(seconds == 0) {
+      if (seconds == 0) {
         timer.cancel();
+        widget.onDismissed?.call();
         Navigator.of(context).pop();
       }
     });
@@ -43,12 +44,9 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
 
   trackEvent(String action) async {
     String url = 'adverts/${widget.advert.id}';
-    final res = await ApiHandler.postHttp(
-        
-        endPoint: url, body: {
-          'action' : action,
+    final res = await ApiHandler.postHttp(endPoint: url, body: {
+      'action': action,
     });
-
   }
 
   @override
@@ -67,9 +65,13 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
             child: GestureDetector(
                 onTap: () {
                   trackEvent('click');
-                  launchUrl(Uri.parse(widget.advert.openUrl!), mode: LaunchMode.externalApplication);
+                  launchUrl(Uri.parse(widget.advert.openUrl!),
+                      mode: LaunchMode.externalApplication);
                 },
-                child: Image(image: CachedNetworkImageProvider(widget.advert.image!), fit: BoxFit.fitWidth, width: double.maxFinite)),
+                child: Image(
+                    image: CachedNetworkImageProvider(widget.advert.image!),
+                    fit: BoxFit.fitWidth,
+                    width: double.maxFinite)),
           ),
           Positioned(
               top: 16,
@@ -79,10 +81,12 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
                   borderRadius: BorderRadius.circular(20),
                   onTap: () {
                     timer.cancel();
+                    widget.onDismissed?.call();
                     Navigator.of(context).pop();
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300), curve: Curves.easeIn,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeIn,
                     padding: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
                       color: seconds < 8 ? Colors.white : null,
@@ -91,23 +95,34 @@ class _FullscreenAdvertState extends State<FullscreenAdvert> {
                     child: Row(
                       children: [
                         AnimatedContainer(
-                            padding: seconds < 8 ? const EdgeInsets.only(left: 6, right: 6) : null,
-                            duration: const Duration(milliseconds: 300), curve: Curves.easeIn, child: seconds < 8 ? Text('Auto close in $seconds', style: const TextStyle(
-                              fontWeight: FontWeight.w500,
-                              fontSize: 13,
-                              color: Colors.black
-                            )) : null),
+                            padding: seconds < 8
+                                ? const EdgeInsets.only(left: 6, right: 6)
+                                : null,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeIn,
+                            child: seconds < 8
+                                ? Text('Auto close in $seconds',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 13,
+                                        color: Colors.black))
+                                : null),
                         Container(
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
                             boxShadow: [
-                              BoxShadow(color: seconds < 8 ? Colors.black.withOpacity(0.4) : Colors.white.withOpacity(0.4), spreadRadius: seconds < 8 ? 0 : 1, blurRadius: 3),
+                              BoxShadow(
+                                  color: seconds < 8
+                                      ? Colors.black.withOpacity(0.4)
+                                      : Colors.white.withOpacity(0.4),
+                                  spreadRadius: seconds < 8 ? 0 : 1,
+                                  blurRadius: 3),
                             ],
                           ),
-                          child: const Icon(Icons.close, size: 19,
-                          color: Colors.black),
+                          child: const Icon(Icons.close,
+                              size: 19, color: Colors.black),
                         ),
                       ],
                     ),
