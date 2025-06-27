@@ -10,8 +10,11 @@ import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:markdown/markdown.dart' as md;
 
 import 'assistant_controller.dart';
 
@@ -294,11 +297,129 @@ class ChatMessage extends StatelessWidget {
           SizedBox(
             height: 1.h,
           ),
-          AppText(
-            message.content!.replaceAll('${controller.item.prefixprompt}', ''),
-            fontSize: 16,
+          MarkdownBody(
+            data: message.content!
+                .replaceAll('${controller.item.prefixprompt}', ''),
+            onTapLink: (text, url, title) async {
+              if (url != null) {
+                final Uri uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ToastUtils.show('Could not open link');
+                }
+              }
+            },
+            builders: {
+              'img': CustomImageBuilder(),
+            },
+            styleSheet: MarkdownStyleSheet(
+              p: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              strong: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              em: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              h1: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              h2: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              h3: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              listBullet: TextStyle(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? AppColors.white
+                      : AppColors.darkBlack),
+              a: TextStyle(
+                  color: AppColors.primary,
+                  decoration: TextDecoration.underline),
+            ),
           )
         ],
+      ),
+    );
+  }
+}
+
+class CustomImageBuilder extends MarkdownElementBuilder {
+  @override
+  Widget? visitElementAfter(md.Element element, TextStyle? preferredStyle) {
+    final String? src = element.attributes['src'];
+    final String? alt = element.attributes['alt'];
+
+    if (src == null || src.isEmpty) {
+      return null;
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: Image.network(
+          src,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes!
+                      : null,
+                ),
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              height: 200,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.grey[600]),
+                  const SizedBox(height: 8),
+                  Text(
+                    alt ?? 'Image failed to load',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                ],
+              ),
+            );
+          },
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

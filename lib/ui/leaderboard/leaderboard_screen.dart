@@ -636,7 +636,7 @@ class LeaderboardScreen extends StatelessWidget {
                             width: 80,
                             child: Center(
                                 child: Text(
-                              AppLocalizations.of(context)!.diff,
+                              'Gap',
                               style: TextStyle(
                                 color:
                                     Theme.of(context).scaffoldBackgroundColor,
@@ -654,6 +654,20 @@ class LeaderboardScreen extends StatelessWidget {
                         child: Center(
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
+                          ),
+                        ),
+                      )
+                    else if ((controller.eventResult?.data?.isEmpty ?? true))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 80),
+                        child: Center(
+                          child: Text(
+                            'No results available yet',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       )

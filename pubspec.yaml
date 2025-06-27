@@ -67,6 +67,7 @@ dependencies:
   get_storage:
   super_tooltip: ^2.0.9
   win32: ^5.5.4
+  flutter_markdown: ^0.6.18
   flutter_localizations:
     sdk: flutter
   #new_version_plus: ^0.0.11
