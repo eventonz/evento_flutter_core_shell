@@ -809,9 +809,19 @@ class LeaderboardScreen extends StatelessWidget {
                                                 fontSize: 14,
                                                 color: Colors.black,
                                               ),
-                                              index != 0
-                                                  ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
-                                                  : '',
+                                              index == 0
+                                                  ? (athlete.raceTime != null &&
+                                                          athlete.raceTime
+                                                              .toString()
+                                                              .isNotEmpty
+                                                      ? athlete.raceTime
+                                                      : '')
+                                                  : (timeDiff != null &&
+                                                          timeDiff
+                                                              .toString()
+                                                              .isNotEmpty
+                                                      ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
+                                                      : ''),
                                               textAlign: TextAlign.end,
                                             )),
                                       ],
