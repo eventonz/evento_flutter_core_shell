@@ -15,7 +15,7 @@ class MoreMenuTitle extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           AppText(
-            item.title!.capitalize!,
+            item.title!,
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),

@@ -22,7 +22,7 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MoreController controller = Get.find();
-    print( controller.moreDetails.items?.map((e) => e.id));
+
     return Scaffold(
         appBar: AppBar(
           surfaceTintColor: Colors.white,
@@ -34,7 +34,6 @@ class MoreScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              
                 onPressed: controller.toSettingsScreen,
                 icon: const Icon(
                   FeatherIcons.settings,
@@ -56,9 +55,11 @@ class MoreScreen extends StatelessWidget {
                   } else if (mode == LoadStatus.loading) {
                     body = const CupertinoActivityIndicator();
                   } else if (mode == LoadStatus.failed) {
-                    body = Text(AppLocalizations.of(context)!.loadFailedClickRetry);
+                    body = Text(
+                        AppLocalizations.of(context)!.loadFailedClickRetry);
                   } else if (mode == LoadStatus.canLoading) {
-                    body = Text(AppLocalizations.of(context)!.releaseToLoadMore);
+                    body =
+                        Text(AppLocalizations.of(context)!.releaseToLoadMore);
                   } else {
                     body = Text(AppLocalizations.of(context)!.noMoreData);
                   }
@@ -76,45 +77,12 @@ class MoreScreen extends StatelessWidget {
                       height: 1,
                       thickness: .5,
                       color: Theme.of(context).brightness == Brightness.light
-                      ? AppColors.darkgrey :AppColors.greyLight,
+                          ? AppColors.darkgrey
+                          : AppColors.greyLight,
                     );
                   },
                   itemBuilder: (_, i) {
                     if (i == controller.moreDetails.items!.length) {
-                      Items item2 = Items(
-                        type: 'results',
-                        supplier: 'sportsplits',
-                        title: '2024 Results 2',
-                        sportSplitsRaceId: 18409,
-                        id: 14214,
-                        icon: 'terrain',
-                        linkToDetail: true
-                      );
-
-                      Items item = Items(
-                        type: 'results',
-                        supplier: 'sportsplits',
-                        title: '2024 Results',
-                        sportSplitsRaceId: 18507,
-                        id: 1704,
-                        icon: 'terrain',
-                      );
-
-
-                      return SizedBox();
-
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-
-                          MoreMenuTile(
-                              onTap: () => controller.decideNextView(item),
-                              item: item),
-                          MoreMenuTile(
-                              onTap: () => controller.decideNextView(item2),
-                              item: item2),
-                        ],
-                      );
                       return const SizedBox();
                     }
                     final item = controller.moreDetails.items![i];
