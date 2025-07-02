@@ -35,94 +35,95 @@ class ListPageScreen extends StatelessWidget {
       backgroundColor: isLightMode
           ? AppThemeColors.lightBackground
           : AppThemeColors.darkBackground,
-      body: Column(
-        children: [
-          Expanded(
-            child: Obx(() {
-              if (controller.dataSnapshot.value == DataSnapShot.loaded) {
-                final eventResults = controller.eventResults;
-                if (eventResults.isEmpty) {
-                  return Center(
-                      child: NoDataFoundLayout(
-                    errorMessage: AppLocalizations.of(context)!.noResultFound,
-                  ));
-                }
-                return Container(
-                  decoration: AppThemeStyles.cardDecoration(context),
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
-                    itemCount: eventResults.length,
-                    separatorBuilder: (_, i) {
-                      return const Divider(height: 1, thickness: 0.5);
-                    },
-                    itemBuilder: (_, i) {
-                      final result = eventResults[i];
-                      return ListTile(
-                        onTap: () => controller.decide(result),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppText(
-                              result.listTitle!.title!,
-                              fontSize: 14,
-                            ),
-                            result.listTitle!.subtitle != null
-                                ? AppText(
-                                    result.listTitle!.subtitle!,
-                                    color: AppColors.grey,
-                                    fontSize: 12,
-                                  )
-                                : const SizedBox()
-                          ],
+      body: Obx(() {
+        if (controller.dataSnapshot.value == DataSnapShot.loaded) {
+          final eventResults = controller.eventResults;
+          if (eventResults.isEmpty) {
+            return Center(
+                child: NoDataFoundLayout(
+              errorMessage: AppLocalizations.of(context)!.noResultFound,
+            ));
+          }
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Container(
+              decoration: AppThemeStyles.cardDecoration(context),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: eventResults.length,
+                separatorBuilder: (_, i) {
+                  return const Divider(
+                    height: 1,
+                    thickness: 0.5,
+                    color: Color(0xFFE0E0E0), // light grey
+                  );
+                },
+                itemBuilder: (_, i) {
+                  final result = eventResults[i];
+                  return ListTile(
+                    onTap: () => controller.decide(result),
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AppText(
+                          result.listTitle!.title!,
+                          fontSize: 14,
                         ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            result.listTitle!.thumbnail != null
-                                ? Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(0, 4, 12, 4),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(6),
-                                      child: CachedNetworkImage(
-                                        imageUrl: result.listTitle!.thumbnail!,
-                                        placeholder: (_, val) => const Center(
-                                            child: CircularProgressIndicator
-                                                .adaptive()),
-                                        errorWidget: (_, val, val2) =>
-                                            const Center(
-                                                child: NoDataFoundLayout(
-                                          errorMessage: 'No Image Found',
-                                        )),
-                                        fit: BoxFit.cover,
-                                        width: 14.w,
-                                      ),
-                                    ),
-                                  )
-                                : const SizedBox(),
-                            Icon(
-                              Icons.arrow_circle_right_outlined,
-                              size: 5.w,
-                            ),
-                          ],
+                        result.listTitle!.subtitle != null
+                            ? AppText(
+                                result.listTitle!.subtitle!,
+                                color: AppColors.grey,
+                                fontSize: 12,
+                              )
+                            : const SizedBox()
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        result.listTitle!.thumbnail != null
+                            ? Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 4, 12, 4),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(6),
+                                  child: CachedNetworkImage(
+                                    imageUrl: result.listTitle!.thumbnail!,
+                                    placeholder: (_, val) => const Center(
+                                        child: CircularProgressIndicator
+                                            .adaptive()),
+                                    errorWidget: (_, val, val2) => const Center(
+                                        child: NoDataFoundLayout(
+                                      errorMessage: 'No Image Found',
+                                    )),
+                                    fit: BoxFit.cover,
+                                    width: 14.w,
+                                  ),
+                                ),
+                              )
+                            : const SizedBox(),
+                        Icon(
+                          Icons.arrow_circle_right_outlined,
+                          size: 5.w,
+                          color:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? AppColors.accentDark
+                                  : AppColors.accentLight,
                         ),
-                      );
-                    },
-                  ),
-                );
-              } else if (controller.dataSnapshot.value == DataSnapShot.error) {
-                return Center(
-                    child: RetryLayout(onTap: controller.getEventResults));
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator.adaptive());
-              }
-            }),
-          )
-        ],
-      ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        } else if (controller.dataSnapshot.value == DataSnapShot.error) {
+          return Center(child: RetryLayout(onTap: controller.getEventResults));
+        } else {
+          return const Center(child: CircularProgressIndicator.adaptive());
+        }
+      }),
     );
   }
 }
