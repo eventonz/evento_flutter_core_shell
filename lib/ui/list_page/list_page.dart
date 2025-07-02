@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
+import 'package:evento_core/core/res/app_theme.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
@@ -18,8 +19,12 @@ class ListPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ListPageController());
+    final isLightMode = Theme.of(context).brightness == Brightness.dark;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: isLightMode
+            ? AppThemeColors.lightBackground
+            : AppThemeColors.darkBackground,
         surfaceTintColor: Colors.white,
         shadowColor: Colors.white,
         title: AppText(
@@ -27,6 +32,9 @@ class ListPageScreen extends StatelessWidget {
           style: AppStyles.appBarTitle,
         ),
       ),
+      backgroundColor: isLightMode
+          ? AppThemeColors.lightBackground
+          : AppThemeColors.darkBackground,
       body: Column(
         children: [
           Expanded(
@@ -39,17 +47,15 @@ class ListPageScreen extends StatelessWidget {
                     errorMessage: AppLocalizations.of(context)!.noResultFound,
                   ));
                 }
-                return ListView.separated(
+                return Container(
+                  decoration: AppThemeStyles.cardDecoration(context),
+                  child: ListView.separated(
                     shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
                     itemCount: eventResults.length,
                     separatorBuilder: (_, i) {
-                      return  Divider(
-                        height: 1,
-                        thickness: .5,
-                        color: Theme.of(context).brightness == Brightness.light
-                      ? AppColors.darkgrey :AppColors.greyLight,
-                      );
+                      return const Divider(height: 1, thickness: 0.5);
                     },
                     itemBuilder: (_, i) {
                       final result = eventResults[i];
@@ -103,7 +109,9 @@ class ListPageScreen extends StatelessWidget {
                           ],
                         ),
                       );
-                    });
+                    },
+                  ),
+                );
               } else if (controller.dataSnapshot.value == DataSnapShot.error) {
                 return Center(
                     child: RetryLayout(onTap: controller.getEventResults));

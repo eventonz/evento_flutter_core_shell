@@ -1,6 +1,7 @@
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_styles.dart';
+import 'package:evento_core/core/res/app_theme.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/ui/common_components/more_menu_tile.dart';
 import 'package:evento_core/ui/common_components/more_menu_title.dart';
@@ -22,9 +23,17 @@ class MoreScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final MoreController controller = Get.find();
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
 
     return Scaffold(
+        backgroundColor: isLightMode
+    
+            ? AppThemeColors.darkBackground :
+            AppThemeColors.lightBackground,
         appBar: AppBar(
+          backgroundColor: isLightMode
+              ? AppThemeColors.darkBackground
+              : AppThemeColors.lightBackground,
           surfaceTintColor: Colors.white,
           shadowColor: Colors.white,
           automaticallyImplyLeading: false,
@@ -69,30 +78,79 @@ class MoreScreen extends StatelessWidget {
                   );
                 },
               ),
-              child: ListView.separated(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  itemCount: controller.moreDetails.items!.length + 1,
-                  separatorBuilder: (_, i) {
-                    return Divider(
-                      height: 1,
-                      thickness: .5,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? AppColors.darkgrey
-                          : AppColors.greyLight,
-                    );
-                  },
-                  itemBuilder: (_, i) {
-                    if (i == controller.moreDetails.items!.length) {
-                      return const SizedBox();
-                    }
-                    final item = controller.moreDetails.items![i];
-                    if (item.type == 'divider') {
-                      return MoreMenuTitle(item: item);
-                    }
-                    return MoreMenuTile(
-                        onTap: () => controller.decideNextView(item),
-                        item: item);
-                  }));
+              child: _buildCardGroups(context, controller));
         }));
+  }
+
+  Widget _buildCardGroups(BuildContext context, MoreController controller) {
+    final items = controller.moreDetails.items!;
+    final List<Widget> widgets = [];
+
+    List<Items> currentGroup = [];
+
+    for (int i = 0; i < items.length; i++) {
+      final item = items[i];
+
+      if (item.type == 'divider') {
+        // If we have items in the current group, create a card for them
+        if (currentGroup.isNotEmpty) {
+          widgets.add(_buildCard(context, currentGroup, controller));
+          currentGroup = [];
+        }
+
+        // Add the divider title (not in a card)
+        widgets.add(MoreMenuTitle(item: item));
+      } else {
+        // Add item to current group
+        currentGroup.add(item);
+      }
+    }
+
+    // Don't forget the last group if there are items
+    if (currentGroup.isNotEmpty) {
+      widgets.add(_buildCard(context, currentGroup, controller));
+    }
+
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      itemCount: widgets.length,
+      separatorBuilder: (_, i) => const SizedBox(height: 16),
+      itemBuilder: (_, i) => widgets[i],
+    );
+  }
+
+  Widget _buildCard(
+      BuildContext context, List<Items> items, MoreController controller) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+
+    return Container(
+      decoration: AppThemeStyles.cardDecoration(context),
+      child: Column(
+        children: items.asMap().entries.map((entry) {
+          final index = entry.key;
+          final item = entry.value;
+
+          return Column(
+            children: [
+              MoreMenuTile(
+                onTap: () => controller.decideNextView(item),
+                item: item,
+              ),
+              // Add divider between items (except for the last one)
+              if (index < items.length - 1)
+                Divider(
+                  height: 1,
+                  thickness: 0.5,
+                  color: isLightMode
+                      ? AppColors.darkgrey.withOpacity(0.2)
+                      : AppColors.greyLight.withOpacity(0.2),
+                  indent: 16,
+                  endIndent: 16,
+                ),
+            ],
+          );
+        }).toList(),
+      ),
+    );
   }
 }
