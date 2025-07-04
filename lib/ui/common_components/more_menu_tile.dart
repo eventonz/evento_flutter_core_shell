@@ -18,7 +18,7 @@ class MoreMenuTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical:18),
         child: Row(
           children: [
             SvgPicture.asset(
@@ -33,7 +33,7 @@ class MoreMenuTile extends StatelessWidget {
             Expanded(
               child: AppText(
                 item.title!,
-                fontSize: 14,
+                fontSize: 16,
               ),
             ),
             Icon(

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppThemeColors {
   // App backgrounds
-  static const Color lightBackground = Color(0xFFF9F9F9); // light
+  static const Color lightBackground = Color(0x08F9F9F9); // light
   static const Color darkBackground = Color(0xFF121212); // dark
 
   // Card backgrounds
   static const Color lightCard = Color(0xFFFFFFFF); // white
-  static const Color darkCard = Color(0xFF2C2C2E); // dark card
+  static const Color darkCard = Color(0x14FFFFFF); // dark card
 }
 
 class AppThemeStyles {

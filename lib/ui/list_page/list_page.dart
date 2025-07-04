@@ -54,10 +54,10 @@ class ListPageScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: eventResults.length,
                 separatorBuilder: (_, i) {
-                  return const Divider(
+                  return  Divider(
                     height: 1,
-                    thickness: 0.5,
-                    color: Color(0xFFE0E0E0), // light grey
+                    thickness: 2,
+                    color: isLightMode ? AppColors.darkgrey : AppColors.greyLight, // light grey
                   );
                 },
                 itemBuilder: (_, i) {
@@ -69,13 +69,13 @@ class ListPageScreen extends StatelessWidget {
                       children: [
                         AppText(
                           result.listTitle!.title!,
-                          fontSize: 14,
+                          fontSize: 16,
                         ),
                         result.listTitle!.subtitle != null
                             ? AppText(
                                 result.listTitle!.subtitle!,
                                 color: AppColors.grey,
-                                fontSize: 12,
+                                fontSize: 14,
                               )
                             : const SizedBox()
                       ],

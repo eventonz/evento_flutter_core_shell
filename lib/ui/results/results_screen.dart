@@ -23,15 +23,12 @@ class ResultsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(ResultsScreenController());
 
-     final isLightMode = Theme.of(context).brightness == Brightness.dark;
-
-     
+    final isLightMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       backgroundColor: isLightMode
-            ? AppThemeColors.lightBackground
-            : AppThemeColors.darkBackground,
-      
+          ? AppThemeColors.lightBackground
+          : AppThemeColors.darkBackground,
       appBar: AppBar(
         backgroundColor: isLightMode
             ? AppThemeColors.lightBackground
