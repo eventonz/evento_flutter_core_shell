@@ -11,6 +11,7 @@ import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/ui/dashboard/dashboard_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../../core/models/advert.dart';
 import '../../../core/utils/api_handler.dart';
@@ -139,6 +140,19 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthlete(Entrants athelete) async {
+     if (AppGlobals.oneSignalUserId == '' ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print(
+          'Obtained OneSignal User ID: [36m${AppGlobals.oneSignalUserId}[0m');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        //Get.snackbar('Enable Notifications',
+        //    'Unable to get device ID. Please try again.');
+        return;
+      }
+    }
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,

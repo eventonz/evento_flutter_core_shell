@@ -19,7 +19,7 @@ void main() {
    appName: 'Single Event App',
    singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
    //configUrl: 'https://evento-nz.fra1.cdn.digitaloceanspaces.com/config/91.json',
-   singleEventId: '91',
+   singleEventId: '121',
    splashImage: 'assets/images/splash_image.png',
  );
 
