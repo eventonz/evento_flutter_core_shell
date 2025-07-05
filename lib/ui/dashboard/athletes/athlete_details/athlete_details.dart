@@ -296,147 +296,107 @@ class AthleteDetailsScreen extends StatelessWidget {
                                           ? controller.selEntrant!.athleteId
                                           : controller.selEntrantA!.id),
                                   builder: (_, snap) {
-                                    //print('snap ${controller.selEntrant.athleteId} ${snap.data}');
                                     final isFollowed =
                                         snap.data?.isFollowed ?? false;
                                     return Column(
                                       children: [
-                                        if ((Get.arguments?['can_follow']) !=
-                                            false)
-                                          AnimatedContainer(
-                                            width: double.infinity,
-                                            curve: Curves.easeInOut,
-                                            margin: const EdgeInsets.symmetric(
-                                                horizontal: 16),
-                                            duration: const Duration(
-                                                milliseconds: 200),
-                                            decoration: BoxDecoration(
-                                                color: !(controller.selEntrant
-                                                            ?.canFollow ??
-                                                        controller.selEntrantA
-                                                            ?.canFollow ??
-                                                        false)
-                                                    ? Theme.of(context)
-                                                        .disabledColor
-                                                    : (isFollowed
-                                                        ? AppColors.transparent
-                                                        : Theme.of(context).brightness ==
+                                        AnimatedContainer(
+                                          width: double.infinity,
+                                          curve: Curves.easeInOut,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 16),
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          decoration: BoxDecoration(
+                                              color: isFollowed
+                                                  ? AppColors.transparent
+                                                  : Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? AppColors.accentDark
+                                                      : AppColors.accentLight,
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Theme.of(context)
+                                                              .brightness ==
+                                                          Brightness.light
+                                                      ? AppColors.accentDark
+                                                      : AppColors.accentLight,
+                                                  width: 0.4)),
+                                          child: CupertinoButton(
+                                              padding: const EdgeInsets.all(0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    isFollowed
+                                                        ? Icons.star
+                                                        : Icons.star_outline,
+                                                    color: isFollowed
+                                                        ? Theme.of(context)
+                                                                    .brightness ==
                                                                 Brightness.light
                                                             ? AppColors
                                                                 .accentDark
                                                             : AppColors
-                                                                .accentLight),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                border: !(controller.selEntrant
-                                                            ?.canFollow ??
-                                                        controller.selEntrantA
-                                                            ?.canFollow ??
-                                                        false)
-                                                    ? null
-                                                    : Border.all(
-                                                        color: Theme.of(context)
+                                                                .accentLight
+                                                        : AppColors.white,
+                                                    size: 18,
+                                                  ),
+                                                  const SizedBox(
+                                                    width: 10,
+                                                  ),
+                                                  AppText(
+                                                    isFollowed
+                                                        ? AppLocalizations.of(
+                                                                context)!
+                                                            .following
+                                                        : AppLocalizations.of(
+                                                                context)!
+                                                            .follow,
+                                                    fontSize: 14,
+                                                    color: isFollowed
+                                                        ? Theme.of(context)
                                                                     .brightness ==
                                                                 Brightness.light
-                                                            ? AppColors.accentDark
-                                                            : AppColors.accentLight,
-                                                        width: 0.4)),
-                                            child: CupertinoButton(
-                                                padding:
-                                                    const EdgeInsets.all(0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Icon(
-                                                      isFollowed
-                                                          ? Icons.star
-                                                          : Icons.star_outline,
-                                                      color: isFollowed
-                                                          ? Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? AppColors
-                                                                  .accentDark
-                                                              : AppColors
-                                                                  .accentLight
-                                                          : AppColors.white,
-                                                      size: 18,
-                                                    ),
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                    AppText(
-                                                      isFollowed
-                                                          ? AppLocalizations.of(
-                                                                  context)!
-                                                              .following
-                                                          : AppLocalizations.of(
-                                                                  context)!
-                                                              .follow,
-                                                      fontSize: 14,
-                                                      color: isFollowed
-                                                          ? Theme.of(context)
-                                                                      .brightness ==
-                                                                  Brightness
-                                                                      .light
-                                                              ? AppColors
-                                                                  .accentDark
-                                                              : AppColors
-                                                                  .accentLight
-                                                          : AppColors.white,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                  ],
-                                                ),
-                                                onPressed: (!(controller
-                                                            .selEntrant
-                                                            ?.canFollow ??
-                                                        controller.selEntrantA
-                                                            ?.canFollow ??
-                                                        false))
-                                                    ? null
-                                                    : () {
-                                                        print('akk2');
-                                                        //final detailsController = Get.put(AthletesController());
-                                                        // detailsController.insertAthlete(
-                                                        //     snap.data!, isFollowed);
-                                                        if (Get.arguments[
-                                                                'on_follow'] !=
-                                                            null) {
-                                                          print('akk');
-                                                          Get.arguments[
-                                                              'on_follow']!(controller
-                                                                  .selEntrant
-                                                                  ?.canFollow ??
-                                                              controller
-                                                                  .selEntrantA
-                                                                  ?.canFollow);
-                                                        }
-                                                      }),
-                                          ),
-                                        if ((Get.arguments?['can_follow']) !=
-                                            false)
-                                          if (!(controller
-                                                  .selEntrant?.canFollow ??
-                                              controller
-                                                  .selEntrantA?.canFollow ??
-                                              false))
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 4.0,
-                                                  right: 4.0,
-                                                  top: 4.0),
-                                              child: Text(
-                                                AppLocalizations.of(context)!
-                                                    .followNotAvailableUntilRaceNumberIsAssigned,
-                                                style: TextStyle(
-                                                  fontSize: 10,
-                                                ),
+                                                            ? AppColors
+                                                                .accentDark
+                                                            : AppColors
+                                                                .accentLight
+                                                        : AppColors.white,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ],
                                               ),
-                                            ),
+                                              onPressed: () {
+                                                if (controller.selEntrant !=
+                                                    null) {
+                                                  controller.updateAthlete(
+                                                      controller.selEntrant!,
+                                                      isFollowed);
+                                                  if (Get.arguments[
+                                                          'on_follow'] !=
+                                                      null) {
+                                                    Get.arguments['on_follow']!(
+                                                        controller.selEntrant!);
+                                                  }
+                                                } else if (controller
+                                                        .selEntrantA !=
+                                                    null) {
+                                                  // If Entrants object is used
+                                                  // You may need to implement updateAthlete for Entrants if not present
+                                                  // For now, just call the callback
+                                                  if (Get.arguments[
+                                                          'on_follow'] !=
+                                                      null) {
+                                                    Get.arguments['on_follow']!(
+                                                        controller
+                                                            .selEntrantA!);
+                                                  }
+                                                }
+                                              }),
+                                        ),
                                         const SizedBox(
                                           height: 16,
                                         ),
