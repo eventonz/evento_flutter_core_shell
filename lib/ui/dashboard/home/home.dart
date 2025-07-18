@@ -153,7 +153,7 @@ class HomeScreen extends StatelessWidget {
                                       image: DecorationImage(
                                           image: shortcut.image!
                                                   .startsWith('http')
-                                              ? NetworkImage(shortcut.image!)
+                                              ? CachedNetworkImageProvider(shortcut.image!)
                                               : AssetImage(AppHelper.getImage(
                                                       shortcut.image! + '.png'))
                                                   as ImageProvider,
