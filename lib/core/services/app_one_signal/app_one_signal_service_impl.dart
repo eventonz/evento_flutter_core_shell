@@ -18,6 +18,7 @@ import '../../models/app_config.dart';
 
 class AppOneSignalImpl implements AppOneSignal {
   final appLinks = AppLinks();
+  bool _isInitialized = false;
 
   AppOneSignalImpl() {
     // Do not call init() here. Initialization will be triggered manually.
@@ -48,10 +49,16 @@ class AppOneSignalImpl implements AppOneSignal {
   }
 
   Future<void> initializeOneSignal() async {
+    if (_isInitialized) {
+      print('OneSignal already initialized, skipping...');
+      return;
+    }
+
     await Future.delayed(const Duration(seconds: 1));
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(AppGlobals.appEventConfig.oneSignalId);
-    OneSignal.Notifications.requestPermission(true);
+    OneSignal.Notifications.requestPermission(false);
+    _isInitialized = true;
 
     OneSignal.Notifications.addClickListener((event) async {
       debugPrint(

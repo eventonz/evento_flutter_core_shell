@@ -1089,7 +1089,6 @@ class TrackingController extends GetxController
   }
 
   updateAthleteMarkers() async {
-    print('updateAthleteMarkers');
     for (var trackDetail in athleteTrackDetails.value) {
       final routePath = getAthleteRouthPath(trackDetail);
       if (routePath.isNotEmpty) {
