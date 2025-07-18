@@ -1,4 +1,5 @@
 import 'package:evento_core/ui/assistant/assistant.dart';
+import 'package:evento_core/ui/assistant/assistantv2.dart';
 import 'package:evento_core/ui/dashboard/athletes/athlete_details/athlete_details.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:evento_core/ui/carousel/carousel.dart';
@@ -80,6 +81,10 @@ class PageRouter {
     GetPage(
       name: Routes.assistant,
       page: () => const AssistantScreen(),
+    ),
+    GetPage(
+      name: Routes.assistantv2,
+      page: () => const AssistantV2Screen(),
     ),
     GetPage(
       name: Routes.storySlider,

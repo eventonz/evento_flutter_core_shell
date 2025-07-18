@@ -100,6 +100,9 @@ class MoreController extends GetxController {
     } else if (itemType == 'assistant') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.assistant, arguments: {AppKeys.moreItem: item});
+    } else if (itemType == 'assistantv2') {
+      // DatabaseHandler.removeAllChatMessages();
+      Get.toNamed(Routes.assistantv2, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'storyslider') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item, 'slides' : sliders});

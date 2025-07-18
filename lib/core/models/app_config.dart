@@ -388,6 +388,7 @@ class Items {
   int? id;
   String? sourceId;
   String? prefixprompt;
+  String? assistantId;
   Endpoint? storySlider;
   Endpoint? link;
   Endpoint? pages;
@@ -408,6 +409,7 @@ class Items {
       this.prefixprompt,
       this.id,
       this.sourceId,
+      this.assistantId,
       this.link,
       this.pages,
       this.storySlider,
@@ -429,6 +431,7 @@ class Items {
     linkToDetail = json['opens_athlete_detail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];
+    assistantId = json['assistant_id'];
     listEvents = (json['list_events'] as List?)?.map((e) => e as int).toList();
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
     pages = json['pages'] != null ? Endpoint.fromJson(json['pages']) : null;
@@ -457,6 +460,7 @@ class Items {
     data['linktodetail'] = linkToDetail;
     data['id'] = id;
     data['sourceId'] = sourceId;
+    data['assistant_id'] = assistantId;
     if (link != null) {
       data['link'] = link!.toJson();
     }
