@@ -393,6 +393,7 @@ class DashboardController extends GetxController {
 
   void goBack() {
     Preferences.setString(AppKeys.eventUrl, '');
+    Preferences.setString(AppKeys.localConfig, '{}');
     Get.off(
       () => const EventsScreen(),
       routeName: Routes.events,

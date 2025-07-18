@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/event_info.dart';
 import 'package:evento_core/core/overlays/progress_dialog.dart';
@@ -137,6 +139,7 @@ void onSearch(String val) {
     try {
       final res = await ApiHandler.genericGetHttp(url: event.config);
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
+      Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
       Preferences.setInt(AppKeys.configLastUpdated,
           AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
       final accentColors = AppGlobals.appConfig!.theme!.accent;
