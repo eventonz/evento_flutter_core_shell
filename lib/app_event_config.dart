@@ -12,6 +12,7 @@ class AppEventConfig {
     this.multiEventListId,
     this.isTimer,
     this.searchbarcolor,
+    this.appId,
   });
 
   final String appName;
@@ -24,4 +25,5 @@ class AppEventConfig {
   final String? multiEventListId;
   final bool? isTimer;
   final Color? searchbarcolor;
+  final int? appId;
 }
