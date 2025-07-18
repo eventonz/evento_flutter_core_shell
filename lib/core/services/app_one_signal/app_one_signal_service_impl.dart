@@ -112,11 +112,13 @@ class AppOneSignalImpl implements AppOneSignal {
     String userId = '';
     await Preferences.init();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Get the actual OneSignal User ID
       userId = OneSignal.User.pushSubscription.id ?? '';
       if (userId.isNotEmpty) {
         await Preferences.setString(AppKeys.oneSingleUserId, userId);
         AppGlobals.oneSignalUserId = userId;
       } else {
+        // Fallback to stored user ID if OneSignal ID is not available
         userId = Preferences.getString(AppKeys.oneSingleUserId, '');
         AppGlobals.oneSignalUserId = userId;
       }

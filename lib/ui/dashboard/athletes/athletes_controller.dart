@@ -4,6 +4,7 @@ import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -140,7 +141,7 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthlete(Entrants athelete) async {
-     if (AppGlobals.oneSignalUserId == '' ||
+    if (AppGlobals.oneSignalUserId == '' ||
         AppGlobals.oneSignalUserId.isEmpty) {
       String? userId = OneSignal.User.pushSubscription.id;
       AppGlobals.oneSignalUserId = userId ?? '';
@@ -186,7 +187,7 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthleteA(AppAthleteDb athelete) async {
-     if (AppGlobals.oneSignalUserId == null ||
+    if (AppGlobals.oneSignalUserId == null ||
         AppGlobals.oneSignalUserId.isEmpty) {
       String? userId = OneSignal.User.pushSubscription.id;
       AppGlobals.oneSignalUserId = userId ?? '';
@@ -198,7 +199,6 @@ class AthletesController extends GetxController {
         return;
       }
     }
-
 
     final data = {
       'event_id': AppGlobals.selEventId,
@@ -217,8 +217,7 @@ class AthletesController extends GetxController {
   }
 
   Future<void> unfollowAthleteA(AppAthleteDb athelete) async {
-
-     if (AppGlobals.oneSignalUserId == null ||
+    if (AppGlobals.oneSignalUserId == null ||
         AppGlobals.oneSignalUserId.isEmpty) {
       String? userId = OneSignal.User.pushSubscription.id;
       AppGlobals.oneSignalUserId = userId ?? '';
