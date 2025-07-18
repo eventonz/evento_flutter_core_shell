@@ -193,8 +193,8 @@ class Shortcuts {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['small'] = small?.map((e) => e.toJson());
-    data['large'] = large?.map((e) => e.toJson());
+    data['small'] = small?.map((e) => e.toJson()).toList();
+    data['large'] = large?.map((e) => e.toJson()).toList();
     return data;
   }
 }

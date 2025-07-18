@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
@@ -98,6 +100,8 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       return false;
     }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
+
+    Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
 
     //AppGlobals.oldAppConfig ??= AppConfig.fromJson(res.data);
 

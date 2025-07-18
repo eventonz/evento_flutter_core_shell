@@ -1,17 +1,17 @@
 class AthleteLeaderboardResponse {
-  final int currentPage;
+  final int? currentPage;
   final List<AthleteResult> data;
   final String firstPageUrl;
-  final int from;
-  final int lastPage;
-  final String lastPageUrl;
-  final List<PageLink> links;
-  final String nextPageUrl;
-  final String path;
-  final int perPage;
+  final int? from;
+  final int? lastPage;
+  final String? lastPageUrl;
+  final List<PageLink>? links;
+  final String? nextPageUrl;
+  final String? path;
+  final int? perPage;
   final String? prevPageUrl;
-  final int to;
-  final int total;
+  final int? to;
+  final int? total;
 
   AthleteLeaderboardResponse({
     required this.currentPage,

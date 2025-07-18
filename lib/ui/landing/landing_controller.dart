@@ -43,64 +43,6 @@ class LandingController extends GetxController {
     if (res != null) {
       isPrev = true;
     }
-    //setupDeepLinkListener();
-  }
-
-  void setupDeepLinkListener() {
-    Logger.i('Setting up deep link listener');
-    final appLinks = AppLinks();
-
-    // Handle initial deep link
-    appLinks.getInitialLink().then((Uri? initialLink) {
-      if (initialLink != null) {
-        Logger.i('Received initial deep link: ${initialLink.path}');
-        handleDeepLink(initialLink);
-      }
-    }).catchError((e) {
-      Logger.e('Error getting initial deep link: $e');
-    });
-
-    // Listen for incoming deep links
-    appLinks.uriLinkStream.listen((Uri? link) {
-      if (link != null) {
-        Logger.i('Received deep link: ${link.path}');
-        handleDeepLink(link);
-      }
-    }, onError: (error) {
-      Logger.e('Error listening to deep links: $error');
-    });
-  }
-
-  void handleDeepLink(Uri uri) async {
-    Logger.i('Processing deep link: $uri');
-    final path = uri.path;
-
-    if (path.contains('/event_id/')) {
-      try {
-        final eventId = path.substring(
-            path.indexOf('event_id/') + 9, path.indexOf('/athlete/'));
-        final athleteId = path.split('/athlete/')[1];
-
-        Logger.i(
-            'Deep link contains event_id: $eventId and athlete_id: $athleteId');
-
-        // Store the event ID
-        AppGlobals.selEventId = int.parse(eventId);
-        await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
-
-        // First navigate to dashboard to show event context
-        Logger.i('Navigating to dashboard for event: $eventId');
-        await Get.offAllNamed(Routes.dashboard);
-
-        // Then navigate to athlete details
-        Logger.i('Navigating to athlete details for athlete: $athleteId');
-        Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
-      } catch (e) {
-        Logger.e('Error processing deep link: $e');
-      }
-    } else {
-      Logger.w('Deep link path does not contain expected pattern: $path');
-    }
   }
 
   @override
@@ -134,7 +76,12 @@ class LandingController extends GetxController {
     if ((!result.contains(ConnectivityResult.wifi) &&
         !result.contains(ConnectivityResult.mobile) &&
         !result.contains(ConnectivityResult.ethernet))) {
-      noConnection.value = true;
+      await Preferences.init();
+      if(Preferences.getString(AppKeys.localConfig, '{}') == '{}') {
+        noConnection.value = true;
+      } else {
+        navigate();
+      }
       update();
     } else {
       navigate();
@@ -314,8 +261,19 @@ class LandingController extends GetxController {
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {
-    final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
-    AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    var config = Preferences.getString(AppKeys.localConfig, '{}');
+    AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(config));
+    try {
+      final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
+      if(res.statusCode != 200) {
+        throw Exception('error');
+      }
+      AppGlobals.appConfig = AppConfig.fromJson(res.data);
+      Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+    } catch (e) {
+      print(e);
+    }
+
     Preferences.setInt(AppKeys.configLastUpdated,
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
