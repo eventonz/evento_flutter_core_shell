@@ -38,8 +38,16 @@ class AssistantV2Controller extends GetxController {
     super.onInit();
     final res = Get.arguments;
     item = res[AppKeys.moreItem];
-    loadAssistantConfig();
-    loadPreviousMessages();
+    initializeAssistant();
+  }
+
+  Future<void> initializeAssistant() async {
+    // First load the config
+    await loadAssistantConfig();
+    // Then load previous messages and add default message
+    await loadPreviousMessages();
+    // Add default message after both config and messages are loaded
+    addDefaultMessage();
   }
 
   Future<void> loadAssistantConfig() async {
@@ -67,10 +75,9 @@ class AssistantV2Controller extends GetxController {
     }
   }
 
-  void loadPreviousMessages() async {
+  Future<void> loadPreviousMessages() async {
     chatMessages.clear();
     chatMessages.addAll(await DatabaseHandler.getAllChatMessages());
-    addDefaultMessage();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       scrollController.jumpTo(scrollController.position.maxScrollExtent);
     });
@@ -80,7 +87,8 @@ class AssistantV2Controller extends GetxController {
     if (chatMessages.isEmpty) {
       final defaultMessage = ChatMessageM(
           role: 'assistant',
-          content: assistantConfig['welcome_message'] ??
+          content: assistantConfig['initialMessage'] ??
+              assistantConfig['welcome_message'] ??
               AppLocalizations.of(Get.context!)!.defaultAssistantMessage);
       chatMessages.add(defaultMessage);
       DatabaseHandler.insertChatMessage(defaultMessage);
@@ -125,7 +133,8 @@ class AssistantV2Controller extends GetxController {
   Future<Map<String, dynamic>> callServer(String message) async {
     try {
       final response = await ApiHandler.postHttp(
-          baseUrl: 'https://ai.evento.co.nz/api/assistants/${item.assistantId}/chat',
+          baseUrl:
+              'https://ai.evento.co.nz/api/assistants/${item.assistantId}/chat',
           endPoint: '',
           body: {'message': message, 'messages': []},
           timeout: 30);
@@ -139,7 +148,22 @@ class AssistantV2Controller extends GetxController {
 
   void sendMessage() async {
     try {
-      if (messageText.value.isEmpty) return;
+      // Input validation and sanitization
+      if (messageText.value.isEmpty || messageText.value.trim().isEmpty) {
+        ToastUtils.show('Please enter a message');
+        return;
+      }
+
+      // Sanitize input - remove excessive whitespace and special characters that might cause issues
+      final sanitizedInput =
+          messageText.value.trim().replaceAll(RegExp(r'\s+'), ' ');
+
+      // Check for potentially problematic inputs
+      if (sanitizedInput.length > 1000) {
+        ToastUtils.show(
+            'Message is too long. Please keep it under 1000 characters.');
+        return;
+      }
 
       // Check if assistant is active before sending message
       if (!isAssistantActive.value) {
@@ -148,7 +172,7 @@ class AssistantV2Controller extends GetxController {
       }
 
       // Store the message before clearing
-      final userInput = messageText.value;
+      final userInput = sanitizedInput;
 
       // Add user message to chat
       final userMessage = ChatMessageM(
@@ -165,45 +189,17 @@ class AssistantV2Controller extends GetxController {
       // Show loading indicator
       assistantResponseSnapshot.value = DataSnapShot.loading;
 
-      // ===== IMAGE DETECTION FEATURE - COMMENT OUT TO DISABLE =====
-      // Check if user message contains "image" keyword
-      print('DEBUG: User input: "$userInput"');
-      print('DEBUG: Contains image: ${userInput.toLowerCase().contains('image')}');
-      
-      if (userInput.toLowerCase().contains('image')) {
-        print('DEBUG: Image detected! Returning random image response');
-        // Return a random image response
-        final randomImages = [
-          'https://picsum.photos/400/300?random=1',
-          'https://picsum.photos/400/300?random=2',
-          'https://picsum.photos/400/300?random=3',
-          'https://picsum.photos/400/300?random=4',
-          'https://picsum.photos/400/300?random=5',
-        ];
-        
-        final randomImage = randomImages[DateTime.now().millisecond % randomImages.length];
-        print('DEBUG: Selected random image: $randomImage');
-        
-        final assistantMessage = ChatMessageM(
-            role: 'assistant',
-            content: 'Here\'s a random image for you!\n\n![Random Image]($randomImage)');
-        chatMessages.add(assistantMessage);
-        DatabaseHandler.insertChatMessage(assistantMessage);
-      } else {
-        print('DEBUG: No image keyword found, calling AI API');
-        // Call the new assistant API
-        final response = await callServer(userInput);
+      // Call the new assistant API
+      final response = await callServer(userInput);
 
-        // Add assistant response to chat
-        final assistantMessage = ChatMessageM(
-            role: 'assistant',
-            content: response['response'] ??
-                response['message'] ??
-                'No response received');
-        chatMessages.add(assistantMessage);
-        DatabaseHandler.insertChatMessage(assistantMessage);
-      }
-      // ===== END IMAGE DETECTION FEATURE =====
+      // Add assistant response to chat
+      final assistantMessage = ChatMessageM(
+          role: 'assistant',
+          content: response['response'] ??
+              response['message'] ??
+              'No response received');
+      chatMessages.add(assistantMessage);
+      DatabaseHandler.insertChatMessage(assistantMessage);
 
       assistantResponseSnapshot.value = DataSnapShot.loaded;
       scrollToBottom();

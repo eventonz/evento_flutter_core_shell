@@ -79,8 +79,22 @@ class AssistantV2Screen extends StatelessWidget {
                       Flexible(
                           child: TextField(
                         controller: controller.messageTextEditingController,
-                        onChanged: (value) =>
-                            controller.messageText.value = value,
+                        onChanged: (value) {
+                          // Sanitize input to prevent keyboard issues
+                          final sanitizedValue =
+                              value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
+                          controller.messageText.value = sanitizedValue;
+                        },
+                        onSubmitted: (value) {
+                          // Handle Enter key press safely
+                          if (value.trim().isNotEmpty) {
+                            controller.sendMessage();
+                          }
+                        },
+                        maxLength: 1000, // Prevent extremely long messages
+                        minLines: 1, // Start with 1 line
+                        maxLines: 5, // Expand up to 5 lines
+                        textInputAction: TextInputAction.send,
                         decoration: InputDecoration(
                             hintText:
                                 '${AppLocalizations.of(context)!.askAQuestion}...',
@@ -89,7 +103,9 @@ class AssistantV2Screen extends StatelessWidget {
                                         Brightness.light
                                     ? AppColors.white
                                     : AppColors.darkBlack),
-                            border: InputBorder.none),
+                            border: InputBorder.none,
+                            counterText: '', // Hide character counter
+                            errorMaxLines: 1),
                       )),
                       SizedBox(
                         width: 2.w,
