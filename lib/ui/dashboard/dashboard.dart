@@ -13,182 +13,243 @@ import '../../evento_app.dart';
 import '../../youtube_player_flutter/src/player/youtube_player.dart';
 import 'athletes/athletes_controller.dart';
 import 'dashboard_controller.dart';
+import 'home/home_controller.dart';
+import 'more/more_controller.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
 
   _play(MiniPlayerConfig config) {
     Get.toNamed(Routes.miniplayer, arguments: {
-      'config' : config,
+      'config': config,
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
-    //final controllerA = Get.put(AthletesController());
 
-    if(!notificationHandlerController.isClosed) {
+    // Ensure all required controllers are initialized
+    if (!Get.isRegistered<HomeController>()) {
+      Get.put(HomeController());
+    }
+    if (!Get.isRegistered<MoreController>()) {
+      Get.put(MoreController());
+    }
+    if (!Get.isRegistered<AthletesController>()) {
+      Get.put(AthletesController());
+    }
+
+    if (!notificationHandlerController.isClosed) {
       notificationHandlerController.add(true);
     }
 
-    if(controller.miniPlayerConfig.value != null) {
+    if (controller.miniPlayerConfig.value != null) {
       controller.setMiniPlayerConfig(AppGlobals.appConfig!.miniPlayerConfig);
     }
 
     Get.put(TrackingController());
     return Scaffold(
-        body: controller.webViewController != null ? Stack(
-          children: [
-            WebViewWidget(controller: controller.webViewController!),
-            Obx(() => Visibility(
-              visible: controller.selMenu.value == controller.menus.first &&
-                  AppGlobals.appEventConfig.multiEventListId != null,
-              child: SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: CircleAvatar(
-                    radius: 22,
-                    backgroundColor:
-                    Theme.of(context).brightness == Brightness.light
-                        ? AppColors.black.withOpacity(0.8)
-                        : AppColors.white.withOpacity(0.8),
-                    child: IconButton(
-                      onPressed: controller.goBack,
-                      color:
-                      Theme.of(context).brightness == Brightness.light
-                          ? AppColors.accentDark
-                          : AppColors.accentLight,
-                      icon: const Icon(Icons.arrow_circle_left_outlined),
-                    ),
-                  ),
-                ),
-              ),
-            )),
-          ],
-        ) : Stack(
-          children: [
-            Obx(() => controller.selMenu.value!.view),
-            Obx(() => Visibility(
-                  visible: controller.selMenu.value == controller.menus.first &&
-                      AppGlobals.appEventConfig.multiEventListId != null,
-                  child: SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: CircleAvatar(
-                        radius: 22,
-                        backgroundColor:
-                            Theme.of(context).brightness == Brightness.light
-                                ? AppColors.black.withOpacity(0.8)
-                                : AppColors.white.withOpacity(0.8),
-                        child: IconButton(
-                          onPressed: controller.goBack,
-                          color:
-                              Theme.of(context).brightness == Brightness.light
-                                  ? AppColors.accentDark
-                                  : AppColors.accentLight,
-                          icon: const Icon(Icons.arrow_circle_left_outlined),
-                        ),
-                      ),
-                    ),
-                  ),
-                )),
-            if(controller.miniPlayerConfig.value != null)
-            Positioned(
-              bottom: 4,
-              left: 0,
-              right: 0,
-              child: Obx(() => controller.miniPlayerConfig.value == null ? Container() : Miniplayer(backgroundColor: Colors.white, minHeight: 60, maxHeight: 265, builder: (height, percentage) {
-                  if(height == 60) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: Row(
-                        children: [
-                          Image.network('https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller
-                              .miniPlayerConfig.value!
-                              .ytUrl!)}/0.jpg', width: 91, height: 51, fit: BoxFit
-                              .cover,),
-                          Expanded(child: Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    const SizedBox(height: 10),
-                                    Text('${controller.miniPlayerConfig.value!.title ?? ''}',
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                      ), maxLines: 2, overflow: TextOverflow.ellipsis,),
-                                  ],
-                                ),
-                              )
-                            ],
-                          )),
-                          IconButton(onPressed: () {
-                            _play(controller.miniPlayerConfig.value!);
-                          }, icon: Icon(
-                            Icons.play_arrow_outlined, size: 30,)),
-                          IconButton(onPressed: () {
-                            controller.setMiniPlayerConfig(null);
-                          }, icon: Icon(
-                              Icons.close, size: 30)),
-                        ],
-                      ),
-                    );
-                  }
-                  if(height == 265) {
-                    return Stack(
-                      children: [
-                        Center(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(5),
-                                child: Image.network(
-                                  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller
-                                      .miniPlayerConfig.value!
-                                      .ytUrl!)}/0.jpg', width: MediaQuery
-                                    .of(context)
-                                    .size
-                                    .width * 0.6, height: 140, fit: BoxFit
-                                    .cover,),
+        body: controller.webViewController != null
+            ? Stack(
+                children: [
+                  WebViewWidget(controller: controller.webViewController!),
+                  Obx(() => Visibility(
+                        visible: controller.selMenu.value ==
+                                controller.menus.first &&
+                            AppGlobals.appEventConfig.multiEventListId != null,
+                        child: SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.black.withOpacity(0.8)
+                                  : AppColors.white.withOpacity(0.8),
+                              child: IconButton(
+                                onPressed: controller.goBack,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.accentDark
+                                    : AppColors.accentLight,
+                                icon: const Icon(
+                                    Icons.arrow_circle_left_outlined),
                               ),
-                              const SizedBox(height: 4),
-                              IconButton(onPressed: () {
-                                _play(controller.miniPlayerConfig.value!);
-                              }, icon: Icon(
-                                Icons.play_arrow_outlined, size: 34,)),
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: Text('Play ${controller.miniPlayerConfig.value!.title ?? ''}',
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                    ),),
-                                ),
-                              ),
-                            ],
+                            ),
                           ),
                         ),
-                        Positioned(
-                          right: 4,
-                          top: 4,
-                          child: IconButton(onPressed: () {
-                            controller.setMiniPlayerConfig(null);
-                          }, icon: Icon(
-                            Icons.close, size: 28,)),
+                      )),
+                ],
+              )
+            : Stack(
+                children: [
+                  Obx(() => controller.selMenu.value!.view),
+                  Obx(() => Visibility(
+                        visible: controller.selMenu.value ==
+                                controller.menus.first &&
+                            AppGlobals.appEventConfig.multiEventListId != null,
+                        child: SafeArea(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: CircleAvatar(
+                              radius: 22,
+                              backgroundColor: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.black.withOpacity(0.8)
+                                  : AppColors.white.withOpacity(0.8),
+                              child: IconButton(
+                                onPressed: controller.goBack,
+                                color: Theme.of(context).brightness ==
+                                        Brightness.light
+                                    ? AppColors.accentDark
+                                    : AppColors.accentLight,
+                                icon: const Icon(
+                                    Icons.arrow_circle_left_outlined),
+                              ),
+                            ),
+                          ),
                         ),
-                      ],
-                    );
-                  }
-                  return Container();
-                }),
+                      )),
+                  if (controller.miniPlayerConfig.value != null)
+                    Positioned(
+                      bottom: 4,
+                      left: 0,
+                      right: 0,
+                      child: Obx(
+                        () => controller.miniPlayerConfig.value == null
+                            ? Container()
+                            : Miniplayer(
+                                backgroundColor: Colors.white,
+                                minHeight: 60,
+                                maxHeight: 265,
+                                builder: (height, percentage) {
+                                  if (height == 60) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Row(
+                                        children: [
+                                          Image.network(
+                                            'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller.miniPlayerConfig.value!.ytUrl!)}/0.jpg',
+                                            width: 91,
+                                            height: 51,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          Expanded(
+                                              child: Row(
+                                            children: [
+                                              const SizedBox(width: 16),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    const SizedBox(height: 10),
+                                                    Text(
+                                                      '${controller.miniPlayerConfig.value!.title ?? ''}',
+                                                      style: TextStyle(
+                                                        fontSize: 13,
+                                                      ),
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                ),
+                                              )
+                                            ],
+                                          )),
+                                          IconButton(
+                                              onPressed: () {
+                                                _play(controller
+                                                    .miniPlayerConfig.value!);
+                                              },
+                                              icon: Icon(
+                                                Icons.play_arrow_outlined,
+                                                size: 30,
+                                              )),
+                                          IconButton(
+                                              onPressed: () {
+                                                controller
+                                                    .setMiniPlayerConfig(null);
+                                              },
+                                              icon:
+                                                  Icon(Icons.close, size: 30)),
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                  if (height == 265) {
+                                    return Stack(
+                                      children: [
+                                        Center(
+                                          child: Column(
+                                            children: [
+                                              const SizedBox(height: 20),
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                child: Image.network(
+                                                  'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(controller.miniPlayerConfig.value!.ytUrl!)}/0.jpg',
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      0.6,
+                                                  height: 140,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 4),
+                                              IconButton(
+                                                  onPressed: () {
+                                                    _play(controller
+                                                        .miniPlayerConfig
+                                                        .value!);
+                                                  },
+                                                  icon: Icon(
+                                                    Icons.play_arrow_outlined,
+                                                    size: 34,
+                                                  )),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 12.0),
+                                                  child: Text(
+                                                    'Play ${controller.miniPlayerConfig.value!.title ?? ''}',
+                                                    style: TextStyle(
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Positioned(
+                                          right: 4,
+                                          top: 4,
+                                          child: IconButton(
+                                              onPressed: () {
+                                                controller
+                                                    .setMiniPlayerConfig(null);
+                                              },
+                                              icon: Icon(
+                                                Icons.close,
+                                                size: 28,
+                                              )),
+                                        ),
+                                      ],
+                                    );
+                                  }
+                                  return Container();
+                                }),
+                      ),
+                    ),
+                ],
               ),
-            ),
-          ],
-        ),
-        bottomNavigationBar: controller.webViewController != null ? null : const AppBottomNav());
+        bottomNavigationBar:
+            controller.webViewController != null ? null : const AppBottomNav());
   }
 }
