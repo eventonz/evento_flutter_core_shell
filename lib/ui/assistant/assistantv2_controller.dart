@@ -44,9 +44,9 @@ class AssistantV2Controller extends GetxController {
   Future<void> initializeAssistant() async {
     // First load the config
     await loadAssistantConfig();
-    // Then load previous messages and add default message
+    // Then load previous messages
     await loadPreviousMessages();
-    // Add default message after both config and messages are loaded
+    // Add default message after config is loaded so we can use the config values
     addDefaultMessage();
   }
 
@@ -54,12 +54,19 @@ class AssistantV2Controller extends GetxController {
     try {
       configSnapshot.value = DataSnapShot.loading;
 
-      // Get assistant configuration from the new API endpoint
+      // Get the base URL from config or use default
+      final baseUrl = item.assistantBaseUrl ?? 'https://eventochat.com';
+
+      // Get assistant configuration from the public config endpoint
       final response = await ApiHandler.genericGetHttp(
-          url:
-              'https://ai.evento.co.nz/api/assistants/${item.assistantId}/config');
+          url: '$baseUrl/api/assistants/${item.assistantId}/public-config');
 
       assistantConfig.value = response.data;
+
+      // Debug: Log the response data to see what we're getting
+      print('Assistant config response: ${response.data}');
+      print('Status field: ${response.data['status']}');
+
       isAssistantActive.value = response.data['status'] == 'active';
 
       configSnapshot.value = DataSnapShot.loaded;
@@ -85,11 +92,21 @@ class AssistantV2Controller extends GetxController {
 
   void addDefaultMessage() {
     if (chatMessages.isEmpty) {
+      // Debug: Log what we're getting from config
+      print('Config for initial message:');
+      print('  initialMessage: ${assistantConfig['initialMessage']}');
+      print('  welcome_message: ${assistantConfig['welcome_message']}');
+      print(
+          '  fallback: ${AppLocalizations.of(Get.context!)!.defaultAssistantMessage}');
+
       final defaultMessage = ChatMessageM(
           role: 'assistant',
           content: assistantConfig['initialMessage'] ??
               assistantConfig['welcome_message'] ??
               AppLocalizations.of(Get.context!)!.defaultAssistantMessage);
+
+      print('Final initial message content: ${defaultMessage.content}');
+
       chatMessages.add(defaultMessage);
       DatabaseHandler.insertChatMessage(defaultMessage);
     }
@@ -131,12 +148,12 @@ class AssistantV2Controller extends GetxController {
   }
 
   Future<Map<String, dynamic>> callServer(String message) async {
+    final baseUrl = item.assistantBaseUrl ?? 'https://eventochat.com';
     try {
       final response = await ApiHandler.postHttp(
-          baseUrl:
-              'https://ai.evento.co.nz/api/assistants/${item.assistantId}/chat',
+          baseUrl: '$baseUrl/api/assistants/${item.assistantId}/chat',
           endPoint: '',
-          body: {'message': message, 'messages': []},
+          body: {'message': message, 'messages': [], 'source': 'mobile'},
           timeout: 30);
       print('Assistant response: ${response.data}');
       return response.data;
