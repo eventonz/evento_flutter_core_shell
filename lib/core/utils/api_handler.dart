@@ -52,6 +52,7 @@ class ApiHandler {
         'data': body,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,
@@ -198,6 +199,7 @@ class ApiHandler {
         'url': url,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,

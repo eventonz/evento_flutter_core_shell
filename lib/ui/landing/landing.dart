@@ -166,8 +166,12 @@ class LandingScreen extends StatelessWidget {
                   : Container(
                       width: double.infinity,
                       height: double.infinity,
-                      color: Colors.transparent,
-                      child: const SizedBox.shrink(),
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/splash_image.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
         );
       },

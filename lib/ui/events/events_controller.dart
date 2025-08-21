@@ -33,7 +33,7 @@ class EventsController extends GetxController {
 
   TextEditingController searchController = TextEditingController();
 
-  late ScrollController scrollController;
+  ScrollController? scrollController;
 
   final storage = GetStorage();
 
@@ -65,11 +65,11 @@ class EventsController extends GetxController {
         initialScrollOffset: savedPosition,
       );
       Future.delayed(const Duration(seconds: 2), () {
-        scrollController.addListener(scrollListener);
+        scrollController?.addListener(scrollListener);
       });
     } else {
       scrollController = ScrollController();
-      scrollController.addListener(scrollListener);
+      scrollController?.addListener(scrollListener);
     }
     // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
     events = eventM.events!.obs
@@ -84,8 +84,9 @@ class EventsController extends GetxController {
   }
 
   scrollListener() {
-    if (scrollController.offset >=
-            (scrollController.position.maxScrollExtent - 200) &&
+    if (scrollController?.offset != null &&
+        scrollController!.offset >=
+            (scrollController!.position.maxScrollExtent - 200) &&
         !loading.value &&
         events.length != allEvents.length) {
       loading.value = true;
@@ -126,6 +127,7 @@ class EventsController extends GetxController {
 
   @override
   void onClose() {
+    scrollController?.dispose();
     super.onClose();
   }
 
@@ -138,7 +140,9 @@ class EventsController extends GetxController {
   }
 
   void selectEvent(dynamic event) {
-    storage.write('scroll_position', scrollController.position.pixels);
+    if (scrollController != null) {
+      storage.write('scroll_position', scrollController!.position.pixels);
+    }
     if (event is Event) {
       if (event.subEvents == null) {
         getConfigDetails(event);

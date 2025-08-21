@@ -64,8 +64,6 @@ class LandingController extends GetxController {
   }
 
   checkConnection() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-
     var result = await connectivity.checkConnectivity();
 
     if ((!result.contains(ConnectivityResult.wifi) &&
@@ -98,10 +96,9 @@ class LandingController extends GetxController {
       () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 300),
       arguments: const {'is_prev': true, 'is_deeplink': true},
     );
-    await Future.delayed(const Duration(milliseconds: 2000));
     Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
   }
 
@@ -110,7 +107,7 @@ class LandingController extends GetxController {
       () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 300),
       arguments: const {'is_prev': true},
     );
   }
@@ -174,7 +171,6 @@ class LandingController extends GetxController {
       AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
 
       checkTheme();
-      await Future.delayed(const Duration(milliseconds: 1300));
 
       if (Get.arguments?['athlete_id'] != null) {
         Get.offNamed(Routes.dashboard)?.then((_) {
