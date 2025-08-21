@@ -282,7 +282,7 @@ abstract class AppLocalizations {
   /// No description provided for @wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent.
   ///
   /// In en, this message translates to:
-  /// **'Would you like to receive event related push notification for this event'**
+  /// **'Would you like to receive event related push notifications for this event'**
   String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent;
 
   /// No description provided for @noThanks.
