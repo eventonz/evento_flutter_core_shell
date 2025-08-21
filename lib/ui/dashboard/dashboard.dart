@@ -13,8 +13,6 @@ import '../../evento_app.dart';
 import '../../youtube_player_flutter/src/player/youtube_player.dart';
 import 'athletes/athletes_controller.dart';
 import 'dashboard_controller.dart';
-import 'home/home_controller.dart';
-import 'more/more_controller.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -28,17 +26,6 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(DashboardController());
-
-    // Ensure all required controllers are initialized
-    if (!Get.isRegistered<HomeController>()) {
-      Get.put(HomeController());
-    }
-    if (!Get.isRegistered<MoreController>()) {
-      Get.put(MoreController());
-    }
-    if (!Get.isRegistered<AthletesController>()) {
-      Get.put(AthletesController());
-    }
 
     if (!notificationHandlerController.isClosed) {
       notificationHandlerController.add(true);

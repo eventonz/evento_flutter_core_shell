@@ -77,14 +77,26 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('DashboardController.onInit() started');
+
     eventId = Preferences.getInt(AppKeys.eventId, 0);
     AppGlobals.checkOnUserId();
+
+    // Initialize other data first with null safety
+    if (AppGlobals.appConfig?.athletes != null) {
+      entrantsList = AppGlobals.appConfig!.athletes!;
+    } else {
+      print('Warning: AppGlobals.appConfig.athletes is null');
+      return; // Exit early if critical data is missing
+    }
+
+    trackingData = AppGlobals.appConfig?.tracking;
+    resultsData = AppGlobals.appConfig?.results;
+    miniPlayerConfig.value = AppGlobals.appConfig?.miniPlayerConfig;
+
+    // Now initialize controllers after data is ready
     Get.put(HomeController());
     Get.put(MoreController());
-    entrantsList = AppGlobals.appConfig!.athletes!;
-    trackingData = AppGlobals.appConfig!.tracking;
-    resultsData = AppGlobals.appConfig!.results;
-    miniPlayerConfig.value = AppGlobals.appConfig!.miniPlayerConfig;
     final showAthletes = entrantsList.showAthletes ?? false;
     if (showAthletes) {
       menus.insert(
@@ -163,6 +175,13 @@ class DashboardController extends GetxController {
       // No splash advert will be shown
       print('DEBUG: No splash advert found, setting flag to false');
       isSplashAdvertShowing = false;
+
+      // Delay the notification prompt to avoid blocking the dashboard initialization
+      Future.delayed(const Duration(seconds: 2), () {
+        if (!isSplashAdvertShowing) {
+          showNotificationPrompt();
+        }
+      });
     }
 
     if (AppGlobals.appConfig?.menu?.items?.length == 0) {

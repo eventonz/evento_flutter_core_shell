@@ -44,24 +44,42 @@ class HomeController extends GetxController {
     }
 
     if (action == 'openTracking') {
-      final dashboard = Get.find<DashboardController>();
-      dashboard
-          .selectMenu(dashboard.menus.where((e) => e.label == 'track').first);
+      try {
+        final dashboard = Get.find<DashboardController>();
+        if (dashboard.menus.isNotEmpty) {
+          dashboard.selectMenu(
+              dashboard.menus.where((e) => e.label == 'track').first);
+        }
+      } catch (e) {
+        Logger.e('DashboardController not ready for tracking shortcut: $e');
+      }
     }
 
     if (action == 'openAthletes') {
-      final dashboard = Get.find<DashboardController>();
-      final entrantsList = AppGlobals.appConfig?.athletes;
-      dashboard.selectMenu(dashboard.menus
-          .where((e) =>
-              e.label == AppHelper.setAthleteMenuText(entrantsList?.text))
-          .first);
+      try {
+        final dashboard = Get.find<DashboardController>();
+        if (dashboard.menus.isNotEmpty) {
+          final entrantsList = AppGlobals.appConfig?.athletes;
+          dashboard.selectMenu(dashboard.menus
+              .where((e) =>
+                  e.label == AppHelper.setAthleteMenuText(entrantsList?.text))
+              .first);
+        }
+      } catch (e) {
+        Logger.e('DashboardController not ready for athletes shortcut: $e');
+      }
     }
 
     if (action == 'openResults') {
-      final dashboard = Get.find<DashboardController>();
-      dashboard
-          .selectMenu(dashboard.menus.where((e) => e.label == 'results').first);
+      try {
+        final dashboard = Get.find<DashboardController>();
+        if (dashboard.menus.isNotEmpty) {
+          dashboard.selectMenu(
+              dashboard.menus.where((e) => e.label == 'results').first);
+        }
+      } catch (e) {
+        Logger.e('DashboardController not ready for results shortcut: $e');
+      }
     }
 
     if (action == 'openURL') {

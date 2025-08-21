@@ -59,48 +59,58 @@ class EventsController extends GetxController {
       scrollController = ScrollController();
       scrollController.addListener(scrollListener);
     }
-   // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
-   events = eventM.events!.obs.sublist(
-  0, 
-  (savedPosition ?? 0.0) == 0.0 
-    ? (eventM.events!.length < 20 ? eventM.events!.length : 20) 
-    : (((savedPosition!/100).toInt()+6) >= eventM.events!.length 
-        ? eventM.events!.length 
-        : ((savedPosition!/100).toInt()+6))
-).obs;
+    // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+    events = eventM.events!.obs
+        .sublist(
+            0,
+            (savedPosition ?? 0.0) == 0.0
+                ? (eventM.events!.length < 20 ? eventM.events!.length : 20)
+                : (((savedPosition! / 100).toInt() + 6) >= eventM.events!.length
+                    ? eventM.events!.length
+                    : ((savedPosition! / 100).toInt() + 6)))
+        .obs;
   }
 
   scrollListener() {
-      
-      if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
-        loading.value = true;
-        page +=1;
+    if (scrollController.offset >=
+            (scrollController.position.maxScrollExtent - 200) &&
+        !loading.value &&
+        events.length != allEvents.length) {
+      loading.value = true;
+      page += 1;
+      update();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        loading.value = false;
+        events.addAll(allEvents.sublist(
+            (page - 1) * 20,
+            (((page - 1) * 20) + 20) > allEvents.length
+                ? allEvents.length
+                : (((page - 1) * 20) + 20)));
         update();
-        Future.delayed(const Duration(milliseconds: 300), () {
-          loading.value = false;
-          events.addAll(allEvents.sublist((page-1)*20, (((page-1)*20)+20) > allEvents.length ? allEvents.length : (((page-1)*20)+20)));
-          update();
-        });
-      }
+      });
+    }
   }
 
-void onSearch(String val) {
-  page = 1;
-  // Trim the search value to remove any leading or trailing whitespace
-  String trimmedVal = val.trim();
-  
-  if (trimmedVal.isNotEmpty) {
-    // Filter events based on the trimmed search value
-    events.value = allEvents.where((element) => element.title.toLowerCase().contains(trimmedVal.toLowerCase())).toList();
-  } else {
-    // Ensure the range for sublist is within bounds
-    int endIndex = allEvents.length < 20 ? allEvents.length : 20;
-    events.value = allEvents.sublist(0, endIndex).toList();
+  void onSearch(String val) {
+    page = 1;
+    // Trim the search value to remove any leading or trailing whitespace
+    String trimmedVal = val.trim();
+
+    if (trimmedVal.isNotEmpty) {
+      // Filter events based on the trimmed search value
+      events.value = allEvents
+          .where((element) =>
+              element.title.toLowerCase().contains(trimmedVal.toLowerCase()))
+          .toList();
+    } else {
+      // Ensure the range for sublist is within bounds
+      int endIndex = allEvents.length < 20 ? allEvents.length : 20;
+      events.value = allEvents.sublist(0, endIndex).toList();
+    }
+
+    update();
+    events.refresh();
   }
-  
-  update();
-  events.refresh();
-}
 
   @override
   void onClose() {
@@ -139,7 +149,8 @@ void onSearch(String val) {
     try {
       final res = await ApiHandler.genericGetHttp(url: event.config);
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
-      Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+      Preferences.setString(
+          AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
       Preferences.setInt(AppKeys.configLastUpdated,
           AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
       final accentColors = AppGlobals.appConfig!.theme!.accent;
@@ -147,6 +158,7 @@ void onSearch(String val) {
       AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);
       ProgressDialogUtils.dismiss();
       saveEventSelection(event);
+
       toLanding();
     } catch (e) {
       debugPrint(e.toString());
