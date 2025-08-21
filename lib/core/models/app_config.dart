@@ -193,8 +193,8 @@ class Shortcuts {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['small'] = small?.map((e) => e.toJson());
-    data['large'] = large?.map((e) => e.toJson());
+    data['small'] = small?.map((e) => e.toJson()).toList();
+    data['large'] = large?.map((e) => e.toJson()).toList();
     return data;
   }
 }
@@ -388,6 +388,8 @@ class Items {
   int? id;
   String? sourceId;
   String? prefixprompt;
+  String? assistantId;
+  String? assistantBaseUrl;
   Endpoint? storySlider;
   Endpoint? link;
   Endpoint? pages;
@@ -408,6 +410,8 @@ class Items {
       this.prefixprompt,
       this.id,
       this.sourceId,
+      this.assistantId,
+      this.assistantBaseUrl,
       this.link,
       this.pages,
       this.storySlider,
@@ -429,6 +433,8 @@ class Items {
     linkToDetail = json['opens_athlete_detail'] ?? false;
     id = json['id'];
     sourceId = json['sourceId'];
+    assistantId = json['assistant_id'];
+    assistantBaseUrl = json['assistant_base_url'];
     listEvents = (json['list_events'] as List?)?.map((e) => e as int).toList();
     link = json['link'] != null ? Endpoint.fromJson(json['link']) : null;
     pages = json['pages'] != null ? Endpoint.fromJson(json['pages']) : null;
@@ -457,6 +463,8 @@ class Items {
     data['linktodetail'] = linkToDetail;
     data['id'] = id;
     data['sourceId'] = sourceId;
+    data['assistant_id'] = assistantId;
+    data['assistant_base_url'] = assistantBaseUrl;
     if (link != null) {
       data['link'] = link!.toJson();
     }

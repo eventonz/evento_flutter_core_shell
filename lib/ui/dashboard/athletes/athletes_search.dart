@@ -204,8 +204,7 @@ class AthletesSearchScreen extends StatelessWidget {
                                       .searchAccumulatedList.isNotEmpty) {
                                     List<Entrants> entrants =
                                         controller.searchAccumulatedList;
-                                    entrants = controller
-                                        .sortFilterAthletesSearch(entrants);
+                                   // entrants = controller.sortFilterAthletesSearch(entrants);
 
                                     return ListView.separated(
                                         padding: const EdgeInsets.symmetric(

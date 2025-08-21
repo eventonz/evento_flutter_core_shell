@@ -15,156 +15,166 @@ class LandingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(LandingController());
+
     return Obx(
-      () => Scaffold(
-        body: controller.noConnection.value ? Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon representing no internet connection
-              Icon(
-                Icons.wifi_off,
-                size: 80,
-                color: AppColors.primary,
-              ),
-              SizedBox(height: 20),
-
-              // "Whoops!" text
-              Text(
-                'Whoops!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // No internet connection message
-              Text(
-                AppLocalizations.of(context)!.noInternetConnectionFoundMsg,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 30),
-
-              // Reload button
-              ElevatedButton(
-                onPressed: () {
-                  // Add your reload functionality here
-                  controller.noConnection.value = false;
-                  controller.noConnection.refresh();
-                  controller.checkConnection();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+      () {
+        return Scaffold(
+          body: controller.noConnection.value
+              ? Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.primary.withOpacity(0.05),
+                        Colors.white,
+                      ],
+                    ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.reload,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(24),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.08),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 10),
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary.withOpacity(0.1),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    Icons.wifi_off_rounded,
+                                    size: 48,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                Text(
+                                  'No Internet Connection',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey[800],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  AppLocalizations.of(context)!
+                                      .noInternetConnectionFoundMsg,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                    height: 1.4,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      controller.noConnection.value = false;
+                                      controller.noConnection.refresh();
+                                      controller.checkConnection();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primary,
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 16,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      AppLocalizations.of(context)!.reload,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ],
-          ),
-        ) : controller.exception.value ?  Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Icon representing no internet connection
-              Icon(
-                Icons.error,
-                size: 80,
-                color: Colors.redAccent,
-              ),
-              SizedBox(height: 20),
-
-              // "Whoops!" text
-              Text(
-                AppLocalizations.of(context)!.oops,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.redAccent,
-                ),
-              ),
-              SizedBox(height: 10),
-
-              // No internet connection message
-              Text(
-                '${AppLocalizations.of(context)!.somethingWentWrong}.\n${AppLocalizations.of(context)!.pleaseTryAgainLater}.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600],
-                ),
-              ),
-              SizedBox(height: 30),
-
-              // Reload button
-              ElevatedButton(
-                onPressed: () async {
-                  // Add your reload functionality here
-                  controller.exception.value = false;
-                  controller.exception.refresh();
-                  await Future.delayed(const Duration(milliseconds: 300));
-                  controller.navigate();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                ),
-                child: Text(
-                  AppLocalizations.of(context)!.reload,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ) : Stack(
-          children: [
-            Image.asset(
-              AppGlobals.appEventConfig.splashImage ??
-                  AppHelper.getImage('splash_image.png'),
-              width: double.infinity,
-              height: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(bottom: Platform.isAndroid ? 24 : 12),
-                  child: CircleAvatar(
-                      backgroundColor: AppColors.white.withOpacity(0.8),
-                      radius: 5.w,
-                      child: SizedBox(
-                          width: 5.w,
-                          height: 5.w,
-                          child: const CircularProgressIndicator.adaptive(
-                            strokeWidth: 3,
-                          ))),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+                )
+              : controller.exception.value
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.error, size: 80, color: Colors.redAccent),
+                          SizedBox(height: 20),
+                          Text(AppLocalizations.of(context)!.oops,
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.redAccent)),
+                          SizedBox(height: 10),
+                          Text(
+                              '${AppLocalizations.of(context)!.somethingWentWrong}.\n${AppLocalizations.of(context)!.pleaseTryAgainLater}.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.grey[600])),
+                          SizedBox(height: 30),
+                          ElevatedButton(
+                            onPressed: () async {
+                              controller.exception.value = false;
+                              controller.exception.refresh();
+                              await Future.delayed(
+                                  const Duration(milliseconds: 300));
+                              controller.navigate();
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.redAccent,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 24, vertical: 12)),
+                            child: Text(AppLocalizations.of(context)!.reload,
+                                style: TextStyle(
+                                    color: Colors.white, fontSize: 16)),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      width: double.infinity,
+                      height: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/splash_image.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+        );
+      },
     );
   }
 }

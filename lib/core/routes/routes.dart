@@ -14,6 +14,7 @@ class Routes {
   static const String userChallenge = '/userChallenge';
   static const String schedule = '/schedule';
   static const String assistant = '/assistant';
+  static const String assistantv2 = '/assistantv2';
   static const String storySlider = '/storySlider';
   static const String results = '/results';
   static const String leaderboard = '/leaderboard';

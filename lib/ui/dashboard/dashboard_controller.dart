@@ -77,10 +77,15 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     eventId = Preferences.getInt(AppKeys.eventId, 0);
+
     AppGlobals.checkOnUserId();
+
     Get.put(HomeController());
+
     Get.put(MoreController());
+
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
     resultsData = AppGlobals.appConfig!.results;
@@ -123,36 +128,27 @@ class DashboardController extends GetxController {
         .where((element) => element.type == AdvertType.splash)
         .firstOrNull;
     if (splashImage != null && Get.arguments?['is_deeplink'] != true) {
-      print('DEBUG: Splash advert found, checking frequency');
       if (splashImage.frequency == AdvertFrequency.daily) {
         String lastOpen = Preferences.getString('last_splash_open', '');
         if (lastOpen != '') {
           DateTime dateTime = DateTime.parse(lastOpen);
           if (dateTime.day == DateTime.now().day) {
             // If daily splash already shown today, no splash will be shown
-            print(
-                'DEBUG: Daily splash already shown today, no splash will be shown');
-            isSplashAdvertShowing = false;
             return;
           }
         }
         Preferences.setString('last_splash_open', DateTime.now().toString());
       }
       // Splash advert will be shown
-      print('DEBUG: Setting splash advert flag to true');
       isSplashAdvertShowing = true;
       precacheImage(
           CachedNetworkImageProvider(splashImage.image!), Get.context!);
       Future.delayed(const Duration(seconds: 1), () {
-        print('DEBUG: Showing splash advert now');
         Navigator.of(Get.context!).push(MaterialPageRoute(
             builder: (_) => FullscreenAdvert(
                   splashImage,
                   onDismissed: () {
                     // Show notification prompt after splash advert is dismissed
-                    print(
-                        'DEBUG: Splash advert dismissed, showing OneSignal prompt');
-                    isSplashAdvertShowing = false;
                     oneSignalService.initializeOneSignal().then((_) {
                       showNotificationPrompt();
                     });
@@ -161,8 +157,8 @@ class DashboardController extends GetxController {
       });
     } else {
       // No splash advert will be shown
-      print('DEBUG: No splash advert found, setting flag to false');
       isSplashAdvertShowing = false;
+      // Notification prompt will be scheduled in onReady via _scheduleNotificationPrompt()
     }
 
     if (AppGlobals.appConfig?.menu?.items?.length == 0) {
@@ -173,23 +169,11 @@ class DashboardController extends GetxController {
       webViewController = Get.arguments;
     }
 
-    Future.delayed(Duration(seconds: 1), () {
-      //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
-    });
     var appLinks = AppLinks();
     final sub = appLinks.uriLinkStream.listen((uri) async {
-      print('HANDLE DEEPLINK ${uri.path}');
-      print('--- DEEP LINK DEBUG ---');
-      print('Full URI: $uri');
-      print('Scheme: ${uri.scheme}');
-      print('Host: ${uri.host}');
-      print('Path: ${uri.path}');
-      print('Segments: ${uri.pathSegments}');
       var open = uri.path;
       if (open.contains('/event_id/')) {
         var eventId = extractEventId(open);
-        print('eventId');
-        print(eventId);
         if (AppGlobals.appEventConfig.multiEventListId != null) {
           var event = AppGlobals.eventM?.events
               ?.firstWhereOrNull((e) => e.id == int.parse(eventId));
@@ -325,13 +309,9 @@ class DashboardController extends GetxController {
 
     if (isSingleEvent && isSplashAdvertShowing) {
       // Single event mode and splash advert is showing: delay OneSignal init
-      print(
-          'DEBUG: Single event mode with splash advert, will init OneSignal after splash advert');
       // OneSignal will be initialized in splash advert onDismissed callback
     } else {
       // Multi event mode or no splash advert: initialize OneSignal immediately
-      print(
-          'DEBUG: Multi event mode or no splash advert, initializing OneSignal now');
       oneSignalService.initializeOneSignal().then((_) {
         _scheduleNotificationPrompt();
       });
@@ -344,13 +324,8 @@ class DashboardController extends GetxController {
 
     // Schedule the notification prompt with a delay
     _notificationTimer = Timer(const Duration(seconds: 2), () {
-      print('DEBUG: Timer fired, checking if splash advert is still showing');
       if (!isSplashAdvertShowing) {
-        print('DEBUG: Splash advert not showing, displaying OneSignal prompt');
         showNotificationPrompt();
-      } else {
-        print(
-            'DEBUG: Splash advert still showing, not showing OneSignal prompt');
       }
     });
   }
@@ -358,14 +333,13 @@ class DashboardController extends GetxController {
   void showNotificationPrompt() {
     // Safety check: don't show if splash advert is still showing
     if (isSplashAdvertShowing) {
-      print(
-          'DEBUG: Not showing OneSignal prompt - splash advert is still showing');
       return;
     }
     AppHelper.showNotificationOptInPrompt(
       context: Get.context!,
       eventId: eventId,
       onResult: (allow) {
+        // Call API in background without waiting
         oneSignalService.updateNotificationStatus(
             AppGlobals.oneSignalUserId, eventId, allow);
       },
@@ -374,9 +348,7 @@ class DashboardController extends GetxController {
 
   void selectMenu(BottomNavMenu menu) async {
     selMenu.value = menu;
-    print('it is ${selMenu.value!.label}');
     if (selMenu.value!.label == 'track') {
-      print('it is');
       await Future.delayed(const Duration(seconds: 0));
       final TrackingController controller = Get.find();
       controller.getAthleteTrackingInfo(firstTime: true);
@@ -393,6 +365,7 @@ class DashboardController extends GetxController {
 
   void goBack() {
     Preferences.setString(AppKeys.eventUrl, '');
+    Preferences.setString(AppKeys.localConfig, '{}');
     Get.off(
       () => const EventsScreen(),
       routeName: Routes.events,

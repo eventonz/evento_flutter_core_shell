@@ -3,13 +3,16 @@ import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/models/athlete_tab_details.dart';
 import 'package:evento_core/core/models/split_data.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/core/utils/keys.dart';
+import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 import '../../../../core/models/detail_item.dart';
 
@@ -163,6 +166,16 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> followAthlete(AppAthleteDb athelete) async {
+    if (AppGlobals.oneSignalUserId == null ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print('Obtained OneSignal User ID: ${AppGlobals.oneSignalUserId}');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        return;
+      }
+    }
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -180,6 +193,16 @@ class AthleteDetailsController extends GetxController
   }
 
   Future<void> unfollowAthlete(AppAthleteDb athelete) async {
+    if (AppGlobals.oneSignalUserId == null ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print('Obtained OneSignal User ID: ${AppGlobals.oneSignalUserId}');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        return;
+      }
+    }
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,

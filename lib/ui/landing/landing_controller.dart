@@ -43,98 +43,38 @@ class LandingController extends GetxController {
     if (res != null) {
       isPrev = true;
     }
-    //setupDeepLinkListener();
-  }
-
-  void setupDeepLinkListener() {
-    Logger.i('Setting up deep link listener');
-    final appLinks = AppLinks();
-
-    // Handle initial deep link
-    appLinks.getInitialLink().then((Uri? initialLink) {
-      if (initialLink != null) {
-        Logger.i('Received initial deep link: ${initialLink.path}');
-        handleDeepLink(initialLink);
-      }
-    }).catchError((e) {
-      Logger.e('Error getting initial deep link: $e');
-    });
-
-    // Listen for incoming deep links
-    appLinks.uriLinkStream.listen((Uri? link) {
-      if (link != null) {
-        Logger.i('Received deep link: ${link.path}');
-        handleDeepLink(link);
-      }
-    }, onError: (error) {
-      Logger.e('Error listening to deep links: $error');
-    });
-  }
-
-  void handleDeepLink(Uri uri) async {
-    Logger.i('Processing deep link: $uri');
-    final path = uri.path;
-
-    if (path.contains('/event_id/')) {
-      try {
-        final eventId = path.substring(
-            path.indexOf('event_id/') + 9, path.indexOf('/athlete/'));
-        final athleteId = path.split('/athlete/')[1];
-
-        Logger.i(
-            'Deep link contains event_id: $eventId and athlete_id: $athleteId');
-
-        // Store the event ID
-        AppGlobals.selEventId = int.parse(eventId);
-        await Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
-
-        // First navigate to dashboard to show event context
-        Logger.i('Navigating to dashboard for event: $eventId');
-        await Get.offAllNamed(Routes.dashboard);
-
-        // Then navigate to athlete details
-        Logger.i('Navigating to athlete details for athlete: $athleteId');
-        Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
-      } catch (e) {
-        Logger.e('Error processing deep link: $e');
-      }
-    } else {
-      Logger.w('Deep link path does not contain expected pattern: $path');
-    }
   }
 
   @override
   void onReady() {
     super.onReady();
+
     final isMultiEvent = AppGlobals.appEventConfig.multiEventListId != null;
+
     if (isMultiEvent) {
       Preferences.init().then((_) {
         final oneSignalService = Get.find<AppOneSignal>();
-        final eventId = Preferences.getInt(AppKeys.eventId, 0);
-        oneSignalService.initializeOneSignal().then((_) {
-          AppHelper.showNotificationOptInPrompt(
-            context: Get.context!,
-            eventId: eventId,
-            onResult: (allow) {
-              oneSignalService.updateNotificationStatus(
-                  AppGlobals.oneSignalUserId, eventId, allow);
-            },
-          );
-        });
+        // Don't show notification prompt here - let DashboardController handle it
+        // when user reaches the home page
+        oneSignalService.initializeOneSignal();
       });
     }
+
     checkConnection();
   }
 
   checkConnection() async {
-    await Future.delayed(const Duration(milliseconds: 300));
     var result = await connectivity.checkConnectivity();
-    print(result.map((e) => e.toString()));
 
     if ((!result.contains(ConnectivityResult.wifi) &&
         !result.contains(ConnectivityResult.mobile) &&
         !result.contains(ConnectivityResult.ethernet))) {
-      noConnection.value = true;
+      await Preferences.init();
+      if (Preferences.getString(AppKeys.localConfig, '{}') == '{}') {
+        noConnection.value = true;
+      } else {
+        navigate();
+      }
       update();
     } else {
       navigate();
@@ -156,10 +96,9 @@ class LandingController extends GetxController {
       () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 300),
       arguments: const {'is_prev': true, 'is_deeplink': true},
     );
-    await Future.delayed(const Duration(milliseconds: 2000));
     Get.toNamed(Routes.athleteDetails, arguments: {'id': athleteId});
   }
 
@@ -168,7 +107,7 @@ class LandingController extends GetxController {
       () => const DashboardScreen(),
       routeName: Routes.dashboard,
       transition: Transition.topLevel,
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 300),
       arguments: const {'is_prev': true},
     );
   }
@@ -198,25 +137,40 @@ class LandingController extends GetxController {
 
   void navigate() async {
     try {
+      // Always initialize SharedPrefs first
+      await Preferences.init();
+
+      // Initialize AppGlobals if first time
       if (!isPrev) {
         await AppGlobals.init();
       }
+
+      // Load AppConfig from SharedPrefs
+      var savedConfig = Preferences.getString(AppKeys.localConfig, '{}');
+      if (savedConfig != '{}') {
+        AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(savedConfig));
+      } else {
+        // Create an empty config to prevent crashes
+        AppGlobals.appConfig = AppConfig();
+      }
+
       isPrev = true;
       await checkLaunchState();
+
       late String url;
-      final config = AppGlobals.appEventConfig;
-      if (config.multiEventListId != null) {
+      final eventConfig = AppGlobals.appEventConfig;
+      if (eventConfig.multiEventListId != null) {
         url = Preferences.getString(AppKeys.eventUrl, '');
-        await getEvents(config);
+        await getEvents(eventConfig);
       } else {
-        url =
-            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
-        AppGlobals.selEventId = int.parse(config.singleEventId!);
+        url = AppHelper.createUrl(
+            eventConfig.singleEventUrl!, eventConfig.singleEventId!);
+        AppGlobals.selEventId = int.parse(eventConfig.singleEventId!);
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
       AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
+
       checkTheme();
-      await Future.delayed(const Duration(milliseconds: 1300));
 
       if (Get.arguments?['athlete_id'] != null) {
         Get.offNamed(Routes.dashboard)?.then((_) {
@@ -246,7 +200,7 @@ class LandingController extends GetxController {
             // Handle athlete deep link
             if (path.contains('/athlete/')) {
               final athleteId = path.split('/athlete/')[1];
-              await _navigateToAthleteDetails(athleteId, url, config);
+              await _navigateToAthleteDetails(athleteId, url, eventConfig);
               return; // This will prevent further execution
             } else {
               await _navigateToDashboard();
@@ -260,7 +214,7 @@ class LandingController extends GetxController {
       if (url.isEmpty) {
         Get.offNamed(Routes.events);
       } else {
-        await _handleWebViewNavigation(url, config.configUrl, isPrev);
+        await _handleWebViewNavigation(url, eventConfig.configUrl, isPrev);
       }
 
 // Helper methods
@@ -314,8 +268,20 @@ class LandingController extends GetxController {
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {
-    final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
-    AppGlobals.appConfig = AppConfig.fromJson(res.data);
+    var savedConfig = Preferences.getString(AppKeys.localConfig, '{}');
+    AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(savedConfig));
+    try {
+      final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
+      if (res.statusCode != 200) {
+        throw Exception('error');
+      }
+      AppGlobals.appConfig = AppConfig.fromJson(res.data);
+      Preferences.setString(
+          AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+    } catch (e) {
+      print(e);
+    }
+
     Preferences.setInt(AppKeys.configLastUpdated,
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
     final accentColors = AppGlobals.appConfig!.theme!.accent;
@@ -327,6 +293,9 @@ class LandingController extends GetxController {
     AppColors.secondary = AppColors.primary == AppColors.accentDark
         ? AppColors.accentLight
         : AppColors.accentDark;
+
+    // Update the app theme to reflect the new colors
+    AppHelper.updateAppTheme();
   }
 
   // Future<void> getAthletes() async {

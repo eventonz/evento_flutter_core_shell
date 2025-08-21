@@ -67,7 +67,6 @@ class _AndroidMapViewState extends State<AndroidMapView> {
 
 
   updateAthleteMarkers() async {
-    print('updateAthleteMarkers');
     for (var trackDetail in controller.athleteTrackDetails) {
       final routePath = controller.getAthleteRouthPath(trackDetail);
       if (routePath.isNotEmpty) {

@@ -4,6 +4,7 @@ import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
+import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
@@ -140,7 +141,7 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthlete(Entrants athelete) async {
-    if (AppGlobals.oneSignalUserId == null ||
+    if (AppGlobals.oneSignalUserId == '' ||
         AppGlobals.oneSignalUserId.isEmpty) {
       String? userId = OneSignal.User.pushSubscription.id;
       AppGlobals.oneSignalUserId = userId ?? '';
@@ -148,7 +149,7 @@ class AthletesController extends GetxController {
           'Obtained OneSignal User ID: [36m${AppGlobals.oneSignalUserId}[0m');
       if (AppGlobals.oneSignalUserId.isEmpty) {
         //Get.snackbar('Enable Notifications',
-        //   'Unable to get device ID. Please try again.');
+        //    'Unable to get device ID. Please try again.');
         return;
       }
     }
@@ -197,6 +198,19 @@ class AthletesController extends GetxController {
   }
 
   Future<void> followAthleteA(AppAthleteDb athelete) async {
+    if (AppGlobals.oneSignalUserId == null ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print(
+          'Obtained OneSignal User ID: [36m${AppGlobals.oneSignalUserId}[0m');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        //Get.snackbar('Enable Notifications',
+        //    'Unable to get device ID. Please try again.');
+        return;
+      }
+    }
+
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -214,6 +228,18 @@ class AthletesController extends GetxController {
   }
 
   Future<void> unfollowAthleteA(AppAthleteDb athelete) async {
+    if (AppGlobals.oneSignalUserId == null ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print(
+          'Obtained OneSignal User ID: [36m${AppGlobals.oneSignalUserId}[0m');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        //Get.snackbar('Enable Notifications',
+        //    'Unable to get device ID. Please try again.');
+        return;
+      }
+    }
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,

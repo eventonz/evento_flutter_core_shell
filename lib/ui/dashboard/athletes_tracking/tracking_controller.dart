@@ -41,14 +41,15 @@ class TrackingController extends GetxController
     with GetTickerProviderStateMixin {
   late Tracking? trackingDetails;
   late int eventId = 0;
-  late Timer timer;
+  Timer? timer;
   Timer? athleteUpdateTimer;
   int currentII = 0;
   int counter = 0;
   final athleteTrackDetails = <AthleteTrackDetail>[].obs;
   final mapDataSnap = DataSnapShot.initial.obs;
-  final accessToken ='pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2enQ4a3FuMDdmaTJxcGY1MG1ldjh6diJ9.72FtQjCQ4uUiyFyzWCh5hA';
-  final mapid =  'mapbox.mapbox-streets-v8';
+  final accessToken =
+      'pk.eyJ1IjoiZXZlbnRvbnoiLCJhIjoiY2x2enQ4a3FuMDdmaTJxcGY1MG1ldjh6diJ9.72FtQjCQ4uUiyFyzWCh5hA';
+  final mapid = 'mapbox.mapbox-streets-v8';
   final currentStyle = 0.obs;
   List<Paths> routePathLinks = [];
   List<MapPathMarkers> mapPathMarkers = [];
@@ -60,10 +61,14 @@ class TrackingController extends GetxController
   bool isAnimatingMarkers = false;
 
   apple_maps.AppleMapController? appleMapController;
-  Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines = Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
-  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
-  Rx<Map<String, PointAnnotation>> androidAnnotations = Rx(<String, PointAnnotation>{});
-  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> extraAnnotations = Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+  Rx<Map<apple_maps.PolylineId, apple_maps.Polyline>> polylines =
+      Rx(<apple_maps.PolylineId, apple_maps.Polyline>{});
+  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> annotations =
+      Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
+  Rx<Map<String, PointAnnotation>> androidAnnotations =
+      Rx(<String, PointAnnotation>{});
+  Rx<Map<apple_maps.AnnotationId, apple_maps.Annotation>> extraAnnotations =
+      Rx(<apple_maps.AnnotationId, apple_maps.Annotation>{});
 
   Map<String, TrackProgress> trackProgressMap = {};
   bool isFirstTime = true;
@@ -75,10 +80,10 @@ class TrackingController extends GetxController
   MapController mapController = MapController();
   ScreenshotController screenshotController = ScreenshotController();
 
-  cc.CarouselSliderController carouselController = cc.CarouselSliderController();
+  cc.CarouselSliderController carouselController =
+      cc.CarouselSliderController();
 
   late StreamController<int> updateStream = StreamController<int>.broadcast();
-
 
   static const _startedId = 'AnimatedMapController#MoveStarted';
   static const _inProgressId = 'AnimatedMapController#MoveInProgress';
@@ -112,7 +117,8 @@ class TrackingController extends GetxController
 
   var geoJson = GeoJson();
 
-  RxMap<String, List<dynamic>> interestAnnotations = <String, List<dynamic>>{}.obs;
+  RxMap<String, List<dynamic>> interestAnnotations =
+      <String, List<dynamic>>{}.obs;
   Map<String, Uint8List> interestImages = {};
 
   Rx<List<String>> selectedInterests = Rx(['']);
@@ -132,12 +138,11 @@ class TrackingController extends GetxController
     "firstaid": "First Aid"
   };
 
-
   @override
   void onInit() {
     super.onInit();
     trackingDetails = AppGlobals.appConfig!.tracking;
-    eventId = AppGlobals.selEventId;//
+    eventId = AppGlobals.selEventId; //
     changeMapStyle(setDefault: true);
     updateStream.add(1);
     MapboxOptions.setAccessToken(accessToken);
@@ -152,11 +157,11 @@ class TrackingController extends GetxController
 
     final state = await mapboxMap?.getCameraState();
     print(state?.zoom);
-    for(int x = 0; x < routePathsCordinates.values.length; x++) {
+    for (int x = 0; x < routePathsCordinates.values.length; x++) {
       var distance = totalDistance.values.toList()[x];
       for (int i = 1; i < distance; i++) {
-
-        final annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'];
+        final annotation =
+            points['${routePathsCordinates.keys.toList()[x]}_$i'];
         if (annotation != null) {
           if (!Platform.isIOS) {
             if (showDistanceMarkers.value == false) {
@@ -170,19 +175,22 @@ class TrackingController extends GetxController
             points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
           } else {
             var zoom = await appleMapController?.getZoomLevel() ?? 0;
-            var annotation = points['${routePathsCordinates.keys.toList()[x]}_$i'] as apple_maps.Annotation;
+            var annotation =
+                points['${routePathsCordinates.keys.toList()[x]}_$i']
+                    as apple_maps.Annotation;
             if (!showDistanceMarkers.value) {
               annotation = annotation.copyWith(
-                  iconParam: apple_maps.BitmapDescriptor.fromBytes(
-                      Uint8List(0)));
+                  iconParam:
+                      apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
             } else if ((zoom) >= 14) {
               annotation = annotation.copyWith(
                   iconParam: apple_maps.BitmapDescriptor.fromBytes(images[i]!));
             } else {
               annotation = annotation.copyWith(
-                  iconParam: i % 5 == 0 ? apple_maps.BitmapDescriptor.fromBytes(
-                      images[i]!) : apple_maps.BitmapDescriptor.fromBytes(
-                      AppHelper.emptyImage));
+                  iconParam: i % 5 == 0
+                      ? apple_maps.BitmapDescriptor.fromBytes(images[i]!)
+                      : apple_maps.BitmapDescriptor.fromBytes(
+                          AppHelper.emptyImage));
             }
             points['${routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
             points.refresh();
@@ -230,19 +238,19 @@ class TrackingController extends GetxController
     mapboxMap?.loadStyleURI(mapStyles[index]);
     update();
 
-
     //mapboxMap?.style.addSource(RasterDemSource(id: 'mapbox-dem', url: 'mapbox://mapbox.mapbox-terrain-dem-v1', tileSize: 512, maxzoom: 14));
     // add the DEM source as a terrain layer with exaggerated height
     //mapboxMap.style.til();
-    mapboxMap?.style.setStyleTerrain(jsonEncode({ 'source': 'mapbox-dem', 'exaggeration': 3.0 }));
+    mapboxMap?.style.setStyleTerrain(
+        jsonEncode({'source': 'mapbox-dem', 'exaggeration': 3.0}));
   }
 
   String getStyleName(String style) {
-    if(style == MapboxStyles.OUTDOORS) {
+    if (style == MapboxStyles.OUTDOORS) {
       return 'Outdoors';
-    } else if(style == MapboxStyles.SATELLITE) {
+    } else if (style == MapboxStyles.SATELLITE) {
       return 'Satellite';
-    } else if(style == MapboxStyles.STANDARD) {
+    } else if (style == MapboxStyles.STANDARD) {
       return Platform.isIOS ? 'Hybrid' : '3D';
     } else {
       return 'Default';
@@ -250,11 +258,11 @@ class TrackingController extends GetxController
   }
 
   String getStyleImage(String style) {
-    if(style == MapboxStyles.OUTDOORS) {
+    if (style == MapboxStyles.OUTDOORS) {
       return 'square.png';
-    } else if(style == MapboxStyles.SATELLITE) {
+    } else if (style == MapboxStyles.SATELLITE) {
       return 'square2.png';
-    } else if(style == MapboxStyles.STANDARD) {
+    } else if (style == MapboxStyles.STANDARD) {
       return Platform.isIOS ? 'square3.png' : 'square3.png';
     } else {
       return 'square3.png';
@@ -265,12 +273,15 @@ class TrackingController extends GetxController
     print('updateSelectedInterests');
     selectedInterests.value = values;
     update();
-    if(values.contains('')) {
+    if (values.contains('')) {
       for (var value in interestAnnotations.keys) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          if(Platform.isIOS) {
-            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          if (Platform.isIOS) {
+            interestAnnotations[value]![index] =
+                (element as apple_maps.Annotation).copyWith(
+                    iconParam: apple_maps.BitmapDescriptor.fromBytes(
+                        interestImages[value]!));
           } else {
             print('updateSelectedInterests 2');
             (element as PointAnnotation).image = interestImages[value];
@@ -285,8 +296,11 @@ class TrackingController extends GetxController
       for (var value in interestAnnotations.keys) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          if(Platform.isIOS) {
-            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
+          if (Platform.isIOS) {
+            interestAnnotations[value]![index] =
+                (element as apple_maps.Annotation).copyWith(
+                    iconParam:
+                        apple_maps.BitmapDescriptor.fromBytes(Uint8List(0)));
           } else {
             print('updateSelectedInterests 3');
             (element as PointAnnotation).image = interestImages['empty_image'];
@@ -300,8 +314,11 @@ class TrackingController extends GetxController
       for (var value in values) {
         int index = 0;
         interestAnnotations[value]?.forEach((element) {
-          if(Platform.isIOS) {
-            interestAnnotations[value]![index] = (element as apple_maps.Annotation).copyWith(iconParam: apple_maps.BitmapDescriptor.fromBytes(interestImages[value]!));
+          if (Platform.isIOS) {
+            interestAnnotations[value]![index] =
+                (element as apple_maps.Annotation).copyWith(
+                    iconParam: apple_maps.BitmapDescriptor.fromBytes(
+                        interestImages[value]!));
           } else {
             print('updateSelectedInterests 4');
             (element as PointAnnotation).image = interestImages[value];
@@ -314,7 +331,7 @@ class TrackingController extends GetxController
     }
     interestAnnotations.refresh();
   }
-  
+
   void addPolyline(polylineId, polyline) {
     polylines.value[polylineId] = polyline;
     update();
@@ -340,7 +357,7 @@ class TrackingController extends GetxController
 
   void addStaticAnnotation(annotationId, annotation) {
     print('hello');
-    if(interestAnnotations['static'] == null) {
+    if (interestAnnotations['static'] == null) {
       interestAnnotations['static'] = [];
     }
     interestAnnotations['static']?.add(annotation);
@@ -367,7 +384,7 @@ class TrackingController extends GetxController
   }
 
   void updateStaticAnnotation(annotationId, annotation) {
-    if(interestAnnotations['static'] == null) {
+    if (interestAnnotations['static'] == null) {
       interestAnnotations['static'] = [];
     }
     interestAnnotations['static']?.add(annotation);
@@ -391,7 +408,7 @@ class TrackingController extends GetxController
     // The animation determines what path the animation will take. You can try different Curves values, although I found
     // fastOutSlowIn to be my favorite.
     final Animation<double> animation =
-    CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
+        CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn);
 
     // Note this method of encoding the target destination is a workaround.
     // When proper animated movement is supported (see #1263) we should be able
@@ -429,13 +446,12 @@ class TrackingController extends GetxController
     controller.forward();
   }
 
-
   @override
   void onClose() {
     super.onClose();
     athleteUpdateTimer?.cancel();
 
-    timer.cancel();
+    timer?.cancel();
   }
 
   @override
@@ -444,12 +460,13 @@ class TrackingController extends GetxController
     getRoutePaths();
   }
 
-  Future<void> setLocation(String track, LatLng location, {bool wait = false, bool update = true}) async {
+  Future<void> setLocation(String track, LatLng location,
+      {bool wait = false, bool update = true}) async {
     locations[track] = location;
-    if(wait) {
+    if (wait) {
       await Future.delayed(const Duration(seconds: 1));
     }
-    if(update) {
+    if (update) {
       this.update();
     }
   }
@@ -487,10 +504,11 @@ class TrackingController extends GetxController
         var i = 0;
         for (var element in list) {
           print(element['geometry']['coordinates']);
-          if(element['geometry']['coordinates'] is Map) {
-            data['features'][i]['geometry']['coordinates'] =
-              [element['geometry']['coordinates']['lng'], element['geometry']['coordinates']['lat']]
-            ;
+          if (element['geometry']['coordinates'] is Map) {
+            data['features'][i]['geometry']['coordinates'] = [
+              element['geometry']['coordinates']['lng'],
+              element['geometry']['coordinates']['lat']
+            ];
           }
           i++;
         }
@@ -505,175 +523,193 @@ class TrackingController extends GetxController
           //routePathsColors[path.name ?? 'path'] = geoJson.features.where((element) => element.properties?['color'] != null).firstOrNull?.properties?['color'];
         }
 
-        if(Platform.isIOS) {
+        if (Platform.isIOS) {
           final points = geoJson.features;
           for (int index = 0; index < points.length; index++) {
             var element = points[index];
             if (element.type == GeoJsonFeatureType.point) {
-              print(geoJson.features[index]
-                  .properties);
-              Widget widget = element
-                  .properties?['type'] == 'custom' ? Image.network('${element
-                  .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${element
-                  .properties?['type']}.png'), width: 30, height: 30);
-              AppHelper.widgetToBytes(widget, milliseconds: element
-                  .properties?['type'] == 'custom' ? 2000 : 100)
+              print(geoJson.features[index].properties);
+              Widget widget = element.properties?['type'] == 'custom'
+                  ? Image.network('${element.properties?['icon']}',
+                      width: 30, height: 30)
+                  : Image.asset(
+                      AppHelper.getImage('${element.properties?['type']}.png'),
+                      width: 30,
+                      height: 30);
+              AppHelper.widgetToBytes(widget,
+                      milliseconds:
+                          element.properties?['type'] == 'custom' ? 2000 : 100)
                   .then((value) async {
                 apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
-                  annotationId: apple_maps.AnnotationId(element
-                      .properties?['id']),
+                  annotationId:
+                      apple_maps.AnnotationId(element.properties?['id']),
                   icon: apple_maps.BitmapDescriptor.fromBytes(value),
                   position: apple_maps.LatLng(
-                      (element.geometry as GeoJsonPoint).geoPoint
-                          .latitude,
-                      (element.geometry as GeoJsonPoint).geoPoint
-                          .longitude),
+                      (element.geometry as GeoJsonPoint).geoPoint.latitude,
+                      (element.geometry as GeoJsonPoint).geoPoint.longitude),
                   onTap: () async {
                     var point = element;
                     print(point.geometry);
                     appleMapController?.animateCamera(
                         apple_maps.CameraUpdate.newCameraPosition(
-                            apple_maps.CameraPosition(target: apple_maps.LatLng(
-                                (point.geometry as GeoJsonPoint).geoPoint
-                                    .latitude,
-                                (point.geometry as GeoJsonPoint).geoPoint
-                                    .longitude), zoom: 18)));
+                            apple_maps.CameraPosition(
+                                target: apple_maps.LatLng(
+                                    (point.geometry as GeoJsonPoint)
+                                        .geoPoint
+                                        .latitude,
+                                    (point.geometry as GeoJsonPoint)
+                                        .geoPoint
+                                        .longitude),
+                                zoom: 18)));
                     await showModalBottomSheet(
                         barrierColor: Colors.black.withOpacity(0.04),
-                        context: Get.context!, builder: (_) =>
-                        BottomSheet(
+                        context: Get.context!,
+                        builder: (_) => BottomSheet(
                             elevation: 0,
-                            onClosing: () {
-
-                            }, builder: (_) =>
-                            Container(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 24.0,
-                                        right: 24.0,
-                                        top: 24.0,
-                                        bottom: 12.0),
-                                    child: Row(
-                                      children: [
-                                        point
-                                            .properties?['type'] == 'custom' ? Image.network('${point
-                                            .properties?['icon']}', width: 30, height: 30) : Image.asset(AppHelper.getImage('${point
-                                            .properties?['type']}.png'),
-                                            width: 30, height: 30),
-                                        const SizedBox(width: 8),
-                                        Text('${point.properties?['title']}',
-                                            style: TextStyle(
-                                              fontSize: 17,
-                                              fontWeight: FontWeight.w700,
-                                            )),
-                                      ],
-                                    ),
-                                  ),
-                                  if((point.properties?['image'] ?? '') != '')
-                                    Padding(
-                                      padding: const EdgeInsets.only(bottom: 8.0),
-                                      child: Image.network(point.properties?['image'], height: 150, fit: BoxFit.cover),
-                                    ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 24.0),
-                                    child: Text(
-                                        '${point.properties?['description']}',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                        )),
-                                  ),
-                                  if(point.properties?['direction'] == true)
-                                    ...[
-                                      const SizedBox(height: 16),
+                            onClosing: () {},
+                            builder: (_) => Container(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 24.0,
+                                            right: 24.0,
+                                            top: 24.0,
+                                            bottom: 12.0),
+                                        child: Row(
+                                          children: [
+                                            point.properties?['type'] ==
+                                                    'custom'
+                                                ? Image.network(
+                                                    '${point.properties?['icon']}',
+                                                    width: 30,
+                                                    height: 30)
+                                                : Image.asset(
+                                                    AppHelper.getImage(
+                                                        '${point.properties?['type']}.png'),
+                                                    width: 30,
+                                                    height: 30),
+                                            const SizedBox(width: 8),
+                                            Text(
+                                                '${point.properties?['title']}',
+                                                style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w700,
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                      if ((point.properties?['image'] ?? '') !=
+                                          '')
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 8.0),
+                                          child: Image.network(
+                                              point.properties?['image'],
+                                              height: 150,
+                                              fit: BoxFit.cover),
+                                        ),
                                       Padding(
                                         padding: const EdgeInsets.symmetric(
                                             horizontal: 24.0),
-                                        child: ElevatedButton(onPressed: () {
-                                          AppHelper.showDirectionsOnMap(
-                                              apple_maps.LatLng(
-                                                  (point
-                                                      .geometry as GeoJsonPoint)
-                                                      .geoPoint.latitude,
-                                                  (point
-                                                      .geometry as GeoJsonPoint)
-                                                      .geoPoint.longitude));
-                                        },
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty
-                                                .all(Theme
-                                                .of(Get.context!)
-                                                .colorScheme
-                                                .primary),
-                                            shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius
-                                                        .circular(5))),
-                                          ),
-                                          child: Text(
-                                            AppLocalizations.of(Get.context!)!.getDirections, style: TextStyle(
-                                            color: Theme
-                                                .of(Get.context!)
-                                                .colorScheme
-                                                .secondary,
-                                          ),),),
+                                        child: Text(
+                                            '${point.properties?['description']}',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                            )),
                                       ),
+                                      if (point.properties?['direction'] ==
+                                          true) ...[
+                                        const SizedBox(height: 16),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 24.0),
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              AppHelper.showDirectionsOnMap(
+                                                  apple_maps.LatLng(
+                                                      (point.geometry
+                                                              as GeoJsonPoint)
+                                                          .geoPoint
+                                                          .latitude,
+                                                      (point.geometry
+                                                              as GeoJsonPoint)
+                                                          .geoPoint
+                                                          .longitude));
+                                            },
+                                            style: ButtonStyle(
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Theme.of(Get.context!)
+                                                          .colorScheme
+                                                          .primary),
+                                              shape: MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5))),
+                                            ),
+                                            child: Text(
+                                              AppLocalizations.of(Get.context!)!
+                                                  .getDirections,
+                                              style: TextStyle(
+                                                color: Theme.of(Get.context!)
+                                                    .colorScheme
+                                                    .secondary,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                      SizedBox(
+                                          height: MediaQuery.of(Get.context!)
+                                                  .padding
+                                                  .bottom +
+                                              8),
                                     ],
-                                  SizedBox(height: MediaQuery
-                                      .of(Get.context!)
-                                      .padding
-                                      .bottom + 8),
-                                ],
-                              ),
-                            )));
+                                  ),
+                                )));
                     List<LatLng> bounds = [];
 
                     routePathsCordinates.values.forEach((element) {
-                      bounds.addAll(element.map((element) =>
-                          LatLng(element.latitude.toDouble(),
-                              element.longitude.toDouble())));
+                      bounds.addAll(element.map((element) => LatLng(
+                          element.latitude.toDouble(),
+                          element.longitude.toDouble())));
                     });
                     appleMapController?.animateCamera(
                         apple_maps.CameraUpdate.newCameraPosition(
                             apple_maps.CameraPosition(
-                              target: initialPathCenterPoint().lat.toDouble() ==
-                                  0.0 ? apple_maps.LatLng(
-                                  -42.0178775, 174.3417791) : apple_maps.LatLng(
-                                  initialPathCenterPoint().lat.toDouble(),
-                                  initialPathCenterPoint().lng.toDouble()),
-                              zoom: bounds.isEmpty ? 5 : TrackingMapView
-                                  .dgetBoundsZoomLevel(
+                      target: initialPathCenterPoint().lat.toDouble() == 0.0
+                          ? apple_maps.LatLng(-42.0178775, 174.3417791)
+                          : apple_maps.LatLng(
+                              initialPathCenterPoint().lat.toDouble(),
+                              initialPathCenterPoint().lng.toDouble()),
+                      zoom: bounds.isEmpty
+                          ? 5
+                          : TrackingMapView.dgetBoundsZoomLevel(
                                   LatLngBounds.fromPoints(bounds), {
-
-                                'height': MediaQuery
-                                    .of(Get.context!)
-                                    .size
-                                    .height,
-                                'width': MediaQuery
-                                    .of(Get.context!)
-                                    .size
-                                    .width}) * 1.05,
-                            )));
+                                'height':
+                                    MediaQuery.of(Get.context!).size.height,
+                                'width': MediaQuery.of(Get.context!).size.width
+                              }) *
+                              1.05,
+                    )));
                   },
                 );
-                  if (interestAnnotations[element
-                      .properties?['type']] == null) {
-                    interestAnnotations[element
-                        .properties?['type']] = [];
-                    interestImages[element
-                        .properties?['type']] = value;
-                  }
-                  interestAnnotations[element
-                      .properties?['type']]!.add(pointAnnotation);
-                  geoJson.features[index]
-                      .properties?['annotation'] =
-                      pointAnnotation.annotationId.value;
-                  interestAnnotations.refresh();
-                  update();
+                if (interestAnnotations[element.properties?['type']] == null) {
+                  interestAnnotations[element.properties?['type']] = [];
+                  interestImages[element.properties?['type']] = value;
+                }
+                interestAnnotations[element.properties?['type']]!
+                    .add(pointAnnotation);
+                geoJson.features[index].properties?['annotation'] =
+                    pointAnnotation.annotationId.value;
+                interestAnnotations.refresh();
+                update();
               });
             }
             print(geoJson.features.length);
@@ -681,7 +717,6 @@ class TrackingController extends GetxController
         }
 
         calculateTotalDistance();
-
 
         showStartIcon[path.name ?? 'path'] = geoJson.features
             .where((element) => element.properties?['start_icon'] == true)
@@ -695,57 +730,56 @@ class TrackingController extends GetxController
             .isNotEmpty;
 
         routePathsColors[path.name ?? 'path'] = geoJson.features
-            .firstWhereOrNull((element) => element.properties?['color']?.isNotEmpty ?? false)
-        ?.properties!['color'];
+            .firstWhereOrNull(
+                (element) => element.properties?['color']?.isNotEmpty ?? false)
+            ?.properties!['color'];
 
-        if(routePathsColors[path.name ?? 'path'] == null) {
+        if (routePathsColors[path.name ?? 'path'] == null) {
           routePathsColors[path.name ?? 'path'] = path.color;
         }
 
         //showStartIcon = true;
         //showFinishIcon = true;
 
-
         if (Platform.isIOS) {
           var lineString = getLineStringForPath(path.name ?? 'path');
           if (showStartIcon[path.name ?? 'path'] == true) {
             print('showStartIcon');
-            Widget widget = SvgPicture.asset(
-                AppHelper.getSvg('startingpoint'), width: 27, height: 27);
+            Widget widget = SvgPicture.asset(AppHelper.getSvg('startingpoint'),
+                width: 27, height: 27);
 
             AppHelper.widgetToBytes(widget).then((value) {
+              var annotationId =
+                  apple_maps.AnnotationId('start_icon_${path.name}');
 
-            var annotationId = apple_maps.AnnotationId('start_icon_${path.name}');
+              var annotation = apple_maps.Annotation(
+                  annotationId: annotationId,
+                  zIndex: 4,
+                  position: apple_maps.LatLng(
+                      lineString!.coordinates.first.latitude.toDouble(),
+                      lineString.coordinates.first.longitude.toDouble()),
+                  icon: apple_maps.BitmapDescriptor.fromBytes(value));
 
-            var annotation = apple_maps.Annotation(
-                annotationId: annotationId,
-                zIndex: 4,
-                position: apple_maps.LatLng(
-                    lineString!.coordinates.first.latitude.toDouble(),
-                    lineString.coordinates.first.longitude.toDouble()),
-                icon: apple_maps.BitmapDescriptor.fromBytes(
-                    value));
-
-            addExtraAnnotation(annotationId, annotation);
+              addExtraAnnotation(annotationId, annotation);
             });
-
           }
 
           if (showFinishIcon[path.name ?? 'path'] == true) {
-            Widget widget = SvgPicture.asset(
-                AppHelper.getSvg('finishpoint'), width: 27, height: 27);
+            Widget widget = SvgPicture.asset(AppHelper.getSvg('finishpoint'),
+                width: 27, height: 27);
 
-            var annotationId = apple_maps.AnnotationId('finish_icon_${path.name}');
+            var annotationId =
+                apple_maps.AnnotationId('finish_icon_${path.name}');
 
-                var annotation = apple_maps.Annotation(
-                    annotationId: annotationId,
-                    position: apple_maps.LatLng(
-                        lineString!.coordinates.last.latitude.toDouble(),
-                        lineString.coordinates.last.longitude.toDouble()),
-                    icon: apple_maps.BitmapDescriptor.fromBytes(
-                        await AppHelper.widgetToBytes(widget)));
+            var annotation = apple_maps.Annotation(
+                annotationId: annotationId,
+                position: apple_maps.LatLng(
+                    lineString!.coordinates.last.latitude.toDouble(),
+                    lineString.coordinates.last.longitude.toDouble()),
+                icon: apple_maps.BitmapDescriptor.fromBytes(
+                    await AppHelper.widgetToBytes(widget)));
 
-                addExtraAnnotation(annotationId, annotation);
+            addExtraAnnotation(annotationId, annotation);
           }
 
           //if (showDistanceMarkers.value) {
@@ -754,8 +788,10 @@ class TrackingController extends GetxController
 
       for (int x = 0; x < routePathsCordinates.length; x++) {
         print('${routePathsCordinates.length} abcda ${this.totalDistance}');
-        final lineString = getLineStringForPath(routePathsCordinates.keys.toList()[x]);
-        final totalDistance = this.totalDistance[routePathsCordinates.keys.toList()[x]];
+        final lineString =
+            getLineStringForPath(routePathsCordinates.keys.toList()[x]);
+        final totalDistance =
+            this.totalDistance[routePathsCordinates.keys.toList()[x]];
 
         var color = routePathsColors[routePathsCordinates.keys.toList()[x]];
 
@@ -769,97 +805,96 @@ class TrackingController extends GetxController
                 border: Border.all(
                   color: Colors.black,
                   width: 1,
-                )
-            ),
+                )),
             child: Center(
-              child: Text('$i', style: TextStyle(
-                fontSize: 8,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),),
+              child: Text(
+                '$i',
+                style: TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
             ),
           );
 
-          if(false)
-          widget = Stack(
-            alignment: Alignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // The main container with the number
-                  Container(
-                    width: 30,
-                    padding: EdgeInsets.symmetric(vertical: 3),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(3),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 8,
-                          spreadRadius: 4,
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$i', // The number
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
+          if (false)
+            widget = Stack(
+              alignment: Alignment.center,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // The main container with the number
+                    Container(
+                      width: 30,
+                      padding: EdgeInsets.symmetric(vertical: 3),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 8,
+                            spreadRadius: 4,
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$i', // The number
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  //Container(height: .5, width: 16, color: Colors.black),
-                  RotatedBox(
-                    quarterTurns: 2,
-                    child: ClipPath(
-                      clipper: TriangleClipper(),
-                      child: Container(
-                        width: 16,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 8,
-                              spreadRadius: 4,
-                            ),
-                          ],
+                    //Container(height: .5, width: 16, color: Colors.black),
+                    RotatedBox(
+                      quarterTurns: 2,
+                      child: ClipPath(
+                        clipper: TriangleClipper(),
+                        child: Container(
+                          width: 16,
+                          height: 6,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 8,
+                                spreadRadius: 4,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          );
+                  ],
+                ),
+              ],
+            );
 
           AppHelper.widgetToBytes(widget).then((bytes) {
             images[i] = bytes;
 
             apple_maps.Annotation pointAnnotation = apple_maps.Annotation(
                 annotationId: apple_maps.AnnotationId('distance_$i $x'),
-                position: apple_maps.LatLng(lineString!
-                    .along(i.toDouble() * 1000)
-                    .lat, lineString
-                    .along(i.toDouble() * 1000)
-                    .lng),
+                position: apple_maps.LatLng(
+                    lineString!.along(i.toDouble() * 1000).lat,
+                    lineString.along(i.toDouble() * 1000).lng),
                 icon: apple_maps.BitmapDescriptor.fromBytes(
                     i % 5 == 0 ? images[i]! : Uint8List(0)));
-            this.points['${routePathsCordinates.keys.toList()[x]}_$i'] = pointAnnotation;
+            this.points['${routePathsCordinates.keys.toList()[x]}_$i'] =
+                pointAnnotation;
             this.points.refresh();
           });
           //}
         }
         //}
       }
-
-
 
       if (trackingDetails!.mapMarkers != null) {
         final res = await ApiHandler.downloadFile(
@@ -882,12 +917,11 @@ class TrackingController extends GetxController
                 iconUrl: markerPoint.properties?['urlicon'] ?? ''));
           }
         }
-
       }
       mapDataSnap.value = DataSnapShot.loaded;
       await getAthleteTrackingInfo();
       startTrackingTimer();
-      if(Platform.isIOS) {
+      if (Platform.isIOS) {
         updateAthleteMarkers();
         startAthleteUpdateTimer();
         setupStaticMarkers();
@@ -901,41 +935,38 @@ class TrackingController extends GetxController
 
   setupStaticMarkers() async {
     clearAnnotations();
-    for(final marker in mapPathMarkers) {
+    for (final marker in mapPathMarkers) {
       print('marker ${marker.type}');
 
       final response = await http.get(Uri.parse(marker.iconUrl));
-      
 
       Widget widget = Image.memory(response.bodyBytes, width: 30, height: 30);
-      final String annotationIdVal = 'static_annotation_id_${interestAnnotations.value
-          .length}';
-      final apple_maps.AnnotationId polygonId = apple_maps.AnnotationId(
-          annotationIdVal);
+      final String annotationIdVal =
+          'static_annotation_id_${interestAnnotations.value.length}';
+      final apple_maps.AnnotationId polygonId =
+          apple_maps.AnnotationId(annotationIdVal);
       var bytes = await AppHelper.widgetToBytes(widget);
       final apple_maps.Annotation annotation = apple_maps.Annotation(
         annotationId: polygonId,
         icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
         //icon: BitmapDescriptor.defaultAnnotation,
-        position: apple_maps.LatLng(marker.latLng.latitude, marker.latLng.longitude),
-        onTap: () {
-
-        },
+        position:
+            apple_maps.LatLng(marker.latLng.latitude, marker.latLng.longitude),
+        onTap: () {},
       );
       addStaticAnnotation(polygonId.value, annotation);
     }
   }
 
   void startTrackingTimer() {
-    print('freq ${ trackingDetails?.updateFreq ?? 60}');
+    print('freq ${trackingDetails?.updateFreq ?? 60}');
     timer = Timer.periodic(Duration(seconds: trackingDetails?.updateFreq ?? 60),
-        (Timer t){
-
+        (Timer t) {
       DashboardController controller = Get.find();
 
       print(controller.selMenu.value?.label);
       print('okak');
-      if(controller.selMenu.value?.label == 'track') {
+      if (controller.selMenu.value?.label == 'track') {
         getAthleteTrackingInfo();
       } else {
         counter++;
@@ -945,10 +976,10 @@ class TrackingController extends GetxController
 
   void startAthleteUpdateTimer() {
     athleteUpdateTimer?.cancel();
-    athleteUpdateTimer = Timer.periodic(const Duration(milliseconds: 1000),
-            (Timer t){
-            updateAthleteMarkers();
-        });
+    athleteUpdateTimer =
+        Timer.periodic(const Duration(milliseconds: 1000), (Timer t) {
+      updateAthleteMarkers();
+    });
   }
 
   geodart.LineString? getLineStringForPath(String pathName) {
@@ -977,7 +1008,6 @@ class TrackingController extends GetxController
   }
 
   Future<void> getAthleteTrackingInfo({bool firstTime = false}) async {
-
     counter = 0;
 
     if (trackingDetails == null) return;
@@ -1010,16 +1040,15 @@ class TrackingController extends GetxController
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
       entrantsIds.forEach((element) {
-        if(athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
+        if (athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
           athleteTrackDetails.add(AthleteTrackDetail(
             track: element,
           ));
         }
       });
-
     }
 
-    if(false && routePathsCordinates.isNotEmpty) {
+    if (false && routePathsCordinates.isNotEmpty) {
       athleteTrackDetails.addAll([
         AthleteTrackDetail(
           track: '1',
@@ -1046,8 +1075,7 @@ class TrackingController extends GetxController
     athleteTrackDetails.refresh();
     update();
 
-
-    if(Platform.isIOS) {
+    if (Platform.isIOS) {
       annotations.value.clear();
       annotations.refresh();
       trackProgressMap.clear();
@@ -1066,16 +1094,18 @@ class TrackingController extends GetxController
         .toList());
   }
 
-  LatLng getLatlngFromDistance(geodart.LineString lineStringPath, double coveredDistance) {
-    final coordinate =
-        lineStringPath.along(Precision(coveredDistance).toPrecision(4)).coordinate;
+  LatLng getLatlngFromDistance(
+      geodart.LineString lineStringPath, double coveredDistance) {
+    final coordinate = lineStringPath
+        .along(Precision(coveredDistance).toPrecision(4))
+        .coordinate;
     return LatLng(coordinate.latitude, coordinate.longitude);
   }
 
   void updateTrackProgress() {
     for (var trackDetail in athleteTrackDetails.value) {
       final progress = trackProgressMap[trackDetail.track];
-      if(progress != null) {
+      if (progress != null) {
         progress.oldProgress = trackDetail.location ?? 0;
         progress.currentProgress = trackDetail.location ?? 0;
         progress.currentSpeed = trackDetail.speed ?? 0;
@@ -1089,7 +1119,6 @@ class TrackingController extends GetxController
   }
 
   updateAthleteMarkers() async {
-    print('updateAthleteMarkers');
     for (var trackDetail in athleteTrackDetails.value) {
       final routePath = getAthleteRouthPath(trackDetail);
       if (routePath.isNotEmpty) {
@@ -1098,38 +1127,42 @@ class TrackingController extends GetxController
         var latLng = routePath.first;
 
         if (progress == null) {
-
           progress = TrackProgress(
             oldProgress: trackDetail.location ?? 0,
             currentProgress: trackDetail.location ?? 0,
             currentSpeed: trackDetail.speed ?? 0,
-            coveredDistance: (trackDetail.location ?? 0) / 100 *
-                Precision(createLineStringPath((getAthleteRouthPath(trackDetail))).length).toPrecision(3),
+            coveredDistance: (trackDetail.location ?? 0) /
+                100 *
+                Precision(
+                        createLineStringPath((getAthleteRouthPath(trackDetail)))
+                            .length)
+                    .toPrecision(3),
           );
-
 
           trackProgressMap[trackDetail.track] = progress;
 
-          final geodart.LineString lineStringPath = createLineStringPath(
-              routePath);
+          final geodart.LineString lineStringPath =
+              createLineStringPath(routePath);
           latLng =
               getLatlngFromDistance(lineStringPath, progress.coveredDistance);
 
           setLocation(trackDetail.track, latLng);
           var bytes = await AppHelper.widgetToBytes(Container(
-            width: trackDetail.marker_text.length > 3 ? (trackDetail.marker_text
-                .length) * 13 : 36,
+            width: trackDetail.marker_text.length > 3
+                ? (trackDetail.marker_text.length) * 13
+                : 36,
             height: 36,
             decoration: BoxDecoration(
-                color: AppHelper.hexToColor(routePathsColors[trackDetail.path ?? 'path']),
+                color: AppHelper.hexToColor(
+                    routePathsColors[trackDetail.path ?? 'path']),
                 //color: AppColors.accentLight
                 borderRadius: BorderRadius.circular(40)),
             child: Center(
-              child: AppText(
-                  trackDetail.marker_text,
+              child: AppText(trackDetail.marker_text,
                   fontSize: 16,
-                  color: routePathsColors[trackDetail.path ?? 'path'] == null ? Colors.black : AppColors.white
-              ),
+                  color: routePathsColors[trackDetail.path ?? 'path'] == null
+                      ? Colors.black
+                      : AppColors.white),
             ),
           ));
           var marker = apple_maps.Annotation(
@@ -1138,59 +1171,65 @@ class TrackingController extends GetxController
             infoWindow: apple_maps.InfoWindow(title: trackDetail.track),
             icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
           );
-          addAnnotation(
-              apple_maps.AnnotationId(trackDetail.track), marker);
+          addAnnotation(apple_maps.AnnotationId(trackDetail.track), marker);
         } else {
+          print(
+              'routePath ${trackDetail.track} ${trackDetail.path}: $routePath');
+          final geodart.LineString lineStringPath =
+              createLineStringPath(routePath);
 
-          print('routePath ${trackDetail.track} ${trackDetail.path}: $routePath');
-            final geodart.LineString lineStringPath = createLineStringPath(routePath);
+          print('lineString ${trackDetail.track} ${lineStringPath}');
 
-            print('lineString ${trackDetail.track} ${lineStringPath}');
+          double coveredDistance = progress.coveredDistance;
+          if (coveredDistance <
+              Precision(lineStringPath.length).toPrecision(4)) {
+            print('track ' + trackDetail.track);
+            print('location ${trackDetail.location}');
+            print(
+                'speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
+            print(
+                'distance: $coveredDistance ${Precision(lineStringPath.length).toPrecision(4)}');
 
-            double coveredDistance = progress.coveredDistance;
-            if (coveredDistance < Precision(lineStringPath.length).toPrecision(4)) {
-              print('track '+ trackDetail.track);
-              print('location ${trackDetail.location}');
-              print('speed: ${(getNewDistanceAfterOneSec(progress.currentSpeed))}');
-              print('distance: $coveredDistance ${Precision(lineStringPath.length).toPrecision(4)}');
-
-              if (progress.newProgressUpdate) {
-                print('new update');
-                progress.coveredDistance =
-                    (progress.currentProgress / 100) *
-                        Precision(lineStringPath.length).toPrecision(3);
-                progress.newProgressUpdate = false;
-              }
-
-              print('distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
-
-              progress.coveredDistance =
-                  getNewDistanceAfterOneSec(progress.currentSpeed) +
-                      Precision(progress.coveredDistance).toPrecision(4);
-              final latLng = getLatlngFromDistance(lineStringPath, progress.coveredDistance);
-
-              await setLocation(trackDetail.track, latLng, wait: false, update: false);
-
-              if (annotations.value[apple_maps.AnnotationId(trackDetail.track)] != null) {
-                print('annotation update');
-                final dashboardController = Get.put(DashboardController());
-                if (dashboardController.selMenu.value!.label == 'track') {
-                  updateAnnotation(
-                    apple_maps.AnnotationId(trackDetail.track),
-                    annotations.value[apple_maps.AnnotationId(
-                        trackDetail.track)]!
-                        .copyWith(positionParam: apple_maps.LatLng(
-                        latLng.latitude, latLng.longitude)),
-                  );
-                }
-              }
-
-              progress.oldProgress = trackDetail.location ?? 0;
-              progress.currentProgress = trackDetail.location ?? 0;
-              progress.currentSpeed = trackDetail.speed ?? 0;
-
-              trackProgressMap[trackDetail.track] = progress;
+            if (progress.newProgressUpdate) {
+              print('new update');
+              progress.coveredDistance = (progress.currentProgress / 100) *
+                  Precision(lineStringPath.length).toPrecision(3);
+              progress.newProgressUpdate = false;
             }
+
+            print(
+                'distance2: ${getNewDistanceAfterOneSec(progress.currentSpeed)}');
+
+            progress.coveredDistance =
+                getNewDistanceAfterOneSec(progress.currentSpeed) +
+                    Precision(progress.coveredDistance).toPrecision(4);
+            final latLng =
+                getLatlngFromDistance(lineStringPath, progress.coveredDistance);
+
+            await setLocation(trackDetail.track, latLng,
+                wait: false, update: false);
+
+            if (annotations.value[apple_maps.AnnotationId(trackDetail.track)] !=
+                null) {
+              print('annotation update');
+              final dashboardController = Get.put(DashboardController());
+              if (dashboardController.selMenu.value!.label == 'track') {
+                updateAnnotation(
+                  apple_maps.AnnotationId(trackDetail.track),
+                  annotations.value[apple_maps.AnnotationId(trackDetail.track)]!
+                      .copyWith(
+                          positionParam: apple_maps.LatLng(
+                              latLng.latitude, latLng.longitude)),
+                );
+              }
+            }
+
+            progress.oldProgress = trackDetail.location ?? 0;
+            progress.currentProgress = trackDetail.location ?? 0;
+            progress.currentSpeed = trackDetail.speed ?? 0;
+
+            trackProgressMap[trackDetail.track] = progress;
+          }
         }
       }
     }
@@ -1209,12 +1248,15 @@ class TrackingController extends GetxController
       }
     }
 
-    mapboxMap?.loadStyleURI(currentStyle.value == 0 ? MapboxStyles.MAPBOX_STREETS : (currentStyle.value == 1 ? MapboxStyles.STANDARD : MapboxStyles.SATELLITE));
+    mapboxMap?.loadStyleURI(currentStyle.value == 0
+        ? MapboxStyles.MAPBOX_STREETS
+        : (currentStyle.value == 1
+            ? MapboxStyles.STANDARD
+            : MapboxStyles.SATELLITE));
     update();
   }
 
   Future<void> showUserLocation() async {
-
     bool serviceEnabled;
     geolocator.LocationPermission permission;
 
@@ -1227,7 +1269,7 @@ class TrackingController extends GetxController
         // App to enable the location services.
         return Future.error('Location services are disabled.');
       }
-    } catch(e) {
+    } catch (e) {
       ToastUtils.show('Location service is disabled');
       return;
     }
@@ -1254,13 +1296,17 @@ class TrackingController extends GetxController
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
     var position = await geolocator.Geolocator.getCurrentPosition();
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       mapboxMap?.setCamera(CameraOptions(
-        center: Point(coordinates: Position(position.longitude, position.latitude)),
+        center:
+            Point(coordinates: Position(position.longitude, position.latitude)),
         zoom: 15,
       ));
     } else {
-      appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(position.latitude, position.longitude), zoom: 15)));
+      appleMapController?.animateCamera(
+          apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(
+              target: apple_maps.LatLng(position.latitude, position.longitude),
+              zoom: 15)));
     }
   }
 
@@ -1301,7 +1347,10 @@ class MapPathMarkers {
   MapPathMarkers(
       {required this.latLng,
       required this.name,
-      required this.description, this.type = '', this.featureColor = '', this.direction = false,
+      required this.description,
+      this.type = '',
+      this.featureColor = '',
+      this.direction = false,
       required this.iconUrl});
 }
 

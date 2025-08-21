@@ -107,7 +107,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noMoreData => 'No more Data';
 
   @override
-  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => 'Would you like to receive event related push notification for this event';
+  String get wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent => 'Would you like to receive event related push notifications for this event';
 
   @override
   String get noThanks => 'No thanks';

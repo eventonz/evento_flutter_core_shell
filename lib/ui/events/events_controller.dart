@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/event_info.dart';
 import 'package:evento_core/core/overlays/progress_dialog.dart';
@@ -7,7 +9,7 @@ import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
-import 'package:evento_core/ui/landing/landing.dart';
+import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -31,17 +33,29 @@ class EventsController extends GetxController {
 
   TextEditingController searchController = TextEditingController();
 
-  late ScrollController scrollController;
+  ScrollController? scrollController;
 
   final storage = GetStorage();
 
   @override
   void onInit() {
     super.onInit();
+
+    // Check if eventM is available
+    if (AppGlobals.eventM == null) {
+      // Set default values to prevent crashes
+      headerLogo = '';
+      headerColor = '';
+      searchBar = false; // Default to false for bool
+      allEvents = [];
+      events = <Event>[].obs;
+      return;
+    }
+
     eventM = AppGlobals.eventM!;
     headerLogo = eventM.header?.logo ?? '';
     headerColor = eventM.header?.color ?? '';
-    searchBar = eventM.searchBar!;
+    searchBar = eventM.searchBar ?? false; // Default to false if null
     allEvents = eventM.events ?? [];
 
     double? savedPosition = storage.read<double>('scroll_position');
@@ -51,70 +65,84 @@ class EventsController extends GetxController {
         initialScrollOffset: savedPosition,
       );
       Future.delayed(const Duration(seconds: 2), () {
-        scrollController.addListener(scrollListener);
+        scrollController?.addListener(scrollListener);
       });
     } else {
       scrollController = ScrollController();
-      scrollController.addListener(scrollListener);
+      scrollController?.addListener(scrollListener);
     }
-   // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
-   events = eventM.events!.obs.sublist(
-  0, 
-  (savedPosition ?? 0.0) == 0.0 
-    ? (eventM.events!.length < 20 ? eventM.events!.length : 20) 
-    : (((savedPosition!/100).toInt()+6) >= eventM.events!.length 
-        ? eventM.events!.length 
-        : ((savedPosition!/100).toInt()+6))
-).obs;
+    // events = eventM.events!.obs.sublist(0, (savedPosition ?? 0.0) == 0.0 ? 20 : ((savedPosition!/100).toInt()+6) >= allEvents.length ? allEvents.length : ((savedPosition/100).toInt()+6)).obs;
+    events = eventM.events!.obs
+        .sublist(
+            0,
+            (savedPosition ?? 0.0) == 0.0
+                ? (eventM.events!.length < 20 ? eventM.events!.length : 20)
+                : (((savedPosition! / 100).toInt() + 6) >= eventM.events!.length
+                    ? eventM.events!.length
+                    : ((savedPosition! / 100).toInt() + 6)))
+        .obs;
   }
 
   scrollListener() {
-      
-      if(scrollController.offset >= (scrollController.position.maxScrollExtent - 200) && !loading.value && events.length != allEvents.length) {
-        loading.value = true;
-        page +=1;
+    if (scrollController?.offset != null &&
+        scrollController!.offset >=
+            (scrollController!.position.maxScrollExtent - 200) &&
+        !loading.value &&
+        events.length != allEvents.length) {
+      loading.value = true;
+      page += 1;
+      update();
+      Future.delayed(const Duration(milliseconds: 300), () {
+        loading.value = false;
+        events.addAll(allEvents.sublist(
+            (page - 1) * 20,
+            (((page - 1) * 20) + 20) > allEvents.length
+                ? allEvents.length
+                : (((page - 1) * 20) + 20)));
         update();
-        Future.delayed(const Duration(milliseconds: 300), () {
-          loading.value = false;
-          events.addAll(allEvents.sublist((page-1)*20, (((page-1)*20)+20) > allEvents.length ? allEvents.length : (((page-1)*20)+20)));
-          update();
-        });
-      }
+      });
+    }
   }
 
-void onSearch(String val) {
-  page = 1;
-  // Trim the search value to remove any leading or trailing whitespace
-  String trimmedVal = val.trim();
-  
-  if (trimmedVal.isNotEmpty) {
-    // Filter events based on the trimmed search value
-    events.value = allEvents.where((element) => element.title.toLowerCase().contains(trimmedVal.toLowerCase())).toList();
-  } else {
-    // Ensure the range for sublist is within bounds
-    int endIndex = allEvents.length < 20 ? allEvents.length : 20;
-    events.value = allEvents.sublist(0, endIndex).toList();
+  void onSearch(String val) {
+    page = 1;
+    // Trim the search value to remove any leading or trailing whitespace
+    String trimmedVal = val.trim();
+
+    if (trimmedVal.isNotEmpty) {
+      // Filter events based on the trimmed search value
+      events.value = allEvents
+          .where((element) =>
+              element.title.toLowerCase().contains(trimmedVal.toLowerCase()))
+          .toList();
+    } else {
+      // Ensure the range for sublist is within bounds
+      int endIndex = allEvents.length < 20 ? allEvents.length : 20;
+      events.value = allEvents.sublist(0, endIndex).toList();
+    }
+
+    update();
+    events.refresh();
   }
-  
-  update();
-  events.refresh();
-}
 
   @override
   void onClose() {
+    scrollController?.dispose();
     super.onClose();
   }
 
-  void toLanding() async {
-    Get.off(() => const LandingScreen(),
-        routeName: Routes.landing,
+  void toDashboard() async {
+    Get.off(() => const DashboardScreen(),
+        routeName: Routes.dashboard,
         transition: Transition.topLevel,
         duration: const Duration(milliseconds: 1500),
         arguments: const {'is_prev': true});
   }
 
   void selectEvent(dynamic event) {
-    storage.write('scroll_position', scrollController.position.pixels);
+    if (scrollController != null) {
+      storage.write('scroll_position', scrollController!.position.pixels);
+    }
     if (event is Event) {
       if (event.subEvents == null) {
         getConfigDetails(event);
@@ -136,17 +164,33 @@ void onSearch(String val) {
     ProgressDialogUtils.show();
     try {
       final res = await ApiHandler.genericGetHttp(url: event.config);
+
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
+
+      // Save event selection and config to SharedPrefs immediately
+      saveEventSelection(event);
+
+      // Ensure SharedPrefs is initialized before saving
+      await Preferences.init();
+      Preferences.setString(
+          AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
       Preferences.setInt(AppKeys.configLastUpdated,
           AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
+
       final accentColors = AppGlobals.appConfig!.theme!.accent;
       AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
       AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);
+
+      // Also update accent colors so all UI components use the theme
+      AppColors.accentLight = AppColors.primary;
+      AppColors.accentDark = AppColors.secondary;
+
+      // Update the app theme to reflect the new colors
+      AppHelper.updateAppTheme();
+
       ProgressDialogUtils.dismiss();
-      saveEventSelection(event);
-      toLanding();
+      toDashboard();
     } catch (e) {
-      debugPrint(e.toString());
       ProgressDialogUtils.dismiss();
       ToastUtils.show(null);
     }

@@ -37,7 +37,7 @@ class ApiHandler {
             ),
             data: body,
           )
-          .timeout(Duration(seconds: timeout ?? 5));
+          .timeout(Duration(seconds: timeout ?? 10));
 
       Logger.i('POST Response from: $url');
       Logger.d('Response Data: ${response.data}');
@@ -52,6 +52,7 @@ class ApiHandler {
         'data': body,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,
@@ -78,7 +79,7 @@ class ApiHandler {
             ),
             data: body,
           )
-          .timeout(const Duration(seconds: 5));
+          .timeout(const Duration(seconds: 10));
 
       Logger.i('PATCH Response from: $url');
       Logger.d('Response Data: ${response.data}');
@@ -198,6 +199,7 @@ class ApiHandler {
         'url': url,
         'error': e.response?.data ?? e.response?.statusMessage ?? ''
       });
+
       return ApiData(
           data: e.response?.data ?? {},
           statusCode: e.response?.statusCode ?? 500,

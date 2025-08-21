@@ -13,21 +13,21 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.2
-  
   evento_core:
     path: ../
-
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
   flutter_lints: ^2.0.3
   build_runner: ^2.2.0
+  flutter_native_splash: ^2.3.7
 
 flutter:
   uses-material-design: true
   generate: true
+
+  # flutter packages pub run flutter_native_splash:create
 
   assets:
     - assets/images/

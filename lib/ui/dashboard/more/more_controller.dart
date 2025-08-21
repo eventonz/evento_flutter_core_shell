@@ -17,7 +17,6 @@ import 'package:video_player/video_player.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 
-
 import '../../../core/models/storyslider.dart';
 
 class MoreController extends GetxController {
@@ -35,42 +34,36 @@ class MoreController extends GetxController {
   }
 
   storeCache() async {
-    
     int i = 0;
     moreDetails.items?.forEach((item) {
       i++;
-      if(item.type == 'storyslider') {
-        final res = ApiHandler.genericGetHttp(url: item.storySlider!.url!).then((value) {
+      if (item.type == 'storyslider') {
+        final res = ApiHandler.genericGetHttp(url: item.storySlider!.url!)
+            .then((value) {
           print('ss');
           print(value.data);
           sliders = (value.data['items'] as List).map((e) {
             var slider = StorySlider.fromJson(e);
             return slider;
           }).toList();
-          if(sliders!.isNotEmpty) {
-            for(int x = 0; x < sliders!.length; x++) {
-              if((sliders![x].video ?? sliders![x].image) == null) {
+          if (sliders!.isNotEmpty) {
+            for (int x = 0; x < sliders!.length; x++) {
+              if ((sliders![x].video ?? sliders![x].image) == null) {
                 continue;
               }
               try {
-                DefaultCacheManager().getSingleFile(
-                    sliders![x].video ?? sliders![x].image!).then((value) {
+                DefaultCacheManager()
+                    .getSingleFile(sliders![x].video ?? sliders![x].image!)
+                    .then((value) {
                   print(value.path);
                   print(value.path);
                   sliders![0].videoPlayerController =
-                  VideoPlayerController.file(value)
-                    ..initialize().then((value) {
-
-                    });
+                      VideoPlayerController.file(value)
+                        ..initialize().then((value) {});
                 });
-              } catch (e) {
-
-              }
+              } catch (e) {}
             }
-
-
           }
-
         });
       }
     });
@@ -79,7 +72,7 @@ class MoreController extends GetxController {
   void decideNextView(Items item) {
     final itemType = item.type!;
     if (itemType == 'link') {
-      if(item.openExternal == true) {
+      if (item.openExternal == true) {
         launchUrl(Uri.parse(item.link!.url!), mode: LaunchMode.platformDefault);
       } else {
         AppHelper.showWebBottomSheet(
@@ -100,15 +93,20 @@ class MoreController extends GetxController {
     } else if (itemType == 'assistant') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.assistant, arguments: {AppKeys.moreItem: item});
+    } else if (itemType == 'assistantv2') {
+      // DatabaseHandler.removeAllChatMessages();
+      Get.toNamed(Routes.assistantv2, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'storyslider') {
       // DatabaseHandler.removeAllChatMessages();
-      Get.toNamed(Routes.storySlider, arguments: {AppKeys.moreItem: item, 'slides' : sliders});
+      Get.toNamed(Routes.storySlider,
+          arguments: {AppKeys.moreItem: item, 'slides': sliders});
     } else if (itemType == 'results') {
       Get.toNamed(Routes.results, arguments: {AppKeys.moreItem: item});
     } else if (itemType == 'leaderboard') {
       Get.toNamed(Routes.leaderboard, arguments: {AppKeys.moreItem: item});
     } else {
-      ToastUtils.show('${AppLocalizations.of(Get.context!)!.somethingWentWrong}...');
+      ToastUtils.show(
+          '${AppLocalizations.of(Get.context!)!.somethingWentWrong}...');
     }
   }
 
@@ -126,7 +124,7 @@ class MoreController extends GetxController {
         return;
       } else {
         url =
-        AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
+            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
         Preferences.setString(AppKeys.eventUrl, url);
         AppGlobals.selEventId = int.parse(config.singleEventId!);
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
@@ -147,15 +145,22 @@ class MoreController extends GetxController {
     AppColors.secondary = AppColors.primary == AppColors.accentDark
         ? AppColors.accentLight
         : AppColors.accentDark;
+
+    // Also update accent colors so all UI components use the theme
+    AppColors.accentLight = AppColors.primary;
+    AppColors.accentDark = AppColors.secondary;
+
+    // Update the app theme to reflect the new colors
+    AppHelper.updateAppTheme();
   }
 
   Future<void> toSettingsScreen() async {
     await FirebaseAnalytics.instance.logEvent(
-    name: "opened_settings",
-    parameters: {
-         "event_id": Preferences.getInt(AppKeys.eventId, 0),
-    },
-  );
+      name: "opened_settings",
+      parameters: {
+        "event_id": Preferences.getInt(AppKeys.eventId, 0),
+      },
+    );
     Get.toNamed(Routes.settings);
   }
 }

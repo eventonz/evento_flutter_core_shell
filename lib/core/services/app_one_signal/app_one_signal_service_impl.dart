@@ -5,6 +5,7 @@ import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,7 @@ import '../../models/app_config.dart';
 
 class AppOneSignalImpl implements AppOneSignal {
   final appLinks = AppLinks();
+  bool _isInitialized = false;
 
   AppOneSignalImpl() {
     // Do not call init() here. Initialization will be triggered manually.
@@ -48,10 +50,16 @@ class AppOneSignalImpl implements AppOneSignal {
   }
 
   Future<void> initializeOneSignal() async {
+    if (_isInitialized) {
+      print('OneSignal already initialized, skipping...');
+      return;
+    }
+
     await Future.delayed(const Duration(seconds: 1));
     OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
     OneSignal.initialize(AppGlobals.appEventConfig.oneSignalId);
-    OneSignal.Notifications.requestPermission(true);
+    OneSignal.Notifications.requestPermission(false);
+    _isInitialized = true;
 
     OneSignal.Notifications.addClickListener((event) async {
       debugPrint(
@@ -112,11 +120,13 @@ class AppOneSignalImpl implements AppOneSignal {
     String userId = '';
     await Preferences.init();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      // Get the actual OneSignal User ID
       userId = OneSignal.User.pushSubscription.id ?? '';
       if (userId.isNotEmpty) {
         await Preferences.setString(AppKeys.oneSingleUserId, userId);
         AppGlobals.oneSignalUserId = userId;
       } else {
+        // Fallback to stored user ID if OneSignal ID is not available
         userId = Preferences.getString(AppKeys.oneSingleUserId, '');
         AppGlobals.oneSignalUserId = userId;
       }
@@ -127,11 +137,21 @@ class AppOneSignalImpl implements AppOneSignal {
   @override
   Future<void> updateNotificationStatus(
       String userId, int eventId, bool notificationStatus) async {
+    // Ensure we have a valid player ID
+    String playerId = userId;
+    if (playerId.isEmpty) {
+      // Use the helper method to get a player ID with fallbacks
+      playerId = await AppHelper.getPlayerId();
+    }
+
     final data = {
       "race_id": eventId,
-      "player_id": userId,
+      "player_id": playerId,
       "notifications": {"event": notificationStatus}
     };
+
+    print('Updating notification status with player_id: $playerId');
+
     await ApiHandler.postHttp(
       baseUrl: 'https://eventotracker.com/api/v3/api.cfm/settings',
       body: data,
