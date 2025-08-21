@@ -337,6 +337,9 @@ class LandingController extends GetxController {
     AppColors.secondary = AppColors.primary == AppColors.accentDark
         ? AppColors.accentLight
         : AppColors.accentDark;
+
+    // Update the app theme to reflect the new colors
+    AppHelper.updateAppTheme();
   }
 
   // Future<void> getAthletes() async {

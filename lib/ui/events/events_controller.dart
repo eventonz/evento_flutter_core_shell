@@ -177,6 +177,13 @@ class EventsController extends GetxController {
       AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
       AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);
 
+      // Also update accent colors so all UI components use the theme
+      AppColors.accentLight = AppColors.primary;
+      AppColors.accentDark = AppColors.secondary;
+
+      // Update the app theme to reflect the new colors
+      AppHelper.updateAppTheme();
+
       ProgressDialogUtils.dismiss();
       toDashboard();
     } catch (e) {

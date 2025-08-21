@@ -18,7 +18,8 @@ class AppStyles {
   static const eventDescription =
       TextStyle(fontSize: 18, fontWeight: FontWeight.w500);
 
-  static final light = ThemeData.light().copyWith(
+  // Create dynamic themes that can be updated
+  static ThemeData get light => ThemeData.light().copyWith(
       appBarTheme: AppBarTheme(
           backgroundColor: AppColors.white,
           elevation: 0,
@@ -42,31 +43,31 @@ class AppStyles {
         secondary: AppColors.grey,
       ));
 
-  static final dark = ThemeData.dark().copyWith(
-    appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.lightblack,
-        elevation: 0,
-        centerTitle: true,
-        iconTheme: IconThemeData(
-          color: AppColors.white,
-        )),
-    //brightness: Brightness.dark,
-    bottomSheetTheme: const BottomSheetThemeData(
-      backgroundColor: AppColors.lightblack,
-    ),
-    iconTheme: IconThemeData(color: AppColors.accentDark),
-    listTileTheme: ListTileThemeData(iconColor: AppColors.accentDark),
-    cupertinoOverrideTheme: const NoDefaultCupertinoThemeData(
-      barBackgroundColor: AppColors.lightblack,
-    ),
-    scaffoldBackgroundColor: AppColors.black,
-    visualDensity: VisualDensity.adaptivePlatformDensity,
-    primaryIconTheme: const IconThemeData(color: AppColors.white),
-    colorScheme: const ColorScheme.dark().copyWith(
-        primary: AppColors.secondary,
-        brightness: Brightness.light,
-        secondary: AppColors.white),
-  );
+  static ThemeData get dark => ThemeData.dark().copyWith(
+        appBarTheme: const AppBarTheme(
+            backgroundColor: AppColors.lightblack,
+            elevation: 0,
+            centerTitle: true,
+            iconTheme: IconThemeData(
+              color: AppColors.white,
+            )),
+        //brightness: Brightness.dark,
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: AppColors.lightblack,
+        ),
+        iconTheme: IconThemeData(color: AppColors.accentDark),
+        listTileTheme: ListTileThemeData(iconColor: AppColors.accentDark),
+        cupertinoOverrideTheme: const NoDefaultCupertinoThemeData(
+          barBackgroundColor: AppColors.lightblack,
+        ),
+        scaffoldBackgroundColor: AppColors.black,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        primaryIconTheme: const IconThemeData(color: AppColors.white),
+        colorScheme: const ColorScheme.dark().copyWith(
+            primary: AppColors.secondary,
+            brightness: Brightness.light,
+            secondary: AppColors.white),
+      );
 
   static final tileDeepShadow = BoxShadow(
     color: AppColors.black.withOpacity(0.9),

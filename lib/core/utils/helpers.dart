@@ -8,6 +8,7 @@ import 'package:dio/io.dart';
 import 'package:evento_core/core/overlays/progress_dialog.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/ui/common_components/bottom_sheet.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
@@ -362,48 +363,75 @@ class AppHelper {
     final notificationSettingChanged = Preferences.getString(
         AppHelper.notificationPrefenceKey(eventId),
         NotificationStatus.initial.name);
-    if (AppGlobals.appEventConfig.multiEventListId == null) return;
-    if (notificationSettingChanged != NotificationStatus.initial.name) return;
-
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: AppText(
-          AppLocalizations.of(context)!
-              .wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
-          textAlign: TextAlign.center,
+    if (notificationSettingChanged == NotificationStatus.initial.name) {
+      showCupertinoDialog(
+        context: context,
+        builder: (context) => CupertinoAlertDialog(
+          title: AppText(
+            AppLocalizations.of(context)!
+                .wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
+            textAlign: TextAlign.center,
+          ),
+          actions: [
+            CupertinoDialogAction(
+              child: AppText(
+                AppLocalizations.of(context)!.noThanks,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? AppColors.darkgrey
+                    : AppColors.white,
+              ),
+              onPressed: () {
+                Preferences.setString(
+                    AppHelper.notificationPrefenceKey(eventId),
+                    NotificationStatus.hidden.name);
+                Navigator.of(context, rootNavigator: true).pop();
+                onResult(false);
+              },
+            ),
+            CupertinoDialogAction(
+              child: AppText(
+                'Yes',
+                color: Theme.of(context).brightness == Brightness.light
+                    ? AppColors.darkgrey
+                    : AppColors.white,
+              ),
+              onPressed: () {
+                Preferences.setString(
+                    AppHelper.notificationPrefenceKey(eventId),
+                    NotificationStatus.show.name);
+                Navigator.of(context, rootNavigator: true).pop();
+                onResult(true);
+              },
+            ),
+          ],
         ),
-        actions: [
-          CupertinoDialogAction(
-            child: AppText(
-              AppLocalizations.of(context)!.noThanks,
-              color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.darkgrey
-                  : AppColors.white,
-            ),
-            onPressed: () {
-              Preferences.setString(AppHelper.notificationPrefenceKey(eventId),
-                  NotificationStatus.hidden.name);
-              Navigator.of(context, rootNavigator: true).pop();
-              onResult(false);
-            },
-          ),
-          CupertinoDialogAction(
-            child: AppText(
-              'Yes',
-              color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.darkgrey
-                  : AppColors.white,
-            ),
-            onPressed: () {
-              Preferences.setString(AppHelper.notificationPrefenceKey(eventId),
-                  NotificationStatus.show.name);
-              Navigator.of(context, rootNavigator: true).pop();
-              onResult(true);
-            },
-          ),
-        ],
-      ),
-    );
+      );
+    }
+  }
+
+  /// Updates the app theme to reflect new configuration colors
+  /// This should be called after updating AppColors.primary and AppColors.secondary
+  static void updateAppTheme() {
+    try {
+      // Force a theme rebuild by temporarily changing to a different theme mode
+      // and then back to the current one to trigger a rebuild
+      final currentThemeMode =
+          Preferences.getString(AppKeys.appThemeStyle, ThemeMode.system.name);
+      final newThemeMode = currentThemeMode == ThemeMode.light.name
+          ? ThemeMode.dark
+          : ThemeMode.light;
+
+      // Change to different theme mode
+      Get.changeThemeMode(newThemeMode);
+
+      // Change back to original theme mode after a brief delay
+      Future.delayed(const Duration(milliseconds: 50), () {
+        final originalThemeMode = AppHelper.getAppTheme(currentThemeMode);
+        Get.changeThemeMode(originalThemeMode);
+      });
+    } catch (e) {
+      // If there's an error, just log it and continue
+      debugPrint('Error updating app theme: $e');
+    }
   }
 }
