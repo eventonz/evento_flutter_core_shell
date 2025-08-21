@@ -39,53 +39,67 @@ class LandingController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('🔵 STEP 5: LandingController.onInit() started');
     final res = Get.arguments;
     if (res != null) {
       isPrev = true;
+      print('🔵 STEP 5: Arguments found, isPrev set to true');
+    } else {
+      print('🔵 STEP 5: No arguments, isPrev remains false');
     }
+    print('🔵 STEP 5: LandingController.onInit() completed');
   }
 
   @override
   void onReady() {
     super.onReady();
+    print('🔵 STEP 5.5: LandingController.onReady() started');
+
     final isMultiEvent = AppGlobals.appEventConfig.multiEventListId != null;
+    print('🔵 STEP 5.5: Is multi-event: $isMultiEvent');
+
     if (isMultiEvent) {
+      print('🔵 STEP 5.5: Multi-event app, initializing OneSignal');
       Preferences.init().then((_) {
         final oneSignalService = Get.find<AppOneSignal>();
-        final eventId = Preferences.getInt(AppKeys.eventId, 0);
-        oneSignalService.initializeOneSignal().then((_) {
-          AppHelper.showNotificationOptInPrompt(
-            context: Get.context!,
-            eventId: eventId,
-            onResult: (allow) {
-              oneSignalService.updateNotificationStatus(
-                  AppGlobals.oneSignalUserId, eventId, allow);
-            },
-          );
-        });
+        // Don't show notification prompt here - let DashboardController handle it
+        // when user reaches the home page
+        oneSignalService.initializeOneSignal();
       });
     }
+
+    print('🔵 STEP 5.5: Calling checkConnection()');
     checkConnection();
+    print('🔵 STEP 5.5: LandingController.onReady() completed');
   }
 
   checkConnection() async {
+    print('🔵 STEP 5.6: checkConnection() started');
     await Future.delayed(const Duration(milliseconds: 300));
+    print('🔵 STEP 5.6: 300ms delay completed');
+
     var result = await connectivity.checkConnectivity();
-    print(result.map((e) => e.toString()));
+    print(
+        '🔵 STEP 5.6: Connectivity result: ${result.map((e) => e.toString())}');
 
     if ((!result.contains(ConnectivityResult.wifi) &&
         !result.contains(ConnectivityResult.mobile) &&
         !result.contains(ConnectivityResult.ethernet))) {
+      print('🔵 STEP 5.6: No internet connection detected');
       await Preferences.init();
-      if(Preferences.getString(AppKeys.localConfig, '{}') == '{}') {
+      if (Preferences.getString(AppKeys.localConfig, '{}') == '{}') {
+        print('🔵 STEP 5.6: No local config, setting noConnection to true');
         noConnection.value = true;
       } else {
+        print('🔵 STEP 5.6: Local config found, calling navigate()');
         navigate();
       }
       update();
     } else {
+      print('🔵 STEP 5.6: Internet connection detected, calling navigate()');
       navigate();
     }
+    print('🔵 STEP 5.6: checkConnection() completed');
   }
 
   String extractEventId(String url) {
@@ -122,8 +136,12 @@ class LandingController extends GetxController {
 
   Future<void> _handleWebViewNavigation(
       String url, String? configUrl, bool isPrev) async {
+    print(
+        '🔵 STEP 7: _handleWebViewNavigation started - URL: $url, isPrev: $isPrev');
+
     final webUrl = Preferences.getString(AppKeys.eventLink, '');
     if (webUrl.isNotEmpty) {
+      print('🔵 STEP 7: Web URL found, showing WebViewEventPage');
       webViewController = WebViewController()
         ..setJavaScriptMode(JavaScriptMode.unrestricted)
         ..loadRequest(Uri.parse(webUrl));
@@ -136,6 +154,8 @@ class LandingController extends GetxController {
       return;
     }
 
+    print(
+        '🔵 STEP 7: No web URL, getting config details and showing DashboardScreen');
     await getConfigDetails(url, configUrl);
     Get.offAll(
       () => isPrev ? const DashboardScreen() : WebViewEventPage(),
@@ -144,25 +164,54 @@ class LandingController extends GetxController {
   }
 
   void navigate() async {
+    print('🔵 STEP 6: LandingController.navigate() started');
     try {
+      // Always initialize SharedPrefs first
+      print('🔵 STEP 6: Initializing SharedPrefs');
+      await Preferences.init();
+      print('🔵 STEP 6: SharedPrefs initialized successfully');
+
+      // Initialize AppGlobals if first time
       if (!isPrev) {
+        print('🔵 STEP 6: First time launch, initializing AppGlobals');
         await AppGlobals.init();
       }
-      isPrev = true;
-      await checkLaunchState();
-      late String url;
-      final config = AppGlobals.appEventConfig;
-      if (config.multiEventListId != null) {
-        url = Preferences.getString(AppKeys.eventUrl, '');
-        await getEvents(config);
+
+      // Load AppConfig from SharedPrefs
+      print('🔵 STEP 6: Loading AppConfig from SharedPrefs');
+      var savedConfig = Preferences.getString(AppKeys.localConfig, '{}');
+      if (savedConfig != '{}') {
+        AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(savedConfig));
+        print('🔵 STEP 6: AppConfig loaded successfully from SharedPrefs');
       } else {
-        url =
-            AppHelper.createUrl(config.singleEventUrl!, config.singleEventId!);
-        AppGlobals.selEventId = int.parse(config.singleEventId!);
+        print('🔵 STEP 6: No saved config found, creating empty config');
+        // Create an empty config to prevent crashes
+        AppGlobals.appConfig = AppConfig();
+        print('🔵 STEP 6: Empty AppConfig created');
+      }
+
+      isPrev = true;
+      print('🔵 STEP 6: Checking launch state');
+      await checkLaunchState();
+
+      late String url;
+      final eventConfig = AppGlobals.appEventConfig;
+      if (eventConfig.multiEventListId != null) {
+        print('🔵 STEP 6: Multi-event app, getting URL from preferences');
+        url = Preferences.getString(AppKeys.eventUrl, '');
+        await getEvents(eventConfig);
+      } else {
+        print('🔵 STEP 6: Single event app, creating URL from config');
+        url = AppHelper.createUrl(
+            eventConfig.singleEventUrl!, eventConfig.singleEventId!);
+        AppGlobals.selEventId = int.parse(eventConfig.singleEventId!);
         Preferences.setInt(AppKeys.eventId, AppGlobals.selEventId);
       }
       AppGlobals.selEventId = Preferences.getInt(AppKeys.eventId, 0);
+      print('🔵 STEP 6: Event ID set to: ${AppGlobals.selEventId}');
+
       checkTheme();
+      print('🔵 STEP 6: Theme checked, waiting 1.3 seconds');
       await Future.delayed(const Duration(milliseconds: 1300));
 
       if (Get.arguments?['athlete_id'] != null) {
@@ -193,7 +242,7 @@ class LandingController extends GetxController {
             // Handle athlete deep link
             if (path.contains('/athlete/')) {
               final athleteId = path.split('/athlete/')[1];
-              await _navigateToAthleteDetails(athleteId, url, config);
+              await _navigateToAthleteDetails(athleteId, url, eventConfig);
               return; // This will prevent further execution
             } else {
               await _navigateToDashboard();
@@ -205,9 +254,11 @@ class LandingController extends GetxController {
 
 // Handle non-deep link cases
       if (url.isEmpty) {
+        print('🔵 STEP 6: No URL found, going back to events');
         Get.offNamed(Routes.events);
       } else {
-        await _handleWebViewNavigation(url, config.configUrl, isPrev);
+        print('🔵 STEP 6: URL found: $url, calling _handleWebViewNavigation');
+        await _handleWebViewNavigation(url, eventConfig.configUrl, isPrev);
       }
 
 // Helper methods
@@ -261,15 +312,16 @@ class LandingController extends GetxController {
   }
 
   Future<void> getConfigDetails(String url, String? configUrl) async {
-    var config = Preferences.getString(AppKeys.localConfig, '{}');
-    AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(config));
+    var savedConfig = Preferences.getString(AppKeys.localConfig, '{}');
+    AppGlobals.appConfig = AppConfig.fromJson(jsonDecode(savedConfig));
     try {
       final res = await ApiHandler.genericGetHttp(url: configUrl ?? url);
-      if(res.statusCode != 200) {
+      if (res.statusCode != 200) {
         throw Exception('error');
       }
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
-      Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+      Preferences.setString(
+          AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
     } catch (e) {
       print(e);
     }

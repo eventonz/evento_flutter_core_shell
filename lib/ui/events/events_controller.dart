@@ -9,7 +9,7 @@ import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
-import 'package:evento_core/ui/landing/landing.dart';
+import 'package:evento_core/ui/dashboard/dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -40,10 +40,22 @@ class EventsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
+    // Check if eventM is available
+    if (AppGlobals.eventM == null) {
+      // Set default values to prevent crashes
+      headerLogo = '';
+      headerColor = '';
+      searchBar = false; // Default to false for bool
+      allEvents = [];
+      events = <Event>[].obs;
+      return;
+    }
+
     eventM = AppGlobals.eventM!;
     headerLogo = eventM.header?.logo ?? '';
     headerColor = eventM.header?.color ?? '';
-    searchBar = eventM.searchBar!;
+    searchBar = eventM.searchBar ?? false; // Default to false if null
     allEvents = eventM.events ?? [];
 
     double? savedPosition = storage.read<double>('scroll_position');
@@ -117,9 +129,9 @@ class EventsController extends GetxController {
     super.onClose();
   }
 
-  void toLanding() async {
-    Get.off(() => const LandingScreen(),
-        routeName: Routes.landing,
+  void toDashboard() async {
+    Get.off(() => const DashboardScreen(),
+        routeName: Routes.dashboard,
         transition: Transition.topLevel,
         duration: const Duration(milliseconds: 1500),
         arguments: const {'is_prev': true});
@@ -148,20 +160,26 @@ class EventsController extends GetxController {
     ProgressDialogUtils.show();
     try {
       final res = await ApiHandler.genericGetHttp(url: event.config);
+
       AppGlobals.appConfig = AppConfig.fromJson(res.data);
+
+      // Save event selection and config to SharedPrefs immediately
+      saveEventSelection(event);
+
+      // Ensure SharedPrefs is initialized before saving
+      await Preferences.init();
       Preferences.setString(
           AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
       Preferences.setInt(AppKeys.configLastUpdated,
           AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
+
       final accentColors = AppGlobals.appConfig!.theme!.accent;
       AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
       AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);
-      ProgressDialogUtils.dismiss();
-      saveEventSelection(event);
 
-      toLanding();
+      ProgressDialogUtils.dismiss();
+      toDashboard();
     } catch (e) {
-      debugPrint(e.toString());
       ProgressDialogUtils.dismiss();
       ToastUtils.show(null);
     }
