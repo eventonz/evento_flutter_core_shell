@@ -14,26 +14,10 @@ class LandingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('🔵 STEP 4.5: LandingScreen.build() started');
     final controller = Get.put(LandingController());
-    print('🔵 STEP 4.5: LandingController created successfully');
 
-    // Test if the controller is working
-    print('🔵 STEP 4.5: Testing controller - isPrev: ${controller.isPrev}');
-    print(
-        '🔵 STEP 4.5: Testing controller - noConnection: ${controller.noConnection.value}');
-    print(
-        '🔵 STEP 4.5: Testing controller - exception: ${controller.exception.value}');
-
-    print('🔵 STEP 4.5: About to create Obx widget');
     return Obx(
       () {
-        print('🔵 STEP 4.5: Obx callback executed');
-        print(
-            '🔵 STEP 4.5: noConnection value: ${controller.noConnection.value}');
-        print('🔵 STEP 4.5: exception value: ${controller.exception.value}');
-
-        print('🔵 STEP 4.5: About to create Scaffold');
         return Scaffold(
           body: controller.noConnection.value
               ? Center(
@@ -117,27 +101,8 @@ class LandingScreen extends StatelessWidget {
                   : Container(
                       width: double.infinity,
                       height: double.infinity,
-                      color: Colors.black,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.image,
-                              size: 100,
-                              color: Colors.white,
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              'Loading...',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                      color: Colors.transparent,
+                      child: const SizedBox.shrink(),
                     ),
         );
       },
