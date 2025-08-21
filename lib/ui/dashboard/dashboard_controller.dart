@@ -158,13 +158,7 @@ class DashboardController extends GetxController {
     } else {
       // No splash advert will be shown
       isSplashAdvertShowing = false;
-
-      // Delay the notification prompt to avoid blocking the dashboard initialization
-      Future.delayed(const Duration(seconds: 2), () {
-        if (!isSplashAdvertShowing) {
-          showNotificationPrompt();
-        }
-      });
+      // Notification prompt will be scheduled in onReady via _scheduleNotificationPrompt()
     }
 
     if (AppGlobals.appConfig?.menu?.items?.length == 0) {
@@ -345,6 +339,7 @@ class DashboardController extends GetxController {
       context: Get.context!,
       eventId: eventId,
       onResult: (allow) {
+        // Call API in background without waiting
         oneSignalService.updateNotificationStatus(
             AppGlobals.oneSignalUserId, eventId, allow);
       },

@@ -110,12 +110,16 @@ class HomeScreen extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
                                   ),
                                   Text(
                                     '${shortcut.subtitle}',
                                     style: TextStyle(
                                       fontSize: 10,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.clip,
                                   ),
                                 ],
                               ),
@@ -153,7 +157,8 @@ class HomeScreen extends StatelessWidget {
                                       image: DecorationImage(
                                           image: shortcut.image!
                                                   .startsWith('http')
-                                              ? CachedNetworkImageProvider(shortcut.image!)
+                                              ? CachedNetworkImageProvider(
+                                                  shortcut.image!)
                                               : AssetImage(AppHelper.getImage(
                                                       shortcut.image! + '.png'))
                                                   as ImageProvider,

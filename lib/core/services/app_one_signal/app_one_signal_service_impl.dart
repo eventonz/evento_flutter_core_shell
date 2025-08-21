@@ -5,6 +5,7 @@ import 'package:evento_core/core/routes/routes.dart';
 import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
+import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:flutter/material.dart';
@@ -136,11 +137,21 @@ class AppOneSignalImpl implements AppOneSignal {
   @override
   Future<void> updateNotificationStatus(
       String userId, int eventId, bool notificationStatus) async {
+    // Ensure we have a valid player ID
+    String playerId = userId;
+    if (playerId.isEmpty) {
+      // Use the helper method to get a player ID with fallbacks
+      playerId = await AppHelper.getPlayerId();
+    }
+
     final data = {
       "race_id": eventId,
-      "player_id": userId,
+      "player_id": playerId,
       "notifications": {"event": notificationStatus}
     };
+
+    print('Updating notification status with player_id: $playerId');
+
     await ApiHandler.postHttp(
       baseUrl: 'https://eventotracker.com/api/v3/api.cfm/settings',
       body: data,

@@ -23,7 +23,8 @@ import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 class AppHelper {
   static String getImage(String imageName) =>
@@ -364,46 +365,109 @@ class AppHelper {
         AppHelper.notificationPrefenceKey(eventId),
         NotificationStatus.initial.name);
     if (notificationSettingChanged == NotificationStatus.initial.name) {
-      showCupertinoDialog(
+      showDialog(
         context: context,
-        builder: (context) => CupertinoAlertDialog(
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
           title: AppText(
             AppLocalizations.of(context)!
                 .wouldYouLikeToReceiveEventReleatedPushNotificationsForThisEvent,
             textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           actions: [
-            CupertinoDialogAction(
-              child: AppText(
-                AppLocalizations.of(context)!.noThanks,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.darkgrey
-                    : AppColors.white,
-              ),
-              onPressed: () {
-                Preferences.setString(
-                    AppHelper.notificationPrefenceKey(eventId),
-                    NotificationStatus.hidden.name);
-                Navigator.of(context, rootNavigator: true).pop();
-                onResult(false);
-              },
-            ),
-            CupertinoDialogAction(
-              child: AppText(
-                'Yes',
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.darkgrey
-                    : AppColors.white,
-              ),
-              onPressed: () {
-                Preferences.setString(
-                    AppHelper.notificationPrefenceKey(eventId),
-                    NotificationStatus.show.name);
-                Navigator.of(context, rootNavigator: true).pop();
-                onResult(true);
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 16, right: 8),
+                    child: TextButton(
+                      onPressed: () {
+                        print('DEBUG: No Thanks button pressed');
+
+                        // Dismiss the dialog first
+                        Navigator.of(context, rootNavigator: true).pop();
+                        print(
+                            'DEBUG: Dialog dismissed with Navigator.pop(rootNavigator: true)');
+
+                        // Set preference and call API in background
+                        Preferences.setString(
+                            AppHelper.notificationPrefenceKey(eventId),
+                            NotificationStatus.hidden.name);
+                        print('DEBUG: Preference set to hidden');
+
+                        // Call the API in the background
+                        onResult(false);
+                        print('DEBUG: onResult called with false');
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor:
+                            AppColors.greyLight.withValues(alpha: 0.1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: AppText(
+                        AppLocalizations.of(context)!.noThanks,
+                        style: const TextStyle(
+                          color: AppColors.darkgrey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, right: 16),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        // Dismiss the dialog first
+                        print('DEBUG: Yes button pressed');
+                        Navigator.of(context, rootNavigator: true).pop();
+                        print(
+                            'DEBUG: Dialog dismissed with Navigator.pop(rootNavigator: true)');
+
+                        // Set preference and call API in background
+                        Preferences.setString(
+                            AppHelper.notificationPrefenceKey(eventId),
+                            NotificationStatus.show.name);
+                        print('DEBUG: Preference set to show');
+
+                        // Call the API in the background
+                        onResult(true);
+                        print('DEBUG: onResult called with true');
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 2,
+                      ),
+                      child: const AppText(
+                        'Yes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
+          actionsPadding: const EdgeInsets.only(bottom: 16),
         ),
       );
     }
@@ -433,5 +497,89 @@ class AppHelper {
       // If there's an error, just log it and continue
       debugPrint('Error updating app theme: $e');
     }
+  }
+
+  /// Gets a player ID on-demand with OneSignal as primary and device ID as fallback
+  /// This should be called when following athletes instead of storing globally
+  static Future<String> getPlayerId() async {
+    try {
+      // First try to get OneSignal User ID
+      String? oneSignalId = OneSignal.User.pushSubscription.id;
+      if (oneSignalId != null && oneSignalId.isNotEmpty) {
+        // Store it for future use
+        await Preferences.setString(AppKeys.oneSingleUserId, oneSignalId);
+        AppGlobals.oneSignalUserId = oneSignalId;
+        return oneSignalId;
+      }
+
+      // Check if we have a stored OneSignal ID
+      String storedId = Preferences.getString(AppKeys.oneSingleUserId, '');
+      if (storedId.isNotEmpty) {
+        AppGlobals.oneSignalUserId = storedId;
+        return storedId;
+      }
+
+      // Fallback: Generate a unique device-based ID
+      String deviceId = await _generateDeviceId();
+
+      // Store the fallback ID
+      await Preferences.setString(AppKeys.oneSingleUserId, deviceId);
+      AppGlobals.oneSignalUserId = deviceId;
+      return deviceId;
+    } catch (e) {
+      debugPrint('Error getting player ID: $e');
+      // Final fallback: Generate a random ID
+      String randomId = _generateRandomId();
+      await Preferences.setString(AppKeys.oneSingleUserId, randomId);
+      AppGlobals.oneSignalUserId = randomId;
+      return randomId;
+    }
+  }
+
+  /// Generates a unique device ID using platform-specific information
+  static Future<String> _generateDeviceId() async {
+    try {
+      final deviceInfo = DeviceInfoPlugin();
+      String deviceId = '';
+
+      if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        deviceId = iosInfo.identifierForVendor ?? '';
+      } else if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        deviceId = androidInfo.id;
+      }
+
+      // Hash the device ID for privacy (same method as in evento_app.dart)
+      if (deviceId.isNotEmpty) {
+        return _hashDeviceId(deviceId);
+      }
+
+      // If device ID is empty, generate from other device info
+      return _hashDeviceId(
+          '${deviceInfo.toString()}_${DateTime.now().millisecondsSinceEpoch}');
+    } catch (e) {
+      debugPrint('Error generating device ID: $e');
+      return _hashDeviceId('fallback_${DateTime.now().millisecondsSinceEpoch}');
+    }
+  }
+
+  /// Simple hash function for device ID privacy (same as in evento_app.dart)
+  static String _hashDeviceId(String deviceId) {
+    int hash = 0;
+    for (int i = 0; i < deviceId.length; i++) {
+      int char = deviceId.codeUnitAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash.abs().toString();
+  }
+
+  /// Generates a random ID as final fallback
+  static String _generateRandomId() {
+    final random = Random();
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final randomNum = random.nextInt(999999);
+    return 'fallback_${timestamp}_$randomNum';
   }
 }
