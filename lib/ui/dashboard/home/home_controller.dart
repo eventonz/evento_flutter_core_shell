@@ -14,7 +14,9 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('🔵 STEP 10: HomeController.onInit() started');
     loadImageLink();
+    print('🔵 STEP 10: HomeController.onInit() completed');
   }
 
   void loadImageLink() {

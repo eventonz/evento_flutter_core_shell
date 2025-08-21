@@ -22,12 +22,12 @@ void main() {
     splashImage: 'assets/images/splash_image.png',
   );
 
-  /*
+/*
  final eventConfig = AppEventConfig(
     oneSignalId: '111cddd2-0265-44d4-8aa2-af7982884d1b',
     appName: 'Pop Up Races',
     multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
-    multiEventListId: '27',
+    multiEventListId: '38',
     splashImage: 'assets/images/splash_image.png',
   );
 */

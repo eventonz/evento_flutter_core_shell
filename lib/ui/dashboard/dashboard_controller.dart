@@ -77,14 +77,28 @@ class DashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print('🔵 STEP 9: DashboardController.onInit() started');
+
     eventId = Preferences.getInt(AppKeys.eventId, 0);
+    print('🔵 STEP 9: Event ID set to: $eventId');
+
     AppGlobals.checkOnUserId();
+    print('🔵 STEP 9: User ID checked');
+
+    print('🔵 STEP 9: Initializing HomeController');
     Get.put(HomeController());
+    print('🔵 STEP 9: HomeController initialized');
+
+    print('🔵 STEP 9: Initializing MoreController');
     Get.put(MoreController());
+    print('🔵 STEP 9: MoreController initialized');
+
+    print('🔵 STEP 9: Setting up data');
     entrantsList = AppGlobals.appConfig!.athletes!;
     trackingData = AppGlobals.appConfig!.tracking;
     resultsData = AppGlobals.appConfig!.results;
     miniPlayerConfig.value = AppGlobals.appConfig!.miniPlayerConfig;
+    print('🔵 STEP 9: Data setup complete');
     final showAthletes = entrantsList.showAthletes ?? false;
     if (showAthletes) {
       menus.insert(
@@ -173,6 +187,7 @@ class DashboardController extends GetxController {
       webViewController = Get.arguments;
     }
 
+    print('🔵 STEP 9: Setting up deep link listener');
     Future.delayed(Duration(seconds: 1), () {
       //NewVersionPlus().showAlertIfNecessary(context: Get.context!);
     });
@@ -225,6 +240,7 @@ class DashboardController extends GetxController {
         }
       }
     });
+    print('🔵 STEP 9: DashboardController.onInit() completed successfully');
   }
 
   onFollow(entrant) async {
