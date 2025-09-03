@@ -17,8 +17,8 @@ class AppBottomNav extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.light
-                ? AppColors.darkBlack
-                : AppColors.white,
+                ? AppColors.white
+                : AppColors.darkBlack,
             boxShadow: [
               BoxShadow(
                   color: AppColors.black.withOpacity(0.08),
@@ -32,58 +32,61 @@ class AppBottomNav extends StatelessWidget {
             children: [
               for (BottomNavMenu menu in controller.menus)
                 Visibility(
-                      visible: true,
-                      child: Expanded(
-                          child: Visibility(
-                        visible: true,
-                        child: InkWell(
-                          onTap: () {
-                            controller.selectMenu(menu);
-                          },
-                          child: Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                menu.image == null ? Icon(menu.iconData,
+                  visible: true,
+                  child: Expanded(
+                      child: Visibility(
+                    visible: true,
+                    child: InkWell(
+                      onTap: () {
+                        controller.selectMenu(menu);
+                      },
+                      child: Center(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            menu.image == null
+                                ? Icon(menu.iconData,
                                     color: controller.selMenu.value == menu
                                         ? (Theme.of(context).brightness ==
                                                 Brightness.light
-                                            ? AppColors.accentDark
-                                            : AppColors.accentLight)
+                                            ? AppColors.accentLight
+                                            : AppColors.accentDark)
                                         : Theme.of(context).brightness ==
                                                 Brightness.light
-                                            ? AppColors.greyLight.withOpacity(0.4)
-                                            : AppColors.grey.withOpacity(0.8))
+                                            ? AppColors.grey.withOpacity(0.8)
+                                            : AppColors.greyLight
+                                                .withOpacity(0.4))
                                 : Image.asset(menu.image!,
                                     color: controller.selMenu.value == menu
                                         ? (Theme.of(context).brightness ==
-                                        Brightness.light
-                                        ? AppColors.accentDark
-                                        : AppColors.accentLight)
-                                        : Theme.of(context).brightness ==
-                                        Brightness.light
-                                        ? AppColors.greyLight.withOpacity(0.4)
-                                        : AppColors.grey.withOpacity(0.8)),
-                                const SizedBox(
-                                  height: 4,
-                                ),
-                                AppText(menu.text ?? menu.label.capitalize!,
-                                    fontSize: 10,
-                                    color: controller.selMenu.value == menu
-                                        ? (Theme.of(context).brightness ==
                                                 Brightness.light
-                                            ? AppColors.accentDark
-                                            : AppColors.accentLight)
+                                            ? AppColors.accentLight
+                                            : AppColors.accentDark)
                                         : Theme.of(context).brightness ==
                                                 Brightness.light
-                                            ? AppColors.greyLight.withOpacity(0.4)
-                                            : AppColors.grey.withOpacity(0.8))
-                              ],
+                                            ? AppColors.grey.withOpacity(0.8)
+                                            : AppColors.greyLight
+                                                .withOpacity(0.4)),
+                            const SizedBox(
+                              height: 4,
                             ),
-                          ),
+                            AppText(menu.text ?? menu.label.capitalize!,
+                                fontSize: 10,
+                                color: controller.selMenu.value == menu
+                                    ? (Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? AppColors.accentLight
+                                        : AppColors.accentDark)
+                                    : Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? AppColors.grey.withOpacity(0.8)
+                                        : AppColors.greyLight.withOpacity(0.4))
+                          ],
                         ),
-                      )),
-                    )
+                      ),
+                    ),
+                  )),
+                )
             ],
           ),
         ),

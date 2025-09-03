@@ -20,8 +20,12 @@ class SettingsScreen extends StatelessWidget {
     final controller = Get.put(SettingsController());
     return Scaffold(
         appBar: AppBar(
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+          surfaceTintColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.black,
+          shadowColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black.withOpacity(0.1)
+              : Colors.white,
           title: AppText(
             AppLocalizations.of(context)!.settings,
             style: AppStyles.appBarTitle,
@@ -29,7 +33,9 @@ class SettingsScreen extends StatelessWidget {
         ),
         body: Column(
           children: [
-            TitleDivider(title: '${AppLocalizations.of(context)!.general} ${AppLocalizations.of(context)!.settings}'),
+            TitleDivider(
+                title:
+                    '${AppLocalizations.of(context)!.general} ${AppLocalizations.of(context)!.settings}'),
             ListTile(
               onTap: controller.showThemeModePrompt,
               title: AppText(
@@ -44,13 +50,13 @@ class SettingsScreen extends StatelessWidget {
                     )),
               ),
             ),
-             Divider(
+            Divider(
                 height: 1,
                 thickness: .5,
                 color: Theme.of(context).brightness == Brightness.light
-                                ?  AppColors.darkgrey :AppColors.greyLight
-            ),
-           /* ListTile(
+                    ? AppColors.greyLight
+                    : AppColors.darkgrey),
+            /* ListTile(
               onTap: controller.getAthletes,
               title: AppText(
                 AppLocalizations.of(context)!.reloadAthletes,
@@ -82,8 +88,8 @@ class SettingsScreen extends StatelessWidget {
                 height: 1,
                 thickness: .5,
                 color: Theme.of(context).brightness == Brightness.light
-                    ?  AppColors.darkgrey :AppColors.greyLight
-            ),
+                    ? AppColors.greyLight
+                    : AppColors.darkgrey),
             ListTile(
               onTap: () {
                 Get.to(LanguageScreen());
@@ -117,9 +123,10 @@ class SettingsScreen extends StatelessWidget {
                 height: 1,
                 thickness: .5,
                 color: Theme.of(context).brightness == Brightness.light
-                                ?  AppColors.darkgrey :AppColors.greyLight
-            ),
-            TitleDivider(title: AppLocalizations.of(context)!.notificationSettings),
+                    ? AppColors.greyLight
+                    : AppColors.darkgrey),
+            TitleDivider(
+                title: AppLocalizations.of(context)!.notificationSettings),
             ListTile(
               onTap: controller.toggleNotificationStatus,
               title: AppText(
@@ -132,8 +139,8 @@ class SettingsScreen extends StatelessWidget {
                 height: 1,
                 thickness: .5,
                 color: Theme.of(context).brightness == Brightness.light
-                                ?  AppColors.darkgrey :AppColors.greyLight
-            ),
+                    ? AppColors.greyLight
+                    : AppColors.darkgrey),
             ListTile(
               title: AppText(
                 '${AppLocalizations.of(context)!.version} ${AppGlobals.appVersion}',

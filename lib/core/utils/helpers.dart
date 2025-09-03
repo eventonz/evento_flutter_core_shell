@@ -246,7 +246,9 @@ class AppHelper {
 
     final wf.WebViewController webViewController = wf.WebViewController()
       ..setJavaScriptMode(wf.JavaScriptMode.unrestricted)
-      ..setBackgroundColor(AppColors.white)
+      ..setBackgroundColor(Theme.of(Get.context!).brightness == Brightness.light
+          ? AppColors.white
+          : AppColors.darkBlack)
       ..enableZoom(true)
       ..loadRequest(Uri.parse(url));
 
@@ -266,8 +268,8 @@ class AppHelper {
                   icon: Icon(
                     FeatherIcons.x,
                     color: Theme.of(Get.context!).brightness == Brightness.light
-                        ? AppColors.accentDark
-                        : AppColors.accentLight,
+                        ? AppColors.accentLight
+                        : AppColors.accentDark,
                   )),
               title: AppText(
                 pageTitle.trim(),

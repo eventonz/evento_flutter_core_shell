@@ -11,7 +11,6 @@ class WebViewEventPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final controller = Get.put(WebViewEventController());
 
     return Scaffold(
@@ -20,8 +19,13 @@ class WebViewEventPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Container(height: MediaQuery.of(context).padding.top+4, color: Colors.black,),
-              Expanded(child: WebViewWidget(controller: controller.webViewController!)),
+              Container(
+                height: MediaQuery.of(context).padding.top + 4,
+                color: Colors.black,
+              ),
+              Expanded(
+                  child:
+                      WebViewWidget(controller: controller.webViewController!)),
             ],
           ),
           Visibility(
@@ -32,15 +36,14 @@ class WebViewEventPage extends StatelessWidget {
                 child: CircleAvatar(
                   radius: 22,
                   backgroundColor:
-                  Theme.of(context).brightness == Brightness.light
-                      ? AppColors.black.withOpacity(0.8)
-                      : AppColors.white.withOpacity(0.8),
+                      Theme.of(context).brightness == Brightness.light
+                          ? AppColors.white.withOpacity(0.8)
+                          : AppColors.black.withOpacity(0.8),
                   child: IconButton(
                     onPressed: controller.goBack,
-                    color:
-                    Theme.of(context).brightness == Brightness.light
-                        ? AppColors.accentDark
-                        : AppColors.accentLight,
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? AppColors.accentLight
+                        : AppColors.accentDark,
                     icon: const Icon(Icons.arrow_circle_left_outlined),
                   ),
                 ),

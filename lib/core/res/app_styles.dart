@@ -39,7 +39,7 @@ class AppStyles {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: const ColorScheme.light().copyWith(
         primary: AppColors.primary,
-        brightness: Brightness.dark,
+        brightness: Brightness.light,
         secondary: AppColors.grey,
       ));
 
@@ -65,7 +65,7 @@ class AppStyles {
         primaryIconTheme: const IconThemeData(color: AppColors.white),
         colorScheme: const ColorScheme.dark().copyWith(
             primary: AppColors.secondary,
-            brightness: Brightness.light,
+            brightness: Brightness.dark,
             secondary: AppColors.white),
       );
 

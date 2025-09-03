@@ -18,15 +18,15 @@ class MoreMenuTile extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(8),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical:18),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
         child: Row(
           children: [
             SvgPicture.asset(
               AppHelper.getSvg(item.icon!),
               fit: BoxFit.cover,
               color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.accentDark
-                  : AppColors.accentLight,
+                  ? AppColors.accentLight
+                  : AppColors.accentDark,
               width: 24,
             ),
             const SizedBox(width: 16),
@@ -39,8 +39,8 @@ class MoreMenuTile extends StatelessWidget {
             Icon(
               Icons.arrow_circle_right_outlined,
               color: (Theme.of(context).brightness == Brightness.light
-                  ? AppColors.accentDark
-                  : AppColors.accentLight),
+                  ? AppColors.accentLight
+                  : AppColors.accentDark),
               size: 4.5.w,
             ),
           ],

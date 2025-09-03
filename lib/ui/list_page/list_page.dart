@@ -19,7 +19,7 @@ class ListPageScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ListPageController());
-    final isLightMode = Theme.of(context).brightness == Brightness.dark;
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: isLightMode
@@ -54,10 +54,12 @@ class ListPageScreen extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: eventResults.length,
                 separatorBuilder: (_, i) {
-                  return  Divider(
+                  return Divider(
                     height: 1,
                     thickness: 2,
-                    color: isLightMode ? AppColors.darkgrey : AppColors.greyLight, // light grey
+                    color: isLightMode
+                        ? AppColors.darkgrey
+                        : AppColors.greyLight, // light grey
                   );
                 },
                 itemBuilder: (_, i) {

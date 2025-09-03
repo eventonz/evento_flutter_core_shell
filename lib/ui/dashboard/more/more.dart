@@ -27,15 +27,16 @@ class MoreScreen extends StatelessWidget {
 
     return Scaffold(
         backgroundColor: isLightMode
-    
-            ? AppThemeColors.darkBackground :
-            AppThemeColors.lightBackground,
+            ? AppThemeColors.lightBackground
+            : AppThemeColors.darkBackground,
         appBar: AppBar(
           backgroundColor: isLightMode
-              ? AppThemeColors.darkBackground
-              : AppThemeColors.lightBackground,
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+              ? AppThemeColors.lightBackground
+              : AppThemeColors.darkBackground,
+          surfaceTintColor:
+              isLightMode ? Colors.transparent : Colors.transparent,
+          shadowColor:
+              isLightMode ? Colors.black.withOpacity(0.1) : Colors.transparent,
           automaticallyImplyLeading: false,
           title: AppText(
             AppLocalizations.of(context)!.menubutton,
@@ -112,9 +113,9 @@ class MoreScreen extends StatelessWidget {
     }
 
     return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       itemCount: widgets.length,
-      separatorBuilder: (_, i) => const SizedBox(height: 16),
+      separatorBuilder: (_, i) => const SizedBox(height: 20),
       itemBuilder: (_, i) => widgets[i],
     );
   }
@@ -124,6 +125,7 @@ class MoreScreen extends StatelessWidget {
     final isLightMode = Theme.of(context).brightness == Brightness.light;
 
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       decoration: AppThemeStyles.cardDecoration(context),
       child: Column(
         children: items.asMap().entries.map((entry) {

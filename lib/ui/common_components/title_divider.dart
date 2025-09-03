@@ -12,8 +12,8 @@ class TitleDivider extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       width: double.infinity,
       color: Theme.of(context).brightness == Brightness.light
-          ? AppColors.darkBlack
-          : AppColors.greyLighter,
+          ? AppColors.greyLighter
+          : AppColors.darkBlack,
       child: AppText(
         title,
         fontSize: 12,

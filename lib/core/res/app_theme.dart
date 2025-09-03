@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AppThemeColors {
   // App backgrounds
-  static const Color lightBackground = Color(0x08F9F9F9); // light
+  static const Color lightBackground =
+      Color(0xFFF5F5F5); // light grey (bg-gray-100 equivalent)
   static const Color darkBackground = Color(0xFF121212); // dark
 
   // Card backgrounds
@@ -12,16 +14,17 @@ class AppThemeColors {
 
 class AppThemeStyles {
   static BoxDecoration cardDecoration(BuildContext context) {
-    final isLight = Theme.of(context).brightness == Brightness.light;
+    final isLight = !Get.isDarkMode;
     return BoxDecoration(
-      color: isLight ? AppThemeColors.darkCard :  AppThemeColors.lightCard,
+      color: isLight ? AppThemeColors.lightCard : AppThemeColors.darkCard,
       borderRadius: BorderRadius.circular(12),
       boxShadow: isLight
           ? [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 3),
+                spreadRadius: 0,
               ),
             ]
           : null,
