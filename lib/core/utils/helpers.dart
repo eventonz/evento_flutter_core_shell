@@ -25,6 +25,7 @@ import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/enums.dart';
 import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:share_plus/share_plus.dart';
 
 class AppHelper {
   static String getImage(String imageName) =>
@@ -271,9 +272,29 @@ class AppHelper {
                         ? AppColors.accentLight
                         : AppColors.accentDark,
                   )),
-              title: AppText(
-                pageTitle.trim(),
-              ),
+              title: AppText(''),
+              actions: [
+                IconButton(
+                  onPressed: () async {
+                    try {
+                      await Share.share(
+                        url,
+                        subject:
+                            pageTitle.isNotEmpty ? pageTitle : 'Shared Link',
+                      );
+                    } catch (e) {
+                      debugPrint('Error sharing: $e');
+                      ToastUtils.show('Unable to share link');
+                    }
+                  },
+                  icon: Icon(
+                    FeatherIcons.share2,
+                    color: Theme.of(Get.context!).brightness == Brightness.light
+                        ? AppColors.accentLight
+                        : AppColors.accentDark,
+                  ),
+                ),
+              ],
             ),
             Expanded(
               child: Platform.isAndroid && linkType == 'pdf'
