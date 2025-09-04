@@ -14,6 +14,7 @@ import 'package:country_flags/country_flags.dart';
 
 import '../../core/models/app_config.dart';
 import '../../core/res/app_colors.dart';
+import '../../core/res/app_theme.dart';
 import '../common_components/text.dart';
 import 'leaderboard_screen_controller.dart';
 
@@ -24,6 +25,7 @@ class LeaderboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(LeaderboardScreenController());
     final ValueNotifier<bool> showScrollToTop = ValueNotifier(false);
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
 
     controller.scrollController.addListener(() {
       if (controller.scrollController.offset > 200) {
@@ -35,6 +37,12 @@ class LeaderboardScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor:
+            isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
+        surfaceTintColor:
+            isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
+        shadowColor:
+            isLightMode ? Colors.black.withOpacity(0.1) : Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         title: AppText(
@@ -57,549 +65,487 @@ class LeaderboardScreen extends StatelessWidget {
                 controller: controller.scrollController,
                 child: Column(
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(
-                        left: 16,
-                        right: 16,
-                        top: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.grey,
-                          width: .5,
-                        ),
-                        borderRadius: BorderRadius.circular(5),
-                      ),
-                      child: DropdownButton<int>(
-                          items: [
-                            ...(controller.eventResponse?.data
-                                    ?.where((e) =>
-                                        controller.items?.listEvents
-                                            ?.contains(e.eventId) ??
-                                        false)
-                                    .map((e) => DropdownMenuItem(
-                                        value: e.eventId, child: Text(e.name)))
-                                    .toList() ??
-                                []),
-                          ],
-                          onChanged: (val) {
-                            controller.changeEvent(val!);
-                          },
-                          icon: Icon(CupertinoIcons.chevron_down,
-                              color: Colors.grey),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 0),
-                          value: controller.selectedEvent.value,
-                          isExpanded: true,
-                          borderRadius: BorderRadius.circular(5),
-                          underline: Container()),
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                left: 16, right: 8, top: 0),
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.grey,
-                                width: .5,
+                    // Filter Controls Card
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: AppThemeStyles.cardDecoration(context),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            children: [
+                              // Event Dropdown
+                              Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    color: Colors.grey,
+                                    width: .5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: DropdownButton<int>(
+                                    items: [
+                                      ...(controller.eventResponse?.data
+                                              ?.where((e) =>
+                                                  controller.items?.listEvents
+                                                      ?.contains(e.eventId) ??
+                                                  false)
+                                              .map((e) => DropdownMenuItem(
+                                                  value: e.eventId,
+                                                  child: Text(e.name)))
+                                              .toList() ??
+                                          []),
+                                    ],
+                                    onChanged: (val) {
+                                      controller.changeEvent(val!);
+                                    },
+                                    icon: Icon(CupertinoIcons.chevron_down,
+                                        color: Colors.grey),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12, vertical: 0),
+                                    value: controller.selectedEvent.value,
+                                    isExpanded: true,
+                                    borderRadius: BorderRadius.circular(5),
+                                    underline: Container()),
                               ),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                int tempSelectedIndex = controller.splits
-                                        .indexWhere((split) =>
-                                            split['id'] ==
-                                            controller.selectedSplitId.value) ??
-                                    0;
+                              const SizedBox(height: 12),
+                              // Split and Filter Row
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: .5,
+                                        ),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          int tempSelectedIndex = controller
+                                                  .splits
+                                                  .indexWhere((split) =>
+                                                      split['id'] ==
+                                                      controller.selectedSplitId
+                                                          .value) ??
+                                              0;
 
-                                await showModalBottomSheet(
-                                    context: context,
-                                    elevation: 0,
-                                    backgroundColor: Theme.of(context)
-                                        .bottomSheetTheme
-                                        .backgroundColor,
-                                    builder: (_) => BottomSheet(
-                                          onClosing: () {},
-                                          builder: (_) {
-                                            return StatefulBuilder(
-                                              builder: (context, setState) {
-                                                return ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.only(
-                                                    topLeft:
-                                                        Radius.circular(15),
-                                                    topRight:
-                                                        Radius.circular(15),
-                                                  ),
-                                                  child: Container(
-                                                    height: 320,
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  top: 16.0,
-                                                                  bottom: 8.0),
-                                                          child: Text(
-                                                            'Split',
-                                                            style: TextStyle(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                              color: Theme.of(context)
-                                                                          .brightness ==
-                                                                      Brightness
-                                                                          .dark
-                                                                  ? Colors.white
-                                                                  : Colors
-                                                                      .black,
+                                          await showModalBottomSheet(
+                                              context: context,
+                                              elevation: 0,
+                                              backgroundColor: Theme.of(context)
+                                                  .bottomSheetTheme
+                                                  .backgroundColor,
+                                              builder: (_) => BottomSheet(
+                                                    onClosing: () {},
+                                                    builder: (_) {
+                                                      return StatefulBuilder(
+                                                        builder: (context,
+                                                            setState) {
+                                                          return ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(15),
+                                                              topRight: Radius
+                                                                  .circular(15),
                                                             ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child:
-                                                              CupertinoPicker(
-                                                            itemExtent: 48,
-                                                            scrollController:
-                                                                FixedExtentScrollController(
-                                                              initialItem:
-                                                                  tempSelectedIndex,
-                                                            ),
-                                                            onSelectedItemChanged:
-                                                                (val) {
-                                                              tempSelectedIndex =
-                                                                  val;
-                                                            },
-                                                            children: controller
-                                                                .splits
-                                                                .map(
-                                                                    (split) =>
-                                                                        Center(
-                                                                          child:
-                                                                              Text(
-                                                                            '${split['name']}',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
-                                                                              fontSize: 22,
-                                                                            ),
-                                                                          ),
-                                                                        ))
-                                                                .toList(),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .fromLTRB(
-                                                                  16.0,
-                                                                  16.0,
-                                                                  16.0,
-                                                                  32.0),
-                                                          child: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child:
-                                                                    CupertinoButton(
-                                                                  color: AppColors
-                                                                      .primary,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                  onPressed:
-                                                                      () {
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                    final selectedSplit =
-                                                                        controller
-                                                                            .splits[tempSelectedIndex];
-                                                                    controller.setSplit(
-                                                                        selectedSplit['id']
-                                                                            as int);
-                                                                  },
-                                                                  child: Text(
-                                                                    AppLocalizations.of(
-                                                                            context)!
-                                                                        .apply
-                                                                        .toUpperCase(),
-                                                                    style:
-                                                                        TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      color: Theme.of(context).brightness ==
-                                                                              Brightness
-                                                                                  .light
-                                                                          ? Colors
-                                                                              .white
-                                                                          : Colors
-                                                                              .black,
+                                                            child: Container(
+                                                              height: 320,
+                                                              child: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .only(
+                                                                        top:
+                                                                            16.0,
+                                                                        bottom:
+                                                                            8.0),
+                                                                    child: Text(
+                                                                      'Split',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        fontSize:
+                                                                            16,
+                                                                        fontWeight:
+                                                                            FontWeight.w800,
+                                                                        color: Theme.of(context).brightness ==
+                                                                                Brightness.dark
+                                                                            ? Colors.white
+                                                                            : Colors.black,
+                                                                      ),
                                                                     ),
                                                                   ),
+                                                                  Expanded(
+                                                                    child:
+                                                                        CupertinoPicker(
+                                                                      itemExtent:
+                                                                          48,
+                                                                      scrollController:
+                                                                          FixedExtentScrollController(
+                                                                        initialItem:
+                                                                            tempSelectedIndex,
+                                                                      ),
+                                                                      onSelectedItemChanged:
+                                                                          (val) {
+                                                                        tempSelectedIndex =
+                                                                            val;
+                                                                      },
+                                                                      children: controller
+                                                                          .splits
+                                                                          .map((split) =>
+                                                                              Center(
+                                                                                child: Text(
+                                                                                  '${split['name']}',
+                                                                                  style: TextStyle(
+                                                                                    color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                    fontSize: 22,
+                                                                                  ),
+                                                                                ),
+                                                                              ))
+                                                                          .toList(),
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        16.0,
+                                                                        16.0,
+                                                                        16.0,
+                                                                        32.0),
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              CupertinoButton(
+                                                                            color:
+                                                                                AppColors.primary,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(8),
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.of(context).pop();
+                                                                              final selectedSplit = controller.splits[tempSelectedIndex];
+                                                                              controller.setSplit(selectedSplit['id'] as int);
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              AppLocalizations.of(context)!.apply.toUpperCase(),
+                                                                              style: TextStyle(
+                                                                                fontWeight: FontWeight.w500,
+                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                            width:
+                                                                                16),
+                                                                        CupertinoButton(
+                                                                          padding: const EdgeInsets
+                                                                              .symmetric(
+                                                                              horizontal: 16),
+                                                                          color:
+                                                                              Colors.grey[400],
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          onPressed:
+                                                                              () {
+                                                                            controller.setSplit(0); // Reset to Overall
+                                                                            Navigator.of(context).pop();
+                                                                          },
+                                                                          child:
+                                                                              Text(
+                                                                            AppLocalizations.of(context)!.clear.toUpperCase(),
+                                                                            style:
+                                                                                TextStyle(
+                                                                              fontWeight: FontWeight.w500,
+                                                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    elevation: 0,
+                                                  ));
+                                        },
+                                        child: Container(
+                                          height: 48,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Obx(() => Text(
+                                                      controller.splits.firstWhereOrNull(
+                                                              (split) =>
+                                                                  split['id'] ==
+                                                                  controller
+                                                                      .selectedSplitId
+                                                                      .value)?['name'] ??
+                                                          'Overall',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    )),
+                                              ),
+                                              Icon(CupertinoIcons.chevron_down,
+                                                  color: Colors.grey),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Container(
+                                      margin: const EdgeInsets.only(
+                                          right: 16, left: 8, top: 0),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey, width: .5),
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          controller.updateScrollController();
+                                          await showModalBottomSheet(
+                                              context: context,
+                                              elevation: 0,
+                                              backgroundColor: Theme.of(context)
+                                                  .bottomSheetTheme
+                                                  .backgroundColor,
+                                              builder: (_) => BottomSheet(
+                                                    onClosing: () {},
+                                                    builder: (_) {
+                                                      return ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  15),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  15),
+                                                        ),
+                                                        child: Container(
+                                                          height: 360,
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Expanded(
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          CupertinoPicker(
+                                                                        itemExtent:
+                                                                            70,
+                                                                        scrollController:
+                                                                            FixedExtentScrollController(
+                                                                          initialItem:
+                                                                              (controller.eventResponse?.data?.where((element) => element.eventId == controller.selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList().indexWhere((element) => element.id == controller.gender) ?? -1) + 1,
+                                                                        ),
+                                                                        onSelectedItemChanged:
+                                                                            (val) {
+                                                                          controller
+                                                                              .setGender(val);
+                                                                        },
+                                                                        children: [
+                                                                          Center(
+                                                                            child:
+                                                                                Text(
+                                                                              'All',
+                                                                              style: TextStyle(
+                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          ...controller.eventResponse?.data
+                                                                                  ?.where((element) => element.eventId == controller.selectedEvent.value)
+                                                                                  .firstOrNull
+                                                                                  ?.genders
+                                                                                  .where((element) => element.enabled)
+                                                                                  .map((e) => Center(
+                                                                                        child: Text(
+                                                                                          '${e.name}',
+                                                                                          style: TextStyle(
+                                                                                            color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ))
+                                                                                  ?.toList() ??
+                                                                              [],
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      child:
+                                                                          CupertinoPicker(
+                                                                        itemExtent:
+                                                                            70,
+                                                                        scrollController:
+                                                                            controller.categoryScrollController,
+                                                                        onSelectedItemChanged:
+                                                                            (val) {
+                                                                          controller
+                                                                              .setCategory(val);
+                                                                        },
+                                                                        children: [
+                                                                          Center(
+                                                                            child:
+                                                                                Text(
+                                                                              'All',
+                                                                              style: TextStyle(
+                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          ...controller.eventResponse?.data
+                                                                                  ?.where((element) => element.eventId == controller.selectedEvent.value)
+                                                                                  .firstOrNull
+                                                                                  ?.categories
+                                                                                  .map((e) => Center(
+                                                                                        child: Text(
+                                                                                          '${e.name ?? e.code}',
+                                                                                          style: TextStyle(
+                                                                                            color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                          ),
+                                                                                        ),
+                                                                                      ))
+                                                                                  ?.toList() ??
+                                                                              [],
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                              const SizedBox(
-                                                                  width: 16),
-                                                              CupertinoButton(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16),
-                                                                color: Colors
-                                                                    .grey[400],
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            8),
-                                                                onPressed: () {
-                                                                  controller
-                                                                      .setSplit(
-                                                                          0); // Reset to Overall
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                child: Text(
-                                                                  AppLocalizations.of(
-                                                                          context)!
-                                                                      .clear
-                                                                      .toUpperCase(),
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: Theme.of(context).brightness ==
-                                                                            Brightness
-                                                                                .dark
-                                                                        ? Colors
-                                                                            .white
-                                                                        : Colors
-                                                                            .black,
-                                                                  ),
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        16.0,
+                                                                        16.0,
+                                                                        16.0,
+                                                                        32.0),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          CupertinoButton(
+                                                                        color: AppColors
+                                                                            .primary,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                          controller
+                                                                              .filterResults();
+                                                                        },
+                                                                        child:
+                                                                            Text(
+                                                                          AppLocalizations.of(context)!
+                                                                              .apply
+                                                                              .toUpperCase(),
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.w500,
+                                                                            color: Theme.of(context).brightness == Brightness.dark
+                                                                                ? Colors.white
+                                                                                : Colors.black,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            16),
+                                                                    CupertinoButton(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16),
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          400],
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                      onPressed:
+                                                                          () {
+                                                                        controller
+                                                                            .setCategory(0);
+                                                                        controller
+                                                                            .setGender(0);
+                                                                        Navigator.of(context)
+                                                                            .pop();
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        AppLocalizations.of(context)!
+                                                                            .clear
+                                                                            .toUpperCase(),
+                                                                        style:
+                                                                            TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          color: Theme.of(context).brightness == Brightness.dark
+                                                                              ? Colors.white
+                                                                              : Colors.black,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
                                                             ],
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            );
-                                          },
-                                          elevation: 0,
-                                        ));
-                              },
-                              child: Container(
-                                height: 48,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 12),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Obx(() => Text(
-                                            controller.splits.firstWhereOrNull(
-                                                    (split) =>
-                                                        split['id'] ==
-                                                        controller
-                                                            .selectedSplitId
-                                                            .value)?['name'] ??
-                                                'Overall',
-                                            style: TextStyle(fontSize: 16),
-                                          )),
+                                                      );
+                                                    },
+                                                    elevation: 0,
+                                                  ));
+                                          controller.filterResults();
+                                        },
+                                        child: Container(
+                                          height: 48,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 30),
+                                          child: Center(
+                                            child: Text(
+                                              AppLocalizations.of(context)!
+                                                  .filter,
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    Icon(CupertinoIcons.chevron_down,
-                                        color: Colors.grey),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Container(
-                            margin: const EdgeInsets.only(
-                                right: 16, left: 8, top: 0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey, width: .5),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: GestureDetector(
-                              onTap: () async {
-                                controller.updateScrollController();
-                                await showModalBottomSheet(
-                                    context: context,
-                                    elevation: 0,
-                                    backgroundColor: Theme.of(context)
-                                        .bottomSheetTheme
-                                        .backgroundColor,
-                                    builder: (_) => BottomSheet(
-                                          onClosing: () {},
-                                          builder: (_) {
-                                            return ClipRRect(
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(15),
-                                                topRight: Radius.circular(15),
-                                              ),
-                                              child: Container(
-                                                height: 360,
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                CupertinoPicker(
-                                                              itemExtent: 70,
-                                                              scrollController:
-                                                                  FixedExtentScrollController(
-                                                                initialItem: (controller
-                                                                            .eventResponse
-                                                                            ?.data
-                                                                            ?.where((element) =>
-                                                                                element.eventId ==
-                                                                                controller.selectedEvent.value)
-                                                                            .firstOrNull
-                                                                            ?.genders
-                                                                            .where((element) => element.enabled)
-                                                                            .toList()
-                                                                            .indexWhere((element) => element.id == controller.gender) ??
-                                                                        -1) +
-                                                                    1,
-                                                              ),
-                                                              onSelectedItemChanged:
-                                                                  (val) {
-                                                                controller
-                                                                    .setGender(
-                                                                        val);
-                                                              },
-                                                              children: [
-                                                                Center(
-                                                                  child: Text(
-                                                                    'All',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color: Theme.of(context).brightness ==
-                                                                              Brightness
-                                                                                  .light
-                                                                          ? Colors
-                                                                              .white
-                                                                          : Colors
-                                                                              .black,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ...controller
-                                                                        .eventResponse
-                                                                        ?.data
-                                                                        ?.where((element) =>
-                                                                            element.eventId ==
-                                                                            controller
-                                                                                .selectedEvent.value)
-                                                                        .firstOrNull
-                                                                        ?.genders
-                                                                        .where((element) =>
-                                                                            element
-                                                                                .enabled)
-                                                                        .map((e) =>
-                                                                            Center(
-                                                                              child: Text(
-                                                                                '${e.name}',
-                                                                                style: TextStyle(
-                                                                                  color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
-                                                                                ),
-                                                                              ),
-                                                                            ))
-                                                                        ?.toList() ??
-                                                                    [],
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                CupertinoPicker(
-                                                              itemExtent: 70,
-                                                              scrollController:
-                                                                  controller
-                                                                      .categoryScrollController,
-                                                              onSelectedItemChanged:
-                                                                  (val) {
-                                                                controller
-                                                                    .setCategory(
-                                                                        val);
-                                                              },
-                                                              children: [
-                                                                Center(
-                                                                  child: Text(
-                                                                    'All',
-                                                                    style:
-                                                                        TextStyle(
-                                                                      color: Theme.of(context).brightness ==
-                                                                              Brightness
-                                                                                  .light
-                                                                          ? Colors
-                                                                              .white
-                                                                          : Colors
-                                                                              .black,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                ...controller
-                                                                        .eventResponse
-                                                                        ?.data
-                                                                        ?.where((element) =>
-                                                                            element.eventId ==
-                                                                            controller
-                                                                                .selectedEvent.value)
-                                                                        .firstOrNull
-                                                                        ?.categories
-                                                                        .map((e) =>
-                                                                            Center(
-                                                                              child: Text(
-                                                                                '${e.name ?? e.code}',
-                                                                                style: TextStyle(
-                                                                                  color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
-                                                                                ),
-                                                                              ),
-                                                                            ))
-                                                                        ?.toList() ??
-                                                                    [],
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .fromLTRB(16.0, 16.0,
-                                                          16.0, 32.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                CupertinoButton(
-                                                              color: AppColors
-                                                                  .primary,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                              onPressed: () {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                controller
-                                                                    .filterResults();
-                                                              },
-                                                              child: Text(
-                                                                AppLocalizations.of(
-                                                                        context)!
-                                                                    .apply
-                                                                    .toUpperCase(),
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: Theme.of(context)
-                                                                              .brightness ==
-                                                                          Brightness
-                                                                              .dark
-                                                                      ? Colors
-                                                                          .white
-                                                                      : Colors
-                                                                          .black,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 16),
-                                                          CupertinoButton(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16),
-                                                            color: Colors
-                                                                .grey[400],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                            onPressed: () {
-                                                              controller
-                                                                  .setCategory(
-                                                                      0);
-                                                              controller
-                                                                  .setGender(0);
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                            },
-                                                            child: Text(
-                                                              AppLocalizations.of(
-                                                                      context)!
-                                                                  .clear
-                                                                  .toUpperCase(),
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: Theme.of(context)
-                                                                            .brightness ==
-                                                                        Brightness
-                                                                            .dark
-                                                                    ? Colors
-                                                                        .white
-                                                                    : Colors
-                                                                        .black,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                          elevation: 0,
-                                        ));
-                                controller.filterResults();
-                              },
-                              child: Container(
-                                height: 48,
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 30),
-                                child: Center(
-                                  child: Text(
-                                    AppLocalizations.of(context)!.filter,
-                                    style: TextStyle(fontSize: 16),
                                   ),
-                                ),
+                                ],
                               ),
-                            ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                     const SizedBox(height: 16),
                     Builder(builder: (context) {
@@ -645,269 +591,317 @@ class LeaderboardScreen extends StatelessWidget {
                       );
                     }),
                     const SizedBox(height: 16),
-                    Container(
-                      height: 50,
-                      decoration: BoxDecoration(
-                          color: Theme.of(context).brightness == Brightness.light
-                              ? AppColors.accentDark
-                              : AppColors.accentLight),
-                      child: Row(
-                        children: [
-                          if (controller.search == '')
-                            SizedBox(
-                              width: 60,
-                              child: Center(
-                                  child: Text(
-                                '${AppLocalizations.of(context)!.pos}.',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16,
-                                ),
-                              )),
-                            ),
-                          Expanded(
-                              child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            child: Text(
-                              '${AppLocalizations.of(context)!.name}.',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                          )),
-                          Container(
-                            width: 80,
-                            child: Center(
-                                child: Text(
-                              'Gap',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            )),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (controller.loadingResults.value)
-                      Container(
-                        padding: const EdgeInsets.symmetric(vertical: 100),
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
-                        ),
-                      )
-                    else if ((controller.eventResult?.data?.isEmpty ?? true))
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 80),
-                        child: Center(
-                          child: Text(
-                            'No results available yet',
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[600],
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      ListView.builder(
-                          itemBuilder: (_, index) {
-                            if (index == controller.eventResult!.data!.length) {
-                              return Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ));
-                            }
-
-                            var athlete = controller.eventResult!.data[index];
-
-                            var timeDiff = controller.gender == -1 &&
-                                    controller.category == -1
-                                ? athlete.timeBehindOverallLeader
-                                : (controller.category == -1
-                                    ? athlete.timeBehindGenderLeader
-                                    : athlete.timeBehindCategoryLeader);
-
-                            return GestureDetector(
-                              onTap: () {
-                                // if (!(controller.items?.linkToDetail ?? false)) {
-                                //   return;
-                                // }
-                                Entrants entrant = Entrants(
-                                    id: athlete.importKey.toString(),
-                                    number: athlete.raceNo.toString(),
-                                    canFollow: false,
-                                    isFollowed: false,
-                                    name: athlete.fullName ?? 'Unknown',
-                                    extra: '',
-                                    profileImage: '',
-                                    info:
-                                        '${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
-                                    contest: athlete.overallPos,
-                                    disRaceNo: athlete.raceNo.toString() ?? '',
-                                    importKey: athlete.importKey);
-
-                                Get.toNamed(Routes.athleteDetails, arguments: {
-                                  AppKeys.athlete: entrant,
-                                  'can_follow': false
-                                });
-                              },
-                              child: Column(
+                    // Results Card
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Container(
+                        decoration: AppThemeStyles.cardDecoration(context),
+                        child: Column(
+                          children: [
+                            // Table Header
+                            Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                  color: isLightMode
+                                      ? AppColors.primary
+                                      : AppColors.secondary,
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
+                                  )),
+                              child: Row(
                                 children: [
+                                  if (controller.search == '')
+                                    SizedBox(
+                                      width: 60,
+                                      child: Center(
+                                          child: Text(
+                                        '${AppLocalizations.of(context)!.pos}.',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
+                                        ),
+                                      )),
+                                    ),
+                                  Expanded(
+                                      child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20),
+                                    child: Text(
+                                      '${AppLocalizations.of(context)!.name}.',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  )),
                                   Container(
-                                    height: 60,
-                                    child: Row(
-                                      children: [
-                                        if (controller.search == '')
-                                          Container(
-                                            width: 60,
-                                            padding: const EdgeInsets.fromLTRB(
-                                                15.0, 0.0, 0.0, 0.0),
-                                            child: Text(
-                                              (index + 1)
-                                                  .toString() /*'${athlete.netOverallPos ?? athlete.overallPos}'*/,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w800,
-                                                fontSize: 16,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.grey[700]
-                                                    : Colors.grey[300],
-                                              ),
-                                            ),
-                                          ),
-                                        Expanded(
-                                            child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      '${athlete.fullName}',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontSize: 16,
-                                                      ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                    ),
-                                                  ),
-                                                  if ((athlete.countryRepresenting
-                                                              .iso2 ??
-                                                          '')
-                                                      .isNotEmpty)
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 6.0),
-                                                      child: CountryFlag
-                                                          .fromCountryCode(
-                                                        athlete
-                                                            .countryRepresenting
-                                                            .iso2
-                                                            .toLowerCase(),
-                                                        height: 16,
-                                                        width: 22,
-                                                        borderRadius: 4,
-                                                      ),
-                                                    ),
-                                                ],
-                                              ),
-                                              if ((athlete.splitName ?? '')
-                                                  .isNotEmpty)
-                                                Text(
-                                                  athlete.splitName,
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 12,
-                                                    color: Theme.of(context)
-                                                                .brightness ==
-                                                            Brightness.dark
-                                                        ? Colors.grey[700]
-                                                        : Colors.grey[300],
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                            ],
-                                          ),
-                                        )),
-                                        Container(
-                                            width: 100,
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0.0, 0.0, 20.0, 0.0),
-                                            child: Text(
-                                              index == 0
-                                                  ? (athlete.raceTime != null &&
-                                                          athlete.raceTime
-                                                              .toString()
-                                                              .isNotEmpty
-                                                      ? athlete.raceTime
-                                                      : '')
-                                                  : (timeDiff != null &&
-                                                          timeDiff
-                                                              .toString()
-                                                              .isNotEmpty
-                                                      ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
-                                                      : ''),
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w600,
-                                                fontSize: 14,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.black
-                                                    : Colors.white,
-                                              ),
-                                              textAlign: TextAlign.end,
-                                            )),
-                                      ],
-                                    ),
+                                    width: 80,
+                                    child: Center(
+                                        child: Text(
+                                      'Gap',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
+                                    )),
                                   ),
-                                  //
-                                  // Divider for list 
-                                  //
-                                  if (index <
-                                      (controller.eventResult!.data.length - 1))
-                                    Container(
-                                      height: 1,
-                                      color: Theme.of(context).brightness ==
-                                                        Brightness.dark
-                                                    ? Colors.grey[300]
-                                                    : AppColors.grey,
-                                      margin: const EdgeInsets.symmetric(
-                                      horizontal: 16),
-                                    ),
                                 ],
                               ),
-                            );
-                          },
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount:
-                              (controller.eventResult?.data?.length ?? 0) +
-                                  (controller.loadingMore.value ? 1 : 0))
+                            ),
+                            // Results Content
+                            if (controller.loadingResults.value)
+                              Container(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 100),
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            else if ((controller.eventResult?.data?.isEmpty ??
+                                true))
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 80),
+                                child: Center(
+                                  child: Text(
+                                    'No results available yet',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            else
+                              ListView.builder(
+                                  itemBuilder: (_, index) {
+                                    if (index ==
+                                        controller.eventResult!.data!.length) {
+                                      return Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          ));
+                                    }
+
+                                    var athlete =
+                                        controller.eventResult!.data[index];
+
+                                    var timeDiff = controller.gender == -1 &&
+                                            controller.category == -1
+                                        ? athlete.timeBehindOverallLeader
+                                        : (controller.category == -1
+                                            ? athlete.timeBehindGenderLeader
+                                            : athlete.timeBehindCategoryLeader);
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        // if (!(controller.items?.linkToDetail ?? false)) {
+                                        //   return;
+                                        // }
+                                        Entrants entrant = Entrants(
+                                            id: athlete.importKey.toString(),
+                                            number: athlete.raceNo.toString(),
+                                            canFollow: false,
+                                            isFollowed: false,
+                                            name: athlete.fullName ?? 'Unknown',
+                                            extra: '',
+                                            profileImage: '',
+                                            info:
+                                                '${athlete.gender.name ?? ''} ${athlete.category.name ?? ''}\n${athlete.countryRepresenting.name ?? ''}',
+                                            contest: athlete.overallPos,
+                                            disRaceNo:
+                                                athlete.raceNo.toString() ?? '',
+                                            importKey: athlete.importKey);
+
+                                        Get.toNamed(Routes.athleteDetails,
+                                            arguments: {
+                                              AppKeys.athlete: entrant,
+                                              'can_follow': false
+                                            });
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: 60,
+                                            child: Row(
+                                              children: [
+                                                if (controller.search == '')
+                                                  Container(
+                                                    width: 60,
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(
+                                                        15.0, 0.0, 0.0, 0.0),
+                                                    child: Text(
+                                                      (index + 1)
+                                                          .toString() /*'${athlete.netOverallPos ?? athlete.overallPos}'*/,
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w800,
+                                                        fontSize: 16,
+                                                        color: isLightMode
+                                                            ? AppColors.darkgrey
+                                                            : AppColors
+                                                                .splitLightGrey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                Expanded(
+                                                    child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 20),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .stretch,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Text(
+                                                              '${athlete.fullName}',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 16,
+                                                                color: isLightMode
+                                                                    ? AppColors
+                                                                        .darkBlack
+                                                                    : AppColors
+                                                                        .white,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          if ((athlete.countryRepresenting
+                                                                      .iso2 ??
+                                                                  '')
+                                                              .isNotEmpty)
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      left:
+                                                                          6.0),
+                                                              child: CountryFlag
+                                                                  .fromCountryCode(
+                                                                athlete
+                                                                    .countryRepresenting
+                                                                    .iso2
+                                                                    .toLowerCase(),
+                                                                height: 16,
+                                                                width: 22,
+                                                                borderRadius: 4,
+                                                              ),
+                                                            ),
+                                                        ],
+                                                      ),
+                                                      if ((athlete.splitName ??
+                                                              '')
+                                                          .isNotEmpty)
+                                                        Text(
+                                                          athlete.splitName,
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                            fontSize: 12,
+                                                            color: isLightMode
+                                                                ? AppColors
+                                                                    .darkgrey
+                                                                : AppColors
+                                                                    .splitLightGrey,
+                                                          ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                    ],
+                                                  ),
+                                                )),
+                                                Container(
+                                                    width: 100,
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(
+                                                        0.0, 0.0, 20.0, 0.0),
+                                                    child: Text(
+                                                      index == 0
+                                                          ? (athlete.raceTime !=
+                                                                      null &&
+                                                                  athlete
+                                                                      .raceTime
+                                                                      .toString()
+                                                                      .isNotEmpty
+                                                              ? athlete.raceTime
+                                                              : '')
+                                                          : (timeDiff != null &&
+                                                                  timeDiff
+                                                                      .toString()
+                                                                      .isNotEmpty
+                                                              ? '+${timeDiff.startsWith('00:') ? timeDiff.substring(3) : timeDiff}'
+                                                              : ''),
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 14,
+                                                        color: isLightMode
+                                                            ? AppColors
+                                                                .darkBlack
+                                                            : AppColors.white,
+                                                      ),
+                                                      textAlign: TextAlign.end,
+                                                    )),
+                                              ],
+                                            ),
+                                          ),
+                                          //
+                                          // Divider for list
+                                          //
+                                          if (index <
+                                              (controller.eventResult!.data
+                                                      .length -
+                                                  1))
+                                            Container(
+                                              height: 1,
+                                              color: isLightMode
+                                                  ? AppColors.darkgrey
+                                                      .withOpacity(0.2)
+                                                  : AppColors.greyLight
+                                                      .withOpacity(0.2),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16),
+                                            ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: (controller
+                                              .eventResult?.data?.length ??
+                                          0) +
+                                      (controller.loadingMore.value ? 1 : 0))
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               );
