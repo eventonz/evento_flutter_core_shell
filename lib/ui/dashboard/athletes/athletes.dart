@@ -37,8 +37,15 @@ class AthletesScreen extends StatelessWidget {
     controller.checkAdvert(false);
     return Scaffold(
         appBar: AppBar(
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
+          surfaceTintColor: Theme.of(context).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
+          shadowColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black.withOpacity(0.1)
+              : Colors.transparent,
           automaticallyImplyLeading: false,
           title: AppText(
             controller.athleteText,
@@ -164,8 +171,7 @@ class AthletesScreen extends StatelessWidget {
                                   decoration: InputDecoration(
                                       enabled: false,
                                       isDense: true,
-                                      hintText:
-                                          '${AppLocalizations.of(context)!.search} ${controller.athleteText}',
+                                    
                                       hintStyle: TextStyle(
                                         fontSize: 16,
                                         color: Theme.of(context).brightness ==

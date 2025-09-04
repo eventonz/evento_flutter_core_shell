@@ -35,7 +35,7 @@ class AppStyles {
       cupertinoOverrideTheme: const NoDefaultCupertinoThemeData(
         barBackgroundColor: AppColors.lightblack,
       ),
-      scaffoldBackgroundColor: AppColors.white,
+      scaffoldBackgroundColor: AppColors.greyLighter,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: const ColorScheme.light().copyWith(
         primary: AppColors.primary,
@@ -60,7 +60,7 @@ class AppStyles {
         cupertinoOverrideTheme: const NoDefaultCupertinoThemeData(
           barBackgroundColor: AppColors.lightblack,
         ),
-        scaffoldBackgroundColor: AppColors.black,
+        scaffoldBackgroundColor: AppColors.darkBlack,
         visualDensity: VisualDensity.adaptivePlatformDensity,
         primaryIconTheme: const IconThemeData(color: AppColors.white),
         colorScheme: const ColorScheme.dark().copyWith(

@@ -25,8 +25,10 @@ class ListPageScreen extends StatelessWidget {
         backgroundColor: isLightMode
             ? AppThemeColors.lightBackground
             : AppThemeColors.darkBackground,
-        surfaceTintColor: Colors.white,
-        shadowColor: Colors.white,
+        surfaceTintColor:
+            isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
+        shadowColor:
+            isLightMode ? Colors.black.withOpacity(0.1) : Colors.transparent,
         title: AppText(
           controller.item.title!,
           style: AppStyles.appBarTitle,

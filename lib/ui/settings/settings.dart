@@ -20,134 +20,181 @@ class SettingsScreen extends StatelessWidget {
     final controller = Get.put(SettingsController());
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
           surfaceTintColor: Theme.of(context).brightness == Brightness.light
-              ? Colors.white
-              : Colors.black,
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
           shadowColor: Theme.of(context).brightness == Brightness.light
               ? Colors.black.withOpacity(0.1)
-              : Colors.white,
+              : Colors.transparent,
           title: AppText(
             AppLocalizations.of(context)!.settings,
             style: AppStyles.appBarTitle,
           ),
         ),
-        body: Column(
-          children: [
-            TitleDivider(
-                title:
-                    '${AppLocalizations.of(context)!.general} ${AppLocalizations.of(context)!.settings}'),
-            ListTile(
-              onTap: controller.showThemeModePrompt,
-              title: AppText(
-                AppLocalizations.of(context)!.appTheme,
-              ),
-              trailing: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Obx(() => Icon(
-                      controller.getThemeIcon(),
-                      size: 6.w,
-                      color: AppColors.grey,
-                    )),
-              ),
-            ),
-            Divider(
-                height: 1,
-                thickness: .5,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight
-                    : AppColors.darkgrey),
-            /* ListTile(
-              onTap: controller.getAthletes,
-              title: AppText(
-                AppLocalizations.of(context)!.reloadAthletes,
-              ),
-              trailing: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Obx(() =>
-                    controller.athletesloading.value == DataSnapShot.loading
-                        ? const Padding(
-                            padding: EdgeInsets.only(right: 6.0),
-                            child: SizedBox(
-                              width: 15,
-                              height: 15,
-                              child: CircularProgressIndicator(
-                                backgroundColor: AppColors.greyLight,
-                                strokeWidth: 3,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              // General Settings Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.white
+                        : Colors.grey[900],
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AppText(
+                          '${AppLocalizations.of(context)!.general} ${AppLocalizations.of(context)!.settings}',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      ListTile(
+                        onTap: controller.showThemeModePrompt,
+                        title: AppText(
+                          AppLocalizations.of(context)!.appTheme,
+                        ),
+                        trailing: Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: Obx(() => Icon(
+                                controller.getThemeIcon(),
+                                size: 6.w,
                                 color: AppColors.grey,
-                              ),
-                            ),
-                          )
-                        : Icon(
-                            Icons.refresh,
+                              )),
+                        ),
+                      ),
+                      Divider(
+                        height: 1,
+                        thickness: 0.5,
+                        color: Theme.of(context).brightness == Brightness.light
+                            ? AppColors.darkgrey.withOpacity(0.2)
+                            : AppColors.greyLight.withOpacity(0.2),
+                      ),
+                      ListTile(
+                        onTap: () {
+                          Get.to(LanguageScreen());
+                        },
+                        title: AppText(
+                          AppLocalizations.of(context)!.language,
+                        ),
+                        trailing: Padding(
+                          padding: const EdgeInsets.only(right: 12),
+                          child: Icon(
+                            Icons.language,
                             size: 6.w,
                             color: AppColors.grey,
-                          )),
-              ),
-            ),*/
-            Divider(
-                height: 1,
-                thickness: .5,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight
-                    : AppColors.darkgrey),
-            ListTile(
-              onTap: () {
-                Get.to(LanguageScreen());
-              },
-              title: AppText(
-                AppLocalizations.of(context)!.language,
-              ),
-              trailing: Padding(
-                padding: const EdgeInsets.only(right: 12),
-                child: Icon(
-                  Icons.language,
-                  size: 6.w,
-                  color: AppColors.grey,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
                 ),
               ),
-            ),
-            /*
-            const Divider(
-              height: 0,
-            ),
-            ListTile(
-              onTap: controller.toggleAthleteInfo,
-              title: const AppText(
-                'Athlete Information',
+              const SizedBox(height: 16),
+              // Notification Settings Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.white
+                        : Colors.grey[900],
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AppText(
+                          AppLocalizations.of(context)!.notificationSettings,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      ListTile(
+                        onTap: controller.toggleNotificationStatus,
+                        title: AppText(
+                          AppLocalizations.of(context)!.eventUpdates,
+                        ),
+                        trailing: Obx(() => AppCheckBox(
+                            isChecked:
+                                controller.eventNotificationstatus.value)),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
               ),
-              trailing: Obx(() =>
-                  AppCheckBox(isChecked: controller.showAthleteInfo.value)),
-            ),
-            */
-            Divider(
-                height: 1,
-                thickness: .5,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight
-                    : AppColors.darkgrey),
-            TitleDivider(
-                title: AppLocalizations.of(context)!.notificationSettings),
-            ListTile(
-              onTap: controller.toggleNotificationStatus,
-              title: AppText(
-                AppLocalizations.of(context)!.eventUpdates,
+              const SizedBox(height: 16),
+              // App Info Card
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).brightness == Brightness.light
+                        ? Colors.white
+                        : Colors.grey[900],
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: AppText(
+                          'App Information',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      ListTile(
+                        title: AppText(
+                          '${AppLocalizations.of(context)!.version} ${AppGlobals.appVersion}',
+                          fontSize: 14,
+                          color: AppColors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                ),
               ),
-              trailing: Obx(() => AppCheckBox(
-                  isChecked: controller.eventNotificationstatus.value)),
-            ),
-            Divider(
-                height: 1,
-                thickness: .5,
-                color: Theme.of(context).brightness == Brightness.light
-                    ? AppColors.greyLight
-                    : AppColors.darkgrey),
-            ListTile(
-              title: AppText(
-                '${AppLocalizations.of(context)!.version} ${AppGlobals.appVersion}',
-                fontSize: 12,
-              ),
-            ),
-          ],
+              const SizedBox(height: 40),
+            ],
+          ),
         ));
   }
 }

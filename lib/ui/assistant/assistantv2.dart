@@ -26,12 +26,16 @@ class AssistantV2Screen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AssistantV2Controller());
     return Scaffold(
-        backgroundColor: Theme.of(context).brightness == Brightness.light
-            ? AppColors.darkBlack
-            : AppColors.white,
         appBar: AppBar(
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+          backgroundColor: Theme.of(context).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
+          surfaceTintColor: Theme.of(context).brightness == Brightness.light
+              ? AppColors.greyLighter
+              : AppColors.darkBlack,
+          shadowColor: Theme.of(context).brightness == Brightness.light
+              ? Colors.black.withOpacity(0.1)
+              : Colors.transparent,
           title: const AppText(
             '',
             style: AppStyles.appBarTitle,
@@ -62,65 +66,111 @@ class AssistantV2Screen extends StatelessWidget {
                 }));
               },
             ),
-            Obx(() => LinearProgressIndicator(
-                  value: controller.assistantResponseSnapshot.value ==
-                          DataSnapShot.loading
-                      ? null
-                      : 0,
-                  minHeight: 0.8,
-                  backgroundColor: AppColors.headerText,
-                )),
             Container(
               child: SafeArea(
-                child: Container(
+                child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(
-                    children: [
-                      Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).brightness == Brightness.light
+                          ? Colors.white
+                          : Colors.grey[900],
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
                           child: TextField(
-                        controller: controller.messageTextEditingController,
-                        onChanged: (value) {
-                          // Sanitize input to prevent keyboard issues
-                          final sanitizedValue =
-                              value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '');
-                          controller.messageText.value = sanitizedValue;
-                        },
-                        onSubmitted: (value) {
-                          // Handle Enter key press safely
-                          if (value.trim().isNotEmpty) {
-                            controller.sendMessage();
-                          }
-                        },
-                        maxLength: 1000, // Prevent extremely long messages
-                        minLines: 1, // Start with 1 line
-                        maxLines: 5, // Expand up to 5 lines
-                        textInputAction: TextInputAction.send,
-                        decoration: InputDecoration(
-                            hintText:
-                                '${AppLocalizations.of(context)!.askAQuestion}...',
-                            hintStyle: TextStyle(
+                            controller: controller.messageTextEditingController,
+                            onChanged: (value) {
+                              // Sanitize input to prevent keyboard issues
+                              final sanitizedValue = value.replaceAll(
+                                  RegExp(r'[\x00-\x1F\x7F]'), '');
+                              controller.messageText.value = sanitizedValue;
+                            },
+                            onSubmitted: (value) {
+                              // Handle Enter key press safely
+                              if (value.trim().isNotEmpty) {
+                                controller.sendMessage();
+                              }
+                            },
+                            maxLength: 1000, // Prevent extremely long messages
+                            minLines: 1, // Start with 1 line
+                            maxLines: 5, // Expand up to 5 lines
+                            textInputAction: TextInputAction.send,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.black
+                                  : AppColors.white,
+                            ),
+                            decoration: InputDecoration(
+                              hintText:
+                                  '${AppLocalizations.of(context)!.askAQuestion}...',
+                              hintStyle: TextStyle(
+                                fontSize: 16,
                                 color: Theme.of(context).brightness ==
                                         Brightness.light
-                                    ? AppColors.white
-                                    : AppColors.darkBlack),
-                            border: InputBorder.none,
-                            counterText: '', // Hide character counter
-                            errorMaxLines: 1),
-                      )),
-                      SizedBox(
-                        width: 2.w,
-                      ),
-                      FloatingActionButton.small(
-                        onPressed: controller.sendMessage,
-                        child: Icon(
-                          Icons.send,
-                          color: Colors.white,
-                          size: 16,
+                                    ? AppColors.grey
+                                    : AppColors.greyLight,
+                              ),
+                              filled: true,
+                              fillColor: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? Colors.grey[100]
+                                  : Colors.grey[800],
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              contentPadding: const EdgeInsets.all(12),
+                              counterText: '', // Hide character counter
+                              errorMaxLines: 1,
+                            ),
+                          ),
                         ),
-                        backgroundColor: AppColors.primary,
-                        elevation: 0,
-                      ),
-                    ],
+                        const SizedBox(width: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? AppColors.primary
+                                    : AppColors.secondary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: IconButton(
+                            onPressed: controller.sendMessage,
+                            icon: const Icon(
+                              Icons.send,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            padding: const EdgeInsets.all(12),
+                            constraints: const BoxConstraints(
+                              minWidth: 48,
+                              minHeight: 48,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -154,7 +204,7 @@ class ChatMessage extends StatelessWidget {
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: isLightMode ? Colors.grey[600] : Colors.grey[200],
+                color: isLightMode ? AppColors.greyLight : AppColors.grey,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -162,7 +212,7 @@ class ChatMessage extends StatelessWidget {
                     .replaceAll('${controller.item.prefixprompt}', ''),
                 style: TextStyle(
                   fontSize: 16,
-                  color: isLightMode ? Colors.white : Colors.black87,
+                  color: isLightMode ? AppColors.darkgrey : AppColors.white,
                 ),
               ),
             ),
@@ -219,40 +269,47 @@ class ChatMessage extends StatelessWidget {
                               styleSheet: MarkdownStyleSheet(
                                 p: TextStyle(
                                   fontSize: 16,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 strong: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 em: TextStyle(
                                   fontStyle: FontStyle.italic,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 h1: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 h2: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 h3: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 listBullet: TextStyle(
-                                  color:
-                                      isLightMode ? Colors.white : Colors.black,
+                                  color: isLightMode
+                                      ? AppColors.black
+                                      : AppColors.white,
                                 ),
                                 a: TextStyle(
                                   color: AppColors.primary,
