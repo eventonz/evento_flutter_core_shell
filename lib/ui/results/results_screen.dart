@@ -13,6 +13,7 @@ import 'package:screenshot/screenshot.dart';
 
 import '../../core/models/app_config.dart';
 import '../../core/res/app_colors.dart';
+import '../../core/res/app_styles.dart';
 import '../common_components/text.dart';
 import 'package:evento_core/core/res/app_theme.dart';
 
@@ -37,7 +38,11 @@ class ResultsScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         title: AppText(
           controller.items!.title ?? '',
+          
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
         ),
+        centerTitle: false,
       ),
       body: GetBuilder(
           init: controller,
@@ -63,26 +68,35 @@ class ResultsScreen extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          DropdownButton<int>(
-                              items: [
-                                ...controller.eventResponse?.data
-                                        ?.map((e) => DropdownMenuItem(
-                                            value: e.eventId,
-                                            child: Text(e.name)))
-                                        .toList() ??
-                                    [],
-                              ],
-                              onChanged: (val) {
-                                controller.changeEvent(val!);
-                              },
-                              icon: Icon(CupertinoIcons.chevron_down,
-                                  color: Colors.grey),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 0),
-                              value: controller.selectedEvent.value,
-                              isExpanded: true,
+                          Container(
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 0.5,
+                              ),
                               borderRadius: BorderRadius.circular(5),
-                              underline: Container()),
+                            ),
+                            child: DropdownButton<int>(
+                                items: [
+                                  ...controller.eventResponse?.data
+                                          ?.map((e) => DropdownMenuItem(
+                                              value: e.eventId,
+                                              child: Text(e.name)))
+                                          .toList() ??
+                                      [],
+                                ],
+                                onChanged: (val) {
+                                  controller.changeEvent(val!);
+                                },
+                                icon: Icon(CupertinoIcons.chevron_down,
+                                    color: Colors.grey),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 0),
+                                value: controller.selectedEvent.value,
+                                isExpanded: true,
+                                borderRadius: BorderRadius.circular(5),
+                                underline: Container()),
+                          ),
                           const SizedBox(height: 12),
                           Row(
                             children: [
@@ -110,7 +124,9 @@ class ResultsScreen extends StatelessWidget {
                                         borderRadius: BorderRadius.circular(5),
                                       ),
                                       filled: true,
-                                      fillColor: Colors.white,
+                                      fillColor: isLightMode
+                                          ? Colors.grey[100]
+                                          : Colors.grey[800],
                                     ),
                                     onSubmitted: (val) {
                                       controller.searchResults(val);

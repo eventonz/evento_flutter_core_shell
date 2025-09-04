@@ -25,8 +25,8 @@ class MoreMenuTile extends StatelessWidget {
               AppHelper.getSvg(item.icon!),
               fit: BoxFit.cover,
               color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.accentLight
-                  : AppColors.accentDark,
+                  ? AppColors.primary
+                  : AppColors.secondary,
               width: 24,
             ),
             const SizedBox(width: 16),
@@ -38,9 +38,9 @@ class MoreMenuTile extends StatelessWidget {
             ),
             Icon(
               Icons.arrow_circle_right_outlined,
-              color: (Theme.of(context).brightness == Brightness.light
-                  ? AppColors.accentLight
-                  : AppColors.accentDark),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.primary
+                  : AppColors.secondary,
               size: 4.5.w,
             ),
           ],

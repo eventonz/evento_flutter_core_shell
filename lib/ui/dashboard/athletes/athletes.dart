@@ -28,7 +28,6 @@ class AthletesScreen extends StatelessWidget {
 
     Future.delayed(const Duration(seconds: 1), () {
       if(!Preferences.getBool('is_tooltip', false)) {
-        print('YES');
         controller.tooltipController.showTooltip();
         Preferences.setBool('is_tooltip', true);
       }

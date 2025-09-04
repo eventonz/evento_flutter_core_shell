@@ -21,9 +21,7 @@ class MoreMenuTitle extends StatelessWidget {
             item.title!,
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: isLightMode
-                ? AppColors.accentDark.withOpacity(0.8)
-                : AppColors.accentLight.withOpacity(0.8),
+            color: isLightMode ? AppColors.primary : AppColors.secondary,
           ),
         ],
       ),
