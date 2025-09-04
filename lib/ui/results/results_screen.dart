@@ -38,7 +38,6 @@ class ResultsScreen extends StatelessWidget {
         scrolledUnderElevation: 0,
         title: AppText(
           controller.items!.title ?? '',
-          
           fontSize: 26,
           fontWeight: FontWeight.bold,
         ),
@@ -428,7 +427,9 @@ class ResultsScreen extends StatelessWidget {
                           Container(
                             height: 50,
                             decoration: BoxDecoration(
-                              color: AppColors.primary,
+                              color: isLightMode
+                                  ? AppColors.primary
+                                  : AppColors.secondary,
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(12),
                                 topRight: Radius.circular(12),
