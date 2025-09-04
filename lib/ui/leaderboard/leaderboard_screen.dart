@@ -174,8 +174,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                             16,
                                                                         fontWeight:
                                                                             FontWeight.w800,
-                                                                        color: Theme.of(context).brightness ==
-                                                                                Brightness.dark
+                                                                        color: isLightMode
                                                                             ? Colors.white
                                                                             : Colors.black,
                                                                       ),
@@ -203,7 +202,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                 child: Text(
                                                                                   '${split['name']}',
                                                                                   style: TextStyle(
-                                                                                    color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                    color: isLightMode ? Colors.black : Colors.white,
                                                                                     fontSize: 22,
                                                                                   ),
                                                                                 ),
@@ -238,7 +237,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                               AppLocalizations.of(context)!.apply.toUpperCase(),
                                                                               style: TextStyle(
                                                                                 fontWeight: FontWeight.w500,
-                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                color: isLightMode ? Colors.black : Colors.white,
                                                                               ),
                                                                             ),
                                                                           ),
@@ -265,7 +264,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                             style:
                                                                                 TextStyle(
                                                                               fontWeight: FontWeight.w500,
-                                                                              color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
+                                                                              color: isLightMode ? Colors.black : Colors.white,
                                                                             ),
                                                                           ),
                                                                         ),
@@ -371,7 +370,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                 Text(
                                                                               'All',
                                                                               style: TextStyle(
-                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                color: isLightMode ? Colors.black : Colors.white,
                                                                               ),
                                                                             ),
                                                                           ),
@@ -384,7 +383,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                         child: Text(
                                                                                           '${e.name}',
                                                                                           style: TextStyle(
-                                                                                            color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                            color: isLightMode ? Colors.black : Colors.white,
                                                                                           ),
                                                                                         ),
                                                                                       ))
@@ -411,7 +410,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                 Text(
                                                                               'All',
                                                                               style: TextStyle(
-                                                                                color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                color: isLightMode ? Colors.black : Colors.white,
                                                                               ),
                                                                             ),
                                                                           ),
@@ -423,7 +422,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                                         child: Text(
                                                                                           '${e.name ?? e.code}',
                                                                                           style: TextStyle(
-                                                                                            color: Theme.of(context).brightness == Brightness.light ? Colors.white : Colors.black,
+                                                                                            color: isLightMode ? Colors.black : Colors.white,
                                                                                           ),
                                                                                         ),
                                                                                       ))
