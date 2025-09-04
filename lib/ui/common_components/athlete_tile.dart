@@ -75,8 +75,8 @@ class AthleteTile extends StatelessWidget {
                     entrant.info,
                     maxLines: 2,
                     color: Theme.of(context).brightness == Brightness.light
-                        ? AppColors.greyLight
-                        : AppColors.grey,
+                        ? AppColors.darkgrey
+                        : AppColors.splitLightGrey,
                     fontSize: 14,
                   ),
                 ],
