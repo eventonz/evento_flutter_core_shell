@@ -131,7 +131,8 @@ class ScheduleScreen extends StatelessWidget {
                                           child: AppText(
                                             events.date.withDateFormat(
                                                 format: 'E, dd MMMM'),
-                                            fontSize: 18,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
                                             color: isLightMode
                                                 ? AppColors.darkBlack
                                                 : AppColors.white,
@@ -260,7 +261,7 @@ class ScheduleTile extends StatelessWidget {
     return InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
@@ -279,8 +280,7 @@ class ScheduleTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              SizedBox(
-                width: 82.w,
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -316,7 +316,7 @@ class ScheduleTile extends StatelessWidget {
                   ],
                 ),
               ),
-              SizedBox(width: 8),
+              SizedBox(width: 4),
               Icon(
                 Icons.arrow_circle_right_outlined,
                 color: AppColors.primary,
