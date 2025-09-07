@@ -14,7 +14,6 @@ import 'package:get/get_rx/get_rx.dart';
 import '../../core/models/app_config.dart';
 
 class ResultsScreenController extends GetxController {
-
   late int raceId;
 
   SSEventResponse? eventResponse;
@@ -46,14 +45,30 @@ class ResultsScreenController extends GetxController {
     items = (Get.arguments?[AppKeys.moreItem] as Items?);
     items ??= AppGlobals.appConfig?.results?.config;
 
- 
+    // Debug: Check if items is null
+    if (items == null) {
+      print('ERROR: Results items is null!');
+      print('Arguments: ${Get.arguments}');
+      print(
+          'AppGlobals.appConfig?.results?.config: ${AppGlobals.appConfig?.results?.config}');
+      return; // Exit early if no items
+    }
 
+    // Debug: Check if sportSplitsRaceId is valid
     raceId = items!.sportSplitsRaceId ?? 0;
+    print('Results raceId: $raceId');
+    print('Results items title: ${items!.title}');
+
+    if (raceId == 0) {
+      print('ERROR: sportSplitsRaceId is 0 or null!');
+      print('Items sportSplitsRaceId: ${items!.sportSplitsRaceId}');
+      return; // Exit early if no valid race ID
+    }
     getEvent();
     scrollController.addListener(() {
-   
-      if(scrollController.position.maxScrollExtent-scrollController.offset <=200 && !loadingMore.value) {
-    
+      if (scrollController.position.maxScrollExtent - scrollController.offset <=
+              200 &&
+          !loadingMore.value) {
         loadingMore.value = true;
         page++;
         update();
@@ -63,27 +78,39 @@ class ResultsScreenController extends GetxController {
   }
 
   setCategory(int index) {
-    if(index == 0) {
+    if (index == 0) {
       category = -1;
     } else {
-      category = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories[index-1].id ?? 0;
+      category = eventResponse?.data
+              ?.where((element) => element.eventId == selectedEvent.value)
+              .firstOrNull
+              ?.categories[index - 1]
+              .id ??
+          0;
     }
   }
 
   setGender(int index) {
-    if(index == 0) {
+    if (index == 0) {
       gender = -1;
       category = -1;
       attached = false;
       categoryScrollController?.jumpTo(0);
       attached = true;
     } else {
-      gender = eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.genders.where((element) => element.enabled).toList()[index-1].id ?? 0;
+      gender = eventResponse?.data
+              ?.where((element) => element.eventId == selectedEvent.value)
+              .firstOrNull
+              ?.genders
+              .where((element) => element.enabled)
+              .toList()[index - 1]
+              .id ??
+          0;
     }
   }
 
   categoryListener() {
-    if(gender == -1 && attached) {
+    if (gender == -1 && attached) {
       categoryScrollController?.jumpTo(0);
       ToastUtils.show(AppLocalizations.of(Get.context!)!.selectGenderFirst);
       return;
@@ -102,7 +129,13 @@ class ResultsScreenController extends GetxController {
 
   updateScrollController() {
     categoryScrollController = FixedExtentScrollController(
-      initialItem: (eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == category) ?? -1)+1,
+      initialItem: (eventResponse?.data
+                  ?.where((element) => element.eventId == selectedEvent.value)
+                  .firstOrNull
+                  ?.categories
+                  .indexWhere((element) => element.id == category) ??
+              -1) +
+          1,
     )..addListener(categoryListener);
   }
 
@@ -113,20 +146,28 @@ class ResultsScreenController extends GetxController {
     update();
     getResults();
   }
-  
+
   getEvent([bool first = true]) async {
-    var result = await ApiHandler.genericGetHttp(url: 'https://api.sportsplits.com/v2/races/$raceId/events/', header: {
-      'X-API-KEY' : 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
-    });
+    var result = await ApiHandler.genericGetHttp(
+        url: 'https://api.sportsplits.com/v2/races/$raceId/events/',
+        header: {
+          'X-API-KEY': 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
+        });
 
     eventResponse = SSEventResponse.fromJson(result.data);
-    if(first) {
+    if (first) {
       selectedEvent.value = eventResponse?.data?.firstOrNull?.eventId ?? 0;
     }
     loading.value = false;
 
     categoryScrollController = FixedExtentScrollController(
-      initialItem: (eventResponse?.data?.where((element) => element.eventId == selectedEvent.value).firstOrNull?.categories.indexWhere((element) => element.id == category) ?? -1)+1,
+      initialItem: (eventResponse?.data
+                  ?.where((element) => element.eventId == selectedEvent.value)
+                  .firstOrNull
+                  ?.categories
+                  .indexWhere((element) => element.id == category) ??
+              -1) +
+          1,
     )..addListener(categoryListener);
 
     getResults();
@@ -137,8 +178,6 @@ class ResultsScreenController extends GetxController {
     });
 
     update();
-
- 
   }
 
   filterResults() async {
@@ -149,31 +188,29 @@ class ResultsScreenController extends GetxController {
   }
 
   getResults() async {
-    var url = 'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/${category == -1 && gender == -1 ? 'individuals' : (category != -1 && gender != -1 ? 'gender/$gender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$gender')))}?page=$page${search != '' ? '&search=$search' : ''}';
+    var url =
+        'https://api.sportsplits.com/v2/races/$raceId/events/${selectedEvent.value}/results/${category == -1 && gender == -1 ? 'individuals' : (category != -1 && gender != -1 ? 'gender/$gender/category/$category' : (category != -1 ? 'category/$category' : ('gender/$gender')))}?page=$page${search != '' ? '&search=$search' : ''}';
 
-    if(search != '') {
-      url = 'https://api.sportsplits.com/v2/races/$raceId/results/individuals?search=$search';
+    if (search != '') {
+      url =
+          'https://api.sportsplits.com/v2/races/$raceId/results/individuals?search=$search';
     }
-    if(category != -1) {
+    if (category != -1) {
       url += '';
     }
     var result = await ApiHandler.genericGetHttp(url: url, header: {
-      'X-API-KEY' : 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
+      'X-API-KEY': 'BGE7FS8EY98DFAT57K7XL527F6CA58CJ',
     });
 
     var eventResult = SSEventResult.fromJson(result.data);
     loadingResults.value = false;
     loadingMore.value = false;
 
-   
-
-    if(page == 1) {
+    if (page == 1) {
       this.eventResult = eventResult;
     } else {
       this.eventResult!.data!.addAll(eventResult.data!);
     }
     update();
-
   }
-
 }

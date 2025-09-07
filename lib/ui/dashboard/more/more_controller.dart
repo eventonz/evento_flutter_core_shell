@@ -70,39 +70,80 @@ class MoreController extends GetxController {
   }
 
   void decideNextView(Items item) {
-    final itemType = item.type!;
-    if (itemType == 'link') {
+    // Debug: Print item details
+    print('Menu item details:');
+    print('  Type: ${item.type}');
+    print('  Title: ${item.title}');
+    print('  SportSplitsRaceId: ${item.sportSplitsRaceId}');
+    print('  ID: ${item.id}');
+
+    final itemType = item.type;
+
+    // Fallback: Try to infer type from other fields if type is missing
+    String? inferredType;
+    if (itemType == null || itemType.isEmpty) {
+      if (item.sportSplitsRaceId != null && item.sportSplitsRaceId! > 0) {
+        inferredType = 'results';
+        print(
+            'Inferred type as "results" from sportSplitsRaceId: ${item.sportSplitsRaceId}');
+      } else if (item.link != null) {
+        inferredType = 'link';
+        print('Inferred type as "link" from link field');
+      } else if (item.schedule != null) {
+        inferredType = 'schedule';
+        print('Inferred type as "schedule" from schedule field');
+      } else if (item.carousel != null) {
+        inferredType = 'carousel';
+        print('Inferred type as "carousel" from carousel field');
+      }
+    }
+
+    final finalType = itemType ?? inferredType;
+    if (finalType == null || finalType.isEmpty) {
+      ToastUtils.show('Invalid menu item configuration - Type: ${item.type}');
+      return;
+    }
+
+    if (finalType == 'link') {
+      if (item.link?.url == null || item.link!.url!.isEmpty) {
+        ToastUtils.show('Link URL not configured');
+        return;
+      }
       if (item.openExternal == true) {
         launchUrl(Uri.parse(item.link!.url!), mode: LaunchMode.platformDefault);
       } else {
         AppHelper.showWebBottomSheet(
             item.title, item.link!.url!, item.linkType); //
       }
-    } else if (itemType == 'pages') {
+    } else if (finalType == 'pages') {
       Get.toNamed(Routes.eventResults, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'eventomap') {
+    } else if (finalType == 'eventomap') {
       Get.toNamed(Routes.eventoMap, arguments: {'source_id': item.sourceId});
-    } else if (itemType == 'carousel') {
+    } else if (finalType == 'carousel') {
       Get.toNamed(Routes.eventOffers, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'schedule') {
+    } else if (finalType == 'schedule') {
       Get.toNamed(Routes.schedule, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'open') {
-      AppHelper.launchUrlApp(item.open?.url ?? '');
-    } else if (itemType == 'actions') {
+    } else if (finalType == 'open') {
+      if (item.open?.url == null || item.open!.url!.isEmpty) {
+        ToastUtils.show('Open URL not configured');
+        return;
+      }
+      AppHelper.launchUrlApp(item.open!.url!);
+    } else if (finalType == 'actions') {
       Get.toNamed(Routes.userChallenge, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'assistant') {
+    } else if (finalType == 'assistant') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.assistant, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'assistantv2') {
+    } else if (finalType == 'assistantv2') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.assistantv2, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'storyslider') {
+    } else if (finalType == 'storyslider') {
       // DatabaseHandler.removeAllChatMessages();
       Get.toNamed(Routes.storySlider,
           arguments: {AppKeys.moreItem: item, 'slides': sliders});
-    } else if (itemType == 'results') {
+    } else if (finalType == 'results') {
       Get.toNamed(Routes.results, arguments: {AppKeys.moreItem: item});
-    } else if (itemType == 'leaderboard') {
+    } else if (finalType == 'leaderboard') {
       Get.toNamed(Routes.leaderboard, arguments: {AppKeys.moreItem: item});
     } else {
       ToastUtils.show(

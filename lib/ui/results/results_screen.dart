@@ -37,7 +37,7 @@ class ResultsScreen extends StatelessWidget {
         elevation: 0,
         scrolledUnderElevation: 0,
         title: AppText(
-          controller.items!.title ?? '',
+          controller.items?.title ?? 'Results',
           fontSize: 26,
           fontWeight: FontWeight.bold,
         ),
@@ -46,6 +46,48 @@ class ResultsScreen extends StatelessWidget {
       body: GetBuilder(
           init: controller,
           builder: (_) {
+            // Check if items is null
+            if (controller.items == null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 64,
+                      color: isLightMode
+                          ? AppColors.darkgrey
+                          : AppColors.greyLight,
+                    ),
+                    const SizedBox(height: 16),
+                    AppText(
+                      'Results configuration not found',
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color:
+                          isLightMode ? AppColors.darkBlack : AppColors.white,
+                    ),
+                    const SizedBox(height: 8),
+                    AppText(
+                      'Please check your app configuration or menu setup',
+                      fontSize: 14,
+                      color: isLightMode
+                          ? AppColors.darkgrey
+                          : AppColors.splitLightGrey,
+                    ),
+                    const SizedBox(height: 16),
+                    AppText(
+                      'Race ID: ${controller.raceId}',
+                      fontSize: 12,
+                      color: isLightMode
+                          ? AppColors.darkgrey
+                          : AppColors.splitLightGrey,
+                    ),
+                  ],
+                ),
+              );
+            }
+
             if (controller.loading.value) {
               return const Center(
                 child: CircularProgressIndicator(

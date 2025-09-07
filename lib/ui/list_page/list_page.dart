@@ -58,7 +58,7 @@ class ListPageScreen extends StatelessWidget {
                 separatorBuilder: (_, i) {
                   return Divider(
                     height: 1,
-                    thickness: 2,
+                    thickness: 0.5,
                     color:
                         isLightMode ? AppColors.greyLight : AppColors.darkgrey,
                   );
