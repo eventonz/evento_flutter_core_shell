@@ -47,18 +47,18 @@ class SplitNewDataContent2 extends StatelessWidget {
               : AppColors.splitGrey;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.grey
+              ? AppColors.greyLight
               : AppColors.header;
         case 'header':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.grey
+              ? AppColors.greyLight
               : AppColors.header;
         case 'estimate':
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -69,19 +69,19 @@ class SplitNewDataContent2 extends StatelessWidget {
           return AppColors.white;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
         case 'header':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
 
         case 'estimate':
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black;
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }
@@ -218,8 +218,8 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -230,19 +230,19 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           return AppColors.white;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
         case 'header':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
 
         case 'estimate':
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black.withOpacity(0.75);
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }
@@ -311,7 +311,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
 
       if (context != null && context.mounted) {
         final RenderBox renderBox = context.findRenderObject() as RenderBox;
-       // print('height: ${renderBox.size.height}');
+        // print('height: ${renderBox.size.height}');
         setState(() {
           _currentPageHeight[pageIndex] = renderBox.size.height;
         });
@@ -333,7 +333,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
             height: 2,
           ),
           Container(
-            color: Theme.of(Get.context!).brightness != Brightness.light
+            color: Theme.of(Get.context!).brightness == Brightness.light
                 ? const Color(0xFFF7F7F7)
                 : AppColors.splitGrey,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
@@ -360,12 +360,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 3),
                           decoration: BoxDecoration(
-                            color: _currentPage == index
-                                ? Theme.of(Get.context!).brightness !=
-                                        Brightness.light
-                                    ? Colors.white.withOpacity(1)
-                                    : Colors.white.withOpacity(0.3)
-                                : null,
+                            color: _currentPage == index ? Colors.white : null,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: _currentPage == index
                                 ? [
@@ -385,6 +380,12 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                               widget.segments[index].name ?? '',
                               style: TextStyle(
                                 fontSize: 17,
+                                color: _currentPage == index
+                                    ? AppColors.black
+                                    : (Theme.of(Get.context!).brightness ==
+                                            Brightness.light
+                                        ? AppColors.black
+                                        : AppColors.white),
                               ),
                             ),
                           ),
@@ -400,7 +401,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
             height: 16,
           ),
           Container(
-            color: Theme.of(Get.context!).brightness != Brightness.light
+            color: Theme.of(Get.context!).brightness == Brightness.light
                 ? const Color(0xFFF7F7F7)
                 : AppColors.splitGrey,
             child: Row(
@@ -415,10 +416,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                       child: AppText(
                         widget.columns.first,
                         fontSize: 14,
-                        //color: contentColor(widget.data[i].values!.first, true),
-                        //fontWeight: contentWeight(widget.data[i].values!.first, true),
+                        color: Theme.of(Get.context!).brightness ==
+                                Brightness.light
+                            ? AppColors.black
+                            : AppColors.white,
                         textAlign: TextAlign.left,
-                        //fontStyle: widget.data[i].values!.first.contains('*italic*') ? FontStyle.italic : null,
                       ),
                     ),
                   )),
@@ -444,11 +446,13 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                           ? columns[x].replaceAll(
                                               RegExp(r'\*(\w+)\*'), '')
                                           : '',
-                                      //color: contentColor(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
-                                      //fontWeight: contentWeight(entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '', true),
+                                      color:
+                                          Theme.of(Get.context!).brightness ==
+                                                  Brightness.light
+                                              ? AppColors.black
+                                              : AppColors.white,
                                       textAlign: TextAlign.center,
                                       fontSize: 14,
-                                      //fontStyle: (entry.length > (x+(i*3)+1) ? entry[(x+(i*3))+1] : '').contains('*italics*') ? FontStyle.italic : null,
                                       maxLines: 1,
                                     ),
                                   ),
@@ -577,12 +581,11 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
                                       child: SizedBox(
                                           height: 21,
                                           child: AppText(
-                                              segment.row.values![x + 1],
-                                              color: Colors.white,
-                                              fontSize: 13,
-                                          )
-                                      ),
-                                              //fontWeight: FontWeight.bold)),
+                                            segment.row.values![x + 1],
+                                            color: Colors.white,
+                                            fontSize: 13,
+                                          )),
+                                      //fontWeight: FontWeight.bold)),
                                     ),
                                   ),
                                 ),
@@ -800,8 +803,8 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -812,19 +815,19 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
           return AppColors.white;
         case 'separator':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
         case 'header':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.greyLighter
+              ? AppColors.grey
               : AppColors.headerText;
 
         case 'estimate':
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black;
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }
@@ -1048,13 +1051,15 @@ class SplitTitleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
       child: Text(
         title.label!,
         style: TextStyle(
-          fontSize: 25,
-          fontWeight: FontWeight.w600,
+          fontSize: 22,
+          fontWeight: FontWeight.w700,
+          color: isLightMode ? AppColors.black : AppColors.white,
         ),
       ),
     );
@@ -1315,8 +1320,8 @@ class SplitDataContent2 extends StatelessWidget {
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -1333,8 +1338,8 @@ class SplitDataContent2 extends StatelessWidget {
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black;
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }

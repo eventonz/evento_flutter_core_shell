@@ -36,6 +36,9 @@ class AthletesScreen extends StatelessWidget {
 
     controller.checkAdvert(false);
     return Scaffold(
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? AppColors.greyLighter
+            : AppColors.darkBlack,
         appBar: AppBar(
           backgroundColor: Theme.of(context).brightness == Brightness.light
               ? AppColors.greyLighter
@@ -171,7 +174,6 @@ class AthletesScreen extends StatelessWidget {
                                   decoration: InputDecoration(
                                       enabled: false,
                                       isDense: true,
-                                    
                                       hintStyle: TextStyle(
                                         fontSize: 16,
                                         color: Theme.of(context).brightness ==

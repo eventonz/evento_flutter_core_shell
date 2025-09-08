@@ -27,6 +27,9 @@ class AthletesSearchScreen extends StatelessWidget {
     final controller = Get.put(AthletesController());
     controller.checkAdvert(false);
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? AppColors.greyLighter
+          : AppColors.darkBlack,
       appBar: AppBar(
         backgroundColor: Theme.of(context).brightness == Brightness.light
             ? AppColors.greyLighter

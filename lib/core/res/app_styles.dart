@@ -35,7 +35,7 @@ class AppStyles {
       cupertinoOverrideTheme: const NoDefaultCupertinoThemeData(
         barBackgroundColor: AppColors.lightblack,
       ),
-      scaffoldBackgroundColor: AppColors.greyLighter,
+      scaffoldBackgroundColor: AppColors.white,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       colorScheme: const ColorScheme.light().copyWith(
         primary: AppColors.primary,

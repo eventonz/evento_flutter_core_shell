@@ -46,14 +46,14 @@ class SplitNewDataContent extends StatelessWidget {
               : AppColors.header;
         case 'header':
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.grey
+              ? AppColors.greyLight
               : AppColors.header;
         case 'estimate':
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -75,8 +75,8 @@ class SplitNewDataContent extends StatelessWidget {
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black;
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }
@@ -235,11 +235,7 @@ class SummaryDataContent extends StatelessWidget {
             ),
           )
         ],
-        const Divider(
-                height: 1,
-                thickness: .5,
-                color: AppColors.greyLight
-            ),
+        const Divider(height: 1, thickness: .5, color: AppColors.greyLight),
       ],
     );
   }
@@ -391,8 +387,8 @@ class SplitDataContent extends StatelessWidget {
           return AppColors.header;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.transparent
-              : AppColors.white;
+              ? AppColors.white
+              : AppColors.transparent;
       }
     } else {
       switch (style) {
@@ -409,8 +405,8 @@ class SplitDataContent extends StatelessWidget {
           return AppColors.estimateText;
         default:
           return Theme.of(Get.context!).brightness == Brightness.light
-              ? AppColors.white
-              : AppColors.black;
+              ? AppColors.black
+              : AppColors.white;
       }
     }
   }
