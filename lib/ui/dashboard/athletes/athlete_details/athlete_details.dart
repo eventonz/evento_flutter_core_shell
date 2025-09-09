@@ -145,8 +145,10 @@ class AthleteDetailsScreen extends StatelessWidget {
                               : Colors.transparent,
                           automaticallyImplyLeading: false,
                           centerTitle: false,
-                          pinned: true,
+                          pinned: false,
                           toolbarHeight: 0,
+                          elevation: 0,
+                          scrolledUnderElevation: 0,
                         ),
                         SliverToBoxAdapter(
                           child: Padding(

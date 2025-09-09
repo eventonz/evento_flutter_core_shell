@@ -103,9 +103,6 @@ class SplitNewDataContent2 extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            height: 2,
-          ),
           ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 0),
               physics: const NeverScrollableScrollPhysics(),
@@ -329,12 +326,9 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 2,
-          ),
           Container(
             color: Theme.of(Get.context!).brightness == Brightness.light
-                ? const Color(0xFFF7F7F7)
+                ? AppColors.greyLight
                 : AppColors.splitGrey,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             child: Row(
@@ -402,7 +396,7 @@ class _SegmentedSplitDataContentState extends State<SegmentedSplitDataContent>
           ),
           Container(
             color: Theme.of(Get.context!).brightness == Brightness.light
-                ? const Color(0xFFF7F7F7)
+                ? AppColors.greyLight
                 : AppColors.splitGrey,
             child: Row(
               children: [
@@ -838,9 +832,6 @@ class SegmentedSplitNewDataContent2 extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(
-            height: 2,
-          ),
           Row(
             children: [
               Expanded(
