@@ -310,11 +310,14 @@ class DashboardController extends GetxController {
     if (isSingleEvent && isSplashAdvertShowing) {
       // Single event mode and splash advert is showing: delay OneSignal init
       // OneSignal will be initialized in splash advert onDismissed callback
-    } else {
-      // Multi event mode or no splash advert: initialize OneSignal immediately
+    } else if (isMultiEvent) {
+      // Multi event mode: initialize OneSignal and show notification prompt
       oneSignalService.initializeOneSignal().then((_) {
         _scheduleNotificationPrompt();
       });
+    } else if (isSingleEvent) {
+      // Single event mode: initialize OneSignal but don't show notification prompt
+      oneSignalService.initializeOneSignal();
     }
   }
 
