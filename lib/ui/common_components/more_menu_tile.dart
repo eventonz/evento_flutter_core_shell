@@ -14,23 +14,37 @@ class MoreMenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return InkWell(
       onTap: onTap,
-      leading: SvgPicture.asset(AppHelper.getSvg(item.icon!),
-          fit: BoxFit.cover,
-          color: Theme.of(context).brightness == Brightness.light
-              ? AppColors.accentDark
-              : AppColors.accentLight, width: 24,),
-      title: AppText(
-        item.title!,
-        fontSize: 14,
-      ),
-      trailing: Icon(
-        Icons.arrow_circle_right_outlined,
-        color: (Theme.of(context).brightness == Brightness.light
-                ? AppColors.accentDark
-                : AppColors.accentLight),
-        size: 4.5.w,
+      borderRadius: BorderRadius.circular(8),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              AppHelper.getSvg(item.icon!),
+              fit: BoxFit.cover,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.primary
+                  : AppColors.secondary,
+              width: 24,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: AppText(
+                item.title!,
+                fontSize: 16,
+              ),
+            ),
+            Icon(
+              Icons.arrow_circle_right_outlined,
+              color: Theme.of(context).brightness == Brightness.light
+                  ? AppColors.primary
+                  : AppColors.secondary,
+              size: 4.5.w,
+            ),
+          ],
+        ),
       ),
     );
   }

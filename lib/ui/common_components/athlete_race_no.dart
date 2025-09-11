@@ -1,4 +1,5 @@
 import 'package:evento_core/core/res/app_colors.dart';
+import 'package:evento_core/core/res/app_theme.dart';
 import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,8 +25,8 @@ class AthleteRaceNo extends StatelessWidget {
       case AthleteRaceNoStyle.solid:
       case AthleteRaceNoStyle.solidOutlined:
         return Theme.of(Get.context!).brightness == Brightness.light
-            ? AppColors.grey
-            : AppColors.greyLighter;
+            ? AppColors.greyLighter
+            : AppThemeColors.darkCard;
     }
   }
 
@@ -61,10 +62,9 @@ class AthleteRaceNo extends StatelessWidget {
           fontSize: 16,
           fontWeight: FontWeight.bold,
           textAlign: TextAlign.center,
-          color:Theme.of(context).brightness == Brightness.light
-                      ? AppColors.white
-                      : AppColors.darkBlack,
-          
+          color: Theme.of(context).brightness == Brightness.light
+              ? AppColors.darkBlack
+              : AppColors.white,
         ),
       ),
     );

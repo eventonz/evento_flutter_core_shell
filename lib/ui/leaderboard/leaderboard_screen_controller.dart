@@ -27,6 +27,7 @@ class LeaderboardScreenController extends GetxController {
   RxBool loading = true.obs;
   RxBool loadingResults = true.obs;
   RxBool loadingMore = false.obs;
+  RxBool showMoreOptions = false.obs;
 
   String search = '';
   int page = 1;
@@ -276,5 +277,9 @@ class LeaderboardScreenController extends GetxController {
     selectedSplitId.value = splitId;
     page = 1;
     filterResults();
+  }
+
+  void toggleMoreOptions() {
+    showMoreOptions.value = !showMoreOptions.value;
   }
 }

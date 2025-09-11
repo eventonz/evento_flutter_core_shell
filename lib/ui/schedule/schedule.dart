@@ -20,14 +20,21 @@ class ScheduleScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ScheduleController());
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return Scaffold(
         appBar: AppBar(
-          surfaceTintColor: Colors.white,
-          shadowColor: Colors.white,
+          backgroundColor:
+              isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
+          surfaceTintColor:
+              isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
+          shadowColor:
+              isLightMode ? Colors.black.withOpacity(0.1) : Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
           title: AppText(
-          controller.item.title!,
-          style: AppStyles.appBarTitle,
-        ),
+            controller.item.title!,
+            style: AppStyles.appBarTitle,
+          ),
         ),
         body: Column(
           children: [
@@ -73,8 +80,11 @@ class ScheduleScreen extends StatelessWidget {
                                     decoration: BoxDecoration(
                                         color: tag == controller.selTag.value
                                             ? AppColors.primary
-                                            : AppColors.greyLight
-                                                .withOpacity(0.5),
+                                            : isLightMode
+                                                ? AppColors.greyLight
+                                                    .withOpacity(0.5)
+                                                : AppColors.grey
+                                                    .withOpacity(0.3),
                                         borderRadius: BorderRadius.circular(6)),
                                     child: Center(
                                       child: AppText(
@@ -83,7 +93,9 @@ class ScheduleScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w600,
                                         color: tag == controller.selTag.value
                                             ? AppColors.white
-                                            : AppColors.black,
+                                            : isLightMode
+                                                ? AppColors.black
+                                                : AppColors.white,
                                       ),
                                     ),
                                   ),
@@ -95,13 +107,14 @@ class ScheduleScreen extends StatelessWidget {
                         child: scheduleItems.isEmpty
                             ? Center(
                                 child: NoDataFoundLayout(
-                                  errorMessage: AppLocalizations.of(context)!.noScheduleFound,
+                                  errorMessage: AppLocalizations.of(context)!
+                                      .noScheduleFound,
                                 ),
                               )
                             : ListView.builder(
                                 shrinkWrap: true,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 4, horizontal: 0),
                                 itemCount: scheduleItems.length,
                                 itemBuilder: (_, i) {
                                   final events = scheduleItems[i];
@@ -112,50 +125,84 @@ class ScheduleScreen extends StatelessWidget {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          height: 0.4.h,
-                                        ),
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 12, vertical: 4),
                                           child: AppText(
                                             events.date.withDateFormat(
                                                 format: 'E, dd MMMM'),
-                                            fontSize: 18,
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: isLightMode
+                                                ? AppColors.darkBlack
+                                                : AppColors.white,
                                           ),
                                         ),
-                                        ListView.separated(
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            shrinkWrap: true,
-                                            itemCount: events
-                                                    .scheduleDataItems.length +
-                                                2,
-                                            separatorBuilder: (_, i) {
-                                              return Divider(
-                                            indent:10,
-                                            height: 1,
-                                            thickness: .5,
-                                            color:Theme.of(context).brightness == Brightness.light
-                                                    ? AppColors.darkgrey
-                                                    : AppColors.greyLight);
-                                            },
-                                            itemBuilder: (_, i) {
-                                              if (i == 0 ||
-                                                  i ==
-                                                      events.scheduleDataItems
-                                                              .length +
-                                                          1) {
-                                                return const SizedBox.shrink();
-                                              }
-                                              final item = events
-                                                  .scheduleDataItems[i - 1];
+                                        // Card container for schedule items
+                                        Container(
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 12),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Theme.of(context).brightness ==
+                                                        Brightness.light
+                                                    ? Colors.white
+                                                    : AppColors.darkBlack,
+                                            borderRadius:
+                                                BorderRadius.circular(12),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black
+                                                    .withOpacity(0.05),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          padding: EdgeInsets.zero,
+                                          child: ListView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.zero,
+                                              itemCount: events
+                                                  .scheduleDataItems.length,
+                                              itemBuilder: (_, i) {
+                                                final item =
+                                                    events.scheduleDataItems[i];
 
-                                              return ScheduleTile(
-                                                  onTap: () => controller
-                                                      .showEventDetails(item),
-                                                  item: item);
-                                            }),
+                                                return Column(
+                                                  children: [
+                                                    if (i > 0)
+                                                      Divider(
+                                                          indent: 10,
+                                                          height: 1,
+                                                          thickness: .5,
+                                                          color: isLightMode
+                                                              ? AppColors
+                                                                  .darkgrey
+                                                                  .withOpacity(
+                                                                      0.2)
+                                                              : AppColors
+                                                                  .greyLight
+                                                                  .withOpacity(
+                                                                      0.2)),
+                                                    ScheduleTile(
+                                                      onTap: () => controller
+                                                          .showEventDetails(
+                                                              item),
+                                                      item: item,
+                                                      isFirst: i == 0,
+                                                      isLast: i ==
+                                                          events.scheduleDataItems
+                                                                  .length -
+                                                              1,
+                                                    ),
+                                                  ],
+                                                );
+                                              }),
+                                        ),
+                                        const SizedBox(height: 16),
                                       ],
                                     ),
                                   );
@@ -183,10 +230,17 @@ class ScheduleScreen extends StatelessWidget {
 }
 
 class ScheduleTile extends StatelessWidget {
-  const ScheduleTile({Key? key, required this.onTap, required this.item})
-      : super(key: key);
+  const ScheduleTile({
+    Key? key,
+    required this.onTap,
+    required this.item,
+    this.isFirst = false,
+    this.isLast = false,
+  }) : super(key: key);
   final ScheduleDataItems item;
   final VoidCallback onTap;
+  final bool isFirst;
+  final bool isLast;
 
   String getEventTimings() {
     String timings = '';
@@ -203,23 +257,30 @@ class ScheduleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isLightMode = Theme.of(context).brightness == Brightness.light;
     return InkWell(
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
           decoration: BoxDecoration(
             border: Border(
               left: BorderSide(
-                  width: 2.w,
-                  color: item.highlighted ?? false
-                      ? AppColors.primary
-                      : AppColors.transparent),
+                width: 4,
+                color: item.highlighted ?? false
+                    ? AppColors.primary
+                    : Colors.transparent,
+              ),
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(isFirst ? 12 : 0),
+              topRight: Radius.circular(isFirst ? 12 : 0),
+              bottomLeft: Radius.circular(isLast ? 12 : 0),
+              bottomRight: Radius.circular(isLast ? 12 : 0),
             ),
           ),
           child: Row(
             children: [
-              SizedBox(
-                width: 82.w,
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -229,29 +290,33 @@ class ScheduleTile extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       overflow: TextOverflow.ellipsis,
                       fontSize: 14,
+                      color:
+                          isLightMode ? AppColors.darkBlack : AppColors.white,
                     ),
                     const SizedBox(
-                      height: 2,
+                      height: 1,
                     ),
                     AppText(
                       getEventTimings(),
                       fontSize: 12,
-                      color: Theme.of(context).brightness == Brightness.light
-                                ? AppColors.greyLight
-                                : AppColors.grey,
+                      color: isLightMode
+                          ? AppColors.darkgrey
+                          : AppColors.splitLightGrey,
                     ),
                     const SizedBox(
-                      height: 2,
+                      height: 1,
                     ),
                     AppText(
                       item.location!.title!,
                       fontSize: 12,
-                      color: AppColors.grey,
+                      color: isLightMode
+                          ? AppColors.darkgrey
+                          : AppColors.splitLightGrey,
                     ),
                   ],
                 ),
               ),
-              const Spacer(),
+              SizedBox(width: 4),
               Icon(
                 Icons.arrow_circle_right_outlined,
                 color: AppColors.primary,

@@ -153,7 +153,6 @@ class AthletesController extends GetxController {
         return;
       }
     }
-
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -164,13 +163,25 @@ class AthletesController extends GetxController {
     final res = await ApiHandler.postHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);
     if (res.statusCode == 201) {
-      debugPrint('$data---- Followed');
+      debugPrint('\u001b[32m$data---- Followed\u001b[0m');
     } else {
       debugPrint(res.data.toString());
     }
   }
 
   Future<void> unfollowAthlete(Entrants athelete) async {
+    if (AppGlobals.oneSignalUserId == null ||
+        AppGlobals.oneSignalUserId.isEmpty) {
+      String? userId = OneSignal.User.pushSubscription.id;
+      AppGlobals.oneSignalUserId = userId ?? '';
+      print(
+          'Obtained OneSignal User ID: [36m${AppGlobals.oneSignalUserId}[0m');
+      if (AppGlobals.oneSignalUserId.isEmpty) {
+        //Get.snackbar('Enable Notifications',
+        //    'Unable to get device ID. Please try again.');
+        return;
+      }
+    }
     final data = {
       'event_id': AppGlobals.selEventId,
       'player_id': AppGlobals.oneSignalUserId,
@@ -180,7 +191,7 @@ class AthletesController extends GetxController {
     final res = await ApiHandler.deleteHttp(
         endPoint: '', baseUrl: entrantsList.follow!, body: data);
     if (res.statusCode == 200) {
-      debugPrint('$data---- Unfollowed');
+      debugPrint('\u001b[31m$data---- Unfollowed\u001b[0m');
     } else {
       debugPrint(res.data.toString());
     }

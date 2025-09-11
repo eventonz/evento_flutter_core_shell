@@ -27,19 +27,29 @@ class AthletesSearchScreen extends StatelessWidget {
     final controller = Get.put(AthletesController());
     controller.checkAdvert(false);
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? AppColors.greyLighter
+          : AppColors.darkBlack,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).brightness == Brightness.light
+            ? AppColors.greyLighter
+            : AppColors.darkBlack,
+        surfaceTintColor: Theme.of(context).brightness == Brightness.light
+            ? AppColors.greyLighter
+            : AppColors.darkBlack,
+        shadowColor: Theme.of(context).brightness == Brightness.light
+            ? Colors.black.withOpacity(0.1)
+            : Colors.transparent,
+        automaticallyImplyLeading: true,
+        title: AppText(
+          AppLocalizations.of(context)!.search,
+          fontSize: 26,
+          fontWeight: FontWeight.bold,
+        ),
+        centerTitle: true,
+      ),
       body: Column(
         children: [
-          AppBar(
-            surfaceTintColor: Colors.white,
-            shadowColor: Colors.white,
-            automaticallyImplyLeading: true,
-            title: AppText(
-              AppLocalizations.of(context)!.search,
-              fontSize: 26,
-              fontWeight: FontWeight.bold,
-            ),
-            centerTitle: true,
-          ),
           Obx(() => controller.dashboardController.athleteSnapData.value ==
                   DataSnapShot.loading
               ? LinearProgressIndicator(
@@ -53,273 +63,352 @@ class AthletesSearchScreen extends StatelessWidget {
           SizedBox(
             height: 1.h,
           ),
+          // Search Card
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    focusNode: controller.focusNode,
-                    controller: controller.searchTextEditController,
-                    onSubmitted: (val) => controller.searchAthletes(val),
-                    cursorColor: AppColors.grey,
-                    style: const TextStyle(fontSize: 16),
-                    textInputAction: TextInputAction.search,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      hintText: 'Search ${controller.athleteText}',
-                      hintStyle: TextStyle(
-                        fontSize: 15,
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? AppColors.greyLight
-                            : AppColors.grey,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.white
+                    : Colors.grey[900],
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(
+                    'Search for ${controller.athleteText.toLowerCase()}',
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          focusNode: controller.focusNode,
+                          controller: controller.searchTextEditController,
+                          onSubmitted: (val) => controller.searchAthletes(val),
+                          cursorColor: AppColors.grey,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? AppColors.darkgrey
+                                    : AppColors.splitLightGrey,
+                          ),
+                          textInputAction: TextInputAction.search,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            hintText: 'Search ${controller.athleteText}',
+                            hintStyle: TextStyle(
+                              fontSize: 15,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.greyLight
+                                  : AppColors.grey,
+                            ),
+                            filled: true,
+                            fillColor:
+                                Theme.of(context).brightness == Brightness.light
+                                    ? Colors.grey[100]
+                                    : Colors.grey[800],
+                            prefixIcon: Icon(
+                              FeatherIcons.search,
+                              size: 5.w,
+                              color: Theme.of(context).brightness ==
+                                      Brightness.light
+                                  ? AppColors.grey
+                                  : AppColors.greyLight,
+                            ),
+                            suffixIcon:
+                                Obx(() => controller.searchText.value.isEmpty
+                                    ? const SizedBox()
+                                    : GestureDetector(
+                                        onTap: controller.clearSearchField,
+                                        child: Icon(
+                                          FeatherIcons.x,
+                                          size: 4.w,
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.light
+                                              ? AppColors.grey
+                                              : AppColors.greyLight,
+                                        ))),
+                            contentPadding: const EdgeInsets.all(12),
+                            focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10),
+                                gapPadding: 0),
+                            enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                                borderRadius: BorderRadius.circular(10),
+                                gapPadding: 0),
+                          ),
+                        ),
                       ),
-                      filled: true,
-                      fillColor:
-                          Theme.of(context).brightness == Brightness.light
-                              ? AppColors.white.withOpacity(0.045)
-                              : AppColors.black.withOpacity(0.045),
-                      prefixIcon: Icon(
-                        FeatherIcons.search,
-                        size: 5.w,
-                        color: Theme.of(context).brightness == Brightness.light
-                            ? AppColors.white
-                            : AppColors.black,
+                      const SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: () => controller.searchAthletes(
+                            controller.searchTextEditController.text),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              Theme.of(context).brightness == Brightness.light
+                                  ? AppColors.primary
+                                  : AppColors.secondary,
+                          foregroundColor: AppColors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: Text(
+                          AppLocalizations.of(context)!.search,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                      suffixIcon: Obx(() => controller.searchText.value.isEmpty
-                          ? const SizedBox()
-                          : GestureDetector(
-                              onTap: controller.clearSearchField,
-                              child: Icon(
-                                FeatherIcons.x,
-                                size: 4.w,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? AppColors.white
-                                    : AppColors.black,
-                              ))),
-                      contentPadding: const EdgeInsets.all(12),
-                      focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: AppColors.black, width: 0.8),
-                          borderRadius: BorderRadius.circular(10),
-                          gapPadding: 0),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(
-                              color: AppColors.transparent, width: 0),
-                          borderRadius: BorderRadius.circular(10),
-                          gapPadding: 0),
-                    ),
+                    ],
                   ),
-                ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () => controller
-                      .searchAthletes(controller.searchTextEditController.text),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).brightness == Brightness.light
-                            ? AppColors.white.withOpacity(0.045)
-                            : AppColors.black.withOpacity(0.045),
-                    foregroundColor:
-                        Theme.of(context).brightness == Brightness.light
-                            ? AppColors.white
-                            : AppColors.black,
-                    elevation: 0,
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                    side: BorderSide(
-                      color: AppColors.black,
-                      width: 0.8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context)!.search,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).brightness == Brightness.light
-                          ? AppColors.white
-                          : AppColors.black,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          // SizedBox(
-          //   height: 1.h,
-          // ),
-          // Container(
-          //   width: 16.w,
-          //   height: 1.w,
-          //   decoration: BoxDecoration(
-          //       color: Theme.of(context).brightness == Brightness.light
-          //           ? AppColors.darkBlack
-          //           : AppColors.greyLighter,
-          //       borderRadius: BorderRadius.circular(10)),
-          // ),
-
-          SizedBox(
-            height: 1.5.h,
-          ),
+          const SizedBox(height: 16),
+          // Results Card
           Expanded(
-            child: SingleChildScrollView(
-              controller: controller.searchScrollController,
-              child: Column(
-                children: [
-                  // This is the last updated value for athletes
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                        child: Text(
-                            '${AppLocalizations.of(context)!.lastUpdated}: ${controller.entrantsList.label ?? ''}',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).brightness ==
-                                        Brightness.light
-                                    ? AppColors.greyLighter
-                                    : AppColors.darkBlack))),
-                  ),
-                  Obx(() => controller
-                              .dashboardController.athleteSnapData.value ==
-                          DataSnapShot.loading
-                      ? Container(
-                          height: MediaQuery.of(context).size.height * 0.5,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? Colors.white
+                      : Colors.grey[900],
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: AppText(
+                        'Search Results',
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: controller.searchScrollController,
+                        child: Column(
+                          children: [
+                            // This is the last updated value for athletes
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Text(
+                                '${AppLocalizations.of(context)!.lastUpdated}: ${controller.entrantsList.label ?? ''}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? AppColors.greyLighter
+                                      : AppColors.darkBlack,
+                                ),
+                              ),
                             ),
-                          ),
-                        )
-                      : GetBuilder<AthletesController>(
-                          builder: (_) {
-                            return StreamBuilder<List<AppAthleteDb>>(
-                                stream: controller
-                                    .watchAthletes(controller.searchText.value),
-                                builder: (_, snap) {
-                                  if (controller
-                                      .searchAccumulatedList.isNotEmpty) {
-                                    List<Entrants> entrants =
-                                        controller.searchAccumulatedList;
-                                   // entrants = controller.sortFilterAthletesSearch(entrants);
+                            Obx(() => controller.dashboardController
+                                        .athleteSnapData.value ==
+                                    DataSnapShot.loading
+                                ? Container(
+                                    height: MediaQuery.of(context).size.height *
+                                        0.5,
+                                    child: const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  )
+                                : GetBuilder<AthletesController>(
+                                    builder: (_) {
+                                      return StreamBuilder<List<AppAthleteDb>>(
+                                          stream: controller.watchAthletes(
+                                              controller.searchText.value),
+                                          builder: (_, snap) {
+                                            if (controller.searchAccumulatedList
+                                                .isNotEmpty) {
+                                              List<Entrants> entrants =
+                                                  controller
+                                                      .searchAccumulatedList;
+                                              // entrants = controller.sortFilterAthletesSearch(entrants);
 
-                                    return ListView.separated(
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 0),
-                                        itemCount: entrants.length +
-                                            2 +
-                                            (controller.loadingMore.value
-                                                ? 1
-                                                : 0),
-                                        shrinkWrap: true,
-                                        physics:
-                                            const NeverScrollableScrollPhysics(),
-                                        separatorBuilder: (_, i) {
-                                          return Divider(
-                                              height: 1,
-                                              thickness: .5,
-                                              color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.light
-                                                  ? AppColors.darkgrey
-                                                  : AppColors.greyLight);
-                                        },
-                                        itemBuilder: (_, i) {
-                                          if (i == 0 ||
-                                              i == entrants.length + 1) {
-                                            return const SizedBox.shrink();
-                                          }
-                                          if (i == entrants.length + 2) {
-                                            return Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 20,
-                                              ),
-                                              child: Center(
-                                                child:
-                                                    CupertinoActivityIndicator(
-                                                  color: AppColors.primary,
-                                                ),
-                                              ),
-                                            );
-                                          }
+                                              return ListView.separated(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(vertical: 0),
+                                                  itemCount: entrants.length +
+                                                      2 +
+                                                      (controller
+                                                              .loadingMore.value
+                                                          ? 1
+                                                          : 0),
+                                                  shrinkWrap: true,
+                                                  physics:
+                                                      const NeverScrollableScrollPhysics(),
+                                                  separatorBuilder: (_, i) {
+                                                    return Divider(
+                                                        height: 1,
+                                                        thickness: .5,
+                                                        color: Theme.of(context)
+                                                                    .brightness ==
+                                                                Brightness.light
+                                                            ? AppColors.darkgrey
+                                                                .withOpacity(
+                                                                    0.2)
+                                                            : AppColors
+                                                                .greyLight
+                                                                .withOpacity(
+                                                                    0.2));
+                                                  },
+                                                  itemBuilder: (_, i) {
+                                                    if (i == 0 ||
+                                                        i ==
+                                                            entrants.length +
+                                                                1) {
+                                                      return const SizedBox
+                                                          .shrink();
+                                                    }
+                                                    if (i ==
+                                                        entrants.length + 2) {
+                                                      return Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          vertical: 20,
+                                                        ),
+                                                        child: Center(
+                                                          child:
+                                                              CupertinoActivityIndicator(
+                                                            color: AppColors
+                                                                .primary,
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
 
-                                          if (snap.hasData &&
-                                              snap.data!.firstWhereOrNull((a) =>
-                                                      a.athleteId ==
+                                                    if (snap.hasData &&
+                                                        snap.data!.firstWhereOrNull((a) =>
+                                                                a.athleteId ==
+                                                                controller
+                                                                    .searchAccumulatedList[
+                                                                        i - 1]
+                                                                    .id) !=
+                                                            null) {
                                                       controller
                                                           .searchAccumulatedList[
                                                               i - 1]
-                                                          .id) !=
-                                                  null) {
-                                            controller
-                                                .searchAccumulatedList[i - 1]
-                                                .isFollowed = true;
-                                            entrants[i - 1].isFollowed = true;
-                                          } else {
-                                            controller
-                                                .searchAccumulatedList[i - 1]
-                                                .isFollowed = false;
-                                            entrants[i - 1].isFollowed = false;
-                                          }
+                                                          .isFollowed = true;
+                                                      entrants[i - 1]
+                                                          .isFollowed = true;
+                                                    } else {
+                                                      controller
+                                                          .searchAccumulatedList[
+                                                              i - 1]
+                                                          .isFollowed = false;
+                                                      entrants[i - 1]
+                                                          .isFollowed = false;
+                                                    }
 
-                                          final entrant = entrants[i - 1];
+                                                    final entrant =
+                                                        entrants[i - 1];
 
-                                          onFollow(ent) async {
-                                            await controller.insertAthlete(
-                                                entrant, !entrant.isFollowed);
-                                            if (!entrant.isFollowed) {
-                                              controller.followAthlete(entrant);
+                                                    onFollow(ent) async {
+                                                      await controller
+                                                          .insertAthlete(
+                                                              entrant,
+                                                              !entrant
+                                                                  .isFollowed);
+                                                      if (!entrant.isFollowed) {
+                                                        controller
+                                                            .followAthlete(
+                                                                entrant);
+                                                      } else {
+                                                        controller
+                                                            .unfollowAthlete(
+                                                                entrant);
+                                                      }
+                                                      //controller.update();
+                                                    }
+
+                                                    return AthleteTile(
+                                                        entrant: entrant,
+                                                        onFollow: onFollow,
+                                                        onTap: () => controller
+                                                            .toAthleteDetails(
+                                                                entrant,
+                                                                onFollow:
+                                                                    onFollow));
+                                                  });
+                                            } else if (controller
+                                                .loading.value) {
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 30.h),
+                                                child: const Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                            strokeWidth: 2)),
+                                              );
                                             } else {
-                                              controller
-                                                  .unfollowAthlete(entrant);
+                                              return Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 30.h),
+                                                child: Center(
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Image.asset(
+                                                          AppHelper.getImage(
+                                                              'empty_search.png'),
+                                                          width: 65),
+                                                      SizedBox(height: 10),
+                                                      Text(AppLocalizations.of(
+                                                              context)!
+                                                          .noAthleteFound(
+                                                              controller
+                                                                  .athleteText)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
                                             }
-                                            //controller.update();
-                                          }
-
-                                          return AthleteTile(
-                                              entrant: entrant,
-                                              onFollow: onFollow,
-                                              onTap: () => controller
-                                                  .toAthleteDetails(entrant,
-                                                      onFollow: onFollow));
-                                        });
-                                  } else if (controller.loading.value) {
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 30.h),
-                                      child: const Center(
-                                          child: CircularProgressIndicator(
-                                              strokeWidth: 2)),
-                                    );
-                                  } else {
-                                    return Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 30.h),
-                                      child: Center(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Image.asset(
-                                                AppHelper.getImage(
-                                                    'empty_search.png'),
-                                                width: 65),
-                                            SizedBox(height: 10),
-                                            Text(AppLocalizations.of(context)!
-                                                .noAthleteFound(
-                                                    controller.athleteText)),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                });
-                          },
-                        )),
-                ],
+                                          });
+                                    },
+                                  )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
