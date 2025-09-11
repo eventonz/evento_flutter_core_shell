@@ -28,7 +28,6 @@ import 'tracking_controller.dart';
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     final TrackingController controller = Get.find();
@@ -36,10 +35,7 @@ class TrackingScreen extends StatelessWidget {
       color: AppColors.greyLight,
       child: Stack(
         children: [
-          if(Platform.isIOS)
-            const AppleMapView()
-          else
-            const AndroidMapView(),
+          if (Platform.isIOS) const AppleMapView() else const AndroidMapView(),
           StreamBuilder<List<AppAthleteDb>>(
               stream: controller.watchFollowedAthletes(),
               builder: (_, snap) {
@@ -65,53 +61,82 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 18.5.h,
+                              height: 12.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
                               onPageChanged: (index, reason) {
                                 //try {
-                                  final trackDetail = controller
-                                      .athleteTrackDetails.value.where((
-                                      element) {
-                                    print('element.track');
-                                    print(element.track);
-                                    print(entrants[index].athleteId);
-                                    return element.track ==
-                                        entrants[index].athleteId;
-                                  }).first;
-                                  LatLng latLng;
-                                  if(controller.locations[trackDetail.track] == null || controller.getAthleteRouthPath(trackDetail).isEmpty) {
-                                    latLng = LatLng(controller.initialPathCenterPoint().lat.toDouble(), controller.initialPathCenterPoint().lng.toDouble());
-                                  } else {
-                                    latLng = LatLng(
-                                        controller.locations[trackDetail.track]
-                                            ?.latitude ?? 0,
-                                        controller.locations[trackDetail.track]
-                                            ?.longitude ?? 0);
-                                  }
+                                final trackDetail = controller
+                                    .athleteTrackDetails.value
+                                    .where((element) {
+                                  print('element.track');
+                                  print(element.track);
+                                  print(entrants[index].athleteId);
+                                  return element.track ==
+                                      entrants[index].athleteId;
+                                }).first;
+                                LatLng latLng;
+                                if (controller.locations[trackDetail.track] ==
+                                        null ||
+                                    controller
+                                        .getAthleteRouthPath(trackDetail)
+                                        .isEmpty) {
+                                  latLng = LatLng(
+                                      controller
+                                          .initialPathCenterPoint()
+                                          .lat
+                                          .toDouble(),
+                                      controller
+                                          .initialPathCenterPoint()
+                                          .lng
+                                          .toDouble());
+                                } else {
+                                  latLng = LatLng(
+                                      controller.locations[trackDetail.track]
+                                              ?.latitude ??
+                                          0,
+                                      controller.locations[trackDetail.track]
+                                              ?.longitude ??
+                                          0);
+                                }
 
-                                  double zoom = controller.locations[trackDetail.track] == null ? TrackingMapView.dgetBoundsZoomLevel(LatLngBounds.fromPoints(bounds2),
-                                      {'height': MediaQuery
-                                          .of(context)
-                                          .size
-                                          .height,
-                                        'width': MediaQuery
-                                            .of(context)
-                                            .size
-                                            .width}) * 1.02 : 15;
-                                    print('fly');
-                                    if(Platform.isIOS) {
-                                      controller.appleMapController?.animateCamera(apple_maps.CameraUpdate.newCameraPosition(apple_maps.CameraPosition(target: apple_maps.LatLng(latLng.latitude, latLng.longitude), zoom: zoom)));
-                                    } else {
-                                      controller.mapboxMap!.flyTo(CameraOptions(
+                                double zoom = controller
+                                            .locations[trackDetail.track] ==
+                                        null
+                                    ? TrackingMapView.dgetBoundsZoomLevel(
+                                            LatLngBounds.fromPoints(bounds2), {
+                                          'height': MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          'width':
+                                              MediaQuery.of(context).size.width
+                                        }) *
+                                        1.02
+                                    : 15;
+                                print('fly');
+                                if (Platform.isIOS) {
+                                  controller.appleMapController?.animateCamera(
+                                      apple_maps.CameraUpdate.newCameraPosition(
+                                          apple_maps.CameraPosition(
+                                              target: apple_maps.LatLng(
+                                                  latLng.latitude,
+                                                  latLng.longitude),
+                                              zoom: zoom)));
+                                } else {
+                                  controller.mapboxMap!.flyTo(
+                                      CameraOptions(
                                         zoom: zoom,
-                                        center: Point(coordinates: Position(latLng.longitude, latLng.latitude)),
-                                      ), MapAnimationOptions(
+                                        center: Point(
+                                            coordinates: Position(
+                                                latLng.longitude,
+                                                latLng.latitude)),
+                                      ),
+                                      MapAnimationOptions(
                                         duration: 500,
                                         startDelay: 0,
                                       ));
-                                    }
+                                }
                                 /*} catch (e) {
                                   print(e);
                                 }*/
@@ -126,7 +151,6 @@ class TrackingScreen extends StatelessWidget {
                                       onTap: () =>
                                           controller.toAthleteDetails(x),
                                       athelete: x,
-
                                       trackDetail:
                                           controller.findTrackDetail(x),
                                     ));
@@ -160,7 +184,9 @@ class SliderAthleteTile extends StatelessWidget {
 
   String trackDetailsInfo(BuildContext context) {
     final infoText = trackDetail!.info ?? '';
-    return infoText.isEmpty ? AppLocalizations.of(context)!.trackingNotAvailable : infoText.replaceAll('\\n', '\n').trim();
+    return infoText.isEmpty
+        ? AppLocalizations.of(context)!.trackingNotAvailable
+        : infoText.replaceAll('\\n', '\n').trim();
   }
 
   @override
@@ -172,8 +198,8 @@ class SliderAthleteTile extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 6),
         decoration: BoxDecoration(
             color: Theme.of(context).brightness == Brightness.light
-                  ? AppColors.darkBlack
-                  : AppColors.greyLighter,
+                ? AppColors.greyLighter
+                : AppColors.darkBlack,
             borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
@@ -198,47 +224,19 @@ class SliderAthleteTile extends StatelessWidget {
               ],
             ),
           ),
-            Divider(
+          Divider(
               height: 1,
               thickness: .5,
               color: Theme.of(context).brightness == Brightness.light
-                              ?  AppColors.darkgrey :AppColors.greyLight
-          ),
+                  ? AppColors.greyLight
+                  : AppColors.darkgrey),
           Padding(
             padding: const EdgeInsets.all(12),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                athelete.profileImage.isEmpty
-                    ? const SizedBox()
-                    : Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: CachedNetworkImage(
-                              imageUrl: athelete.profileImage,
-                              placeholder: (_, val) => const Center(
-                                  child: CircularProgressIndicator.adaptive()),
-                              errorWidget: (_, val, val2) => const Center(
-                                  child: Center(
-                                      child: Icon(FeatherIcons.alertTriangle))),
-                              width: 14.w,
-                              height: 14.w,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 16,
-                          ),
-                        ],
-                      ),
-                trackDetail == null
-                    ? const SizedBox()
-                    : AppText(
-                        trackDetailsInfo(context),
-                      ),
-              ],
-            ),
+            child: trackDetail != null
+                ? AppText(
+                    trackDetailsInfo(context),
+                  )
+                : const SizedBox(),
           ),
         ]),
       ),
