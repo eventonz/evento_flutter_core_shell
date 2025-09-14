@@ -14,43 +14,27 @@ class WebViewEventPage extends StatelessWidget {
     final controller = Get.put(WebViewEventController());
 
     return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: MediaQuery.of(context).padding.top + 4,
-                color: Colors.black,
-              ),
-              Expanded(
-                  child:
-                      WebViewWidget(controller: controller.webViewController!)),
-            ],
-          ),
-          Visibility(
-            visible: true,
-            child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(8),
-                child: CircleAvatar(
-                  radius: 22,
-                  backgroundColor:
-                      Theme.of(context).brightness == Brightness.light
-                          ? AppColors.white.withOpacity(0.8)
-                          : AppColors.black.withOpacity(0.8),
-                  child: IconButton(
-                    onPressed: controller.goBack,
-                    color: Theme.of(context).brightness == Brightness.light
-                        ? AppColors.accentLight
-                        : AppColors.accentDark,
-                    icon: const Icon(Icons.arrow_circle_left_outlined),
-                  ),
-                ),
-              ),
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: controller.goBack,
+          icon: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_back,
+              color: Colors.black,
+              size: 20,
             ),
           ),
-        ],
+        ),
+        backgroundColor: Colors.black,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: WebViewWidget(controller: controller.webViewController!),
       ),
     );
   }

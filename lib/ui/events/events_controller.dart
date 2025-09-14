@@ -10,9 +10,11 @@ import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/core/utils/preferences.dart';
 import 'package:evento_core/ui/dashboard/dashboard.dart';
+import 'package:evento_core/ui/dashboard/webview_event_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/utils/app_global.dart';
 import '../../core/utils/helpers.dart';
 import 'subevent_sheet.dart';
@@ -139,13 +141,65 @@ class EventsController extends GetxController {
         arguments: const {'is_prev': true});
   }
 
+  void navigateToResults(dynamic event) async {
+    ProgressDialogUtils.show();
+    try {
+      // Save event selection
+      saveEventSelection(event);
+
+      // Get the config details for the event
+      final res = await ApiHandler.genericGetHttp(url: event.config);
+      AppGlobals.appConfig = AppConfig.fromJson(res.data);
+
+      // Ensure SharedPrefs is initialized before saving
+      await Preferences.init();
+      Preferences.setString(
+          AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+      Preferences.setInt(AppKeys.configLastUpdated,
+          AppGlobals.appConfig?.athletes?.lastUpdated ?? 0);
+
+      final accentColors = AppGlobals.appConfig!.theme!.accent;
+      AppColors.primary = AppHelper.hexToColor(accentColors!.light!);
+      AppColors.secondary = AppHelper.hexToColor(accentColors.dark!);
+
+      // Also update accent colors so all UI components use the theme
+      AppColors.accentLight = AppColors.primary;
+      AppColors.accentDark = AppColors.secondary;
+
+      // Update the app theme to reflect the new colors
+      AppHelper.updateAppTheme();
+
+      ProgressDialogUtils.dismiss();
+
+      // Create WebViewController with the event link URL
+      final webViewController = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadRequest(Uri.parse(event.link));
+
+      // Navigate to webview page with floating back button
+      Get.off(() => const WebViewEventPage(),
+          routeName: Routes.webviewEvent,
+          arguments: webViewController,
+          transition: Transition.topLevel,
+          duration: const Duration(milliseconds: 1500));
+    } catch (e) {
+      ProgressDialogUtils.dismiss();
+      ToastUtils.show(null);
+    }
+  }
+
   void selectEvent(dynamic event) {
     if (scrollController != null) {
       storage.write('scroll_position', scrollController!.position.pixels);
     }
     if (event is Event) {
       if (event.subEvents == null) {
-        getConfigDetails(event);
+        // Check if event type is "link" - if so, navigate to results page
+        if (event.type == 'link') {
+          navigateToResults(event);
+        } else {
+          getConfigDetails(event);
+        }
       } else {
         showSubEventList(event);
       }

@@ -211,6 +211,7 @@ class _EventoAppState extends State<EventoApp> {
               debugShowCheckedModeBanner: false,
               theme: AppStyles.light,
               darkTheme: AppStyles.dark,
+              themeMode: ThemeMode.system,
               initialRoute: Routes.landing,
               unknownRoute: GetPage(
                 name: Routes.landing,

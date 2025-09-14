@@ -22,26 +22,27 @@ void main() {
     splashImage: 'assets/images/splash_image.png',
   );
   */
-
+  /*
   final eventConfig = AppEventConfig(
     oneSignalId: '31c166a5-3735-4ed7-8bea-b3de9b96a687',
     appName: 'Single Event App',
     singleEventUrl: 'https://eventotracker.com/api/v3/api.cfm/config',
-    singleEventId: '488',
+    singleEventId: '431',
     appId: 40,
     splashImage: 'assets/images/splash_image.png',
   );
 
-  /*
+  */
   final eventConfig = AppEventConfig(
     oneSignalId: 'bd954eea-e5dc-4118-8c77-188b5fc1c33d',
     appName: 'My Results by SES',
     multiEventListUrl: 'https://eventotracker.com/api/v3/api.cfm/events',
     multiEventListId: '35',
+     appId: 40,
     splashImage: 'assets/images/splash_image.png',
     searchbarcolor: const Color.fromRGBO(0, 0, 0, 0.5),
   );
-  */
+
 
   runApp(EventoApp(
     appEventConfig: eventConfig,
