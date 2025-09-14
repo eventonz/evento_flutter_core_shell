@@ -52,14 +52,14 @@ class DashboardScreen extends StatelessWidget {
                               radius: 22,
                               backgroundColor: Theme.of(context).brightness ==
                                       Brightness.light
-                                  ? AppColors.black.withOpacity(0.8)
-                                  : AppColors.white.withOpacity(0.8),
+                                  ? AppColors.white.withOpacity(0.8)
+                                  : AppColors.black.withOpacity(0.8),
                               child: IconButton(
                                 onPressed: controller.goBack,
                                 color: Theme.of(context).brightness ==
                                         Brightness.light
-                                    ? AppColors.accentDark
-                                    : AppColors.accentLight,
+                                    ? AppColors.accentLight
+                                    : AppColors.accentDark,
                                 icon: const Icon(
                                     Icons.arrow_circle_left_outlined),
                               ),
@@ -83,14 +83,14 @@ class DashboardScreen extends StatelessWidget {
                               radius: 22,
                               backgroundColor: Theme.of(context).brightness ==
                                       Brightness.light
-                                  ? AppColors.black.withOpacity(0.8)
-                                  : AppColors.white.withOpacity(0.8),
+                                  ? AppColors.white.withOpacity(0.8)
+                                  : AppColors.black.withOpacity(0.8),
                               child: IconButton(
                                 onPressed: controller.goBack,
                                 color: Theme.of(context).brightness ==
                                         Brightness.light
-                                    ? AppColors.accentDark
-                                    : AppColors.accentLight,
+                                    ? AppColors.accentLight
+                                    : AppColors.accentDark,
                                 icon: const Icon(
                                     Icons.arrow_circle_left_outlined),
                               ),
