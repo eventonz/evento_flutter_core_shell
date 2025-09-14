@@ -75,8 +75,8 @@ class AppBottomNav extends StatelessWidget {
                                 color: controller.selMenu.value == menu
                                     ? (Theme.of(context).brightness ==
                                             Brightness.light
-                                        ? AppColors.accentLight
-                                        : AppColors.accentDark)
+                                        ? AppColors.primary
+                                        : AppColors.secondary)
                                     : Theme.of(context).brightness ==
                                             Brightness.light
                                         ? AppColors.grey.withOpacity(0.8)
