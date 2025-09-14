@@ -1,7 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:evento_core/core/db/app_db.dart';
-import 'package:evento_core/core/models/advert.dart';
-import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
 import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/res/app_colors.dart';
@@ -10,12 +7,12 @@ import 'package:evento_core/core/utils/enums.dart';
 import 'package:evento_core/ui/common_components/no_data_found_layout.dart';
 import 'package:evento_core/ui/common_components/retry_layout.dart';
 import 'package:evento_core/ui/common_components/text.dart';
+import 'package:evento_core/ui/common_components/banner_advert_widget.dart';
 import 'package:evento_core/ui/dashboard/athletes/athletes_search.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../core/utils/preferences.dart';
 import '../../common_components/athlete_tile.dart';
 import 'athletes_controller.dart';
@@ -56,28 +53,7 @@ class AthletesScreen extends StatelessWidget {
             fontWeight: FontWeight.bold,
           ),
           centerTitle: false,
-          actions: [
-            if (false)
-              IconButton(
-                  padding: const EdgeInsets.all(0),
-                  //onPressed: controller.toggleFollowed,
-                  onPressed: () {},
-                  icon: Obx(() => CircleAvatar(
-                        backgroundColor: controller.showFollowed.value
-                            ? AppColors.primary.withOpacity(0.6)
-                            : AppColors.transparent,
-                        maxRadius: 4.5.w,
-                        child: Icon(
-                          FeatherIcons.star,
-                          color: controller.showFollowed.value
-                              ? AppColors.white
-                              : Theme.of(context).brightness == Brightness.light
-                                  ? AppColors.accentDark
-                                  : AppColors.accentLight,
-                          size: 4.5.w,
-                        ),
-                      )))
-          ],
+          actions: [],
         ),
         body: Column(
           children: [
@@ -234,35 +210,9 @@ class AthletesScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // Banner Advert
-                    if (controller.showAdvert.value)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Container(
-                          decoration: AppThemeStyles.cardDecoration(context),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: GestureDetector(
-                              onTap: () {
-                                controller.trackEvent('click');
-                                launchUrl(Uri.parse(controller.advertList
-                                    .where((element) =>
-                                        element.type == AdvertType.banner)
-                                    .first
-                                    .openUrl!));
-                              },
-                              child: Image(
-                                  image: CachedNetworkImageProvider(controller
-                                      .advertList
-                                      .where((element) =>
-                                          element.type == AdvertType.banner)
-                                      .first
-                                      .image!),
-                                  width: double.maxFinite,
-                                  fit: BoxFit.cover),
-                            ),
-                          ),
-                        ),
-                      ),
+                    Obx(() => controller.showAdvert.value
+                        ? const BannerAdvertWidget()
+                        : const SizedBox.shrink()),
                     const SizedBox(height: 16),
                     // Followed Athletes Card
                     Padding(
