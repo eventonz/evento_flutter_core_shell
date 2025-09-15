@@ -21,9 +21,7 @@ class DetailItem {
       data = TitleData.fromJson(json['data']);
     } else if (type == 'splits') {
       splits = json['splits'].map<Splits>((e) => Splits.fromJson(e)).toList();
-    } else if(type == 'segmentedsplit') {
-
-
+    } else if (type == 'segmentedsplit') {
       data = json['data']
           .map<SegmentedSplitData>((e) => SegmentedSplitData.fromJson(e))
           .toList();
@@ -126,5 +124,24 @@ class SegmentedSplitSegments {
   SegmentedSplitSegments.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     columns = json['columns'].map<String>((e) => e as String).toList();
+  }
+}
+
+class LiveTimingData {
+  String? racetime;
+  String? label;
+
+  LiveTimingData({this.racetime, this.label});
+
+  LiveTimingData.fromJson(Map<String, dynamic> json) {
+    racetime = json['racetime']?.toString();
+    label = json['label']?.toString();
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['racetime'] = racetime;
+    data['label'] = label;
+    return data;
   }
 }

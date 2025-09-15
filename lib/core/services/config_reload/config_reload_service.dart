@@ -53,23 +53,28 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
         var raceId = AppGlobals.selEventId;
 
-        List<String> athletes = (await DatabaseHandler.getAthletesOnce('', true)).map((e) => e.athleteId ?? '').toList();
+        List<String> athletes =
+            (await DatabaseHandler.getAthletesOnce('', true))
+                .map((e) => e.athleteId ?? '')
+                .toList();
 
-
-        var data = await ApiHandler.patchHttp(endPoint: 'athletes/$raceId', body: {
-          'edition' : edition,
-          'athletes' : athletes,
+        var data =
+            await ApiHandler.patchHttp(endPoint: 'athletes/$raceId', body: {
+          'edition': edition,
+          'athletes': athletes,
         });
 
-        var list = (data.data['patchedathletes'] as List).map((e) => Entrants.fromJson(e)).toList();
+        // Only proceed if PATCH was successful
+        if (data.statusCode == 200 && data.data['patchedathletes'] != null) {
+          var list = (data.data['patchedathletes'] as List)
+              .map((e) => Entrants.fromJson(e))
+              .toList();
 
-    
-        
-        await DatabaseHandler.removeAllAthletes();
+          // Only remove followed athletes for the current event
+          await DatabaseHandler.removeAthletesByEvent(raceId);
 
-        await DatabaseHandler.insertAthletes(list);
-
-
+          await DatabaseHandler.insertAthletes(list);
+        }
       }
       AppGlobals.oldAppConfig = AppGlobals.appConfig;
       BlurLoadingOverlay.dismiss();
@@ -101,16 +106,18 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     }
     AppGlobals.appConfig = AppConfig.fromJson(res.data);
 
-    Preferences.setString(AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
+    Preferences.setString(
+        AppKeys.localConfig, jsonEncode(AppGlobals.appConfig?.toJson()));
 
     //AppGlobals.oldAppConfig ??= AppConfig.fromJson(res.data);
 
     final newConfigLastUpdated =
         AppGlobals.appConfig?.athletes?.lastUpdated ?? 0;
     final oldConfigLastUpdated =
-    Preferences.getInt(AppKeys.configLastUpdated, 0);
+        Preferences.getInt(AppKeys.configLastUpdated, 0);
 
-    if(AppGlobals.oldAppConfig?.home?.image != AppGlobals.appConfig?.home?.image) {
+    if (AppGlobals.oldAppConfig?.home?.image !=
+        AppGlobals.appConfig?.home?.image) {
       try {
         BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
         final HomeController homeController = Get.find();
@@ -121,7 +128,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       }
     }
 
-    if(AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+    if (AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
       try {
         BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
         final TrackingController trackingController = Get.find();
@@ -135,7 +142,8 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
     reloaded = true;
 
-    if(!AppHelper.listsAreEqual(AppGlobals.oldAppConfig?.menu?.items ?? [], AppGlobals.appConfig?.menu?.items ?? [])) {
+    if (!AppHelper.listsAreEqual(AppGlobals.oldAppConfig?.menu?.items ?? [],
+        AppGlobals.appConfig?.menu?.items ?? [])) {
       try {
         BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
         final MoreController moreController = Get.find();
@@ -148,7 +156,8 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
 
     //testing new branch
 
-    if(AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes || AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
+    if (AppGlobals.oldAppConfig?.athletes != AppGlobals.appConfig?.athletes ||
+        AppGlobals.oldAppConfig?.tracking != AppGlobals.appConfig?.tracking) {
       try {
         BlurLoadingOverlay.show(loadingText: 'Checking for Updates');
         final DashboardController dashboardController = Get.find();
@@ -158,7 +167,6 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
         BlurLoadingOverlay.dismiss();
       }
     }
-
 
     await Future.delayed(const Duration(seconds: 1));
     BlurLoadingOverlay.dismiss();
@@ -176,7 +184,7 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
     if (!showAthletes) {
       return;
     }
-    
+
     try {
       BlurLoadingOverlay.updateLoaderText(
           'Updating ${AppHelper.setAthleteMenuText(entrantsList.text)} List');
@@ -187,7 +195,6 @@ class ConfigReload extends GetxController with WidgetsBindingObserver {
       debugPrint(e.toString());
       BlurLoadingOverlay.dismiss();
     }
-    
   }
 
   @override

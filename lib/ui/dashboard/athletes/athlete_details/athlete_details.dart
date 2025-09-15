@@ -24,6 +24,8 @@ import 'package:country_flags/country_flags.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:evento_core/ui/common_components/split_data_table_2.dart';
+import 'package:evento_core/ui/common_components/live_timing_card.dart';
+import 'package:evento_core/core/models/detail_item.dart';
 
 class AthleteDetailsScreen extends StatelessWidget {
   const AthleteDetailsScreen({super.key});
@@ -672,6 +674,12 @@ class AthleteDetailsScreen extends StatelessWidget {
       );
     } else if (item.type == 'pace') {
       return PaceDataContent(data: item.data ?? []);
+    } else if (item.type == 'live') {
+      if (item.data != null && item.data is LiveTimingData) {
+        return LiveTimingCard(liveData: item.data);
+      } else {
+        return const SizedBox(); // Return empty widget if no live data
+      }
     }
     return const SizedBox();
   }
