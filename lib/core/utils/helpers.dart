@@ -14,6 +14,7 @@ import 'package:evento_core/ui/common_components/text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
@@ -451,22 +452,64 @@ class AppHelper {
                   child: Padding(
                     padding: const EdgeInsets.only(left: 8, right: 16),
                     child: ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        print('🔔 NOTIFICATION PROMPT: User clicked YES');
+
                         // Dismiss the dialog first
-                        print('DEBUG: Yes button pressed');
+                        print('🔔 NOTIFICATION PROMPT: Dismissing dialog');
                         Navigator.of(context, rootNavigator: true).pop();
+                        print('🔔 NOTIFICATION PROMPT: Dialog dismissed');
+
+                        // Request actual iOS permission
                         print(
-                            'DEBUG: Dialog dismissed with Navigator.pop(rootNavigator: true)');
+                            '🔔 NOTIFICATION PROMPT: Requesting iOS notification permission with fallback: true');
+                        try {
+                          bool permissionGranted =
+                              await OneSignal.Notifications.requestPermission(
+                                  true);
+                          print(
+                              '🔔 NOTIFICATION PROMPT: iOS permission result: $permissionGranted');
+
+                          // Wait a moment for OneSignal to process the permission
+                          await Future.delayed(const Duration(seconds: 2));
+
+                          // Check current permission status
+                          var permissionStatus =
+                              await OneSignal.Notifications.permission;
+                          print(
+                              '🔔 NOTIFICATION PROMPT: Current permission status: $permissionStatus');
+
+                          // Try to get the push subscription ID now that permission is granted
+                          String? pushId = OneSignal.User.pushSubscription.id;
+                          print(
+                              '🔔 NOTIFICATION PROMPT: Push subscription ID after permission: $pushId');
+
+                          if (pushId != null && pushId.isNotEmpty) {
+                            // Update the global user ID with the new push subscription ID
+                            AppGlobals.oneSignalUserId = pushId;
+                            await Preferences.setString(
+                                AppKeys.oneSingleUserId, pushId);
+                            print(
+                                '🔔 NOTIFICATION PROMPT: Updated OneSignal user ID: $pushId');
+                          }
+                        } catch (e) {
+                          print(
+                              '🔔 NOTIFICATION PROMPT: Error requesting permission: $e');
+                        }
 
                         // Set preference and call API in background
+                        print(
+                            '🔔 NOTIFICATION PROMPT: Setting preference to show for event: $eventId');
                         Preferences.setString(
                             AppHelper.notificationPrefenceKey(eventId),
                             NotificationStatus.show.name);
-                        print('DEBUG: Preference set to show');
+                        print(
+                            '🔔 NOTIFICATION PROMPT: Preference set successfully');
 
                         // Call the API in the background
+                        print('🔔 NOTIFICATION PROMPT: Calling onResult(true)');
                         onResult(true);
-                        print('DEBUG: onResult called with true');
+                        print('🔔 NOTIFICATION PROMPT: onResult completed');
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,

@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:apple_maps_flutter/apple_maps_flutter.dart' as apple_maps;
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete_track_detail.dart';
@@ -16,7 +15,6 @@ import 'package:evento_core/ui/dashboard/athletes_tracking/android_map_view.dart
 import 'package:evento_core/ui/dashboard/athletes_tracking/apple_map_view.dart';
 import 'package:evento_core/ui/dashboard/athletes_tracking/map_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
@@ -61,7 +59,7 @@ class TrackingScreen extends StatelessWidget {
                         child: CarouselSlider(
                           carouselController: controller.carouselController,
                           options: CarouselOptions(
-                              height: 12.h,
+                              height: 14.h,
                               enableInfiniteScroll: false,
                               viewportFraction: 0.82,
                               enlargeCenterPage: true,
@@ -203,12 +201,11 @@ class SliderAthleteTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(14)),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: 50.w,
+                Expanded(
                   child: AppText(
                     athelete.name,
                     fontSize: 16,
@@ -217,6 +214,7 @@ class SliderAthleteTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
+                const SizedBox(width: 8),
                 AthleteRaceNo(
                   number: athelete.disRaceNo ?? '',
                   width: 18.w,
@@ -231,10 +229,13 @@ class SliderAthleteTile extends StatelessWidget {
                   ? AppColors.greyLight
                   : AppColors.darkgrey),
           Padding(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
             child: trackDetail != null
                 ? AppText(
                     trackDetailsInfo(context),
+                    fontSize: 14,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
                   )
                 : const SizedBox(),
           ),

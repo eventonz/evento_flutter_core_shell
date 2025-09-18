@@ -325,23 +325,45 @@ class DashboardController extends GetxController {
     // Cancel any existing timer
     _notificationTimer?.cancel();
 
-    // Schedule the notification prompt with a delay
-    _notificationTimer = Timer(const Duration(seconds: 2), () {
+    // Schedule the notification prompt with a longer delay to ensure everything is ready
+    _notificationTimer = Timer(const Duration(seconds: 5), () {
       if (!isSplashAdvertShowing) {
+        print('🔔 DASHBOARD: Timer triggered, showing notification prompt');
         showNotificationPrompt();
+      } else {
+        print(
+            '🔔 DASHBOARD: Timer triggered but splash advert still showing, skipping prompt');
       }
     });
   }
 
   void showNotificationPrompt() {
+    print('🔔 DASHBOARD: showNotificationPrompt called');
+    print('🔔 DASHBOARD: isSplashAdvertShowing: $isSplashAdvertShowing');
+    print('🔔 DASHBOARD: eventId: $eventId');
+    print('🔔 DASHBOARD: oneSignalUserId: ${AppGlobals.oneSignalUserId}');
+
     // Safety check: don't show if splash advert is still showing
     if (isSplashAdvertShowing) {
+      print(
+          '🔔 DASHBOARD: Skipping notification prompt - splash advert showing');
       return;
     }
+
+    // Check if we have a valid OneSignal user ID
+    if (AppGlobals.oneSignalUserId.isEmpty) {
+      print(
+          '🔔 DASHBOARD: Skipping notification prompt - OneSignal user ID is empty');
+      return;
+    }
+
+    print('🔔 DASHBOARD: Showing notification opt-in prompt');
     AppHelper.showNotificationOptInPrompt(
       context: Get.context!,
       eventId: eventId,
       onResult: (allow) {
+        print('🔔 DASHBOARD: Notification prompt result: $allow');
+        print('🔔 DASHBOARD: Calling updateNotificationStatus API');
         // Call API in background without waiting
         oneSignalService.updateNotificationStatus(
             AppGlobals.oneSignalUserId, eventId, allow);

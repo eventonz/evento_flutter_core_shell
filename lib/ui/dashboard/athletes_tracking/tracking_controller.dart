@@ -1019,8 +1019,11 @@ class TrackingController extends GetxController
     final entrants = await watchFollowedAthletes().first;
     print('athletes updating 2');
     final entrantsIds = <String>[];
+    // Create a map of athleteId to disRaceNo for easy lookup
+    final athleteIdToDisRaceNo = <String, String>{};
     for (final AppAthleteDb entrant in entrants) {
       entrantsIds.add(entrant.athleteId);
+      athleteIdToDisRaceNo[entrant.athleteId] = entrant.disRaceNo ?? '';
     }
     print('entrantsIds');
     print(entrantsIds);
@@ -1039,10 +1042,21 @@ class TrackingController extends GetxController
       athleteTrackDetails.clear();
       athleteTrackDetails
           .addAll(TrackDetail.fromJson(res.data).tracks!.toList());
+
+      // Update marker_text with disRaceNo instead of athlete ID
+      for (var trackDetail in athleteTrackDetails) {
+        final disRaceNo = athleteIdToDisRaceNo[trackDetail.track];
+        if (disRaceNo != null && disRaceNo.isNotEmpty) {
+          trackDetail.marker_text = disRaceNo;
+        }
+      }
+
       entrantsIds.forEach((element) {
         if (athleteTrackDetails.where((p0) => p0.track == element).isEmpty) {
+          final disRaceNo = athleteIdToDisRaceNo[element] ?? '';
           athleteTrackDetails.add(AthleteTrackDetail(
             track: element,
+            marker_text: disRaceNo,
           ));
         }
       });
@@ -1168,7 +1182,10 @@ class TrackingController extends GetxController
           var marker = apple_maps.Annotation(
             annotationId: apple_maps.AnnotationId(trackDetail.track),
             position: apple_maps.LatLng(latLng.latitude, latLng.longitude),
-            infoWindow: apple_maps.InfoWindow(title: trackDetail.track),
+            infoWindow: apple_maps.InfoWindow(
+                title: trackDetail.marker_text.isNotEmpty
+                    ? trackDetail.marker_text
+                    : trackDetail.track),
             icon: apple_maps.BitmapDescriptor.fromBytes(bytes),
           );
           addAnnotation(apple_maps.AnnotationId(trackDetail.track), marker);

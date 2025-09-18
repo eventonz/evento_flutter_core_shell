@@ -41,12 +41,16 @@ class AthleteDetailsController extends GetxController
   void onInit() {
     super.onInit();
     final res = Get.arguments;
+    print('AthleteDetailsController onInit - arguments: $res');
     entrantsList = AppGlobals.appConfig!.athletes!;
     if (res[AppKeys.athlete] is AppAthleteDb) {
+      print('Found AppAthleteDb in arguments');
       selEntrant = res[AppKeys.athlete];
     } else if (res['id'] != null) {
+      print('Found id in arguments: ${res['id']}');
       loading.value = true;
     } else {
+      print('Found selEntrantA in arguments');
       selEntrantA = res[AppKeys.athlete];
     }
     canFollow = res['can_follow'] ?? true;
@@ -56,18 +60,21 @@ class AthleteDetailsController extends GetxController
   void onReady() {
     super.onReady();
     if (Get.arguments[AppKeys.athlete] != null) {
+      print('Calling getSplitDetails()');
       getSplitDetails();
     } else {
+      print('Calling getAthlete() with id: ${Get.arguments['id']}');
       getAthlete(Get.arguments['id'].toString());
     }
   }
 
   Future<void> getAthlete(String id) async {
-    //print('getAthlete $id');
+    print('getAthlete called with id: $id');
     loading.value = true;
     update();
 
     var raceId = AppGlobals.selEventId;
+    print('Current event ID: $raceId');
 
     var data = await ApiHandler.postHttp(
         endPoint: 'athletes/$raceId',
@@ -78,10 +85,14 @@ class AthleteDetailsController extends GetxController
         },
         timeout: 15);
 
-    //print(data.data);
+    print('API response: ${data.data}');
 
     if (data.data['athletes'].isNotEmpty) {
+      print('Found ${data.data['athletes'].length} athletes');
       selEntrantA = Entrants.fromJson(data.data['athletes'][0]);
+      print('Selected athlete: ${selEntrantA?.name}');
+    } else {
+      print('No athletes found in API response');
     }
     loading.value = false;
     update();
