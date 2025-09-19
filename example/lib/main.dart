@@ -31,7 +31,9 @@ void main() {
     appId: 36,
     splashImage: 'assets/images/splash_image.png',
   );
- /
+
+  
+ /*
 
   final eventConfig = AppEventConfig(
     oneSignalId: 'bd954eea-e5dc-4118-8c77-188b5fc1c33d',
