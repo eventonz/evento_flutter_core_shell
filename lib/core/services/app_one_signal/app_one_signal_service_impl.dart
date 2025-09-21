@@ -104,7 +104,6 @@ class AppOneSignalImpl implements AppOneSignal {
 
   Future<void> notificationHandler(String open) async {
     Future.delayed(const Duration(seconds: 1), () async {
-      Get.offNamedUntil(Routes.dashboard, (_) => false);
       String? eventId;
 
       if (open.contains('event_id/')) {
@@ -121,6 +120,9 @@ class AppOneSignalImpl implements AppOneSignal {
           }
         }
       }
+
+      // Navigate to dashboard after event switch is complete
+      Get.offNamedUntil(Routes.dashboard, (_) => false);
 
       if (open.contains('/athlete/')) {
         String athleteId = open.split('/athlete/')[1];

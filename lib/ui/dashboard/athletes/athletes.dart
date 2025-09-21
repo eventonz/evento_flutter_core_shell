@@ -1,6 +1,5 @@
 import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/res/app_colors.dart';
 import 'package:evento_core/core/res/app_theme.dart';
 import 'package:evento_core/core/utils/enums.dart';
@@ -13,7 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_feather_icons/flutter_feather_icons.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import '../../../core/utils/preferences.dart';
 import '../../common_components/athlete_tile.dart';
 import 'athletes_controller.dart';
 
@@ -23,13 +21,6 @@ class AthletesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AthletesController());
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!Preferences.getBool('is_tooltip', false)) {
-        controller.tooltipController.showTooltip();
-        Preferences.setBool('is_tooltip', true);
-      }
-    });
 
     controller.checkAdvert(false);
     return Scaffold(
@@ -90,118 +81,77 @@ class AthletesScreen extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                             ),
                             const SizedBox(height: 12),
-                            SuperTooltip(
-                              showBarrier: false,
-                              hasShadow: false,
-                              arrowBaseWidth: 0,
-                              arrowLength: 0,
-                              arrowTipDistance: 0,
-                              arrowTipRadius: 0,
-                              verticalOffset: 20,
-                              backgroundColor: Colors.transparent,
-                              borderWidth: 0,
-                              borderColor: Colors.transparent,
-                              minimumOutsideMargin: 0,
-                              hideTooltipOnBarrierTap: true,
-                              hideTooltipOnTap: true,
-                              controller: controller.tooltipController,
-                              content: Padding(
-                                padding: const EdgeInsets.only(top: 20.0),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 12, vertical: 8),
-                                  decoration: ShapeDecoration(
-                                      shape: TooltipShapeBorder(
-                                        radius: 5,
-                                      ),
-                                      color: AppColors.black),
-                                  child: Text(
-                                    AppLocalizations.of(context)!
-                                        .searchForAthletesUsingNameOrRaceNo,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                    ),
-                                  ),
+                            GestureDetector(
+                              onTap: () {
+                                controller.getAthletes('', init: true);
+                                Get.to(const AthletesSearchScreen());
+                                Future.delayed(
+                                    const Duration(milliseconds: 200), () {
+                                  controller.focusNode.requestFocus();
+                                });
+                              },
+                              child: TextField(
+                                controller: controller.searchTextEditController,
+                                onChanged: (val) =>
+                                    controller.searchAthletes(val),
+                                cursorColor: AppColors.grey,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Theme.of(context).brightness ==
+                                          Brightness.light
+                                      ? AppColors.darkgrey
+                                      : AppColors.splitLightGrey,
                                 ),
-                              ),
-                              child: GestureDetector(
-                                onTap: () {
-                                  controller.getAthletes('', init: true);
-                                  Get.to(const AthletesSearchScreen());
-                                  Future.delayed(
-                                      const Duration(milliseconds: 200), () {
-                                    controller.focusNode.requestFocus();
-                                  });
-                                },
-                                child: TextField(
-                                  controller:
-                                      controller.searchTextEditController,
-                                  onChanged: (val) =>
-                                      controller.searchAthletes(val),
-                                  cursorColor: AppColors.grey,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Theme.of(context).brightness ==
-                                            Brightness.light
-                                        ? AppColors.darkgrey
-                                        : AppColors.splitLightGrey,
-                                  ),
-                                  decoration: InputDecoration(
-                                      enabled: false,
-                                      isDense: true,
-                                      hintStyle: TextStyle(
-                                        fontSize: 16,
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? AppColors.greyLight
-                                            : AppColors.grey,
-                                      ),
-                                      filled: true,
-                                      fillColor: Theme.of(context).brightness ==
+                                decoration: InputDecoration(
+                                    enabled: false,
+                                    isDense: true,
+                                    hintStyle: TextStyle(
+                                      fontSize: 16,
+                                      color: Theme.of(context).brightness ==
                                               Brightness.light
-                                          ? Colors.grey[100]
-                                          : Colors.grey[800],
-                                      prefixIcon: Icon(
-                                        FeatherIcons.search,
-                                        size: 5.w,
-                                        color: Theme.of(context).brightness ==
-                                                Brightness.light
-                                            ? AppColors.grey
-                                            : AppColors.greyLight,
-                                      ),
-                                      suffixIcon: Obx(() => controller
-                                              .searchText.value.isEmpty
-                                          ? const SizedBox()
-                                          : GestureDetector(
-                                              onTap:
-                                                  controller.clearSearchField,
-                                              child: Icon(
-                                                FeatherIcons.x,
-                                                size: 4.w,
-                                                color: Theme.of(context)
-                                                            .brightness ==
-                                                        Brightness.light
-                                                    ? AppColors.grey
-                                                    : AppColors.greyLight,
-                                              ))),
-                                      contentPadding: const EdgeInsets.all(12),
-                                      focusedBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          gapPadding: 0),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          gapPadding: 0),
-                                      disabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide.none,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          gapPadding: 0)),
-                                ),
+                                          ? AppColors.greyLight
+                                          : AppColors.grey,
+                                    ),
+                                    filled: true,
+                                    fillColor: Theme.of(context).brightness ==
+                                            Brightness.light
+                                        ? Colors.grey[100]
+                                        : Colors.grey[800],
+                                    prefixIcon: Icon(
+                                      FeatherIcons.search,
+                                      size: 5.w,
+                                      color: Theme.of(context).brightness ==
+                                              Brightness.light
+                                          ? AppColors.grey
+                                          : AppColors.greyLight,
+                                    ),
+                                    suffixIcon: Obx(() => controller
+                                            .searchText.value.isEmpty
+                                        ? const SizedBox()
+                                        : GestureDetector(
+                                            onTap: controller.clearSearchField,
+                                            child: Icon(
+                                              FeatherIcons.x,
+                                              size: 4.w,
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.light
+                                                  ? AppColors.grey
+                                                  : AppColors.greyLight,
+                                            ))),
+                                    contentPadding: const EdgeInsets.all(12),
+                                    focusedBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(10),
+                                        gapPadding: 0),
+                                    enabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(10),
+                                        gapPadding: 0),
+                                    disabledBorder: OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(10),
+                                        gapPadding: 0)),
                               ),
                             ),
                           ],

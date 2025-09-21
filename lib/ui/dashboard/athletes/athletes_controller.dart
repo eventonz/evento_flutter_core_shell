@@ -4,8 +4,6 @@ import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/app_config.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
-import 'package:evento_core/core/services/app_one_signal/app_one_signal_service.dart';
-import 'package:super_tooltip/super_tooltip.dart';
 import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/helpers.dart';
 import 'package:evento_core/core/utils/keys.dart';
@@ -23,8 +21,6 @@ class AthletesController extends GetxController {
   late String athletelabel;
   final TextEditingController searchTextEditController =
       TextEditingController();
-
-  final tooltipController = SuperTooltipController();
 
   final FocusNode focusNode = FocusNode();
   final searchText = ''.obs;
