@@ -55,7 +55,15 @@ class AthleteLeaderboardResponse {
 }
 
 class AthleteResult {
-  final int athleteId;
+  /// Helper method to safely convert dynamic values to string
+  /// Handles both int and string values from API
+  static String _safeStringConversion(dynamic value) {
+    if (value == null) return '';
+    if (value is String) return value;
+    if (value is int) return value.toString();
+    return value.toString();
+  }
+
   final String eventId;
   final dynamic alphaRaceNo;
   final int bib;
@@ -95,7 +103,6 @@ class AthleteResult {
   final String timeBehindCategoryLeader;
 
   AthleteResult({
-    required this.athleteId,
     required this.eventId,
     this.alphaRaceNo,
     required this.bib,
@@ -137,7 +144,6 @@ class AthleteResult {
 
   factory AthleteResult.fromJson(Map<String, dynamic> json) {
     return AthleteResult(
-      athleteId: json['athlete_id'] ?? 0,
       eventId: json['event_id'] ?? '',
       alphaRaceNo: json['alpha_race_no'],
       bib: json['bib'] ?? 0,
@@ -150,7 +156,7 @@ class AthleteResult {
       countryRepresenting: json['country_representing'] == null
           ? Country(id: 0, code: '', ioc: '', iso2: '', name: '')
           : Country.fromJson(json['country_representing']),
-      importKey: json['import_key'] ?? '',
+      importKey: _safeStringConversion(json['import_key']),
       leaderboardId: json['leaderboard_id'] ?? '',
       category: json['category'] == null
           ? Category(
