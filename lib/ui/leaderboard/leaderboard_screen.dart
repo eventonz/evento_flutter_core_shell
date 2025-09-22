@@ -1,18 +1,12 @@
-import 'package:evento_core/core/db/app_db.dart';
 import 'package:evento_core/core/models/athlete.dart';
 import 'package:evento_core/core/routes/routes.dart';
-import 'package:evento_core/core/utils/app_global.dart';
 import 'package:evento_core/core/utils/keys.dart';
 import 'package:evento_core/l10n/app_localizations.dart';
-import 'package:evento_core/ui/results/results_screen_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:country_flags/country_flags.dart';
-
-import '../../core/models/app_config.dart';
 import '../../core/res/app_colors.dart';
 import '../../core/res/app_theme.dart';
 import '../common_components/text.dart';
@@ -36,6 +30,8 @@ class LeaderboardScreen extends StatelessWidget {
     });
 
     return Scaffold(
+      backgroundColor:
+          isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
       appBar: AppBar(
         backgroundColor:
             isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
@@ -612,7 +608,7 @@ class LeaderboardScreen extends StatelessWidget {
                                 children: [
                                   if (controller.search == '')
                                     SizedBox(
-                                      width: 60,
+                                      width: 50,
                                       child: Center(
                                           child: Text(
                                         '${AppLocalizations.of(context)!.pos}.',
@@ -626,7 +622,7 @@ class LeaderboardScreen extends StatelessWidget {
                                   Expanded(
                                       child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20),
+                                        horizontal: 12),
                                     child: Text(
                                       '${AppLocalizations.of(context)!.name}.',
                                       style: TextStyle(
@@ -736,10 +732,10 @@ class LeaderboardScreen extends StatelessWidget {
                                               children: [
                                                 if (controller.search == '')
                                                   Container(
-                                                    width: 60,
+                                                    width: 50,
                                                     padding: const EdgeInsets
                                                         .fromLTRB(
-                                                        15.0, 0.0, 0.0, 0.0),
+                                                        10.0, 0.0, 0.0, 0.0),
                                                     child: Text(
                                                       (index + 1)
                                                           .toString() /*'${athlete.netOverallPos ?? athlete.overallPos}'*/,
@@ -758,7 +754,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                     child: Container(
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      horizontal: 20),
+                                                      horizontal: 12),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -776,7 +772,7 @@ class LeaderboardScreen extends StatelessWidget {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w500,
-                                                                fontSize: 16,
+                                                                fontSize: 14,
                                                                 color: isLightMode
                                                                     ? AppColors
                                                                         .darkBlack
@@ -812,25 +808,23 @@ class LeaderboardScreen extends StatelessWidget {
                                                             ),
                                                         ],
                                                       ),
-                                                      if ((athlete.splitName ??
-                                                              '')
-                                                          .isNotEmpty)
-                                                        Text(
-                                                          athlete.splitName,
-                                                          style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 12,
-                                                            color: isLightMode
-                                                                ? AppColors
-                                                                    .darkgrey
-                                                                : AppColors
-                                                                    .splitLightGrey,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                      // Split name, gender code and category name on one line
+                                                      Text(
+                                                        '${(athlete.splitName?.isNotEmpty == true ? '${athlete.splitName} • ' : '')}${athlete.gender.code ?? ''} ${athlete.category.name ?? ''}',
+                                                        style: TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          fontSize: 12,
+                                                          color: isLightMode
+                                                              ? AppColors
+                                                                  .darkgrey
+                                                              : AppColors
+                                                                  .splitLightGrey,
                                                         ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
                                                     ],
                                                   ),
                                                 )),
