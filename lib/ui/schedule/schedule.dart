@@ -22,6 +22,8 @@ class ScheduleScreen extends StatelessWidget {
     final controller = Get.put(ScheduleController());
     final isLightMode = Theme.of(context).brightness == Brightness.light;
     return Scaffold(
+        backgroundColor:
+            isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
         appBar: AppBar(
           backgroundColor:
               isLightMode ? AppColors.greyLighter : AppColors.darkBlack,
