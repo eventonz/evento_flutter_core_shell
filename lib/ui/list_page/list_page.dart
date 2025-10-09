@@ -47,12 +47,11 @@ class ListPageScreen extends StatelessWidget {
             ));
           }
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.all(16),
             child: Container(
               decoration: AppThemeStyles.cardDecoration(context),
               child: ListView.separated(
                 shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 itemCount: eventResults.length,
                 separatorBuilder: (_, i) {
