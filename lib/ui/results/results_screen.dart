@@ -145,6 +145,7 @@ class ResultsScreen extends StatelessWidget {
                                 child: Container(
                                   margin: const EdgeInsets.only(right: 8),
                                   child: TextField(
+                                    controller: controller.searchController,
                                     style: TextStyle(
                                       height: 1,
                                     ),
@@ -206,6 +207,7 @@ class ResultsScreen extends StatelessWidget {
                                                         bottom: 0,
                                                         child: Row(
                                                           children: [
+                                                            // Gender Picker
                                                             Expanded(
                                                               child:
                                                                   CupertinoPicker(
@@ -239,8 +241,9 @@ class ResultsScreen extends StatelessWidget {
                                                                       'All',
                                                                       style:
                                                                           TextStyle(
-                                                                        color: Colors
-                                                                            .black,
+                                                                        color: isLightMode
+                                                                            ? Colors.black
+                                                                            : Colors.white,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -262,7 +265,61 @@ class ResultsScreen extends StatelessWidget {
                                                                                   child: Text(
                                                                                     '${e.name}',
                                                                                     style: TextStyle(
-                                                                                      color: Colors.black,
+                                                                                      color: isLightMode ? Colors.black : Colors.white,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ))
+                                                                          .toList() ??
+                                                                      [],
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            // Category Picker
+                                                            Expanded(
+                                                              child:
+                                                                  CupertinoPicker(
+                                                                itemExtent: 70,
+                                                                scrollController:
+                                                                    controller
+                                                                        .categoryScrollController,
+                                                                onSelectedItemChanged:
+                                                                    (val) {
+                                                                  controller
+                                                                      .setCategory(
+                                                                          val);
+                                                                },
+                                                                children: [
+                                                                  Center(
+                                                                    child: Text(
+                                                                      'All',
+                                                                      style:
+                                                                          TextStyle(
+                                                                        color: isLightMode
+                                                                            ? Colors.black
+                                                                            : Colors.white,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  ...controller
+                                                                          .eventResponse
+                                                                          ?.data
+                                                                          ?.where((element) =>
+                                                                              element.eventId ==
+                                                                              controller
+                                                                                  .selectedEvent.value)
+                                                                          .firstOrNull
+                                                                          ?.categories
+                                                                          .where((e) =>
+                                                                              e.name !=
+                                                                              null) // Filter out null names
+                                                                          .map((e) =>
+                                                                              Container(
+                                                                                child: Center(
+                                                                                  child: Text(
+                                                                                    '${e.name ?? e.code ?? 'Unknown'}',
+                                                                                    style: TextStyle(
+                                                                                      color: isLightMode ? Colors.black : Colors.white,
                                                                                     ),
                                                                                   ),
                                                                                 ),
@@ -313,6 +370,8 @@ class ResultsScreen extends StatelessWidget {
                                                                             child: Text(AppLocalizations.of(context)!.gender,
                                                                                 style: TextStyle(
                                                                                   fontSize: 16,
+                                                                                  color: isLightMode ? AppColors.darkBlack : AppColors.white,
+                                                                                  fontWeight: FontWeight.w600,
                                                                                 )))),
                                                                     Expanded(
                                                                         child: Container(
@@ -320,6 +379,8 @@ class ResultsScreen extends StatelessWidget {
                                                                             child: Text(AppLocalizations.of(context)!.category,
                                                                                 style: TextStyle(
                                                                                   fontSize: 16,
+                                                                                  color: isLightMode ? AppColors.darkBlack : AppColors.white,
+                                                                                  fontWeight: FontWeight.w600,
                                                                                 )))),
                                                                   ],
                                                                 ),
@@ -353,6 +414,10 @@ class ResultsScreen extends StatelessWidget {
                                                                             TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.w500,
+                                                                          // In dark mode, use dark text for better contrast
+                                                                          color: isLightMode
+                                                                              ? Theme.of(context).scaffoldBackgroundColor
+                                                                              : AppColors.darkBlack,
                                                                         ),
                                                                       )),
                                                                 ),
@@ -386,6 +451,10 @@ class ResultsScreen extends StatelessWidget {
                                                                             TextStyle(
                                                                           fontWeight:
                                                                               FontWeight.w500,
+                                                                          // In dark mode, use dark text for better contrast
+                                                                          color: isLightMode
+                                                                              ? Theme.of(context).scaffoldBackgroundColor
+                                                                              : AppColors.darkBlack,
                                                                         ))),
                                                               ],
                                                             ),
@@ -450,6 +519,9 @@ class ResultsScreen extends StatelessWidget {
                                     '${AppLocalizations.of(context)!.gender} ${gender?.name ?? gender?.code ?? AppLocalizations.of(context)!.all} / ${AppLocalizations.of(context)!.category} ${category?.name ?? category?.code ?? AppLocalizations.of(context)!.all}',
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
+                                      color: isLightMode
+                                          ? AppColors.darkBlack
+                                          : AppColors.white,
                                     )),
                               ],
                             );
@@ -459,6 +531,50 @@ class ResultsScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
+                  // Search results indicator
+                  if (controller.search != '')
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 16),
+                        decoration: BoxDecoration(
+                          color:
+                              isLightMode ? Colors.blue[50] : Colors.blue[900],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isLightMode
+                                ? Colors.blue[200]!
+                                : Colors.blue[700]!,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(
+                              CupertinoIcons.search,
+                              color: isLightMode
+                                  ? Colors.blue[600]
+                                  : Colors.blue[300],
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Search results - Any Event',
+                              style: TextStyle(
+                                color: isLightMode
+                                    ? Colors.blue[700]
+                                    : Colors.blue[200],
+                                fontWeight: FontWeight.w500,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (controller.search != '') const SizedBox(height: 16),
                   // Results table card
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -606,7 +722,9 @@ class ResultsScreen extends StatelessWidget {
                                                   overflow:
                                                       TextOverflow.ellipsis),
                                               Text(
-                                                '${athlete.gender?.name} ${athlete.category?.name}',
+                                                controller.search != ''
+                                                    ? '${athlete.gender?.name} ${athlete.category?.name}\n${athlete.event?.name ?? ''}'
+                                                    : '${athlete.gender?.name} ${athlete.category?.name}',
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w300,
                                                   fontSize: 12,

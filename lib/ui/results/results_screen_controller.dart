@@ -28,6 +28,7 @@ class ResultsScreenController extends GetxController {
 
   String search = '';
   int page = 1;
+  final TextEditingController searchController = TextEditingController();
 
   Items? items;
 
@@ -37,6 +38,12 @@ class ResultsScreenController extends GetxController {
   bool attached = true;
 
   final ScrollController scrollController = ScrollController();
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
+  }
 
   @override
   void onInit() {
@@ -83,12 +90,20 @@ class ResultsScreenController extends GetxController {
     if (index == 0) {
       category = -1;
     } else {
-      category = eventResponse?.data
+      // Get filtered categories (same as UI)
+      var filteredCategories = eventResponse?.data
               ?.where((element) => element.eventId == selectedEvent.value)
               .firstOrNull
-              ?.categories[index - 1]
-              .id ??
-          0;
+              ?.categories
+              .where((e) => e.name != null)
+              .toList() ??
+          [];
+
+      if (index - 1 < filteredCategories.length) {
+        category = filteredCategories[index - 1].id ?? 0;
+      } else {
+        category = 0;
+      }
     }
   }
 
@@ -123,6 +138,8 @@ class ResultsScreenController extends GetxController {
     selectedEvent.value = id;
     gender = -1;
     category = -1;
+    search = ''; // Clear search when event changes
+    searchController.clear(); // Clear search text field
     loading.value = true;
     loadingResults.value = true;
     update();
@@ -171,6 +188,27 @@ class ResultsScreenController extends GetxController {
               -1) +
           1,
     )..addListener(categoryListener);
+
+    // Debug: Log genders and categories for the selected event
+    try {
+      final selected = eventResponse?.data
+          ?.where((e) => e.eventId == selectedEvent.value)
+          .firstOrNull;
+      final genders = selected?.genders ?? [];
+      final categories = selected?.categories ?? [];
+      print('DEBUG Results: Selected eventId=${selectedEvent.value}');
+      print('DEBUG Results: genders count=${genders.length}');
+      for (final g in genders) {
+        print(
+            '  gender -> id=${g.id}, code=${g.code}, name=${g.name}, enabled=${g.enabled}');
+      }
+      print('DEBUG Results: categories count=${categories.length}');
+      for (final c in categories) {
+        print('  category -> id=${c.id}, code=${c.code}, name=${c.name}');
+      }
+    } catch (e) {
+      print('DEBUG Results: error while logging categories/genders: $e');
+    }
 
     getResults();
 
