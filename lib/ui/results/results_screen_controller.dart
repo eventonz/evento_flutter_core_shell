@@ -90,17 +90,15 @@ class ResultsScreenController extends GetxController {
     if (index == 0) {
       category = -1;
     } else {
-      // Get filtered categories (same as UI)
-      var filteredCategories = eventResponse?.data
+      // Use the full categories list (match leaderboard behavior)
+      var categories = eventResponse?.data
               ?.where((element) => element.eventId == selectedEvent.value)
               .firstOrNull
-              ?.categories
-              .where((e) => e.name != null)
-              .toList() ??
+              ?.categories ??
           [];
 
-      if (index - 1 < filteredCategories.length) {
-        category = filteredCategories[index - 1].id ?? 0;
+      if (index - 1 < categories.length) {
+        category = categories[index - 1].id ?? 0;
       } else {
         category = 0;
       }

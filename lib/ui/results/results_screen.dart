@@ -310,9 +310,6 @@ class ResultsScreen extends StatelessWidget {
                                                                                   .selectedEvent.value)
                                                                           .firstOrNull
                                                                           ?.categories
-                                                                          .where((e) =>
-                                                                              e.name !=
-                                                                              null) // Filter out null names
                                                                           .map((e) =>
                                                                               Container(
                                                                                 child: Center(
