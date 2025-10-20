@@ -68,7 +68,9 @@ class ResultsScreenController extends GetxController {
     scrollController.addListener(() {
       if (scrollController.position.maxScrollExtent - scrollController.offset <=
               200 &&
-          !loadingMore.value) {
+          !loadingMore.value &&
+          // Disable infinite scroll when a search term is active
+          (search.isEmpty)) {
         loadingMore.value = true;
         page++;
         update();
