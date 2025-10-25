@@ -42,3 +42,38 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Android build artifacts
+example/android/app/.cxx/
+example/android/app/build/
+example/android/build/
+example/android/.gradle/
+
+# CMake build files
+/CMakeFiles/
+/CMakeCache.txt
+/cmake_install.cmake
+/build.ninja
+/*.cmake
+/*.bin
+/*.o
+
+# Android native build artifacts
+/armeabi-v7a/
+/x86_64/
+/arm64-v8a/
+/x86/
+
+# Gradle build cache
+/cache-v2-*.json
+/cmakeFiles-v1-*.json
+/codemodel-v2-*.json
+/directory-.*.json
+/android_gradle_build*.json
+/prefab_config.json
+/build_file_index.txt
+/symbol_folder_index.txt
+/metadata_generation_command.txt
+/additional_project_files.txtexample/android/app/.cxx/
+example/android/app/build/
+example/android/build/

@@ -22,7 +22,6 @@ class AppleMapView extends StatefulWidget {
 }
 
 class _AppleMapViewState extends State<AppleMapView> {
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -40,8 +39,7 @@ class _AppleMapViewState extends State<AppleMapView> {
       endDrawer: CustomDrawer(_scaffoldKey),
       body: Obx(() {
         if (controller.mapDataSnap.value == DataSnapShot.loaded) {
-
-          if(controller.counter != 0) {
+          if (controller.counter != 0) {
             controller.getAthleteTrackingInfo();
           }
 
@@ -53,7 +51,6 @@ class _AppleMapViewState extends State<AppleMapView> {
 
           int i = 0;
           for (var routePath in controller.routePathsCordinates.values) {
-            print(controller.routePathsCordinates.values.length.toString()+'abcd');
             var positions = [];
             routePath.forEach((latLng) {
               positions.add(LatLng(latLng.latitude, latLng.longitude));
@@ -64,13 +61,22 @@ class _AppleMapViewState extends State<AppleMapView> {
             final Polyline polyline = Polyline(
               polylineId: polylineId,
               consumeTapEvents: true,
-              zIndex: i+1,
-              color: controller.routePathsColors.values.toList()[i] != null ? AppHelper.hexToColor(controller.routePathsColors.values.toList()[i]) : AppColors.accentDark,
+              zIndex: i + 1,
+              color:
+                  controller.routePathsColors.values.toList()[i] != null
+                      ? AppHelper.hexToColor(
+                        controller.routePathsColors.values.toList()[i],
+                      )
+                      : AppColors.accentDark,
               width: 3,
-              points: routePath.map((element) => LatLng(element.latitude, element.longitude)).toList(),
-              onTap: () {
-
-              },
+              points:
+                  routePath
+                      .map(
+                        (element) =>
+                            LatLng(element.latitude, element.longitude),
+                      )
+                      .toList(),
+              onTap: () {},
             );
             polyLines.add(polyline);
 
@@ -78,8 +84,11 @@ class _AppleMapViewState extends State<AppleMapView> {
           }
 
           controller.routePathsCordinates.values.forEach((element) {
-            bounds.addAll(element
-                .map((element) => LatLng(element.latitude, element.longitude)));
+            bounds.addAll(
+              element.map(
+                (element) => LatLng(element.latitude, element.longitude),
+              ),
+            );
           });
 
           double minX = 180;
@@ -99,43 +108,65 @@ class _AppleMapViewState extends State<AppleMapView> {
 
           List<Annotation> pointAnnotations = [];
 
-            controller.interestAnnotations.values.forEach((element) {
-              pointAnnotations.addAll(element.map((e) => e as Annotation).toList());
-            });
+          controller.interestAnnotations.values.forEach((element) {
+            pointAnnotations.addAll(
+              element.map((e) => e as Annotation).toList(),
+            );
+          });
 
           onZoom(double zoom) {
             print(zoom);
-            if(zoom >= 14) {
-              if(controller.zoomedIn) {
+            if (zoom >= 14) {
+              if (controller.zoomedIn) {
                 return;
               }
               controller.zoomedIn = true;
             } else {
-              if(!controller.zoomedIn) {
+              if (!controller.zoomedIn) {
                 return;
               }
               controller.zoomedIn = false;
             }
-            for(int x = 0; x < controller.routePathsCordinates.keys.length; x++) {
+            for (
+              int x = 0;
+              x < controller.routePathsCordinates.keys.length;
+              x++
+            ) {
               for (int i = 1; i < controller.totalDistance.values.first; i++) {
-                var annotation = controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'];
+                var annotation =
+                    controller
+                        .points['${controller.routePathsCordinates.keys.toList()[x]}_$i'];
                 if (annotation != null) {
                   if (Platform.isIOS) {
-                    var annotation = controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'] as Annotation;
+                    var annotation =
+                        controller
+                                .points['${controller.routePathsCordinates.keys.toList()[x]}_$i']
+                            as Annotation;
                     if (!controller.showDistanceMarkers.value) {
                       annotation = annotation.copyWith(
-                          iconParam: BitmapDescriptor.fromBytes(Uint8List(0)));
+                        iconParam: BitmapDescriptor.fromBytes(Uint8List(0)),
+                      );
                     } else if ((zoom) >= 14) {
                       annotation = annotation.copyWith(
-                          iconParam: BitmapDescriptor.fromBytes(controller
-                              .images[i]!));
+                        iconParam: BitmapDescriptor.fromBytes(
+                          controller.images[i]!,
+                        ),
+                      );
                     } else {
                       annotation = annotation.copyWith(
-                          iconParam: i % 5 == 0 ? BitmapDescriptor.fromBytes(
-                              controller.images[i]!) : BitmapDescriptor
-                              .fromBytes(AppHelper.emptyImage));
+                        iconParam:
+                            i % 5 == 0
+                                ? BitmapDescriptor.fromBytes(
+                                  controller.images[i]!,
+                                )
+                                : BitmapDescriptor.fromBytes(
+                                  AppHelper.emptyImage,
+                                ),
+                      );
                     }
-                    controller.points['${controller.routePathsCordinates.keys.toList()[x]}_$i'] = annotation;
+                    controller
+                            .points['${controller.routePathsCordinates.keys.toList()[x]}_$i'] =
+                        annotation;
                   }
                 }
               }
@@ -144,29 +175,36 @@ class _AppleMapViewState extends State<AppleMapView> {
             controller.points.refresh();
           }
 
-
           return Stack(
             children: [
               AppleMap(
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
                 mapType: controller.mapType.value,
-                  initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          centerPoint.lat.toDouble(), centerPoint.lng.toDouble()),
-                      zoom: AppHelper.dgetBoundsZoomLevel(
-                              LatLngBounds(southwest: sw, northeast: ne),
-                              height: MediaQuery.of(context).size.height,
-                              width: MediaQuery.of(context).size.width) * 1.02),
-                polylines: Set.of([
-                  ...polyLines,
-                ]),
-                onMapCreated: (mapController) {
-                    controller.appleMapController = mapController;
-                    onZoom(AppHelper.dgetBoundsZoomLevel(
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(
+                    centerPoint.lat.toDouble(),
+                    centerPoint.lng.toDouble(),
+                  ),
+                  zoom:
+                      AppHelper.dgetBoundsZoomLevel(
                         LatLngBounds(southwest: sw, northeast: ne),
                         height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width) * 1.02);
+                        width: MediaQuery.of(context).size.width,
+                      ) *
+                      1.02,
+                ),
+                polylines: Set.of([...polyLines]),
+                onMapCreated: (mapController) {
+                  controller.appleMapController = mapController;
+                  onZoom(
+                    AppHelper.dgetBoundsZoomLevel(
+                          LatLngBounds(southwest: sw, northeast: ne),
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                        ) *
+                        1.02,
+                  );
                 },
                 onCameraMove: (position) {
                   final zoom = position.zoom;
@@ -176,8 +214,8 @@ class _AppleMapViewState extends State<AppleMapView> {
                   ...controller.annotations.value.values,
                   ...controller.extraAnnotations.value.values,
                   ...pointAnnotations,
-                  if(controller.showDistanceMarkers.value)
-                  ...controller.points.values,
+                  if (controller.showDistanceMarkers.value)
+                    ...controller.points.values,
                 ]),
                 padding: EdgeInsets.only(top: 68, right: 8),
               ),
@@ -190,15 +228,18 @@ class _AppleMapViewState extends State<AppleMapView> {
                       _scaffoldKey.currentState?.openEndDrawer();
                     },
                     child: Container(
-                        height: 42,
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).cardColor,
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: Center(child: Padding(
+                      height: 42,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: Center(
+                        child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Icon(Icons.menu, size: 24,),
-                        ))),
+                          child: Icon(Icons.menu, size: 24),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
