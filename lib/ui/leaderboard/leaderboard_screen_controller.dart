@@ -1,5 +1,4 @@
 import 'package:evento_core/core/models/ss_event_response.dart';
-import 'package:evento_core/core/models/ss_event_result.dart';
 import 'package:evento_core/core/overlays/toast.dart';
 import 'package:evento_core/core/utils/api_handler.dart';
 import 'package:evento_core/core/utils/app_global.dart';
@@ -190,10 +189,14 @@ class LeaderboardScreenController extends GetxController {
 
       getResults();
 
-      ((result.data as Map)['data'] as List).first.keys.forEach((element) {
-        print('key: $element');
-        print(((result.data as Map)['data'] as List).first[element]);
-      });
+      // Debug: Print keys only if data is not empty
+      final dataList = ((result.data as Map)['data'] as List);
+      if (dataList.isNotEmpty) {
+        dataList.first.keys.forEach((element) {
+          print('key: $element');
+          print(dataList.first[element]);
+        });
+      }
 
       update();
     } catch (e) {
@@ -242,7 +245,7 @@ class LeaderboardScreenController extends GetxController {
       if (page == 1) {
         this.eventResult = eventResult;
       } else {
-        this.eventResult!.data!.addAll(eventResult.data!);
+        this.eventResult?.data.addAll(eventResult.data);
       }
       update();
     } catch (e) {

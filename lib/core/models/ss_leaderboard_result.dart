@@ -209,9 +209,9 @@ class Gender {
 
   factory Gender.fromJson(Map<String, dynamic> json) {
     return Gender(
-      id: json['id'],
-      name: json['name'],
-      code: json['code'],
+      id: json['id'] ?? 0,
+      name: json['name'] ?? '',
+      code: json['code'] ?? '',
     );
   }
 }
@@ -233,11 +233,11 @@ class Country {
 
   factory Country.fromJson(Map<String, dynamic> json) {
     return Country(
-      id: json['id'],
-      code: json['code'],
-      ioc: json['ioc'],
-      iso2: json['iso2'],
-      name: json['name'],
+      id: json['id'] ?? 0,
+      code: json['code'] ?? '',
+      ioc: json['ioc'] ?? '',
+      iso2: json['iso2'] ?? '',
+      name: json['name'] ?? '',
     );
   }
 }
@@ -259,11 +259,11 @@ class Category {
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(
-      id: json['id'],
-      order: json['order'],
-      code: json['code'],
+      id: json['id'] ?? 0,
+      order: json['order'] ?? 0,
+      code: json['code'] ?? '',
       spotterDescription: json['spotter_description'],
-      name: json['name'],
+      name: json['name'] ?? '',
     );
   }
 }
