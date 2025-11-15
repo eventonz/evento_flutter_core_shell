@@ -237,6 +237,35 @@ class LeaderboardScreenController extends GetxController {
       });
 
       var eventResult = AthleteLeaderboardResponse.fromJson(result.data);
+
+      // Deduplicate results based on importKey + raceNo combination
+      final Set<String> seenAthletes = {};
+      final deduplicatedData = eventResult.data.where((athlete) {
+        final uniqueKey = '${athlete.importKey}_${athlete.raceNo}';
+        if (seenAthletes.contains(uniqueKey)) {
+          return false; // Skip duplicate
+        }
+        seenAthletes.add(uniqueKey);
+        return true; // Keep unique athlete
+      }).toList();
+
+      // Create new response with deduplicated data
+      eventResult = AthleteLeaderboardResponse(
+        currentPage: eventResult.currentPage,
+        data: deduplicatedData,
+        firstPageUrl: eventResult.firstPageUrl,
+        from: eventResult.from,
+        lastPage: eventResult.lastPage,
+        lastPageUrl: eventResult.lastPageUrl,
+        links: eventResult.links,
+        nextPageUrl: eventResult.nextPageUrl,
+        path: eventResult.path,
+        perPage: eventResult.perPage,
+        prevPageUrl: eventResult.prevPageUrl,
+        to: eventResult.to,
+        total: eventResult.total,
+      );
+
       if (showLoading) {
         loadingResults.value = false;
       }
@@ -245,7 +274,17 @@ class LeaderboardScreenController extends GetxController {
       if (page == 1) {
         this.eventResult = eventResult;
       } else {
-        this.eventResult?.data.addAll(eventResult.data);
+        // Also deduplicate when adding more results
+        final existingKeys = (this.eventResult?.data ?? [])
+            .map((athlete) => '${athlete.importKey}_${athlete.raceNo}')
+            .toSet();
+
+        final newData = eventResult.data.where((athlete) {
+          final uniqueKey = '${athlete.importKey}_${athlete.raceNo}';
+          return !existingKeys.contains(uniqueKey);
+        }).toList();
+
+        this.eventResult?.data.addAll(newData);
       }
       update();
     } catch (e) {

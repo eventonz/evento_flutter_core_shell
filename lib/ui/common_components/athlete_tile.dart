@@ -104,12 +104,24 @@ class AthleteTile extends StatelessWidget {
                     // const SizedBox(width: 8),
                     if (entrant.country != null &&
                         entrant.country.isNotEmpty) ...[
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: CountryFlag.fromCountryCode(
-                          entrant.country,
-                          height: 20,
-                          width: 30,
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 2,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(4),
+                          child: CountryFlag.fromCountryCode(
+                            entrant.country,
+                            height: 20,
+                            width: 30,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
