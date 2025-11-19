@@ -1,0 +1,60 @@
+# Build outputs
+builds/
+build/
+*.aab
+*.ipa
+*.apk
+
+# Generated files
+lib/app_config.g.dart
+assets/generated/
+
+# Firebase config files (per-app, downloaded during build)
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+# Android signing files (per-app, downloaded during build)
+android/key.properties
+android/app/keystore.jks
+android/app/*.keystore
+android/local.properties
+
+# Android build artifacts
+android/app/.cxx/
+android/app/build/
+android/.gradle/
+android/build/
+android/.gradle/
+android/local.properties
+
+# iOS build artifacts
+ios/build/
+ios/Pods/
+ios/Podfile.lock
+ios/.symlinks/
+ios/DerivedData/
+ios/*.xcworkspace/xcuserdata/
+ios/*.xcodeproj/xcuserdata/
+ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Generated icon and splash configs
+flutter_launcher_icons.yaml
+flutter_native_splash.yaml
+
+# Flutter/Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+pubspec.lock
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db

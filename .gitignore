@@ -16,10 +16,8 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -31,6 +29,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+**/build/
 
 # Symbolication related
 app.*.symbols
@@ -38,42 +37,84 @@ app.*.symbols
 # Obfuscation related
 app.*.map.json
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
-
 # Android build artifacts
-example/android/app/.cxx/
-example/android/app/build/
-example/android/build/
-example/android/.gradle/
+**/android/app/.cxx/
+**/android/app/build/
+**/android/app/debug/
+**/android/app/profile/
+**/android/app/release/
+**/android/.gradle/
+**/android/build/
+**/android/local.properties
+**/android/key.properties
+**/android/app/keystore.jks
+**/android/app/*.keystore
+**/android/app/google-services.json
 
 # CMake build files
-/CMakeFiles/
-/CMakeCache.txt
-/cmake_install.cmake
-/build.ninja
-/*.cmake
-/*.bin
-/*.o
+**/CMakeFiles/
+**/CMakeCache.txt
+**/cmake_install.cmake
+**/build.ninja
+**/*.cmake
+**/*.bin
+**/*.o
 
 # Android native build artifacts
-/armeabi-v7a/
-/x86_64/
-/arm64-v8a/
-/x86/
+**/armeabi-v7a/
+**/x86_64/
+**/arm64-v8a/
+**/x86/
 
 # Gradle build cache
-/cache-v2-*.json
-/cmakeFiles-v1-*.json
-/codemodel-v2-*.json
-/directory-.*.json
-/android_gradle_build*.json
-/prefab_config.json
-/build_file_index.txt
-/symbol_folder_index.txt
-/metadata_generation_command.txt
-/additional_project_files.txtexample/android/app/.cxx/
-example/android/app/build/
-example/android/build/
+**/cache-v2-*.json
+**/cmakeFiles-v1-*.json
+**/codemodel-v2-*.json
+**/directory-.*.json
+**/android_gradle_build*.json
+**/prefab_config.json
+**/build_file_index.txt
+**/symbol_folder_index.txt
+**/metadata_generation_command.txt
+**/additional_project_files.txt
+
+# iOS build artifacts
+**/ios/build/
+**/ios/Pods/
+**/ios/Podfile.lock
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral/
+**/ios/Flutter/app.flx
+**/ios/Flutter/app.zip
+**/ios/Flutter/flutter_assets/
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GoogleService-Info.plist
+**/ios/DerivedData/
+
+# Xcode
+**/ios/*.xcworkspace/xcuserdata/
+**/ios/*.xcodeproj/xcuserdata/
+**/ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+**/ios/*.xcworkspace/contents.xcworkspacedata
+**/ios/.swiftpm/
+
+# Build outputs
+**/builds/
+**/*.aab
+**/*.ipa
+**/*.apk
+
+# Generated files
+**/lib/app_config.g.dart
+**/assets/generated/
+**/flutter_launcher_icons.yaml
+**/flutter_native_splash.yaml
+
+# OS files
+Thumbs.db
+.DS_Store
+**/.DS_Store

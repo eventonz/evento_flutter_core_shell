@@ -1,0 +1,74 @@
+# Event Configuration Template
+# Copy this file and rename it for your event (e.g., myevent2026.yaml)
+# All fields marked with * are required
+
+# * App Display Name (shown in app stores and on device)
+app_name: "My Event 2026"
+
+# * Bundle Name (short name, used internally)
+# This is the short name used in system settings and notifications
+bundle_name: "MyEvent2026"
+
+# * App ID (internal identifier)
+app_id: 100
+
+# * OneSignal Push Notification ID
+onesignal_id: "your-onesignal-app-id-here"
+
+# Event Configuration - Choose ONE of the following:
+
+# Option 1: Single Event App
+single_event_url: "https://eventotracker.com/api/v3/api.cfm/config"
+single_event_id: "449"
+
+# Option 2: Multi Event App (alternative to single_event)
+# multi_event_list_url: "https://eventotracker.com/api/v3/api.cfm/events"
+# multi_event_list_id: "36"
+
+# * Bundle Identifiers (must be unique per app)
+android_bundle_id: "nz.netproject.eventotracker.myevent2026"
+ios_bundle_id: "nz.netproject.eventotracker.myevent2026"
+
+# * App Icon - Cloud URL (will be downloaded during build)
+# The icon should be a square PNG (1024x1024 recommended)
+icon_url: "https://your-cdn.com/events/myevent2026/icon.png"
+
+# * Splash Image - Cloud URL (will be downloaded during build)
+# Recommended size: 2048x2048 or matching your app's aspect ratio
+splash_url: "https://your-cdn.com/events/myevent2026/splash.png"
+
+# Alternative: Use local splash image (if not using splash_url)
+# splash_image: "assets/generated/splash.png"
+
+# * Firebase Configuration Files - Cloud URLs (will be downloaded during build)
+# Android: google-services.json
+firebase_android_url: "https://your-cdn.com/events/myevent2026/google-services.json"
+
+# iOS: GoogleService-Info.plist
+firebase_ios_url: "https://your-cdn.com/events/myevent2026/GoogleService-Info.plist"
+
+# * Android Signing Configuration
+# Option 1: Download key.properties from cloud URL
+key_properties_url: "https://your-cdn.com/events/myevent2026/key.properties"
+
+# Option 2: Provide individual signing fields (alternative to key_properties_url)
+# key_store_password: "YourStorePassword"
+# key_password: "YourKeyPassword"
+# key_alias: "YourKeyAlias"
+# keystore_file_url: "/path/to/local/keystore.jks"  # Local file path (RECOMMENDED)
+# keystore_file_url: "https://your-cdn.com/keystore.jks"  # Cloud URL (NOT RECOMMENDED - insecure)
+
+# Optional: Search Bar Color (RGBA values 0-255 for RGB, 0.0-1.0 for alpha)
+# searchbar_color:
+#   r: 0
+#   g: 0
+#   b: 0
+#   a: 0.5
+
+# Optional: Enable Timer Feature
+# is_timer: false
+
+# Optional: Version Override (if not specified, uses pubspec.yaml or defaults)
+# version_name: "1.0.0"    # App version name (e.g., "2.4.0") - shown to users
+# version_code: 11          # Build number (incremented for each release) - Android only
+

@@ -1,0 +1,62 @@
+# Melbourne 2026 Event Configuration
+
+# App Display Name (shown in app stores and on device)
+app_name: "Melbourne Marathon 2026"
+
+# Bundle Name (short name, used internally)
+bundle_name: "Melb2026"
+
+# App ID (internal identifier)
+app_id: 91
+
+# OneSignal Push Notification ID
+onesignal_id: "31c166a5-3735-4ed7-8bea-b3de9b96a687"
+
+# Single Event Configuration
+single_event_url: "https://eventotracker.com/api/v3/api.cfm/config"
+single_event_id: "449"
+
+# Multi Event Configuration (alternative to single_event)
+# multi_event_list_url: "https://eventotracker.com/api/v3/api.cfm/events"
+# multi_event_list_id: "36"
+
+# Bundle Identifiers (must be unique per app)
+android_bundle_id: "nz.netproject.eventotracker.melb2026"
+ios_bundle_id: "nz.netproject.eventotracker.melb2026"
+
+# App Icon - Cloud URL (will be downloaded during build)
+# Recommended: 1024x1024 PNG
+icon_url: "https://your-cdn.com/events/melb2026/icon.png"
+
+# Splash Image - Cloud URL (will be downloaded during build)
+# Recommended: 2048x2048 PNG
+splash_url: "https://your-cdn.com/events/melb2026/splash.png"
+
+# Firebase Configuration Files - Cloud URLs (will be downloaded during build)
+firebase_android_url: "https://your-cdn.com/events/melb2026/google-services.json"
+firebase_ios_url: "https://your-cdn.com/events/melb2026/GoogleService-Info.plist"
+
+# Android Signing Configuration
+# Option 1: Download key.properties from cloud URL
+key_properties_url: "https://your-cdn.com/events/melb2026/key.properties"
+
+# Option 2: Provide individual signing fields (alternative to key_properties_url)
+# key_store_password: "YourStorePassword"
+# key_password: "YourKeyPassword"
+# key_alias: "YourKeyAlias"
+# keystore_file_url: "https://your-cdn.com/events/melb2026/keystore.jks"
+
+# Optional: Search bar color (RGBA)
+# searchbar_color:
+#   r: 0
+#   g: 0
+#   b: 0
+#   a: 0.5
+
+# Optional: Timer feature
+# is_timer: false
+
+# Optional: Version Override (if not specified, uses pubspec.yaml or defaults)
+# version_name: "2.4.0"    # App version name
+# version_code: 11          # Build number
+

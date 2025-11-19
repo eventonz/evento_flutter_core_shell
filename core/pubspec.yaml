@@ -1,0 +1,179 @@
+name: evento_core
+description: base code for all different events app
+
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+
+version: 2.4.0+11
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  onesignal_flutter: 5.3.4
+  get: ^4.6.6
+  shared_preferences: ^2.2.3
+  responsive_sizer: ^3.3.1
+  dio: ^5.5.0+1
+  intl: ^0.19.0
+  fluttertoast: ^8.2.6
+  permission_handler: ^11.4.0
+  url_launcher: ^6.3.0
+  cached_network_image: ^3.3.1
+  package_info_plus: ^8.0.2
+  device_info_plus: ^11.0.0
+  path_provider: ^2.1.3
+  flutter_feather_icons: ^2.0.0+1
+  path: ^1.9.0
+  connectivity_plus: ^6.1.1
+  syncfusion_flutter_pdfviewer: ^29.1.35
+  country_flags: ^2.2.0
+  geojson:
+    git:
+      url: git@github.com:coding-master15/geojson.git
+      ref: 
+
+  
+  carousel_slider: ^5.0.0
+  youtube_player_flutter: ^9.1.0
+  firebase_core: ^3.6.0
+  firebase_crashlytics: ^4.1.3
+  firebase_analytics: ^11.3.3
+  sqlite3_flutter_libs: ^0.5.24
+  drift_sqflite: 2.0.1
+  drift: 2.20.2
+  collection: ^1.18.0
+  webview_flutter: ^4.13.0
+  flutter_svg: ^2.0.10+1
+  # mobile_scanner: ^3.5.2
+  pull_to_refresh: ^2.0.0
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  geodart: ^0.3.6
+  miniplayer: ^1.0.1
+  smooth_page_indicator: ^1.1.0
+  share_plus: ^7.2.1
+  flutter_inappwebview: 6.2.0-beta.2
+  video_player: ^2.8.2
+  flutter_cache_manager: ^3.3.1
+  app_links: ^6.3.2
+  mapbox_maps_flutter: ^2.2.1
+  screenshot: ^3.0.0
+  geolocator: ^12.0.0
+  geodesy: ^0.10.2
+  fl_chart: ^0.68.0
+  apple_maps_flutter: ^1.4.0
+  get_storage:
+  super_tooltip: ^2.0.9
+  win32: ^5.5.4
+  flutter_markdown: ^0.6.18
+  flutter_localizations:
+    sdk: flutter
+  #new_version_plus: ^0.0.11
+
+
+dependency_overrides:
+  latlong2: ^0.9.0
+  win32: ^5.5.4
+  win32_registry: ^1.1.5
+  flutter_inappwebview_ios: ^1.2.0-beta.2
+  geopoint:
+    git:
+      url: git@github.com:coding-master15/geopoint.git
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^2.0.3
+  build_runner: ^2.4.12
+  drift_dev: ^2.20.3
+  mocktail: ^1.0.4
+  flutter_gen: ^5.8.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/svgs/article.svg
+    - assets/svgs/assignment.svg
+    - assets/svgs/auto_stories.svg
+    - assets/svgs/campaign.svg
+    - assets/svgs/chevron_left.svg
+    - assets/svgs/date_range.svg
+    - assets/svgs/directions_bike.svg
+    - assets/svgs/directions_run.svg
+    - assets/svgs/done.svg
+    - assets/svgs/event.svg
+    - assets/svgs/filter_drama.svg
+    - assets/svgs/gps_fixed.svg
+    - assets/svgs/image.svg
+    - assets/svgs/info.svg
+    - assets/svgs/landscape.svg
+    - assets/svgs/language.svg
+    - assets/svgs/laptop.svg
+    - assets/svgs/layers.svg
+    - assets/svgs/list_numbered.svg
+    - assets/svgs/list.svg
+    - assets/svgs/location_searching.svg
+    - assets/svgs/map.svg
+    - assets/svgs/medical_services.svg
+    - assets/svgs/menu_book.svg
+    - assets/svgs/near_me.svg
+    - assets/svgs/people.svg
+    - assets/svgs/personal_video.svg
+    - assets/svgs/phone.svg
+    - assets/svgs/picture_as_pdf.svg
+    - assets/svgs/qr_code.svg
+    - assets/svgs/shopping_bag.svg
+    - assets/svgs/sticky_note_2.svg
+    - assets/svgs/subject.svg
+    - assets/svgs/support_agent.svg
+    - assets/svgs/terrain.svg
+    - assets/svgs/text_snippet.svg
+    - assets/svgs/trophey.svg
+    - assets/svgs/verified_user.svg
+    - assets/svgs/videocam.svg
+    - assets/svgs/view_list.svg
+    - assets/svgs/watch_later.svg
+    - assets/svgs/wb_sunny.svg
+    - assets/svgs/web.svg
+    - assets/svgs/startingpoint.svg
+    - assets/svgs/finishpoint.svg
+    - assets/svgs/swim.svg
+    - assets/svgs/bike.svg
+    - assets/svgs/run.svg
+
+    - assets/images/splash_image.png
+    - assets/images/empty_search.png
+    - assets/images/us.png
+    - assets/images/instagram.png
+    - assets/images/general.png
+    - assets/images/share.png
+    - assets/images/speedometer.webp
+    - assets/images/aidstation.png
+    - assets/images/camera.png
+    - assets/images/checkpoint.png
+    - assets/images/bagdrop.png
+    - assets/images/bus.png
+    - assets/images/caution.png
+    - assets/images/firstaid.png
+    - assets/images/info.png
+    - assets/images/mechanic.png
+    - assets/images/parking.png
+    - assets/images/roadclosure_marker.png
+    - assets/images/timing.png
+    - assets/images/wc.png
+    - assets/images/waterpoint_marker.png
+    - assets/images/turnaround.png
+    - assets/images/spectators.png
+    - assets/images/square.png
+    - assets/images/square2.png
+    - assets/images/square3.png
+    - assets/images/trophy.png
+    - assets/images/transparent.png
+
+
